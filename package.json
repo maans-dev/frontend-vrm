@@ -32,10 +32,12 @@
     "url": "https://github.com/elastic/next-eui-starter/issues"
   },
   "dependencies": {
-    "@elastic/eui": "^68.0.0",
+    "@elastic/eui": "^75.1.1",
     "@emotion/cache": "^11.10.3",
-    "@emotion/react": "^11.10.4",
+    "@emotion/css": "^11.10.6",
+    "@emotion/react": "^11.10.6",
     "core-js": "^3.25.1",
+    "prop-types": "^15.8.1",
     "regenerator-runtime": "^0.13.9"
   },
   "devDependencies": {
