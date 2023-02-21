@@ -5,12 +5,15 @@ import {
   EuiHeaderLink,
   EuiHeaderLinks,
   EuiHeaderLogo,
+  EuiHeaderSectionItem,
   EuiPageTemplate,
   EuiPageTemplateProps,
+  EuiText,
   useGeneratedHtmlId,
 } from '@elastic/eui';
 import ThemeSwitcher from '../components/chrome/theme_switcher';
 import { useRouter } from 'next/router';
+// import DALogo from '/images/logo-with-text.svg';
 
 const MainLayout: FunctionComponent<EuiPageTemplateProps> = ({
   children,
@@ -27,15 +30,25 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps> = ({
         sections={[
           {
             items: [
-              <EuiHeaderLogo
-                key="vrm-logo"
-                iconType="graphApp"
-                onClick={() => router.push('/')}
-                style={{ cursor: 'pointer' }}>
-                VRM
-              </EuiHeaderLogo>,
+              // <EuiHeaderLogo
+              //   key="vrm-logo"
+              //   iconType="/images/logo-with-text.svg"
+              //   onClick={() => router.push('/')}
+              //   style={{ cursor: 'pointer' }}>
+              //   VRM
+              // </EuiHeaderLogo>,
+              // eslint-disable-next-line @next/next/no-img-element
+              <EuiHeaderSectionItem key="da-logo">
+                <img
+                  src="/images/logo-with-text.svg"
+                  alt="DA Logo"
+                  width="50px"
+                />{' '}
+                <EuiText size="relative" css={{ marginLeft: '10px', fontWeight: 'bold' }}>
+                  VRM
+                </EuiText>
+              </EuiHeaderSectionItem>,
             ],
-            borders: 'right',
           },
           {
             items: [
