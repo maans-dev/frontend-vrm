@@ -8,4 +8,9 @@ export const globalStyes = css`
     flex-direction: column;
     height: 100%;
   }
+  .main-header {
+    background: rgb(0, 87, 157);
+    color: white;
+    border: none;
+  }
 `;

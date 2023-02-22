@@ -1,92 +1,101 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable @next/next/no-img-element */
 import { FunctionComponent } from 'react';
 import { MainLayoutStyles } from './main.styles';
 import {
   EuiHeader,
-  EuiHeaderLink,
-  EuiHeaderLinks,
-  EuiHeaderLogo,
   EuiHeaderSectionItem,
+  EuiPageHeaderProps,
   EuiPageTemplate,
   EuiPageTemplateProps,
   EuiText,
-  useGeneratedHtmlId,
 } from '@elastic/eui';
-import ThemeSwitcher from '../components/chrome/theme_switcher';
 import { useRouter } from 'next/router';
 // import DALogo from '/images/logo-with-text.svg';
 
-const MainLayout: FunctionComponent<EuiPageTemplateProps> = ({
+export type Props = {
+  pageTitle?: string;
+  pageDescription?: string;
+};
+
+const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
   children,
+  pageTitle,
+  pageDescription,
   ...rest
 }) => {
   const styles = MainLayoutStyles();
   const router = useRouter();
 
+  const header: EuiPageHeaderProps = {
+    pageTitle: pageTitle,
+    description: pageDescription,
+    paddingSize: 's',
+  };
+
   return (
     <div css={styles.mainWrapper}>
       <EuiHeader
-        // theme="dark"
+        theme="dark"
         position="fixed"
+        className="main-header"
         sections={[
           {
             items: [
-              // <EuiHeaderLogo
-              //   key="vrm-logo"
-              //   iconType="/images/logo-with-text.svg"
-              //   onClick={() => router.push('/')}
-              //   style={{ cursor: 'pointer' }}>
-              //   VRM
-              // </EuiHeaderLogo>,
-              // eslint-disable-next-line @next/next/no-img-element
               <EuiHeaderSectionItem key="da-logo">
                 <img
-                  src="/images/logo-with-text.svg"
+                  onClick={() => router.push('/')}
+                  style={{ cursor: 'pointer' }}
+                  src="/images/logo-with-white-text.svg"
                   alt="DA Logo"
-                  width="50px"
+                  width="70px"
                 />{' '}
-                <EuiText size="relative" css={{ marginLeft: '10px', fontWeight: 'bold' }}>
-                  VRM
-                </EuiText>
               </EuiHeaderSectionItem>,
+              <EuiText
+                key="app-title"
+                size="m"
+                css={{
+                  marginLeft: '10px',
+                  paddingLeft: '10px',
+                  opacity: 0.6,
+                  borderLeft: '1px solid #ffffff50',
+                }}>
+                <strong> VRM</strong>
+              </EuiText>,
             ],
           },
           {
             items: [
               // eslint-disable-next-line react/jsx-key
-              <EuiHeaderLinks
-                hidden={router.route === '/'}
-                style={{ display: router.route === '/' ? 'none' : 'block' }}>
-                <EuiHeaderLink
-                  iconType="layers"
-                  isActive={router.route == '/campaigns'}
-                  onClick={() => router.push('/campaigns')}>
-                  Campaigns
-                </EuiHeaderLink>
-
-                <EuiHeaderLink
-                  iconType="dashboardApp"
-                  isActive={router.route == '/contacts'}
-                  onClick={() => router.push('/contacts')}>
-                  Contacts
-                </EuiHeaderLink>
-
-                <EuiHeaderLink
-                  iconType="advancedSettingsApp"
-                  isActive={router.route == '/config'}
-                  onClick={() => router.push('/config')}>
-                  Config
-                </EuiHeaderLink>
-              </EuiHeaderLinks>,
+              // <EuiHeaderLinks
+              //   hidden={router.route === '/'}
+              //   style={{ display: router.route === '/' ? 'none' : 'block' }}>
+              //   <EuiHeaderLink
+              //     iconType="layers"
+              //     isActive={router.route == '/campaigns'}
+              //     onClick={() => router.push('/campaigns')}>
+              //     Campaigns
+              //   </EuiHeaderLink>
+              //   <EuiHeaderLink
+              //     iconType="dashboardApp"
+              //     isActive={router.route == '/contacts'}
+              //     onClick={() => router.push('/contacts')}>
+              //     Contacts
+              //   </EuiHeaderLink>
+              //   <EuiHeaderLink
+              //     iconType="advancedSettingsApp"
+              //     isActive={router.route == '/config'}
+              //     onClick={() => router.push('/config')}>
+              //     Config
+              //   </EuiHeaderLink>
+              // </EuiHeaderLinks>,
             ],
-          },
-          {
-            items: [<ThemeSwitcher key={useGeneratedHtmlId()} />],
-            borders: 'none',
           },
         ]}></EuiHeader>
 
       <div css={styles.contentWrapper}>
         <EuiPageTemplate panelled={false} restrictWidth={true} {...rest}>
+          ({pageTitle ? <EuiPageTemplate.Header {...header} /> : null})
           <EuiPageTemplate.Section
             grow={false}
             // color="subdued"
