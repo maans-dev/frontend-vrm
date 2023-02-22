@@ -9,16 +9,14 @@ import {
   EuiForm,
   EuiFormRow,
   EuiHorizontalRule,
-  EuiPanel,
   EuiSelect,
   EuiSplitPanel,
-  EuiSuperSelect,
 } from '@elastic/eui';
 import MainLayout from '@layouts/main';
 
 const Index: FunctionComponent = () => {
   return (
-    <MainLayout pageTitle="Canvassing" pageDescription="Find a voter">
+    <MainLayout>
       <EuiSplitPanel.Outer>
         <EuiSplitPanel.Inner>
           <EuiForm component="form">

@@ -1,8 +1,10 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable @next/next/no-img-element */
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 import { MainLayoutStyles } from './main.styles';
 import {
+  EuiBadge,
+  EuiBreadcrumb,
   EuiHeader,
   EuiHeaderSectionItem,
   EuiPageHeaderProps,
@@ -26,6 +28,7 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
 }) => {
   const styles = MainLayoutStyles();
   const router = useRouter();
+  // const { euiTheme } = useEuiTheme();
 
   const header: EuiPageHeaderProps = {
     pageTitle: pageTitle,
@@ -33,8 +36,29 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
     paddingSize: 's',
   };
 
+  const breadcrumbs: EuiBreadcrumb[] = [
+    {
+      text: 'Canvassing',
+      href: '#',
+      onClick: e => {
+        e.preventDefault();
+      },
+    },
+    {
+      text: 'Search',
+    },
+  ];
+
+  const [showSubHeader, setShowSubHeader] = useState(false);
+
+  useEffect(() => {
+    setShowSubHeader(router.route !== '/');
+  }, [router.route]);
+
   return (
-    <div css={styles.mainWrapper}>
+    <div
+      css={styles.mainWrapper}
+      style={{ paddingTop: showSubHeader ? '55px' : '0px' }}>
       <EuiHeader
         theme="dark"
         position="fixed"
@@ -66,33 +90,28 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
           },
           {
             items: [
-              // eslint-disable-next-line react/jsx-key
-              // <EuiHeaderLinks
-              //   hidden={router.route === '/'}
-              //   style={{ display: router.route === '/' ? 'none' : 'block' }}>
-              //   <EuiHeaderLink
-              //     iconType="layers"
-              //     isActive={router.route == '/campaigns'}
-              //     onClick={() => router.push('/campaigns')}>
-              //     Campaigns
-              //   </EuiHeaderLink>
-              //   <EuiHeaderLink
-              //     iconType="dashboardApp"
-              //     isActive={router.route == '/contacts'}
-              //     onClick={() => router.push('/contacts')}>
-              //     Contacts
-              //   </EuiHeaderLink>
-              //   <EuiHeaderLink
-              //     iconType="advancedSettingsApp"
-              //     isActive={router.route == '/config'}
-              //     onClick={() => router.push('/config')}>
-              //     Config
-              //   </EuiHeaderLink>
-              // </EuiHeaderLinks>,
+              <EuiBadge
+                key="user"
+                color="primary"
+                iconType="arrowDown"
+                iconSide="right">
+                {/* <EuiAvatar name="John Smith" size="s" />{' '} */}
+                <strong>John Smith</strong> (8210105080082)
+              </EuiBadge>,
             ],
           },
         ]}></EuiHeader>
-
+      {showSubHeader ? (
+        <EuiHeader
+          position="fixed"
+          sections={[
+            {
+              breadcrumbs: breadcrumbs,
+              borders: 'right',
+            },
+          ]}
+        />
+      ) : null}
       <div css={styles.contentWrapper}>
         <EuiPageTemplate panelled={false} restrictWidth={true} {...rest}>
           ({pageTitle ? <EuiPageTemplate.Header {...header} /> : null})

@@ -2,7 +2,6 @@ import { css } from '@emotion/react';
 
 export const MainLayoutStyles = () => ({
   mainWrapper: css`
-    //padding-top: 96px; // two top navs
     min-height: 100%;
     display: flex;
     flex-direction: column;
