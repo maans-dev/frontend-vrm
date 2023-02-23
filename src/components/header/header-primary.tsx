@@ -8,6 +8,7 @@ import {
 } from '@elastic/eui';
 import router from 'next/router';
 import { FunctionComponent } from 'react';
+import { UserBadge } from './user-badge';
 
 export const HeaderPrimary: FunctionComponent = ({ children }) => {
   return (
@@ -41,16 +42,7 @@ export const HeaderPrimary: FunctionComponent = ({ children }) => {
           ],
         },
         {
-          items: [
-            <EuiBadge
-              key="user"
-              color="primary"
-              iconType="arrowDown"
-              iconSide="right">
-              {/* <EuiAvatar name="John Smith" size="s" />{' '} */}
-              <strong>John Smith</strong> (8210105080082)
-            </EuiBadge>,
-          ],
+          items: [<UserBadge key="user-badge" />],
         },
       ]}></EuiHeader>
   );
