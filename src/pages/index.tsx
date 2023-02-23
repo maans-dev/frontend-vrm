@@ -13,7 +13,7 @@ const Index: FunctionComponent = () => {
           <EuiCard
             icon={<EuiIcon size="xxl" type="inputOutput" />}
             layout="horizontal"
-            title="Canvassing"
+            title="Canvass"
             description="Canvass a person in person or over the phone"
             onClick={() => router.push('/canvass')}
           />
@@ -51,11 +51,11 @@ const Index: FunctionComponent = () => {
 
         <EuiFlexItem>
           <EuiCard
-            icon={<EuiIcon size="xxl" type="discuss" />}
+            icon={<EuiIcon size="xxl" type="timeline" />}
             layout="horizontal"
             title="Bulk Comms"
             description="Manage bulk comms requests."
-            onClick={() => router.push('/cleanup')}
+            onClick={() => router.push('/bulk-comms')}
           />
         </EuiFlexItem>
 
