@@ -45,7 +45,7 @@ const Index: FunctionComponent = () => {
             layout="horizontal"
             title="Generate Sheets"
             description="Generation of canvassing sheets."
-            onClick={() => router.push('/cleanup')}
+            onClick={() => router.push('/sheets')}
           />
         </EuiFlexItem>
 
@@ -55,7 +55,7 @@ const Index: FunctionComponent = () => {
             layout="horizontal"
             title="Bulk Comms"
             description="Manage bulk comms requests."
-            onClick={() => router.push('/bulk-comms')}
+            onClick={() => router.push('/comms')}
           />
         </EuiFlexItem>
 
