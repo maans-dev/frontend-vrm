@@ -56,7 +56,7 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
         <EuiThemeProvider colorMode="light">
           <EuiFlexGroup
             responsive={false}
-            justifyContent="flexEnd"
+            justifyContent="center"
             gutterSize="m">
             <EuiFlexItem grow={false}>
               <EuiButtonEmpty color="primary" size="xs">

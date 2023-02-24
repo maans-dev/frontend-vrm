@@ -8,9 +8,10 @@ import {
   EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiForm,
   EuiFormFieldset,
   EuiFormRow,
-  EuiHorizontalRule,
+  EuiSpacer,
 } from '@elastic/eui';
 import MainLayout from '@layouts/main';
 import { AdvancedSearchTooltip } from '@components/advanced-search-tooltip';
@@ -51,64 +52,66 @@ const Index: FunctionComponent = () => {
   return (
     <MainLayout breadcrumb={breadcrumb}>
       <EuiFlexGroup direction="row" justifyContent="center">
-        <EuiFlexItem grow={true} css={{ maxWidth: '400px' }}>
-          <EuiCard
-            textAlign="left"
-            title="Voter search"
-            titleSize="xs"
-            footer={formActions}>
-            <EuiFormRow label="Identity" display="rowCompressed">
-              <EuiFieldText
-                name="id"
-                compressed
-                placeholder="ID Number, DARN or Membership number"
-              />
-            </EuiFormRow>
-
-            <EuiHorizontalRule />
-
-            <EuiFormFieldset legend={{ children: 'Personal details' }}>
-              <EuiFormRow display="rowCompressed" label="Date of birth">
-                <EuiDatePicker name="dob" />
-              </EuiFormRow>
-
-              <EuiFormRow display="rowCompressed" label="Surname">
+        <EuiFlexItem grow={true} css={{ maxWidth: '800px' }}>
+          <EuiForm fullWidth>
+            <EuiCard
+              textAlign="left"
+              title="Voter search"
+              titleSize="xs"
+              footer={formActions}>
+              <EuiFormRow label="Identity" display="rowCompressed">
                 <EuiFieldText
-                  name="surname"
+                  name="id"
                   compressed
-                  append={<AdvancedSearchTooltip />}
+                  placeholder="ID Number, DARN or Membership number"
                 />
               </EuiFormRow>
 
-              <EuiFormRow display="rowCompressed" label="First names">
-                <EuiFieldText
-                  name="first"
-                  compressed
-                  append={<AdvancedSearchTooltip />}
-                />
-              </EuiFormRow>
-            </EuiFormFieldset>
+              <EuiSpacer />
 
-            <EuiHorizontalRule />
+              <EuiFormFieldset legend={{ children: 'Personal details' }}>
+                <EuiFormRow display="rowCompressed" label="Date of birth">
+                  <EuiDatePicker name="dob" />
+                </EuiFormRow>
 
-            <EuiFormFieldset legend={{ children: 'Contact details' }}>
-              <EuiFormRow display="rowCompressed" label="Email">
-                <EuiFieldText
-                  name="email"
-                  compressed
-                  append={<AdvancedSearchTooltip />}
-                />
-              </EuiFormRow>
+                <EuiFormRow display="rowCompressed" label="Surname">
+                  <EuiFieldText
+                    name="surname"
+                    compressed
+                    append={<AdvancedSearchTooltip />}
+                  />
+                </EuiFormRow>
 
-              <EuiFormRow display="rowCompressed" label="Phone">
-                <EuiFieldText
-                  name="phone"
-                  compressed
-                  append={<AdvancedSearchTooltip />}
-                />
-              </EuiFormRow>
-            </EuiFormFieldset>
-          </EuiCard>
+                <EuiFormRow display="rowCompressed" label="First names">
+                  <EuiFieldText
+                    name="first"
+                    compressed
+                    append={<AdvancedSearchTooltip />}
+                  />
+                </EuiFormRow>
+              </EuiFormFieldset>
+
+              <EuiSpacer />
+
+              <EuiFormFieldset legend={{ children: 'Contact details' }}>
+                <EuiFormRow display="rowCompressed" label="Email">
+                  <EuiFieldText
+                    name="email"
+                    compressed
+                    append={<AdvancedSearchTooltip />}
+                  />
+                </EuiFormRow>
+
+                <EuiFormRow display="rowCompressed" label="Phone">
+                  <EuiFieldText
+                    name="phone"
+                    compressed
+                    append={<AdvancedSearchTooltip />}
+                  />
+                </EuiFormRow>
+              </EuiFormFieldset>
+            </EuiCard>
+          </EuiForm>
         </EuiFlexItem>
       </EuiFlexGroup>
     </MainLayout>

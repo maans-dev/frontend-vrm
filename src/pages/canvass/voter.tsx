@@ -3,17 +3,16 @@ import {
   EuiBreadcrumb,
   EuiButton,
   EuiButtonEmpty,
-  EuiButtonGroup,
   EuiCallOut,
   EuiCard,
+  EuiComboBox,
   EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
   EuiForm,
   EuiFormFieldset,
   EuiFormRow,
-  EuiHorizontalRule,
-  EuiSelectable,
+  EuiSpacer,
   EuiSwitch,
 } from '@elastic/eui';
 import MainLayout from '@layouts/main';
@@ -38,6 +37,51 @@ const Voter: FunctionComponent = () => {
     },
   ];
 
+  const affilitions = [
+    {
+      label: 'Titan',
+    },
+    {
+      label: 'Enceladus',
+    },
+    {
+      label: 'Mimas',
+    },
+    {
+      label: 'Dione',
+    },
+    {
+      label: 'Iapetus',
+    },
+    {
+      label: 'Phoebe',
+    },
+    {
+      label: 'Rhea',
+    },
+    {
+      label: 'Tethys',
+    },
+    {
+      label: 'Hyperion',
+    },
+  ];
+
+  const languages = [
+    { id: 'Eng', label: 'Eng' },
+    { id: 'Afr', label: 'Afr' },
+    { id: 'Xho', label: 'Xho' },
+    { id: 'Zul', label: 'Zul' },
+    { id: 'Sot', label: 'Sot' },
+    { id: 'Sep', label: 'Sep' },
+    { id: 'Tsn', label: 'Tsn' },
+    { id: 'Tso', label: 'Tso' },
+    { id: 'Ven', label: 'Ven' },
+    { id: 'Nbi', label: 'Nbi' },
+    { id: 'Ssw', label: 'Ssw' },
+    { id: '?', label: '?' },
+  ];
+
   const formActions = (
     <>
       <EuiFlexGroup
@@ -59,13 +103,13 @@ const Voter: FunctionComponent = () => {
   return (
     <MainLayout breadcrumb={breadcrumb}>
       <EuiFlexGroup direction="row" justifyContent="center">
-        <EuiFlexItem grow={true} css={{ maxWidth: '400px' }}>
+        <EuiFlexItem grow={true} css={{ maxWidth: '800px' }}>
           <EuiCard
             textAlign="left"
             title="Voter edit"
             titleSize="xs"
             footer={formActions}>
-            <EuiForm>
+            <EuiForm fullWidth>
               <EuiFormFieldset legend={{ children: 'Personal details' }}>
                 <EuiFormRow display="rowCompressed" label="Surname">
                   <EuiFieldText
@@ -98,7 +142,7 @@ const Voter: FunctionComponent = () => {
                 </EuiFormRow>
               </EuiFormFieldset>
 
-              <EuiHorizontalRule />
+              <EuiSpacer />
 
               <EuiFormFieldset legend={{ children: 'Affiliation' }}>
                 <EuiFormRow display="row">
@@ -109,79 +153,59 @@ const Voter: FunctionComponent = () => {
                   />
                 </EuiFormRow>
                 <EuiFormRow display="rowCompressed">
-                  <EuiSelectable
-                    aria-label="Affiliation"
-                    searchable
-                    options={[
-                      {
-                        label: 'Titan',
-                      },
-                      {
-                        label: 'Enceladus',
-                      },
-                      {
-                        label: 'Mimas',
-                        checked: 'on',
-                      },
-                      {
-                        label: 'Dione',
-                      },
-                      {
-                        label: 'Iapetus',
-                      },
-                      {
-                        label: 'Phoebe',
-                      },
-                      {
-                        label: 'Rhea',
-                      },
-                      {
-                        label: 'Tethys',
-                      },
-                      {
-                        label: 'Hyperion',
-                      },
-                    ]}
+                  <EuiComboBox
+                    compressed
+                    isClearable={false}
+                    aria-label="Select an affiliation"
+                    placeholder="Select an affiliation"
+                    singleSelection={{ asPlainText: true }}
+                    options={affilitions}
+                    selectedOptions={[affilitions[2]]}
                     onChange={() => null}
-                    singleSelection={'always'}
-                    listProps={{ bordered: true }}>
-                    {(list, search) => (
-                      <>
-                        {search}
-                        {list}
-                      </>
-                    )}
-                  </EuiSelectable>
+                  />
                 </EuiFormRow>
               </EuiFormFieldset>
 
-              <EuiHorizontalRule />
+              <EuiSpacer />
 
               <EuiFormFieldset legend={{ children: 'Contact details' }}>
                 <EuiFormRow display="rowCompressed" label="Language">
-                  <EuiButtonGroup
-                    legend="Language"
-                    name="Language"
-                    options={[
-                      { id: 'Eng', label: 'Eng' },
-                      { id: 'Afr', label: 'Afr' },
-                      { id: 'Xho', label: 'Xho' },
-                      { id: 'Zul', label: 'Zul' },
-                      { id: 'Sot', label: 'Sot' },
-                      { id: 'Sep', label: 'Sep' },
-                      { id: 'Tsn', label: 'Tsn' },
-                      { id: 'Tso', label: 'Tso' },
-                      { id: 'Ven', label: 'Ven' },
-                      { id: 'Nbi', label: 'Nbi' },
-                      { id: 'Ssw', label: 'Ssw' },
-                      { id: '?', label: '?' },
-                    ]}
-                    idSelected="Eng"
-                    onChange={optionId => null}
-                    buttonSize="compressed"
-                    isFullWidth
+                  <EuiComboBox
+                    compressed
+                    isClearable={false}
+                    aria-label="Select voter language(s)"
+                    placeholder="Select voter language(s)"
+                    // singleSelection={{ asPlainText: true }}
+                    options={languages}
+                    selectedOptions={[languages[2], languages[4]]}
+                    onChange={() => null}
                   />
                 </EuiFormRow>
+                <EuiFormRow display="rowCompressed" label="Preferred name">
+                  <EuiFieldText name="preferredName" compressed />
+                </EuiFormRow>
+                <EuiFormRow display="rowCompressed" label="Phone numbers">
+                  <></>
+                </EuiFormRow>
+                <EuiFormRow display="rowCompressed" label="Email addresses">
+                  <></>
+                </EuiFormRow>
+              </EuiFormFieldset>
+              <EuiSpacer />
+              <EuiFormFieldset legend={{ children: 'Living address' }}>
+                <></>
+              </EuiFormFieldset>
+              <EuiSpacer />
+              <EuiFormFieldset legend={{ children: 'Comments' }}>
+                <></>
+              </EuiFormFieldset>
+              <EuiSpacer />
+              <EuiFormFieldset legend={{ children: 'Tags' }}>
+                <></>
+              </EuiFormFieldset>
+              <EuiSpacer />
+              <EuiFormFieldset legend={{ children: 'Custom fields' }}>
+                <></>
               </EuiFormFieldset>
             </EuiForm>
           </EuiCard>
