@@ -1,11 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import {
-  EuiBadge,
-  EuiButton,
   EuiButtonEmpty,
   EuiContextMenu,
-  EuiIcon,
   EuiPopover,
   EuiText,
 } from '@elastic/eui';

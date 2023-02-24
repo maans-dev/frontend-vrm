@@ -14,8 +14,10 @@ import {
 } from '@elastic/eui';
 import MainLayout from '@layouts/main';
 import { AdvancedSearchTooltip } from '@components/advanced-search-tooltip';
+import { useRouter } from 'next/router';
 
 const Index: FunctionComponent = () => {
+  const router = useRouter();
   const breadcrumb: EuiBreadcrumb[] = [
     {
       text: 'Canvass',
@@ -35,7 +37,10 @@ const Index: FunctionComponent = () => {
           <EuiButtonEmpty size="m">Reset</EuiButtonEmpty>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
-          <EuiButton size="m" fill>
+          <EuiButton
+            size="m"
+            fill
+            onClick={() => router.push('/canvass/voter')}>
             Search
           </EuiButton>
         </EuiFlexItem>

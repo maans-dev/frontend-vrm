@@ -5,6 +5,7 @@ import { EuiProvider, EuiThemeColorMode } from '@elastic/eui';
 import { useTheme } from '../theme';
 
 import createCache from '@emotion/cache';
+import { theme } from 'styles/eui-theme-overrides';
 
 /**
  * Renders the UI that surrounds the page content.
@@ -37,7 +38,8 @@ const Chrome: FunctionComponent = ({ children }) => {
   return (
     <EuiProvider
       colorMode={colorMode as EuiThemeColorMode}
-      cache={{ default: defaultCache, utility: utilityCache }}>
+      cache={{ default: defaultCache, utility: utilityCache }}
+      modify={theme}>
       {children}
     </EuiProvider>
   );

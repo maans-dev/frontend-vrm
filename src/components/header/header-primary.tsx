@@ -1,16 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import {
-  EuiBadge,
-  EuiHeader,
-  EuiHeaderSectionItem,
-  EuiText,
-} from '@elastic/eui';
+import { EuiHeader, EuiHeaderSectionItem, EuiText } from '@elastic/eui';
 import router from 'next/router';
 import { FunctionComponent } from 'react';
 import { UserBadge } from './user-badge';
 
-export const HeaderPrimary: FunctionComponent = ({ children }) => {
+export const HeaderPrimary: FunctionComponent = () => {
   return (
     <EuiHeader
       theme="dark"
@@ -31,6 +26,7 @@ export const HeaderPrimary: FunctionComponent = ({ children }) => {
             <EuiText
               key="app-title"
               size="m"
+              color="white"
               css={{
                 marginLeft: '10px',
                 paddingLeft: '10px',
