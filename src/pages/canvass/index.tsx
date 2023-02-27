@@ -14,8 +14,8 @@ import {
   EuiSpacer,
 } from '@elastic/eui';
 import MainLayout from '@layouts/main';
-import { AdvancedSearchTooltip } from '@components/advanced-search-tooltip';
 import { useRouter } from 'next/router';
+import { AdvancedSearchTooltip } from '@components/form/advanced-search-tooltip';
 
 const Index: FunctionComponent = () => {
   const router = useRouter();

@@ -17,6 +17,7 @@ import {
 } from '@elastic/eui';
 import MainLayout from '@layouts/main';
 import { useRouter } from 'next/router';
+import PhoneNumbers from '@components/form/phone-numbers';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
@@ -80,6 +81,15 @@ const Voter: FunctionComponent = () => {
     { id: 'Nbi', label: 'Nbi' },
     { id: 'Ssw', label: 'Ssw' },
     { id: '?', label: '?' },
+  ];
+
+  const tags = [
+    { label: 'aaa' },
+    { label: 'bbb' },
+    { label: 'ccc' },
+    { label: 'ddd' },
+    { label: 'eee' },
+    { label: 'fff' },
   ];
 
   const formActions = (
@@ -175,35 +185,55 @@ const Voter: FunctionComponent = () => {
                     isClearable={false}
                     aria-label="Select voter language(s)"
                     placeholder="Select voter language(s)"
-                    // singleSelection={{ asPlainText: true }}
+                    singleSelection={{ asPlainText: true }}
                     options={languages}
-                    selectedOptions={[languages[2], languages[4]]}
+                    selectedOptions={[languages[2]]}
                     onChange={() => null}
                   />
                 </EuiFormRow>
+
                 <EuiFormRow display="rowCompressed" label="Preferred name">
                   <EuiFieldText name="preferredName" compressed />
                 </EuiFormRow>
+
                 <EuiFormRow display="rowCompressed" label="Phone numbers">
-                  <></>
+                  <PhoneNumbers />
                 </EuiFormRow>
+
                 <EuiFormRow display="rowCompressed" label="Email addresses">
                   <></>
                 </EuiFormRow>
               </EuiFormFieldset>
+
               <EuiSpacer />
+
               <EuiFormFieldset legend={{ children: 'Living address' }}>
                 <></>
               </EuiFormFieldset>
+
               <EuiSpacer />
+
               <EuiFormFieldset legend={{ children: 'Comments' }}>
                 <></>
               </EuiFormFieldset>
+
               <EuiSpacer />
+
               <EuiFormFieldset legend={{ children: 'Tags' }}>
-                <></>
+                <EuiFormRow display="rowCompressed">
+                  <EuiComboBox
+                    compressed
+                    isClearable={false}
+                    aria-label="Tags"
+                    options={tags}
+                    selectedOptions={[tags[2], tags[3]]}
+                    onChange={() => null}
+                  />
+                </EuiFormRow>
               </EuiFormFieldset>
+
               <EuiSpacer />
+
               <EuiFormFieldset legend={{ children: 'Custom fields' }}>
                 <></>
               </EuiFormFieldset>
