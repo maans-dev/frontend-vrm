@@ -18,6 +18,7 @@ import {
 import MainLayout from '@layouts/main';
 import { useRouter } from 'next/router';
 import PhoneNumbers from '@components/form/phone-numbers';
+import EmailAddress from '@components/form/email-address'
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
@@ -192,22 +193,22 @@ const Voter: FunctionComponent = () => {
                   />
                 </EuiFormRow>
 
-                <EuiFormRow display="rowCompressed" label="Preferred name">
+                <EuiFormRow display="rowCompressed" label="Preferred Name">
                   <EuiFieldText name="preferredName" compressed />
                 </EuiFormRow>
 
-                <EuiFormRow display="rowCompressed" label="Phone numbers">
+                <EuiFormRow display="rowCompressed" label="Phone Numbers">
                   <PhoneNumbers />
                 </EuiFormRow>
 
-                <EuiFormRow display="rowCompressed" label="Email addresses">
-                  <></>
+                <EuiFormRow display="rowCompressed" label="Email Addresses">
+                  <EmailAddress />
                 </EuiFormRow>
               </EuiFormFieldset>
 
               <EuiSpacer />
 
-              <EuiFormFieldset legend={{ children: 'Living address' }}>
+              <EuiFormFieldset legend={{ children: 'Living Address' }}>
                 <></>
               </EuiFormFieldset>
 

@@ -9,15 +9,19 @@ import {
 } from '@elastic/eui';
 
 const PhoneNumbers: FunctionComponent = () => {
-  const [selectedPhoneType, setSelectedPhoneType] = useState(null);
-  const [phoneNumber, setPhoneNumber] = useState('');
   const [phoneNumbersList, setPhoneNumbersList] = useState([]);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [selectedPhoneType, setSelectedPhoneType] = useState<{
+    label: string;
+  } | null>(null);
+
   const phoneTypeOptions = [
     { label: 'Home' },
     { label: 'Work' },
     { label: 'Mobile' },
   ];
   const showSavedPhoneNumbers = true;
+
   const handlePhoneNumberChange = e => {
     // Remove any non-numeric characters from the input
     const input = e.target.value.replace(/\D/g, '');
@@ -38,9 +42,13 @@ const PhoneNumbers: FunctionComponent = () => {
     newPhoneNumbersList.pop();
     setPhoneNumbersList(newPhoneNumbersList);
   }
+
   return (
     <>
-      <EuiFlexGroup gutterSize="xs" responsive={false}>
+      <EuiFlexGroup
+        gutterSize="xs"
+        responsive={false}
+        style={{ minWidth: '96px', paddingBottom: '8px' }}>
         <EuiFlexItem grow={false}>
           <EuiFormRow display="rowCompressed">
             <EuiComboBox
@@ -50,11 +58,15 @@ const PhoneNumbers: FunctionComponent = () => {
               aria-label="Select phone number type"
               placeholder="Select..."
               singleSelection={{ asPlainText: true }}
-              options={phoneTypeOptions}
-              selectedOptions={selectedPhoneType ? [selectedPhoneType] : []}
+              selectedOptions={[{ label: 'Home' }]}
               onChange={selectedOptions =>
                 setSelectedPhoneType(selectedOptions[0])
               }
+              inputRef={inputElement => {
+                if (inputElement) {
+                  inputElement.disabled = true;
+                }
+              }}
             />
           </EuiFormRow>
         </EuiFlexItem>
@@ -66,7 +78,6 @@ const PhoneNumbers: FunctionComponent = () => {
               placeholder="012 456 7890"
               inputMode="numeric"
               value={phoneNumber}
-              onChange={handlePhoneNumberChange}
             />
           </EuiFormRow>
         </EuiFlexItem>
@@ -77,7 +88,9 @@ const PhoneNumbers: FunctionComponent = () => {
                 display="base"
                 iconType="check"
                 size="s"
-                onClick={handleSavePhoneNumber}
+                onClick={() => {
+                  null;
+                }}
               />
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
@@ -85,7 +98,9 @@ const PhoneNumbers: FunctionComponent = () => {
                 display="base"
                 iconType="cross"
                 size="s"
-                onClick={removeLastPhoneNumber}
+                onClick={() => {
+                  null;
+                }}
               />
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
@@ -98,13 +113,15 @@ const PhoneNumbers: FunctionComponent = () => {
           </EuiFlexGroup>
         </EuiFlexItem>
       </EuiFlexGroup>
+
       {showSavedPhoneNumbers && (
         <div>
           {phoneNumbersList.map(phoneNumberItem => (
             <EuiFlexGroup
               key={`${phoneNumberItem.phoneType.label}-${phoneNumberItem.phoneNumber}`}
               gutterSize="xs"
-              responsive={false}>
+              responsive={false}
+              style={{ paddingBottom: '8px' }}>
               <EuiFlexItem grow={false}>
                 <EuiFormRow display="rowCompressed">
                   <EuiComboBox
@@ -127,7 +144,6 @@ const PhoneNumbers: FunctionComponent = () => {
                     placeholder="012 456 7890"
                     inputMode="numeric"
                     value={phoneNumberItem.phoneNumber}
-                    onChange={handlePhoneNumberChange}
                   />
                 </EuiFormRow>
               </EuiFlexItem>
@@ -137,7 +153,14 @@ const PhoneNumbers: FunctionComponent = () => {
                   alignItems="center"
                   responsive={false}>
                   <EuiFlexItem grow={false}>
-                    <EuiButtonIcon display="base" iconType="check" size="s" />
+                    <EuiButtonIcon
+                      display="base"
+                      iconType="check"
+                      size="s"
+                      onClick={() => {
+                        null;
+                      }}
+                    />
                   </EuiFlexItem>
                   <EuiFlexItem grow={false}>
                     <EuiButtonIcon
@@ -152,6 +175,9 @@ const PhoneNumbers: FunctionComponent = () => {
                       display="base"
                       iconType="/icons/dnc.svg"
                       size="s"
+                      onClick={() => {
+                        null;
+                      }}
                     />
                   </EuiFlexItem>
                 </EuiFlexGroup>
@@ -160,6 +186,63 @@ const PhoneNumbers: FunctionComponent = () => {
           ))}
         </div>
       )}
+
+      <div>
+        <EuiFlexGroup
+          gutterSize="xs"
+          responsive={false}
+          style={{ paddingBottom: '8px' }}>
+          <EuiFlexItem grow={false}>
+            <EuiFormRow display="rowCompressed">
+              <EuiComboBox
+                style={{ minWidth: '96px' }}
+                compressed
+                isClearable={false}
+                aria-label="Select phone number type"
+                placeholder="Select..."
+                singleSelection={{ asPlainText: true }}
+                options={phoneTypeOptions}
+                selectedOptions={selectedPhoneType ? [selectedPhoneType] : []}
+                onChange={selectedOptions =>
+                  setSelectedPhoneType(selectedOptions[0])
+                }
+                inputRef={inputElement => {
+                  if (inputElement) {
+                    inputElement.disabled = true;
+                  }
+                }}
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+          <EuiFlexItem>
+            <EuiFormRow display="rowCompressed">
+              <EuiFieldText
+                name="phone"
+                compressed
+                placeholder="012 456 7890"
+                inputMode="numeric"
+                value={phoneNumber}
+                onChange={handlePhoneNumberChange}
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+          <EuiFlexItem>
+            <EuiFlexGroup
+              gutterSize="xs"
+              alignItems="center"
+              responsive={false}>
+              <EuiFlexItem grow={false}>
+                <EuiButtonIcon
+                  display="base"
+                  iconType="importAction"
+                  size="s"
+                  onClick={handleSavePhoneNumber}
+                />
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      </div>
     </>
   );
 };
