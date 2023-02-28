@@ -14,21 +14,17 @@ const PhoneNumbers: FunctionComponent = () => {
   const [selectedPhoneType, setSelectedPhoneType] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [phoneNumbersList, setPhoneNumbersList] = useState([]);
-  
   const phoneTypeOptions = [
     { label: 'Home' },
     { label: 'Work' },
     { label: 'Mobile' },
   ];
-
   const showSavedPhoneNumbers = true 
-
   const handlePhoneNumberChange = (e) => {
     // Remove any non-numeric characters from the input
     const input = e.target.value.replace(/\D/g, '');
     setPhoneNumber(input);
   };
-
   const handleSavePhoneNumber = () => {
     if (selectedPhoneType && phoneNumber) {
       setPhoneNumbersList((prevList) => [...prevList, { phoneType: selectedPhoneType, phoneNumber }]);
@@ -36,13 +32,11 @@ const PhoneNumbers: FunctionComponent = () => {
       setPhoneNumber('');
     }
   };
-
   function removeLastPhoneNumber() {
     const newPhoneNumbersList = [...phoneNumbersList];
     newPhoneNumbersList.pop();
     setPhoneNumbersList(newPhoneNumbersList);
   }
-
     return (
       <>
         <EuiFlexGroup gutterSize="xs" responsive={false}>
@@ -87,7 +81,6 @@ const PhoneNumbers: FunctionComponent = () => {
             </EuiFlexGroup>
           </EuiFlexItem>
         </EuiFlexGroup>
-
        {showSavedPhoneNumbers && (
           <div>
             {phoneNumbersList.map((phoneNumberItem) => (
@@ -121,13 +114,13 @@ const PhoneNumbers: FunctionComponent = () => {
                 <EuiFlexItem>
                   <EuiFlexGroup gutterSize="xs" alignItems="center" responsive={false}>
                     <EuiFlexItem grow={false}>
-                      <EuiButtonIcon display="base" iconType="check" size="s" onClick={() => {}}/>
+                      <EuiButtonIcon display="base" iconType="check" size="s"/>
                     </EuiFlexItem>
                     <EuiFlexItem grow={false}>
                       <EuiButtonIcon display="base" iconType="cross" size="s" onClick={removeLastPhoneNumber}/>
                     </EuiFlexItem>
                     <EuiFlexItem grow={false}>
-                      <EuiButtonIcon display="base" iconType="/icons/dnc.svg" size="s" onClick={() => {}}/>
+                      <EuiButtonIcon display="base" iconType="/icons/dnc.svg" size="s"/>
                     </EuiFlexItem>
                   </EuiFlexGroup>
                 </EuiFlexItem>
