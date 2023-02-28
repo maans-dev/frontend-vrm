@@ -18,7 +18,7 @@ import {
 import MainLayout from '@layouts/main';
 import { useRouter } from 'next/router';
 import PhoneNumbers from '@components/form/phone-numbers';
-import EmailAddress from '@components/form/email-address'
+import EmailAddress from '@components/form/email-address';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
