@@ -24,6 +24,14 @@ const Index: FunctionComponent = () => {
       text: 'Canvass',
     },
     {
+      text: 'Canvassing Type',
+      href: '/canvass',
+      onClick: e => {
+        router.push('/canvass/canvassing-type');
+        e.preventDefault();
+      },
+    },
+    {
       text: 'Voter search',
     },
   ];
