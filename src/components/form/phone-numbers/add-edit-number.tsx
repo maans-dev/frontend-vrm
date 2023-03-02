@@ -1,36 +1,55 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useState } from 'react';
 import {
-  EuiAvatar,
   EuiButton,
+  EuiButtonEmpty,
+  EuiComboBox,
   EuiFieldNumber,
   EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
   EuiFormRow,
-  EuiHorizontalRule,
-  EuiPanel,
+  EuiSuperSelect,
 } from '@elastic/eui';
 import { Phone } from './types';
-import PhoneNumberLine from './phone-number';
+import {
+  FaMobileAlt,
+  FaRegQuestionCircle,
+  FaHome,
+  FaGlobe,
+} from 'react-icons/fa';
+import { ImUserTie } from 'react-icons/im';
 
 export type Props = {
   item?: Phone;
 };
 
 const AddEditNumber: FunctionComponent<Props> = ({ item }) => {
+  const [selectedPhoneType, setSelectedPhoneType] = useState(null);
+
+  const onChangePhoneType = value => {
+    setSelectedPhoneType(value);
+  };
+
   const phoneTypeOptions = [
-    { label: 'Mobile' },
-    { label: 'Home' },
-    { label: 'Work' },
-    { label: 'International' },
-    { label: 'Other' },
+    { value: 'Mobile', inputDisplay: <FaMobileAlt /> },
+    { value: 'Home', inputDisplay: <FaHome /> },
+    { value: 'Work', inputDisplay: <ImUserTie /> },
+    { value: 'International', inputDisplay: <FaGlobe /> },
+    { value: 'Other', inputDisplay: <FaRegQuestionCircle /> },
   ];
 
   return (
-    <EuiFlexGroup responsive={false}>
-      <EuiFlexItem grow={false}>
+    <EuiFlexGroup responsive={false} gutterSize="xs">
+      <EuiFlexItem grow={false} css={{ minWidth: '50px' }}>
         <EuiFormRow display="rowCompressed">
-          <EuiFieldNumber compressed max={10} placeholder="42" />
+          <EuiSuperSelect
+            compressed
+            aria-label="Select phone number type"
+            placeholder="Select..."
+            options={phoneTypeOptions}
+            valueOfSelected={selectedPhoneType}
+            onChange={onChangePhoneType}
+          />
         </EuiFormRow>
       </EuiFlexItem>
       <EuiFlexItem>
@@ -40,7 +59,13 @@ const AddEditNumber: FunctionComponent<Props> = ({ item }) => {
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
         <EuiFormRow display="rowCompressed">
-          <EuiButton size="s">Save</EuiButton>
+          <EuiButtonEmpty
+            // iconType="plus"
+            // iconSize="s"
+            size="s"
+            css={{ minWidth: '50px' }}>
+            Add
+          </EuiButtonEmpty>
         </EuiFormRow>
       </EuiFlexItem>
     </EuiFlexGroup>
