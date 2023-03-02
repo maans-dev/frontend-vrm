@@ -1,10 +1,14 @@
 import {
+  EuiAvatar,
+  EuiBadge,
   EuiButtonIcon,
   EuiFlexGroup,
   EuiFlexItem,
   EuiHorizontalRule,
+  EuiIcon,
   EuiListGroup,
   EuiPopover,
+  EuiText,
   useEuiTheme,
 } from '@elastic/eui';
 import { FunctionComponent, ReactElement, useEffect, useState } from 'react';
@@ -31,20 +35,58 @@ const PhoneNumberLine: FunctionComponent<Props> = ({ phone, border }) => {
   useEffect(() => {
     switch (phone.type) {
       case 'Mobile':
-        setTypeIcon(<FaMobileAlt color={euiTheme.colors.subduedText} />);
+        setTypeIcon(
+          <FaMobileAlt
+            color={
+              phone.isDnc
+                ? euiTheme.colors.disabledText
+                : euiTheme.colors.subduedText
+            }
+          />
+        );
         break;
       case 'Home':
-        setTypeIcon(<FaHome color={euiTheme.colors.subduedText} />);
+        setTypeIcon(
+          <FaHome
+            color={
+              phone.isDnc
+                ? euiTheme.colors.disabledText
+                : euiTheme.colors.subduedText
+            }
+          />
+        );
         break;
       case 'International':
-        setTypeIcon(<FaGlobe color={euiTheme.colors.subduedText} />);
+        setTypeIcon(
+          <FaGlobe
+            color={
+              phone.isDnc
+                ? euiTheme.colors.disabledText
+                : euiTheme.colors.subduedText
+            }
+          />
+        );
         break;
       case 'Work':
-        setTypeIcon(<ImUserTie color={euiTheme.colors.subduedText} />);
+        setTypeIcon(
+          <ImUserTie
+            color={
+              phone.isDnc
+                ? euiTheme.colors.disabledText
+                : euiTheme.colors.subduedText
+            }
+          />
+        );
         break;
       default:
         setTypeIcon(
-          <FaRegQuestionCircle color={euiTheme.colors.subduedText} />
+          <FaRegQuestionCircle
+            color={
+              phone.isDnc
+                ? euiTheme.colors.disabledText
+                : euiTheme.colors.subduedText
+            }
+          />
         );
     }
   }, [euiTheme.colors.subduedText, phone]);
@@ -62,7 +104,48 @@ const PhoneNumberLine: FunctionComponent<Props> = ({ phone, border }) => {
       responsive={false}>
       <EuiFlexItem grow={false}>{typeIcon}</EuiFlexItem>
       <EuiFlexItem grow={true} onClick={() => setIsEditing(true)}>
-        {phone.number}
+        <EuiFlexGroup
+          responsive={false}
+          // justifyContent="flexStart"
+          alignItems="center"
+          gutterSize="xs">
+          <EuiFlexItem grow={true} css={{ minWidth: '100px' }}>
+            <EuiText
+              size="s"
+              color={phone.isDnc ? euiTheme.colors.disabledText : null}>
+              {phone.number}
+            </EuiText>
+          </EuiFlexItem>
+          <EuiFlexGroup
+            responsive={false}
+            justifyContent="flexEnd"
+            alignItems="center"
+            css={{ maxWidth: '60px' }}
+            gutterSize="xs">
+            {phone.isConfirmed ? (
+              <EuiFlexItem grow={false}>
+                <EuiAvatar
+                  name="Confirmed"
+                  iconType="check"
+                  type="space"
+                  size="s"
+                  color={euiTheme.colors.success}
+                />
+              </EuiFlexItem>
+            ) : null}
+            {phone.isDnc ? (
+              <EuiFlexItem grow={false}>
+                <EuiAvatar
+                  name="Do not contact"
+                  iconType="/icons/dnc.svg"
+                  type="space"
+                  size="s"
+                  color={euiTheme.colors.warning}
+                />
+              </EuiFlexItem>
+            ) : null}
+          </EuiFlexGroup>
+        </EuiFlexGroup>
       </EuiFlexItem>
       <EuiFlexGroup
         responsive={false}

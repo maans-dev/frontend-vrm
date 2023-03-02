@@ -209,10 +209,19 @@ const Voter: FunctionComponent = () => {
                   <PhoneNumbers
                     items={[
                       { type: 'Mobile', number: '123 456 7890' },
-                      { type: 'Home', number: '123 456 7890' },
-                      { type: 'Work', number: '123 456 7890' },
+                      {
+                        type: 'Home',
+                        number: '123 456 7890 aaa',
+                        isConfirmed: true,
+                      },
+                      { type: 'Work', number: '123 456 7890', isDnc: true },
                       { type: 'International', number: '123 456 7890' },
-                      { type: 'Other', number: '123 456 7890' },
+                      {
+                        type: 'Other',
+                        number: '123 456 7890',
+                        isConfirmed: true,
+                        isDnc: true,
+                      },
                     ]}
                   />
                 </EuiFormRow>
