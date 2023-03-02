@@ -1,14 +1,12 @@
 import {
   EuiAvatar,
-  EuiBadge,
   EuiButtonIcon,
   EuiFlexGroup,
   EuiFlexItem,
   EuiHorizontalRule,
-  EuiIcon,
   EuiListGroup,
   EuiPopover,
-  EuiText,
+  EuiTextColor,
   useEuiTheme,
 } from '@elastic/eui';
 import { FunctionComponent, ReactElement, useEffect, useState } from 'react';
@@ -89,7 +87,7 @@ const PhoneNumberLine: FunctionComponent<Props> = ({ phone, border }) => {
           />
         );
     }
-  }, [euiTheme.colors.subduedText, phone]);
+  }, [euiTheme.colors.disabledText, euiTheme.colors.subduedText, phone]);
 
   const [showActions, setShowActions] = useState(false);
 
@@ -109,12 +107,14 @@ const PhoneNumberLine: FunctionComponent<Props> = ({ phone, border }) => {
           // justifyContent="flexStart"
           alignItems="center"
           gutterSize="xs">
-          <EuiFlexItem grow={true} css={{ minWidth: '100px' }}>
-            <EuiText
-              size="s"
+          <EuiFlexItem
+            grow={true}
+            css={{ minWidth: '100px' }}
+            color={phone.isDnc ? euiTheme.colors.disabledText : null}>
+            <EuiTextColor
               color={phone.isDnc ? euiTheme.colors.disabledText : null}>
               {phone.number}
-            </EuiText>
+            </EuiTextColor>
           </EuiFlexItem>
           <EuiFlexGroup
             responsive={false}
