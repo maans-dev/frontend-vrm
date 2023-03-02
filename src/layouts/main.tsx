@@ -48,6 +48,7 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
 
       <EuiPageTemplate.Section
         grow={true}
+        paddingSize="none"
         // color="subdued"
         bottomBorder={false}>
         {children}

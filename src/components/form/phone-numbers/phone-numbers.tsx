@@ -16,9 +16,11 @@ const PhoneNumbers: FunctionComponent = () => {
   } | null>(null);
 
   const phoneTypeOptions = [
+    { label: 'Cell' },
     { label: 'Home' },
     { label: 'Work' },
-    { label: 'Mobile' },
+    { label: 'International' },
+    { label: 'Other' },
   ];
   const showSavedPhoneNumbers = true;
 
