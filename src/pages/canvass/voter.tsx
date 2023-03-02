@@ -198,7 +198,15 @@ const Voter: FunctionComponent = () => {
                 </EuiFormRow>
 
                 <EuiFormRow display="rowCompressed" label="Phone Numbers">
-                  <PhoneNumbers />
+                  <PhoneNumbers
+                    items={[
+                      { type: 'Mobile', number: '123 456 7890' },
+                      { type: 'Home', number: '123 456 7890' },
+                      { type: 'Work', number: '123 456 7890' },
+                      { type: 'International', number: '123 456 7890' },
+                      { type: 'Other', number: '123 456 7890' },
+                    ]}
+                  />
                 </EuiFormRow>
 
                 <EuiFormRow display="rowCompressed" label="Email Addresses">
