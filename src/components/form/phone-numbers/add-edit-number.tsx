@@ -1,9 +1,6 @@
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 import {
-  EuiButton,
   EuiButtonEmpty,
-  EuiComboBox,
-  EuiFieldNumber,
   EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
@@ -21,15 +18,10 @@ import { ImUserTie } from 'react-icons/im';
 
 export type Props = {
   item?: Phone;
+  onUpdate?: (item: Phone) => void;
 };
 
-const AddEditNumber: FunctionComponent<Props> = ({ item }) => {
-  const [selectedPhoneType, setSelectedPhoneType] = useState(null);
-
-  const onChangePhoneType = value => {
-    setSelectedPhoneType(value);
-  };
-
+const AddEditNumber: FunctionComponent<Props> = ({ item, onUpdate }) => {
   const phoneTypeOptions = [
     { value: 'Mobile', inputDisplay: <FaMobileAlt /> },
     { value: 'Home', inputDisplay: <FaHome /> },
@@ -38,33 +30,46 @@ const AddEditNumber: FunctionComponent<Props> = ({ item }) => {
     { value: 'Other', inputDisplay: <FaRegQuestionCircle /> },
   ];
 
+  const [selectedPhoneType, setSelectedPhoneType] = useState(null);
+
+  const onChangePhoneType = value => {
+    setSelectedPhoneType(value);
+  };
+
+  useEffect(() => {
+    if (item) setSelectedPhoneType(item.type);
+  }, [item]);
+
   return (
     <EuiFlexGroup responsive={false} gutterSize="xs">
-      <EuiFlexItem grow={false} css={{ minWidth: '50px' }}>
+      <EuiFlexItem grow={false} css={{ minWidth: '40px' }}>
         <EuiFormRow display="rowCompressed">
           <EuiSuperSelect
             compressed
             aria-label="Select phone number type"
             placeholder="Select..."
             options={phoneTypeOptions}
-            valueOfSelected={selectedPhoneType}
+            valueOfSelected={selectedPhoneType || phoneTypeOptions[0].value}
             onChange={onChangePhoneType}
           />
         </EuiFormRow>
       </EuiFlexItem>
       <EuiFlexItem>
         <EuiFormRow display="rowCompressed">
-          <EuiFieldText compressed placeholder="012 456 7890" />
+          <EuiFieldText
+            compressed
+            placeholder="012 456 7890"
+            value={item ? item.number : null}
+          />
         </EuiFormRow>
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
         <EuiFormRow display="rowCompressed">
           <EuiButtonEmpty
-            // iconType="plus"
-            // iconSize="s"
             size="s"
-            css={{ minWidth: '50px' }}>
-            Add
+            css={{ minWidth: '50px' }}
+            onClick={() => (item ? onUpdate(item) : null)}>
+            {item ? 'Save' : 'Add'}
           </EuiButtonEmpty>
         </EuiFormRow>
       </EuiFlexItem>
