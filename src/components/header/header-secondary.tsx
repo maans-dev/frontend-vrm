@@ -14,16 +14,7 @@ export const HeaderSecondary: FunctionComponent<Props> = ({ breadcrumb }) => {
 
   // Set breadcumb for page
   useEffect(() => {
-    const defaultBreadcrumb: EuiBreadcrumb[] = [
-      {
-        text: 'Home',
-        href: '/',
-        onClick: e => {
-          router.push('/');
-          e.preventDefault();
-        },
-      },
-    ];
+    const defaultBreadcrumb: EuiBreadcrumb[] = [];
     if (breadcrumb) {
       // add provided breadcrumbs to default
       const fullBreadcrumb = defaultBreadcrumb.concat(breadcrumb);

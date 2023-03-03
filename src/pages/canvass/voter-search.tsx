@@ -22,10 +22,7 @@ const Index: FunctionComponent = () => {
   const breadcrumb: EuiBreadcrumb[] = [
     {
       text: 'Canvass',
-    },
-    {
-      text: 'Canvassing Type',
-      href: '/canvass',
+      href: '/canvassing-type',
       onClick: e => {
         router.push('/canvass/canvassing-type');
         e.preventDefault();
