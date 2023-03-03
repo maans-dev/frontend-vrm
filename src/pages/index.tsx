@@ -7,8 +7,8 @@ const Index: FunctionComponent = () => {
   const router = useRouter();
 
   return (
-    <MainLayout>
-      <EuiFlexGrid gutterSize="l" columns={3}>
+    <MainLayout alignment="top" panelled={false} restrictWidth={false}>
+      <EuiFlexGrid gutterSize="l" columns={2}>
         <EuiFlexItem>
           <EuiCard
             icon={<EuiIcon size="xxl" type="inputOutput" />}

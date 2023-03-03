@@ -4,7 +4,6 @@ import {
   EuiButton,
   EuiButtonEmpty,
   EuiCallOut,
-  EuiCard,
   EuiComboBox,
   EuiFieldText,
   EuiFlexGroup,
@@ -99,171 +98,148 @@ const Voter: FunctionComponent = () => {
   ];
 
   const formActions = (
-    <>
-      <EuiFlexGroup
-        direction="row"
-        responsive={false}
-        justifyContent="spaceBetween">
-        <EuiFlexItem grow={false}>
-          <EuiButtonEmpty size="m">Reset</EuiButtonEmpty>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <EuiButton size="m" fill>
-            Search
-          </EuiButton>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-    </>
+    <EuiFlexGroup direction="row" responsive={false} justifyContent="flexEnd">
+      <EuiFlexItem grow={false}>
+        <EuiButtonEmpty size="m">Reset</EuiButtonEmpty>
+      </EuiFlexItem>
+      <EuiFlexItem grow={false}>
+        <EuiButton size="m" fill iconType="save">
+          Save
+        </EuiButton>
+      </EuiFlexItem>
+    </EuiFlexGroup>
   );
 
   return (
-    <MainLayout breadcrumb={breadcrumb}>
-      <EuiFlexGroup direction="row" justifyContent="center">
-        <EuiFlexItem grow={true} css={{ maxWidth: '800px' }}>
-          <EuiCard
-            textAlign="left"
-            title="Voter edit"
-            titleSize="xs"
-            footer={formActions}>
-            <EuiForm fullWidth>
-              <EuiFormFieldset legend={{ children: 'Personal details' }}>
-                <EuiFormRow display="rowCompressed" label="Surname">
-                  <EuiFieldText
-                    name="surname"
-                    compressed
-                    disabled
-                    value="DOE"
-                  />
-                </EuiFormRow>
+    <MainLayout breadcrumb={breadcrumb} pageTitle="Voter Canvassing">
+      <EuiForm fullWidth>
+        <EuiFormFieldset legend={{ children: 'Personal details' }}>
+          <EuiFormRow display="rowCompressed" label="Surname">
+            <EuiFieldText name="surname" compressed disabled value="DOE" />
+          </EuiFormRow>
 
-                <EuiFormRow display="rowCompressed" label="First names">
-                  <EuiFieldText
-                    name="firstNames"
-                    compressed
-                    disabled
-                    value="JOHN"
-                  />
-                </EuiFormRow>
-                <EuiFormRow display="rowCompressed" label="Preferred name">
-                  <EuiFieldText name="preferredName" compressed />
-                </EuiFormRow>
-                <EuiFormRow display="rowCompressed">
-                  <EuiSwitch
-                    label="Deceased?"
-                    // compressed
-                    checked={true}
-                    name="deceased"
-                    onChange={() => null}
-                  />
-                </EuiFormRow>
-              </EuiFormFieldset>
+          <EuiFormRow display="rowCompressed" label="First names">
+            <EuiFieldText name="firstNames" compressed disabled value="JOHN" />
+          </EuiFormRow>
+          <EuiFormRow display="rowCompressed" label="Preferred name">
+            <EuiFieldText name="preferredName" compressed />
+          </EuiFormRow>
+          <EuiFormRow display="rowCompressed">
+            <EuiSwitch
+              label="Deceased?"
+              // compressed
+              checked={true}
+              name="deceased"
+              onChange={() => null}
+            />
+          </EuiFormRow>
+        </EuiFormFieldset>
 
-              <EuiSpacer />
+        <EuiSpacer />
 
-              <EuiFormFieldset legend={{ children: 'Affiliation' }}>
-                <EuiFormRow display="row">
-                  <EuiCallOut
-                    title="Have you confirmed this voter's affiliation?"
-                    size="s"
-                    iconType="search"
-                  />
-                </EuiFormRow>
-                <EuiFormRow display="rowCompressed">
-                  <EuiComboBox
-                    compressed
-                    isClearable={false}
-                    aria-label="Select an affiliation"
-                    placeholder="Select an affiliation"
-                    singleSelection={{ asPlainText: true }}
-                    options={affilitions}
-                    selectedOptions={[affilitions[2]]}
-                    onChange={() => null}
-                  />
-                </EuiFormRow>
-              </EuiFormFieldset>
+        <EuiFormFieldset legend={{ children: 'Affiliation' }}>
+          <EuiFormRow display="row">
+            <EuiCallOut
+              title="Have you confirmed this voter's affiliation?"
+              size="s"
+              iconType="search"
+            />
+          </EuiFormRow>
+          <EuiFormRow display="rowCompressed">
+            <EuiComboBox
+              compressed
+              isClearable={false}
+              aria-label="Select an affiliation"
+              placeholder="Select an affiliation"
+              singleSelection={{ asPlainText: true }}
+              options={affilitions}
+              selectedOptions={[affilitions[2]]}
+              onChange={() => null}
+            />
+          </EuiFormRow>
+        </EuiFormFieldset>
 
-              <EuiSpacer />
+        <EuiSpacer />
 
-              <EuiFormFieldset legend={{ children: 'Contact details' }}>
-                <EuiFormRow display="rowCompressed" label="Language">
-                  <EuiComboBox
-                    compressed
-                    isClearable={false}
-                    aria-label="Select voter language(s)"
-                    placeholder="Select voter language(s)"
-                    singleSelection={{ asPlainText: true }}
-                    options={languages}
-                    selectedOptions={[languages[2]]}
-                    onChange={() => null}
-                  />
-                </EuiFormRow>
+        <EuiFormFieldset legend={{ children: 'Contact details' }}>
+          <EuiFormRow display="rowCompressed" label="Language">
+            <EuiComboBox
+              compressed
+              isClearable={false}
+              aria-label="Select voter language(s)"
+              placeholder="Select voter language(s)"
+              singleSelection={{ asPlainText: true }}
+              options={languages}
+              selectedOptions={[languages[2]]}
+              onChange={() => null}
+            />
+          </EuiFormRow>
 
-                <EuiFormRow display="rowCompressed" label="Preferred Name">
-                  <EuiFieldText name="preferredName" compressed />
-                </EuiFormRow>
+          <EuiFormRow display="rowCompressed" label="Preferred Name">
+            <EuiFieldText name="preferredName" compressed />
+          </EuiFormRow>
 
-                <EuiFormRow display="rowCompressed" label="Phone Numbers">
-                  <PhoneNumbers
-                    items={[
-                      { type: 'Mobile', number: '123 456 7890' },
-                      {
-                        type: 'Home',
-                        number: '123 456 7890',
-                        isConfirmed: true,
-                      },
-                      { type: 'Work', number: '123 456 7890', isDnc: true },
-                      { type: 'International', number: '+27 123 456 7890' },
-                      {
-                        type: 'Other',
-                        number: '123 456 7890',
-                        isConfirmed: true,
-                        isDnc: true,
-                      },
-                    ]}
-                  />
-                </EuiFormRow>
+          <EuiFormRow display="rowCompressed" label="Phone Numbers">
+            <PhoneNumbers
+              items={[
+                { type: 'Mobile', number: '123 456 7890' },
+                {
+                  type: 'Home',
+                  number: '123 456 7890',
+                  isConfirmed: true,
+                },
+                { type: 'Work', number: '123 456 7890', isDnc: true },
+                { type: 'International', number: '+27 123 456 7890' },
+                {
+                  type: 'Other',
+                  number: '123 456 7890',
+                  isConfirmed: true,
+                  isDnc: true,
+                },
+              ]}
+            />
+          </EuiFormRow>
 
-                <EuiFormRow display="rowCompressed" label="Email Addresses">
-                  <EmailAddress />
-                </EuiFormRow>
-              </EuiFormFieldset>
+          <EuiFormRow display="rowCompressed" label="Email Addresses">
+            <EmailAddress />
+          </EuiFormRow>
+        </EuiFormFieldset>
 
-              <EuiSpacer />
+        <EuiSpacer />
 
-              <EuiFormFieldset legend={{ children: 'Living Address' }}>
-                <></>
-              </EuiFormFieldset>
+        <EuiFormFieldset legend={{ children: 'Living Address' }}>
+          <></>
+        </EuiFormFieldset>
 
-              <EuiSpacer />
+        <EuiSpacer />
 
-              <EuiFormFieldset legend={{ children: 'Comments' }}>
-                <></>
-              </EuiFormFieldset>
+        <EuiFormFieldset legend={{ children: 'Comments' }}>
+          <></>
+        </EuiFormFieldset>
 
-              <EuiSpacer />
+        <EuiSpacer />
 
-              <EuiFormFieldset legend={{ children: 'Tags' }}>
-                <EuiFormRow display="rowCompressed">
-                  <EuiComboBox
-                    compressed
-                    isClearable={false}
-                    aria-label="Tags"
-                    options={tags}
-                    selectedOptions={[tags[2], tags[3]]}
-                    onChange={() => null}
-                  />
-                </EuiFormRow>
-              </EuiFormFieldset>
+        <EuiFormFieldset legend={{ children: 'Tags' }}>
+          <EuiFormRow display="rowCompressed">
+            <EuiComboBox
+              compressed
+              isClearable={false}
+              aria-label="Tags"
+              options={tags}
+              selectedOptions={[tags[2], tags[3]]}
+              onChange={() => null}
+            />
+          </EuiFormRow>
+        </EuiFormFieldset>
 
-              <EuiSpacer />
+        <EuiSpacer />
 
-              <EuiFormFieldset legend={{ children: 'Custom fields' }}>
-                <></>
-              </EuiFormFieldset>
-            </EuiForm>
-          </EuiCard>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        <EuiFormFieldset legend={{ children: 'Custom fields' }}>
+          <></>
+        </EuiFormFieldset>
+      </EuiForm>
+      <EuiSpacer />
+      {formActions}
     </MainLayout>
   );
 };

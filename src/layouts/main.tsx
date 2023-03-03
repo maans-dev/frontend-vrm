@@ -7,8 +7,10 @@ import {
   EuiButtonEmpty,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiHorizontalRule,
   EuiPageTemplate,
   EuiPageTemplateProps,
+  EuiText,
   EuiThemeProvider,
 } from '@elastic/eui';
 import { useRouter } from 'next/router';
@@ -17,11 +19,19 @@ import { HeaderSecondary } from '@components/header/header-secondary';
 
 export type Props = {
   breadcrumb?: EuiBreadcrumb[];
+  alignment?: 'top' | 'center' | 'horizontalCenter';
+  panelled?: boolean;
+  restrictWidth?: string | number | boolean;
+  pageTitle?: string;
 };
 
 const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
   children,
   breadcrumb,
+  pageTitle,
+  alignment,
+  panelled,
+  restrictWidth,
   ...rest
 }) => {
   const router = useRouter();
@@ -33,13 +43,22 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
     setShowSubHeader(router.route !== '/');
   }, [router.route]);
 
+  const renderPageTitle = (
+    <>
+      <EuiText size="xs">
+        <h2>{pageTitle}</h2>
+      </EuiText>
+      <EuiHorizontalRule margin="m" color="lightgray" />
+    </>
+  );
+
   return (
     <EuiPageTemplate
       style={{
         paddingTop: showSubHeader ? '96px' : '0px',
       }}
-      css={{ minHeight: 'calc(100vh -  96px)' }}
-      panelled={false}
+      // css={{ minHeight: 'calc(100vh -  96px)' }}
+      panelled={panelled}
       restrictWidth={true}
       {...rest}>
       <HeaderPrimary />
@@ -48,9 +67,11 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
 
       <EuiPageTemplate.Section
         grow={true}
-        paddingSize="none"
-        // color="subdued"
+        paddingSize="m"
+        restrictWidth={restrictWidth === undefined ? 800 : restrictWidth}
+        alignment={alignment || 'top'}
         bottomBorder={false}>
+        {pageTitle ? renderPageTitle : null}
         {children}
       </EuiPageTemplate.Section>
       <EuiPageTemplate.BottomBar paddingSize="s">
