@@ -10,16 +10,29 @@ import {
   EuiFormFieldset,
   EuiFormRow,
   EuiSpacer,
-  EuiIcon,
   useGeneratedHtmlId,
   EuiText,
+  EuiHighlight,
+  EuiSelectableOption,
+  EuiSelectable,
 } from '@elastic/eui';
 import MainLayout from '@layouts/main';
 import { useRouter } from 'next/router';
 
+const campaignData = [
+  { name: 'Red/Pink registration calling', district: 'A placeholder' },
+  { name: 'Campaign 2024 Registration', district: 'A placeholder' },
+  { name: 'Campaign 2024 DAFor Confirm', district: 'A placeholder' },
+  { name: 'Comprehensive Telephone Canvassing', district: 'A placeholder' },
+  { name: 'Registration telephone and foot', district: 'A placeholder' },
+];
+
+interface OptionData {
+  secondaryContent?: string;
+}
+
 const CanvassingType: FunctionComponent = () => {
   const [contactMethod, setContactMethod] = useState('face-to-face');
-  const [selectedCards, setSelectedCards] = useState(null);
 
   const router = useRouter();
   const breadcrumb: EuiBreadcrumb[] = [
@@ -30,27 +43,6 @@ const CanvassingType: FunctionComponent = () => {
       text: 'Canvassing Type',
     },
   ];
-
-  const handleCardClick = card => {
-    setSelectedCards(card === selectedCards ? null : card);
-  };
-
-  const renderCheckIcon = card => {
-    if (card === selectedCards) {
-      return (
-        <EuiIcon
-          type="check"
-          size="m"
-          color="primary"
-          style={{
-            position: 'absolute',
-            right: '0',
-            lineHeight: '0',
-          }}
-        />
-      );
-    }
-  };
 
   const onContactMethodChange = id => {
     setContactMethod(id);
@@ -80,6 +72,38 @@ const CanvassingType: FunctionComponent = () => {
     </>
   );
 
+  const [options, setOptions] = useState<
+    Array<EuiSelectableOption<OptionData>>
+  >([
+    ...campaignData.map(
+      (campaign): EuiSelectableOption => ({
+        label: `${campaign.name}`,
+        searchableLabel: `${campaign.name}`,
+        data: {
+          secondaryContent: campaign.district,
+        },
+      })
+    ),
+  ]);
+
+  const renderCampaignOption = (
+    option: EuiSelectableOption<OptionData>,
+    searchValue: string
+  ) => {
+    return (
+      <>
+        <EuiHighlight search={searchValue}>{option.label}</EuiHighlight>
+        <EuiText size="xs" color="subdued" className="eui-displayBlock">
+          <small>
+            <EuiHighlight search={searchValue}>
+              {option.secondaryContent || ''}
+            </EuiHighlight>
+          </small>
+        </EuiText>
+      </>
+    );
+  };
+
   return (
     <MainLayout breadcrumb={breadcrumb}>
       <EuiFlexGroup direction="row" justifyContent="center">
@@ -89,102 +113,27 @@ const CanvassingType: FunctionComponent = () => {
             title="Canvassing Type"
             titleSize="xs"
             footer={formActions}>
-            <EuiFormFieldset legend={{ children: 'Campaigns' }}>
-              <EuiFlexGroup
-                gutterSize="l"
-                direction="column"
-                alignItems="stretch">
-                <EuiCard
-                  textAlign="left"
-                  titleSize="xs"
-                  title="Red/Pink registration calling"
-                  icon={renderCheckIcon('Card 1')}
-                  onClick={() => handleCardClick('Card 1')}
-                  footer={
-                    <EuiFlexGroup
-                      alignItems="flexStart"
-                      justifyContent="flexStart">
-                      <EuiFlexItem>
-                        <EuiText size="xs">
-                          <p>Cape Town</p>
-                        </EuiText>
-                      </EuiFlexItem>
-                    </EuiFlexGroup>
-                  }
-                />
-                <EuiCard
-                  textAlign="left"
-                  titleSize="xs"
-                  icon={renderCheckIcon('Card 2')}
-                  title="Campaign 2024 Registration"
-                  onClick={() => handleCardClick('Card 2')}
-                  footer={
-                    <EuiFlexGroup
-                      alignItems="flexStart"
-                      justifyContent="flexStart">
-                      <EuiFlexItem>
-                        <EuiText size="xs">
-                          <p>Hermanus</p>
-                        </EuiText>
-                      </EuiFlexItem>
-                    </EuiFlexGroup>
-                  }
-                />
-                <EuiCard
-                  textAlign="left"
-                  titleSize="xs"
-                  icon={renderCheckIcon('Card 3')}
-                  title="Campaign 2024 DAFor Confirm"
-                  onClick={() => handleCardClick('Card 3')}
-                  footer={
-                    <EuiFlexGroup
-                      alignItems="center"
-                      justifyContent="flexStart">
-                      <EuiFlexItem>
-                        <EuiText size="xs">
-                          <p>Struisbaai</p>
-                        </EuiText>
-                      </EuiFlexItem>
-                    </EuiFlexGroup>
-                  }
-                />
-                <EuiCard
-                  textAlign="left"
-                  titleSize="xs"
-                  icon={renderCheckIcon('Card 4')}
-                  title="Comprehensive Telephone Canvassing"
-                  onClick={() => handleCardClick('Card 4')}
-                  footer={
-                    <EuiFlexGroup
-                      alignItems="center"
-                      justifyContent="flexStart">
-                      <EuiFlexItem>
-                        <EuiText size="xs">
-                          <p>Area</p>
-                        </EuiText>
-                      </EuiFlexItem>
-                    </EuiFlexGroup>
-                  }
-                />
-                <EuiCard
-                  textAlign="left"
-                  titleSize="xs"
-                  icon={renderCheckIcon('Card 5')}
-                  title="Registration telephone and foot"
-                  onClick={() => handleCardClick('Card 5')}
-                  footer={
-                    <EuiFlexGroup
-                      alignItems="center"
-                      justifyContent="flexStart">
-                      <EuiFlexItem>
-                        <EuiText size="xs">
-                          <p>Area</p>
-                        </EuiText>
-                      </EuiFlexItem>
-                    </EuiFlexGroup>
-                  }
-                />
-              </EuiFlexGroup>
+            <EuiFormFieldset
+              legend={{ children: 'Which campaign are you canvassing for?' }}>
+              <EuiSelectable
+                aria-label="Select a campaign"
+                singleSelection
+                options={options}
+                onChange={options => setOptions(options)}
+                listProps={{
+                  rowHeight: 50,
+                  showIcons: false,
+                  onFocusBadge: false,
+                }}
+                renderOption={renderCampaignOption}
+                height={250}>
+                {(list, search) => (
+                  <>
+                    {search}
+                    {list}
+                  </>
+                )}
+              </EuiSelectable>
             </EuiFormFieldset>
             <EuiSpacer />
             <EuiFormFieldset
@@ -193,6 +142,8 @@ const CanvassingType: FunctionComponent = () => {
                 <EuiButtonGroup
                   legend="Canvassing type"
                   color="primary"
+                  // buttonSize="compressed"
+                  isFullWidth={true}
                   options={[
                     {
                       id: 'face-to-face',

@@ -211,11 +211,11 @@ const Voter: FunctionComponent = () => {
                       { type: 'Mobile', number: '123 456 7890' },
                       {
                         type: 'Home',
-                        number: '123 456 7890 aaa',
+                        number: '123 456 7890',
                         isConfirmed: true,
                       },
                       { type: 'Work', number: '123 456 7890', isDnc: true },
-                      { type: 'International', number: '123 456 7890' },
+                      { type: 'International', number: '+27 123 456 7890' },
                       {
                         type: 'Other',
                         number: '123 456 7890',

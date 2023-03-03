@@ -14,7 +14,7 @@ const Index: FunctionComponent = () => {
             icon={<EuiIcon size="xxl" type="inputOutput" />}
             layout="horizontal"
             title="Canvassing"
-            description="Canvass a person in person or over the phone"
+            description="I want to canvass a voter who is present or on the phone."
             onClick={() => router.push('/canvass/canvassing-type')}
           />
         </EuiFlexItem>
