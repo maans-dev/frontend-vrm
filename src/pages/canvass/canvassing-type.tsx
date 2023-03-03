@@ -2,22 +2,20 @@ import { FunctionComponent, useState } from 'react';
 import {
   EuiBreadcrumb,
   EuiButton,
-  EuiButtonEmpty,
-  EuiButtonGroup,
   EuiCard,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiFormFieldset,
-  EuiFormRow,
   EuiSpacer,
   useGeneratedHtmlId,
   EuiText,
   EuiHighlight,
   EuiSelectableOption,
   EuiSelectable,
+  EuiCheckableCard,
 } from '@elastic/eui';
 import MainLayout from '@layouts/main';
 import { useRouter } from 'next/router';
+import { css, Global } from '@emotion/react';
 
 const campaignData = [
   { name: 'Red/Pink registration calling', district: 'A placeholder' },
@@ -39,37 +37,34 @@ const CanvassingType: FunctionComponent = () => {
     {
       text: 'Canvass',
     },
-    {
-      text: 'Canvassing Type',
-    },
   ];
 
   const onContactMethodChange = id => {
     setContactMethod(id);
   };
-  const basicButtonGroupPrefix = useGeneratedHtmlId({
-    prefix: 'basicButtonGroup',
+  const radioGroupId = useGeneratedHtmlId({ prefix: 'canvassType' });
+  const checkableCardId__1 = useGeneratedHtmlId({
+    prefix: 'checkableCard',
+    suffix: 'first',
+  });
+  const checkableCardId__2 = useGeneratedHtmlId({
+    prefix: 'checkableCard',
+    suffix: 'second',
   });
 
   const formActions = (
-    <>
-      <EuiFlexGroup
-        direction="row"
-        responsive={false}
-        justifyContent="spaceBetween">
-        <EuiFlexItem grow={false}>
-          <EuiButtonEmpty size="m">Reset</EuiButtonEmpty>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <EuiButton
-            size="m"
-            fill
-            onClick={() => router.push('/canvass/voter-search')}>
-            Continue
-          </EuiButton>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-    </>
+    <EuiFlexGroup direction="row" responsive={false} justifyContent="flexEnd">
+      <EuiFlexItem grow={false}>
+        <EuiButton
+          iconType="arrowRight"
+          iconSide="right"
+          size="m"
+          fill
+          onClick={() => router.push('/canvass/voter-search')}>
+          Continue
+        </EuiButton>
+      </EuiFlexItem>
+    </EuiFlexGroup>
   );
 
   const [options, setOptions] = useState<
@@ -106,60 +101,84 @@ const CanvassingType: FunctionComponent = () => {
 
   return (
     <MainLayout breadcrumb={breadcrumb}>
+      <Global
+        styles={css`
+          li.euiSelectableListItem[aria-checked='true'] {
+            background: #155fa220;
+          }
+          li.euiSelectableListItem {
+            font-weight: 600;
+          }
+        `}
+      />
       <EuiFlexGroup direction="row" justifyContent="center">
         <EuiFlexItem grow={true} css={{ maxWidth: '800px' }}>
           <EuiCard
             textAlign="left"
-            title="Canvassing Type"
+            title=""
             titleSize="xs"
             footer={formActions}>
-            <EuiFormFieldset
-              legend={{ children: 'Which campaign are you canvassing for?' }}>
-              <EuiSelectable
-                aria-label="Select a campaign"
-                singleSelection
-                options={options}
-                onChange={options => setOptions(options)}
-                listProps={{
-                  rowHeight: 50,
-                  showIcons: false,
-                  onFocusBadge: false,
-                }}
-                renderOption={renderCampaignOption}
-                height={250}>
-                {(list, search) => (
-                  <>
-                    {search}
-                    {list}
-                  </>
-                )}
-              </EuiSelectable>
-            </EuiFormFieldset>
-            <EuiSpacer />
-            <EuiFormFieldset
-              legend={{ children: 'How was this voter canvassed?' }}>
-              <EuiFormRow fullWidth>
-                <EuiButtonGroup
-                  legend="Canvassing type"
-                  color="primary"
-                  // buttonSize="compressed"
-                  isFullWidth={true}
-                  options={[
-                    {
-                      id: 'face-to-face',
-                      label: 'Face to Face',
-                    },
-                    {
-                      id: 'telephone',
-                      label: 'Telephone',
-                    },
-                  ]}
-                  idSelected={contactMethod}
-                  onChange={onContactMethodChange}
-                  name={`${basicButtonGroupPrefix}-contact-method`}
+            <EuiText size="xs">
+              <h3>Which campaign are you canvassing for?</h3>
+            </EuiText>
+
+            <EuiSpacer size="m" />
+
+            <EuiSelectable
+              aria-label="Select a campaign"
+              singleSelection="always"
+              options={options}
+              onChange={options => setOptions(options)}
+              listProps={{
+                rowHeight: 50,
+                showIcons: true,
+                onFocusBadge: false,
+                bordered: true,
+                // css: { background: '#ffcc00' },
+              }}
+              renderOption={renderCampaignOption}
+              height={250}>
+              {(list, search) => (
+                <>
+                  {search}
+                  {list}
+                </>
+              )}
+            </EuiSelectable>
+
+            <EuiSpacer size="xxl" />
+
+            <EuiText size="xs">
+              <h3>How was this voter canvassed?</h3>
+            </EuiText>
+
+            <EuiSpacer size="m" />
+
+            <EuiFlexGroup
+              gutterSize="m"
+              justifyContent="spaceBetween"
+              responsive={false}>
+              <EuiFlexItem>
+                <EuiCheckableCard
+                  id={checkableCardId__1}
+                  label="Face to face"
+                  name={radioGroupId}
+                  value="face-to-face"
+                  checked={contactMethod === 'face-to-face'}
+                  onChange={() => onContactMethodChange('face-to-face')}
                 />
-              </EuiFormRow>
-            </EuiFormFieldset>
+              </EuiFlexItem>
+              <EuiFlexItem>
+                <EuiCheckableCard
+                  id={checkableCardId__2}
+                  label="Telephone"
+                  name={radioGroupId}
+                  value="telephone"
+                  checked={contactMethod === 'telephone'}
+                  onChange={() => onContactMethodChange('telephone')}
+                />
+              </EuiFlexItem>
+            </EuiFlexGroup>
             <EuiSpacer />
           </EuiCard>
         </EuiFlexItem>
