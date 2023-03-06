@@ -14,11 +14,11 @@ import AddEditEmail from './add-edit-email';
 import { EmailTypes } from './types';
 
 export type Props = {
-  caracters: EmailTypes;
+  email: EmailTypes;
   border?: boolean;
 };
 
-const EmailAddressLine: FunctionComponent<Props> = ({ caracters, border }) => {
+const EmailAddressLine: FunctionComponent<Props> = ({ email, border }) => {
   const [showActions, setShowActions] = useState(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const { euiTheme } = useEuiTheme();
@@ -34,10 +34,13 @@ const EmailAddressLine: FunctionComponent<Props> = ({ caracters, border }) => {
       responsive={false}>
       <EuiFlexItem grow={true} onClick={() => setIsEditing(true)}>
         <EuiFlexGroup responsive={false} alignItems="center" gutterSize="xs">
-          <EuiFlexItem grow={true} css={{ minWidth: '100px' }}>
+          <EuiFlexItem
+            grow={true}
+            css={{ minWidth: '100px' }}
+            color={email?.isDnc ? euiTheme.colors.disabledText : null}>
             <EuiTextColor
-              color={caracters.isDnc ? euiTheme.colors.disabledText : null}>
-              {caracters.email}
+              color={email?.isDnc ? euiTheme.colors.disabledText : null}>
+              {email.email}
             </EuiTextColor>
           </EuiFlexItem>
           <EuiFlexGroup
@@ -46,7 +49,7 @@ const EmailAddressLine: FunctionComponent<Props> = ({ caracters, border }) => {
             alignItems="center"
             css={{ maxWidth: '60px' }}
             gutterSize="xs">
-            {caracters.isConfirmed ? (
+            {email.isConfirmed ? (
               <EuiFlexItem grow={false}>
                 <EuiAvatar
                   name="Confirmed"
@@ -57,7 +60,7 @@ const EmailAddressLine: FunctionComponent<Props> = ({ caracters, border }) => {
                 />
               </EuiFlexItem>
             ) : null}
-            {caracters.isDnc ? (
+            {email.isDnc ? (
               <EuiFlexItem grow={false}>
                 <EuiAvatar
                   name="Do not contact"
@@ -141,7 +144,7 @@ const EmailAddressLine: FunctionComponent<Props> = ({ caracters, border }) => {
   );
 
   const renderEditMode = (
-    <AddEditEmail i={caracters} onUpdate={() => setIsEditing(false)} />
+    <AddEditEmail item={email} onUpdate={() => setIsEditing(false)} />
   );
 
   return (

@@ -12,7 +12,7 @@ const EmailAddress: FunctionComponent<Props> = ({ items }) => {
   return (
     <EuiPanel hasBorder={true} paddingSize="s">
       {items.map((item: EmailTypes, i) => (
-        <EmailAddressLine caracters={item} key={i} border={true} />
+        <EmailAddressLine email={item} key={i} border={true} />
       ))}
       <AddEditEmail />
     </EuiPanel>

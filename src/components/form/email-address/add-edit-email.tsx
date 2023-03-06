@@ -9,11 +9,11 @@ import {
 import { EmailTypes } from './types';
 
 export type Props = {
-  i?: EmailTypes;
-  onUpdate?: (i: EmailTypes) => void;
+  item?: EmailTypes;
+  onUpdate?: (item: EmailTypes) => void;
 };
 
-const AddEditEmail: FunctionComponent<Props> = ({ i, onUpdate }) => {
+const AddEditEmail: FunctionComponent<Props> = ({ item, onUpdate }) => {
   return (
     <EuiFlexGroup responsive={false} gutterSize="xs">
       <EuiFlexItem>
@@ -21,7 +21,7 @@ const AddEditEmail: FunctionComponent<Props> = ({ i, onUpdate }) => {
           <EuiFieldText
             compressed
             placeholder="dave@example.com"
-            value={i ? i.email : null}
+            value={item ? item.email : null}
           />
         </EuiFormRow>
       </EuiFlexItem>
@@ -30,8 +30,8 @@ const AddEditEmail: FunctionComponent<Props> = ({ i, onUpdate }) => {
           <EuiButtonEmpty
             size="s"
             css={{ minWidth: '50px' }}
-            onClick={() => (i ? onUpdate(i) : null)}>
-            {i ? 'Save' : 'Add'}
+            onClick={() => (item ? onUpdate(item) : null)}>
+            {item ? 'Save' : 'Add'}
           </EuiButtonEmpty>
         </EuiFormRow>
       </EuiFlexItem>
