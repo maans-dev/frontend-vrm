@@ -21,7 +21,7 @@ const AddEditEmail: FunctionComponent<Props> = ({ i, onUpdate }) => {
           <EuiFieldText
             compressed
             placeholder="dave@example.com"
-            value={i ? i.string : null}
+            value={i ? i.email : null}
           />
         </EuiFormRow>
       </EuiFlexItem>
