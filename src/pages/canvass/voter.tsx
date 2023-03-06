@@ -18,6 +18,8 @@ import MainLayout from '@layouts/main';
 import { useRouter } from 'next/router';
 import PhoneNumbers from '@components/form/phone-numbers';
 import EmailAddress from '@components/form/email-address';
+import Comments from '@components/comments';
+import moment from 'moment';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
@@ -222,7 +224,36 @@ const Voter: FunctionComponent = () => {
         <EuiSpacer />
 
         <EuiFormFieldset legend={{ children: 'Comments' }}>
-          <></>
+          <Comments
+            comments={[
+              {
+                date: moment().subtract(4, 'days').toDate(),
+                user: 'John Smith',
+                message: 'A short comment.',
+              },
+              {
+                date: moment().subtract(3, 'days').toDate(),
+                user: 'John Doe',
+                message:
+                  'A long comment. A long comment. A long comment. A long comment.',
+              },
+              {
+                date: moment().subtract(2, 'days').toDate(),
+                user: 'system',
+                message: 'generated an event as a comment',
+              },
+              {
+                date: moment().subtract(1, 'days').toDate(),
+                user: 'Mary Smith',
+                message: 'Another comment.',
+              },
+              {
+                date: new Date(),
+                user: 'Mandy Someone',
+                message: 'And yet another comment.',
+              },
+            ]}
+          />
         </EuiFormFieldset>
 
         <EuiSpacer />
