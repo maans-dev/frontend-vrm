@@ -21,6 +21,8 @@ import EmailAddress from '@components/form/email-address';
 import Comments from '@components/comments';
 import moment from 'moment';
 import CanvassingTags from '@components/canvassing-tags';
+import VoterTags from '@components/voter-tags';
+import { TagInputsProps } from '@components/voter-tags/types';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
@@ -91,13 +93,9 @@ const Voter: FunctionComponent = () => {
     { id: '?', label: '?' },
   ];
 
-  const tags = [
-    { label: 'aaa' },
-    { label: 'bbb' },
-    { label: 'ccc' },
-    { label: 'ddd' },
-    { label: 'eee' },
-    { label: 'fff' },
+  const tags: TagInputsProps[] = [
+    { tags: ['tag1', 'tag2'] },
+    { tags: ['tag3', 'tag4'], onAddTag: (tag: string) => console.log(tag) },
   ];
 
   const formActions = (
@@ -139,7 +137,6 @@ const Voter: FunctionComponent = () => {
         </EuiFormFieldset>
 
         <EuiSpacer />
-
         <EuiFormFieldset legend={{ children: 'Canvassing tags' }}>
           <CanvassingTags
             tags={[
@@ -276,14 +273,7 @@ const Voter: FunctionComponent = () => {
 
         <EuiFormFieldset legend={{ children: 'Tags' }}>
           <EuiFormRow display="rowCompressed">
-            <EuiComboBox
-              compressed
-              isClearable={false}
-              aria-label="Tags"
-              options={tags}
-              selectedOptions={[tags[2], tags[3]]}
-              onChange={() => null}
-            />
+            <VoterTags tags={tags} />
           </EuiFormRow>
         </EuiFormFieldset>
 
