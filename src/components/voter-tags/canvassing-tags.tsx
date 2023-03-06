@@ -1,5 +1,5 @@
 import React from 'react';
-import { EuiComboBox, EuiFlexGroup } from '@elastic/eui';
+import { EuiComboBox, EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
 import { ITag } from './types';
 import Tag from './tag';
 
@@ -23,7 +23,9 @@ const VoterTags: React.FC<Props> = ({
   isLoading,
 }: Props) => {
   const tagBadges = [...tags].map((tag, i) => (
-    <Tag key={i} label={tag.label} isNew={tag.isDirty} onDelete={onRemoveTag} />
+    <EuiFlexItem key={i}>
+      <Tag label={tag.label} isNew={tag.isDirty} onDelete={onRemoveTag} />
+    </EuiFlexItem>
   ));
 
   return (
@@ -48,6 +50,7 @@ const VoterTags: React.FC<Props> = ({
       />
       <EuiFlexGroup
         gutterSize="xs"
+        direction="column"
         style={{ maxHeight: '250px', overflow: 'auto' }}>
         {tagBadges}
       </EuiFlexGroup>
