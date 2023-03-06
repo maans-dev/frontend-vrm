@@ -1,6 +1,5 @@
 export interface EmailTypes {
-    string: string;
-    isConfirmed?: boolean;
-    isDnc?: boolean;
-  }
-  
+  email: string;
+  isConfirmed?: boolean;
+  isDnc?: boolean;
+}

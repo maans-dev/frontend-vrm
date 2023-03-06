@@ -40,7 +40,7 @@ function themeLink(theme: Theme): ReactElement {
  */
 export default class MyDocument extends Document {
   render(): ReactElement {
-    const isLocalDev = process.env.NODE_ENV === 'development';
+    // const isLocalDev = process.env.NODE_ENV === 'development';
 
     return (
       <Html lang="en">
