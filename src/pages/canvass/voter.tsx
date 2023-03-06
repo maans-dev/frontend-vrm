@@ -20,6 +20,7 @@ import PhoneNumbers from '@components/form/phone-numbers';
 import EmailAddress from '@components/form/email-address';
 import Comments from '@components/comments';
 import moment from 'moment';
+import CanvassingTags from '@components/canvassing-tags';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
@@ -135,6 +136,21 @@ const Voter: FunctionComponent = () => {
               onChange={() => null}
             />
           </EuiFormRow>
+        </EuiFormFieldset>
+
+        <EuiSpacer />
+
+        <EuiFormFieldset legend={{ children: 'Canvassing tags' }}>
+          <CanvassingTags
+            tags={[
+              { tag: 'WR', description: 'Will register' },
+              { tag: 'ASTREG', description: 'Assisted to register' },
+              { tag: 'DR', description: 'Did register' },
+              { tag: 'WV', description: "Won't vote" },
+              { tag: 'CV', description: "Can't vote" },
+              { tag: 'M', description: 'Moved' },
+            ]}
+          />
         </EuiFormFieldset>
 
         <EuiSpacer />
