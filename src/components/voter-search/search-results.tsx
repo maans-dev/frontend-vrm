@@ -9,7 +9,6 @@ import {
   EuiFlexGrid,
   Criteria,
   useIsWithinBreakpoints,
-  EuiHealth,
 } from '@elastic/eui';
 import moment from 'moment';
 import router from 'next/router';
@@ -34,10 +33,11 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
   };
 
   const getRowProps = (voter: VoterSearchResult) => {
-    const { darn } = voter;
+    const { darn, colour } = voter;
     return {
       'data-test-subj': `row-${darn}`,
-      className: 'customRowClass',
+      className: 'voter-search-row',
+      css: { borderLeft: `5px solid ${colour} !important` },
       onClick: () => router.push('/canvass/voter'),
     };
   };
@@ -59,11 +59,7 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
       mobileOptions: {
         header: false,
         width: '100%',
-        render: item => (
-          <EuiHealth color={item.colour} textSize="s">
-            <strong>{item.name}</strong>
-          </EuiHealth>
-        ),
+        render: item => <strong>{item.name}</strong>,
       },
     },
     {
@@ -174,15 +170,12 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
             }
             .voter-search .euiTable.euiTable--responsive .euiTableRow {
               padding: 5px;
-              box-shadow: none;
+              padding-left: 10px;
               border: 1px solid lightgrey;
             }
             .voter-search .euiTableCellContent {
               padding: 0;
               font-size: 12px;
-            }
-            .voter-search .euiTableRow td:nth-child(n + 3) {
-              margin-left: 20px;
             }
           `}
         />
