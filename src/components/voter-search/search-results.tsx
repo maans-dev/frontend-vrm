@@ -37,7 +37,7 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
     return {
       'data-test-subj': `row-${darn}`,
       className: 'voter-search-row',
-      css: { borderLeft: `5px solid ${colour} !important` },
+      css: { borderLeft: isMobile ? `5px solid ${colour} !important` : null },
       onClick: () => router.push('/canvass/voter'),
     };
   };
