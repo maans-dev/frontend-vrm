@@ -206,7 +206,7 @@ const Voter: FunctionComponent = () => {
                 {
                   email: 'example@gmail.com',
                   isConfirmed: true,
-                  isDnc: true,
+                  isDnc: undefined,
                 },
                 { email: 'example@gmail.com', isConfirmed: true },
                 { email: 'example@gmail.com', isDnc: true },
