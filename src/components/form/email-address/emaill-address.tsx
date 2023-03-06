@@ -37,7 +37,7 @@ const EmailAddressLine: FunctionComponent<Props> = ({ caracters, border }) => {
           <EuiFlexItem grow={true} css={{ minWidth: '100px' }}>
             <EuiTextColor
               color={caracters.isDnc ? euiTheme.colors.disabledText : null}>
-              {caracters.string}
+              {caracters.email}
             </EuiTextColor>
           </EuiFlexItem>
           <EuiFlexGroup
