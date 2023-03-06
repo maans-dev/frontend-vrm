@@ -201,7 +201,17 @@ const Voter: FunctionComponent = () => {
           </EuiFormRow>
 
           <EuiFormRow display="rowCompressed" label="Email Addresses">
-            <EmailAddress />
+            <EmailAddress
+              items={[
+                {
+                  string: 'example@gmail.com',
+                  isConfirmed: true,
+                  isDnc: true,
+                },
+                { string: 'example@gmail.com', isConfirmed: true },
+                { string: 'example@gmail.com', isDnc: true },
+              ]}
+            />
           </EuiFormRow>
         </EuiFormFieldset>
 
