@@ -7,6 +7,7 @@ import {
   EuiFlexItem,
 } from '@elastic/eui';
 import { TagInputsProps } from './types';
+import { FaTimesCircle } from 'react-icons/fa';
 
 export interface Props {
   items: TagInputsProps[];
@@ -19,16 +20,16 @@ const VoterTags: React.FC<Props> = ({ onAddTag }: Props) => {
   >([]);
   const [selectedTags, setSelectedTags] = useState<{ label: string }[]>([]);
 
+  const handleDeleteTag = (index: number) => {
+    setSelectedTags(selectedTags.filter((_, i) => i !== index));
+  };
+
   const handleAddTag = (newTag: { label: string }) => {
-    if (newTag.label.length < 15) {
+    if (newTag.label.length < 30) {
       return;
     }
     setSelectedTags([...selectedTags, newTag]);
     onAddTag(newTag.label);
-  };
-
-  const handleDeleteTag = (index: number) => {
-    setSelectedTags(selectedTags.filter((_, i) => i !== index));
   };
 
   const onInputChange = (
@@ -46,25 +47,38 @@ const VoterTags: React.FC<Props> = ({ onAddTag }: Props) => {
     selectedOptions: EuiComboBoxOptionOption<string | number | string[]>[]
   ) => {
     const selectedOptionLabels = selectedOptions.map(option => option.label);
-
-    // add selected options from the options list to selected tags array
     const selectedOptionsFromList = options.filter(option =>
       selectedOptionLabels.includes(option.label)
     );
     setSelectedTags([...selectedTags, ...selectedOptionsFromList]);
-
-    // set the selected options state
     setSelectedOptions(selectedOptions);
   };
 
-  const tagBadges = selectedTags.map((tag, i) => (
-    <EuiFlexItem grow={false} key={i}>
+  const tagBadges = [...selectedTags].reverse().map((tag, i) => (
+    <EuiFlexItem key={i}>
       <EuiBadge
-        css={{ marginTop: '10px' }}
+        css={{
+          '.euiBadge__iconButton': {
+            marginLeft: 'auto',
+            color: '#1EA7FD',
+            '&:hover': {
+              color: 'red',
+            },
+            borderLeft: '2px solid #CBD2D9',
+            paddingLeft: '6px',
+          },
+          '.euiBadge__iconButton:hover svg': {
+            fill: 'red',
+          },
+          marginTop: '10px',
+          border: i === 0 ? '2px solid #1EA7FD' : '2px solid #CBD2D9',
+          backgroundColor: i === 0 ? '#E3F3FF' : 'inherit',
+          fontSize: '0.9rem',
+        }}
         color="hollow"
-        iconType="cross"
+        iconType={FaTimesCircle}
         iconSide="right"
-        iconOnClick={() => handleDeleteTag(i)}
+        iconOnClick={() => handleDeleteTag(selectedTags.length - i - 1)}
         iconOnClickAriaLabel={`Delete tag "${tag.label}"`}>
         {tag.label}
       </EuiBadge>
@@ -83,20 +97,17 @@ const VoterTags: React.FC<Props> = ({ onAddTag }: Props) => {
 
   const options = [
     {
-      label: 'Consectetur, adipisicing elit. Unde quas',
+      label:
+        'Consectetur, adipisicing elit. Unde quas Consectetur, adipisicing elit.',
     },
-    {
-      label: 'Dolor sit amet consectetur, adipisicing elit. Unde quas,',
-    },
-    {
-      label: 'Adipisicing elit. Unde quas,',
-    },
-    {
-      label: 'Lorem ipsum dolor sit amet consectetur',
-    },
+    { label: 'Dolor sit amet consectetur, adipisicing elit. Unde quas.' },
+    { label: 'Adipisicing elit. Unde quas. Consectetur, adipisicing elit.' },
     {
       label:
-        'Lorem ipsum dolor sit amet consectetur Consectetur, adipisicing elit. Unde quas',
+        'Lorem ipsum dolor sit amet consectetur Consectetur, adipisicing elit.',
+    },
+    {
+      label: 'Lorem ipsum dolor sit amet',
     },
   ];
 
@@ -105,15 +116,23 @@ const VoterTags: React.FC<Props> = ({ onAddTag }: Props) => {
       <EuiComboBox
         placeholder="Enter a tag here"
         singleSelection={{ asPlainText: true }}
-        // noSuggestions
         options={options}
         selectedOptions={selectedOption}
         onCreateOption={onCreateOption}
         onChange={onChange}
         onSearchChange={searchValue => onInputChange(searchValue)}
         fullWidth
+        isClearable={false}
+        css={{
+          '.euiComboBoxPill--plainText': {
+            display: 'none',
+          },
+        }}
       />
-      <EuiFlexGroup wrap gutterSize="xs">
+      <EuiFlexGroup
+        direction="column"
+        gutterSize="xs"
+        style={{ maxHeight: '150px', overflow: 'auto' }}>
         {tagBadges}
       </EuiFlexGroup>
     </>
