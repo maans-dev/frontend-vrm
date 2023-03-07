@@ -12,6 +12,7 @@ import {
 import { FunctionComponent, useState } from 'react';
 import AddEditEmail from './add-edit-email';
 import { EmailTypes } from './types';
+import { GoCircleSlash } from 'react-icons/go';
 
 export type Props = {
   email: EmailTypes;
@@ -64,7 +65,7 @@ const EmailAddressLine: FunctionComponent<Props> = ({ email, border }) => {
               <EuiFlexItem grow={false}>
                 <EuiAvatar
                   name="Do not contact"
-                  iconType="bellSlash"
+                  iconType={GoCircleSlash}
                   type="space"
                   size="s"
                   color={euiTheme.colors.warning}
@@ -129,7 +130,7 @@ const EmailAddressLine: FunctionComponent<Props> = ({ email, border }) => {
                 {
                   label: 'DNC',
                   href: '#',
-                  iconType: 'cross',
+                  iconType: GoCircleSlash,
                   iconProps: { size: 's' },
                   onClick: e => {
                     e.preventDefault();
