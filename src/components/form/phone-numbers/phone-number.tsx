@@ -19,6 +19,7 @@ import {
 } from 'react-icons/fa';
 import { ImUserTie } from 'react-icons/im';
 import AddEditNumber from './add-edit-number';
+import { GoCircleSlash } from 'react-icons/go';
 
 export type Props = {
   phone: Phone;
@@ -137,7 +138,7 @@ const PhoneNumberLine: FunctionComponent<Props> = ({ phone, border }) => {
               <EuiFlexItem grow={false}>
                 <EuiAvatar
                   name="Do not contact"
-                  iconType="/icons/dnc.svg"
+                  iconType={GoCircleSlash}
                   type="space"
                   size="s"
                   color={euiTheme.colors.warning}
@@ -202,7 +203,7 @@ const PhoneNumberLine: FunctionComponent<Props> = ({ phone, border }) => {
                 {
                   label: 'DNC',
                   href: '#',
-                  iconType: '/icons/dnc.svg',
+                  iconType: GoCircleSlash,
                   iconProps: { size: 's' },
                   onClick: e => {
                     e.preventDefault();
