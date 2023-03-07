@@ -1,7 +1,7 @@
 import { FunctionComponent } from 'react';
 import {
   EuiAvatar,
-  EuiButton,
+  EuiButtonEmpty,
   EuiComment,
   EuiCommentList,
   EuiFieldText,
@@ -47,7 +47,7 @@ const Comments: FunctionComponent<Props> = ({ comments }) => {
               color={euiTheme.colors.lightShade}
             />
           }>
-          <EuiFlexGroup gutterSize="xs">
+          <EuiFlexGroup gutterSize="xs" responsive={false}>
             <EuiFlexItem grow={true}>
               <EuiFieldText
                 compressed
@@ -57,9 +57,7 @@ const Comments: FunctionComponent<Props> = ({ comments }) => {
               />
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiButton fullWidth size="s">
-                Add comment
-              </EuiButton>
+              <EuiButtonEmpty size="s">Add</EuiButtonEmpty>
             </EuiFlexItem>
           </EuiFlexGroup>
         </EuiComment>
