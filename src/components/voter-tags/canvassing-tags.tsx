@@ -19,6 +19,18 @@ const VoterTags: React.FC<Props> = ({ onAddTag }: Props) => {
   >([]);
   const [selectedTags, setSelectedTags] = useState<{ label: string }[]>([]);
 
+  const handleAddTag = (newTag: { label: string }) => {
+    if (newTag.label.length < 15) {
+      return;
+    }
+    setSelectedTags([...selectedTags, newTag]);
+    onAddTag(newTag.label);
+  };
+
+  const handleDeleteTag = (index: number) => {
+    setSelectedTags(selectedTags.filter((_, i) => i !== index));
+  };
+
   const onInputChange = (
     searchValue: string,
     event?: React.KeyboardEvent<HTMLInputElement>
@@ -33,19 +45,16 @@ const VoterTags: React.FC<Props> = ({ onAddTag }: Props) => {
   const onChange = (
     selectedOptions: EuiComboBoxOptionOption<string | number | string[]>[]
   ) => {
+    const selectedOptionLabels = selectedOptions.map(option => option.label);
+
+    // add selected options from the options list to selected tags array
+    const selectedOptionsFromList = options.filter(option =>
+      selectedOptionLabels.includes(option.label)
+    );
+    setSelectedTags([...selectedTags, ...selectedOptionsFromList]);
+
+    // set the selected options state
     setSelectedOptions(selectedOptions);
-  };
-
-  const handleAddTag = (newTag: { label: string }) => {
-    if (newTag.label.length < 15) {
-      return;
-    }
-    setSelectedTags([...selectedTags, newTag]);
-    onAddTag(newTag.label);
-  };
-
-  const handleDeleteTag = (index: number) => {
-    setSelectedTags(selectedTags.filter((_, i) => i !== index));
   };
 
   const tagBadges = selectedTags.map((tag, i) => (
@@ -63,7 +72,7 @@ const VoterTags: React.FC<Props> = ({ onAddTag }: Props) => {
   ));
 
   const onCreateOption = (searchValue: string): boolean => {
-    if (searchValue.length < 15) {
+    if (searchValue.length < 30) {
       const newOption = { label: searchValue };
       setSelectedTags([...selectedTags, newOption]);
       return true;
@@ -72,12 +81,32 @@ const VoterTags: React.FC<Props> = ({ onAddTag }: Props) => {
     }
   };
 
+  const options = [
+    {
+      label: 'Consectetur, adipisicing elit. Unde quas',
+    },
+    {
+      label: 'Dolor sit amet consectetur, adipisicing elit. Unde quas,',
+    },
+    {
+      label: 'Adipisicing elit. Unde quas,',
+    },
+    {
+      label: 'Lorem ipsum dolor sit amet consectetur',
+    },
+    {
+      label:
+        'Lorem ipsum dolor sit amet consectetur Consectetur, adipisicing elit. Unde quas',
+    },
+  ];
+
   return (
     <>
       <EuiComboBox
-        placeholder="Enter a tag name here"
+        placeholder="Enter a tag here"
         singleSelection={{ asPlainText: true }}
         // noSuggestions
+        options={options}
         selectedOptions={selectedOption}
         onCreateOption={onCreateOption}
         onChange={onChange}
