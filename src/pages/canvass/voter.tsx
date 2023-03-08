@@ -11,8 +11,12 @@ import {
   EuiForm,
   EuiFormFieldset,
   EuiFormRow,
+  EuiPanel,
   EuiSpacer,
   EuiSwitch,
+  EuiText,
+  EuiTextColor,
+  EuiTitle,
 } from '@elastic/eui';
 import MainLayout from '@layouts/main';
 import { useRouter } from 'next/router';
@@ -22,7 +26,6 @@ import Comments from '@components/comments';
 import moment from 'moment';
 import CanvassingTags from '@components/canvassing-tags';
 import VoterTags from '@components/voter-tags';
-import { TagInputsProps } from '@components/voter-tags/types';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
@@ -93,11 +96,6 @@ const Voter: FunctionComponent = () => {
     { id: '?', label: '?' },
   ];
 
-  const tags: TagInputsProps[] = [
-    { tags: ['tag1', 'tag2'] },
-    { tags: ['tag3', 'tag4'], onAddTag: (tag: string) => console.log(tag) },
-  ];
-
   const formActions = (
     <EuiFlexGroup direction="row" responsive={false} justifyContent="flexEnd">
       <EuiFlexItem grow={false}>
@@ -111,8 +109,67 @@ const Voter: FunctionComponent = () => {
     </EuiFlexGroup>
   );
 
+  const voterDistrict = (
+    <EuiFlexItem grow={true} style={{ marginTop: '10px' }}>
+      <EuiFlexGroup direction="column" gutterSize="xs">
+        <EuiFlexItem>
+          <EuiPanel
+            paddingSize="s"
+            style={{
+              height: '30px',
+              display: 'flex',
+              alignItems: 'center',
+              width: '100%',
+            }}>
+            <EuiText size="xs" style={{ fontWeight: 'bold', margin: 'auto' }}>
+              District: Capetown CBD
+            </EuiText>
+          </EuiPanel>
+        </EuiFlexItem>
+        <EuiFlexItem>
+          <EuiPanel
+            paddingSize="s"
+            style={{ height: '30px', display: 'flex', alignItems: 'center' }}>
+            <EuiText size="xs" style={{ fontWeight: 'bold', margin: 'auto' }}>
+              Station: Capetown CBD
+            </EuiText>
+          </EuiPanel>
+        </EuiFlexItem>
+      </EuiFlexGroup>
+    </EuiFlexItem>
+  );
+
+  const voterInfo = [
+    <EuiFlexGroup direction="column" alignItems="flexStart" key={0}>
+      <EuiFlexItem style={{ width: '100%' }}>
+        <EuiTitle size="l">
+          <EuiTextColor color="orange">John Smith (42)</EuiTextColor>
+        </EuiTitle>
+        <EuiText size="s" style={{ fontWeight: 'bold', marginTop: '1px' }}>
+          1988/03/12
+        </EuiText>
+        <EuiText size="s" style={{ fontWeight: 'bold', marginTop: '3px' }}>
+          DARN: 2423232424
+        </EuiText>
+        <EuiText size="s" style={{ fontWeight: 'bold', marginTop: '3px' }}>
+          Last Canvassed: John Doe on Wed, 12 Oct 2022
+        </EuiText>
+        {voterDistrict}
+      </EuiFlexItem>
+    </EuiFlexGroup>,
+  ];
+
   return (
-    <MainLayout breadcrumb={breadcrumb} pageTitle="Voter Canvassing">
+    <MainLayout breadcrumb={breadcrumb}>
+      <EuiPanel style={{ border: '1px solid rgba(196, 196, 196, 0.5)' }}>
+        <EuiFlexGroup
+          direction="column"
+          alignItems="flexStart"
+          justifyContent="spaceBetween">
+          <EuiFlexItem style={{ width: '100%' }}>{voterInfo[0]}</EuiFlexItem>
+        </EuiFlexGroup>
+      </EuiPanel>
+      <EuiSpacer />
       <EuiForm fullWidth>
         <EuiFormFieldset legend={{ children: 'Personal details' }}>
           <EuiFormRow display="rowCompressed" label="Surname">
@@ -273,15 +330,36 @@ const Voter: FunctionComponent = () => {
 
         <EuiFormFieldset legend={{ children: 'Tags' }}>
           <EuiFormRow display="rowCompressed">
-            <VoterTags tags={tags} />
+            <VoterTags
+              tags={[
+                {
+                  label:
+                    'Consectetur, adipisicing elit. Unde quas Consectetur, adipisicing elit.',
+                },
+                {
+                  label:
+                    'Dolor sit amet consectetur, adipisicing elit. Unde quas.',
+                },
+                {
+                  label:
+                    'Adipisicing elit. Unde quas. Consectetur, adipisicing elit.',
+                },
+                {
+                  label:
+                    'Lorem ipsum dolor sit amet consectetur Consectetur, adipisicing elit.',
+                },
+                {
+                  label: 'Lorem isspsum dolor sit amet',
+                },
+              ]}
+            />
           </EuiFormRow>
         </EuiFormFieldset>
 
         <EuiSpacer />
-
-        <EuiFormFieldset legend={{ children: 'Custom fields' }}>
+        {/* <EuiFormFieldset legend={{ children: 'Custom fields' }}>
           <></>
-        </EuiFormFieldset>
+        </EuiFormFieldset> */}
       </EuiForm>
       <EuiSpacer />
       {formActions}

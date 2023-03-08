@@ -14,7 +14,7 @@ export interface Props {
   onAddTag?: (tag: string) => void;
 }
 
-const VoterTags: React.FC<Props> = ({ onAddTag }: Props) => {
+const VoterTags: React.FC<Props> = ({ onAddTag, items }: Props) => {
   const [selectedOption, setSelectedOptions] = useState<
     EuiComboBoxOptionOption[]
   >([]);
@@ -47,8 +47,8 @@ const VoterTags: React.FC<Props> = ({ onAddTag }: Props) => {
     selectedOptions: EuiComboBoxOptionOption<string | number | string[]>[]
   ) => {
     const selectedOptionLabels = selectedOptions.map(option => option.label);
-    const selectedOptionsFromList = options.filter(option =>
-      selectedOptionLabels.includes(option.label)
+    const selectedOptionsFromList = items.filter(item =>
+      selectedOptionLabels.includes(item.label)
     );
     setSelectedTags([...selectedTags, ...selectedOptionsFromList]);
     setSelectedOptions(selectedOptions);
@@ -70,9 +70,9 @@ const VoterTags: React.FC<Props> = ({ onAddTag }: Props) => {
           '.euiBadge__iconButton:hover svg': {
             fill: 'red',
           },
-          marginTop: '10px',
-          border: i === 0 ? '2px solid #1EA7FD' : '2px solid #CBD2D9',
-          backgroundColor: i === 0 ? '#E3F3FF' : 'inherit',
+          marginTop: '0.1px',
+          border: 'none',
+          backgroundColor: '#E3F3FF',
           fontSize: '0.9rem',
         }}
         color="hollow"
@@ -95,21 +95,7 @@ const VoterTags: React.FC<Props> = ({ onAddTag }: Props) => {
     }
   };
 
-  const options = [
-    {
-      label:
-        'Consectetur, adipisicing elit. Unde quas Consectetur, adipisicing elit.',
-    },
-    { label: 'Dolor sit amet consectetur, adipisicing elit. Unde quas.' },
-    { label: 'Adipisicing elit. Unde quas. Consectetur, adipisicing elit.' },
-    {
-      label:
-        'Lorem ipsum dolor sit amet consectetur Consectetur, adipisicing elit.',
-    },
-    {
-      label: 'Lorem ipsum dolor sit amet',
-    },
-  ];
+  const options = items.map(item => ({ label: item.label }));
 
   return (
     <>
@@ -127,12 +113,13 @@ const VoterTags: React.FC<Props> = ({ onAddTag }: Props) => {
           '.euiComboBoxPill--plainText': {
             display: 'none',
           },
+          marginBottom: '5px',
         }}
       />
       <EuiFlexGroup
         direction="column"
         gutterSize="xs"
-        style={{ maxHeight: '150px', overflow: 'auto' }}>
+        style={{ maxHeight: '250px', overflow: 'auto' }}>
         {tagBadges}
       </EuiFlexGroup>
     </>

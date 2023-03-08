@@ -1,4 +1,4 @@
 export interface TagInputsProps {
-  tags: string[];
+  label: string;
   onAddTag?: (tag: string) => void;
 }
