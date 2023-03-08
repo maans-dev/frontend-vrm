@@ -36,8 +36,9 @@ const Index: FunctionComponent = () => {
   return (
     <MainLayout
       breadcrumb={breadcrumb}
-      pageTitle="Select a voter"
-      restrictWidth={false}>
+      // pageTitle="Select a voter"
+      panelled={true}
+      restrictWidth={1400}>
       <VoterSearch />
     </MainLayout>
   );

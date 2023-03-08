@@ -3,6 +3,7 @@ import SearchOptions from './search-options';
 import SearchResults from './search-results';
 import { VoterSearchResult } from './types';
 import { faker } from '@faker-js/faker';
+import { EuiCard } from '@elastic/eui';
 
 export type Props = {
   prop?: string;

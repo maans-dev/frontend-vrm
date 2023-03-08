@@ -8,10 +8,13 @@ import {
   EuiFlexItem,
   EuiFlexGrid,
   Criteria,
+  useIsWithinBreakpoints,
+  EuiHealth,
 } from '@elastic/eui';
 import moment from 'moment';
 import router from 'next/router';
 import { VoterSearchResult } from './types';
+import { css, Global } from '@emotion/react';
 
 export type Props = {
   results?: VoterSearchResult[];
@@ -20,6 +23,7 @@ export type Props = {
 const SearchResults: FunctionComponent<Props> = ({ results }) => {
   const [sortField, setSortField] = useState<keyof VoterSearchResult>('name');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const isMobile = useIsWithinBreakpoints(['xs', 's']);
 
   const onTableChange = ({ sort }: Criteria<VoterSearchResult>) => {
     if (sort) {
@@ -54,10 +58,11 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
       valign: 'top',
       mobileOptions: {
         header: false,
+        width: '100%',
         render: item => (
-          <EuiText size="s">
+          <EuiHealth color={item.colour} textSize="s">
             <strong>{item.name}</strong>
-          </EuiText>
+          </EuiHealth>
         ),
       },
     },
@@ -73,6 +78,7 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
           false
         )})`,
       mobileOptions: {
+        show: true,
         header: false,
       },
     },
@@ -109,6 +115,7 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
       ),
       mobileOptions: {
         header: false,
+        show: false,
       },
     },
     {
@@ -158,24 +165,48 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
   ];
 
   return (
-    <EuiBasicTable
-      tableCaption="Voter search results"
-      items={results}
-      rowHeader="darn"
-      columns={columns}
-      // compressed
-      // responsive={false}
-      tableLayout="auto"
-      sorting={{
-        sort: {
-          field: sortField,
-          direction: sortDirection,
-        },
-        enableAllColumns: true,
-      }}
-      rowProps={getRowProps}
-      onChange={onTableChange}
-    />
+    <>
+      {isMobile ? (
+        <Global
+          styles={css`
+            .voter-search .euiTable {
+              line-height: 1.4rem;
+            }
+            .voter-search .euiTable.euiTable--responsive .euiTableRow {
+              padding: 5px;
+              box-shadow: none;
+              border: 1px solid lightgrey;
+            }
+            .voter-search .euiTableCellContent {
+              padding: 0;
+              font-size: 12px;
+            }
+            .voter-search .euiTableRow td:nth-child(n + 3) {
+              margin-left: 20px;
+            }
+          `}
+        />
+      ) : null}
+      <EuiBasicTable
+        className="voter-search"
+        tableCaption="Voter search results"
+        items={results}
+        rowHeader="darn"
+        columns={columns}
+        // compressed
+        // responsive={false}
+        tableLayout="auto"
+        sorting={{
+          sort: {
+            field: sortField,
+            direction: sortDirection,
+          },
+          enableAllColumns: true,
+        }}
+        rowProps={getRowProps}
+        onChange={onTableChange}
+      />
+    </>
   );
 };
 
