@@ -4,32 +4,26 @@ import {
   EuiFormRow,
   EuiFieldText,
   EuiSpacer,
-  EuiFormFieldset,
   EuiDatePicker,
   EuiButton,
   EuiButtonEmpty,
   EuiFlexGroup,
   EuiFlexItem,
 } from '@elastic/eui';
-import router from 'next/router';
 import { FunctionComponent } from 'react';
 
 export type Props = {
-  prop?: string;
+  onSubmit?: (options) => void;
 };
 
-const SearchOptions: FunctionComponent<Props> = () => {
+const SearchOptions: FunctionComponent<Props> = ({ onSubmit }) => {
   const formActions = (
     <EuiFlexGroup direction="row" responsive={false} justifyContent="flexEnd">
       <EuiFlexItem grow={false}>
         <EuiButtonEmpty size="m">Reset</EuiButtonEmpty>
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
-        <EuiButton
-          size="m"
-          iconType="search"
-          fill
-          onClick={() => router.push('/canvass/voter')}>
+        <EuiButton size="m" iconType="search" fill onClick={() => onSubmit({})}>
           Search
         </EuiButton>
       </EuiFlexItem>
@@ -48,49 +42,49 @@ const SearchOptions: FunctionComponent<Props> = () => {
 
       <EuiSpacer />
 
-      <EuiFormFieldset legend={{ children: 'Personal details' }}>
-        <EuiFormRow display="rowCompressed" label="Date of birth">
-          <EuiDatePicker name="dob" />
-        </EuiFormRow>
+      {/* <EuiFormFieldset legend={{ children: 'Personal details' }}> */}
+      <EuiFormRow display="rowCompressed" label="Date of birth">
+        <EuiDatePicker name="dob" />
+      </EuiFormRow>
 
-        <EuiFormRow display="rowCompressed" label="Surname">
-          <EuiFieldText
-            name="surname"
-            compressed
-            append={<AdvancedSearchTooltip />}
-          />
-        </EuiFormRow>
+      <EuiFormRow display="rowCompressed" label="Surname">
+        <EuiFieldText
+          name="surname"
+          compressed
+          append={<AdvancedSearchTooltip />}
+        />
+      </EuiFormRow>
 
-        <EuiFormRow display="rowCompressed" label="First names">
-          <EuiFieldText
-            name="first"
-            compressed
-            append={<AdvancedSearchTooltip />}
-          />
-        </EuiFormRow>
-      </EuiFormFieldset>
+      <EuiFormRow display="rowCompressed" label="First names">
+        <EuiFieldText
+          name="first"
+          compressed
+          append={<AdvancedSearchTooltip />}
+        />
+      </EuiFormRow>
+      {/* </EuiFormFieldset> */}
 
       <EuiSpacer />
 
-      <EuiFormFieldset legend={{ children: 'Contact details' }}>
-        <EuiFormRow display="rowCompressed" label="Email">
-          <EuiFieldText
-            name="email"
-            compressed
-            append={<AdvancedSearchTooltip />}
-          />
-        </EuiFormRow>
+      {/* <EuiFormFieldset legend={{ children: 'Contact details' }}> */}
+      <EuiFormRow display="rowCompressed" label="Email">
+        <EuiFieldText
+          name="email"
+          compressed
+          append={<AdvancedSearchTooltip />}
+        />
+      </EuiFormRow>
 
-        <EuiFormRow display="rowCompressed" label="Phone">
-          <EuiFieldText
-            name="phone"
-            compressed
-            append={<AdvancedSearchTooltip />}
-          />
-        </EuiFormRow>
-      </EuiFormFieldset>
+      <EuiFormRow display="rowCompressed" label="Phone">
+        <EuiFieldText
+          name="phone"
+          compressed
+          append={<AdvancedSearchTooltip />}
+        />
+      </EuiFormRow>
+      {/* </EuiFormFieldset> */}
       <EuiSpacer />
-      {formActions}
+      {onSubmit ? formActions : null}
     </EuiForm>
   );
 };

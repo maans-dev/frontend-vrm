@@ -193,8 +193,6 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
         items={results}
         rowHeader="darn"
         columns={columns}
-        // compressed
-        // responsive={false}
         tableLayout="auto"
         sorting={{
           sort: {
@@ -205,6 +203,11 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
         }}
         rowProps={getRowProps}
         onChange={onTableChange}
+        noItemsMessage={
+          <>
+            <EuiText>No voter&apos;s found. Please search again.</EuiText>
+          </>
+        }
       />
     </>
   );

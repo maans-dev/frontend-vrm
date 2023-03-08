@@ -1,20 +1,7 @@
 import { FunctionComponent } from 'react';
-import {
-  EuiBreadcrumb,
-  EuiButton,
-  EuiButtonEmpty,
-  EuiDatePicker,
-  EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiForm,
-  EuiFormFieldset,
-  EuiFormRow,
-  EuiSpacer,
-} from '@elastic/eui';
+import { EuiBreadcrumb } from '@elastic/eui';
 import MainLayout from '@layouts/main';
 import { useRouter } from 'next/router';
-import { AdvancedSearchTooltip } from '@components/form/advanced-search-tooltip';
 import VoterSearch from '@components/voter-search';
 
 const Index: FunctionComponent = () => {
@@ -38,7 +25,7 @@ const Index: FunctionComponent = () => {
       breadcrumb={breadcrumb}
       // pageTitle="Select a voter"
       panelled={true}
-      restrictWidth={1400}>
+      restrictWidth={true}>
       <VoterSearch />
     </MainLayout>
   );
