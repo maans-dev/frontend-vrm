@@ -1,5 +1,6 @@
 import { FunctionComponent } from 'react';
 import {
+  EuiBadge,
   EuiBreadcrumb,
   EuiButton,
   EuiButtonEmpty,
@@ -11,6 +12,7 @@ import {
   EuiForm,
   EuiFormFieldset,
   EuiFormRow,
+  EuiIcon,
   EuiPanel,
   EuiSpacer,
   EuiSwitch,
@@ -26,6 +28,8 @@ import Comments from '@components/comments';
 import moment from 'moment';
 import CanvassingTags from '@components/canvassing-tags';
 import VoterTags from '@components/voter-tags';
+import { MdHowToVote } from 'react-icons/md';
+import { GiHouse } from 'react-icons/gi';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
@@ -110,65 +114,76 @@ const Voter: FunctionComponent = () => {
   );
 
   const voterDistrict = (
-    <EuiFlexItem grow={true} style={{ marginTop: '10px' }}>
-      <EuiFlexGroup direction="column" gutterSize="xs">
-        <EuiFlexItem>
-          <EuiPanel
-            paddingSize="s"
-            style={{
-              height: '30px',
-              display: 'flex',
-              alignItems: 'center',
-              width: '100%',
-            }}>
-            <EuiText size="xs" style={{ fontWeight: 'bold', margin: 'auto' }}>
-              District: Capetown CBD
-            </EuiText>
-          </EuiPanel>
-        </EuiFlexItem>
-        <EuiFlexItem>
-          <EuiPanel
-            paddingSize="s"
-            style={{ height: '30px', display: 'flex', alignItems: 'center' }}>
-            <EuiText size="xs" style={{ fontWeight: 'bold', margin: 'auto' }}>
-              Station: Capetown CBD
-            </EuiText>
-          </EuiPanel>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-    </EuiFlexItem>
+    <EuiFlexGroup gutterSize="xs" justifyContent="spaceBetween">
+      <EuiFlexItem>
+        <EuiPanel hasBorder={true} paddingSize="xs">
+          <EuiText size="xs">
+            <EuiIcon type={MdHowToVote} /> Claremont Primary School (97090410)
+          </EuiText>
+        </EuiPanel>
+      </EuiFlexItem>
+      <EuiFlexItem>
+        <EuiPanel paddingSize="xs" hasBorder={true}>
+          <EuiText size="xs">
+            <EuiIcon type={GiHouse} /> Claremont Primary School (97090410)
+          </EuiText>
+        </EuiPanel>
+      </EuiFlexItem>
+    </EuiFlexGroup>
   );
 
-  const voterInfo = [
-    <EuiFlexGroup direction="column" alignItems="flexStart" key={0}>
-      <EuiFlexItem style={{ width: '100%' }}>
-        <EuiTitle size="l">
-          <EuiTextColor color="orange">John Smith (42)</EuiTextColor>
-        </EuiTitle>
-        <EuiText size="s" style={{ fontWeight: 'bold', marginTop: '1px' }}>
-          1988/03/12
-        </EuiText>
-        <EuiText size="s" style={{ fontWeight: 'bold', marginTop: '3px' }}>
-          DARN: 2423232424
-        </EuiText>
-        <EuiText size="s" style={{ fontWeight: 'bold', marginTop: '3px' }}>
-          Last Canvassed: John Doe on Wed, 12 Oct 2022
-        </EuiText>
-        {voterDistrict}
-      </EuiFlexItem>
-    </EuiFlexGroup>,
-  ];
+  const voterInfo = (
+    <>
+      <EuiFlexGroup justifyContent="spaceBetween" gutterSize="xs">
+        <EuiFlexItem grow={false}>
+          <EuiTitle size="xs">
+            <EuiTextColor>John Smith (42)</EuiTextColor>
+          </EuiTitle>
+        </EuiFlexItem>
+        <EuiFlexItem grow={false}>
+          <EuiBadge color="green" iconType="checkInCircleFilled">
+            Registered Correctly
+          </EuiBadge>
+        </EuiFlexItem>
+      </EuiFlexGroup>
+
+      <EuiSpacer size="s" />
+
+      <EuiFlexGroup justifyContent="spaceBetween" gutterSize="xs">
+        <EuiFlexItem grow={false}>
+          <EuiText size="xs">
+            DOB <strong>1988/03/12</strong>
+          </EuiText>
+        </EuiFlexItem>
+        <EuiFlexItem grow={false}>
+          <EuiText size="xs">
+            DARN <strong>2423232424</strong>
+          </EuiText>
+        </EuiFlexItem>
+        <EuiFlexItem grow={false}>
+          <EuiFlexGroup justifyContent="spaceBetween" gutterSize="xs">
+            <EuiFlexItem grow={false}>
+              <EuiText size="xs">
+                Last Canvassed on <strong>Wed, 12 Oct 2022</strong>
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiText size="xs">
+                by <strong>John Doe</strong>
+              </EuiText>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </EuiFlexItem>
+      </EuiFlexGroup>
+
+      <EuiSpacer size="s" />
+      {voterDistrict}
+    </>
+  );
 
   return (
     <MainLayout breadcrumb={breadcrumb}>
-      <EuiPanel style={{ border: '1px solid rgba(196, 196, 196, 0.5)' }}>
-        <EuiFlexGroup
-          direction="column"
-          alignItems="flexStart"
-          justifyContent="spaceBetween">
-          <EuiFlexItem style={{ width: '100%' }}>{voterInfo[0]}</EuiFlexItem>
-        </EuiFlexGroup>
-      </EuiPanel>
+      <EuiPanel>{voterInfo}</EuiPanel>
       <EuiSpacer />
       <EuiForm fullWidth>
         <EuiFormFieldset legend={{ children: 'Personal details' }}>
