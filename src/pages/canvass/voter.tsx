@@ -30,6 +30,7 @@ import CanvassingTags from '@components/canvassing-tags';
 import VoterTags from '@components/voter-tags';
 import { MdHowToVote } from 'react-icons/md';
 import { GiHouse } from 'react-icons/gi';
+import Address from '@components/living-address';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
@@ -303,7 +304,7 @@ const Voter: FunctionComponent = () => {
         <EuiSpacer />
 
         <EuiFormFieldset legend={{ children: 'Living Address' }}>
-          <></>
+          <Address />
         </EuiFormFieldset>
 
         <EuiSpacer />
