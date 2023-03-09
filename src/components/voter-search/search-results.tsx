@@ -25,7 +25,6 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
   // const [sortField, setSortField] = useState<keyof Person>('name');
   // const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const isMobile = useIsWithinBreakpoints(['xs', 's']);
-  console.log(results);
 
   const onTableChange = ({ sort }: Criteria<Person>) => {
     if (sort) {
@@ -132,11 +131,10 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
       },
     },
     {
-      field: 'status',
+      field: 'iec.regStatus',
       name: 'Reg Status',
       valign: 'top',
       css: { minWidth: '90px' },
-      render: () => <div>???</div>,
       mobileOptions: {
         show: false,
       },
@@ -155,24 +153,24 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
         show: false,
       },
     },
-    {
-      field: 'involvement',
-      name: 'Involvement',
-      valign: 'top',
-      css: { minWidth: '100px' },
-      render: () => (
-        <EuiFlexGrid gutterSize="s" columns={1}>
-          {/* {involvement.map(item => ( */}
-          <EuiFlexItem key={1} grow={false}>
-            <EuiBadge color="hollow">???</EuiBadge>
-          </EuiFlexItem>
-          {/* ))} */}
-        </EuiFlexGrid>
-      ),
-      mobileOptions: {
-        show: false,
-      },
-    },
+    // {
+    //   field: 'involvement',
+    //   name: 'Involvement',
+    //   valign: 'top',
+    //   css: { minWidth: '100px' },
+    //   render: () => (
+    //     <EuiFlexGrid gutterSize="s" columns={1}>
+    //       {/* {involvement.map(item => ( */}
+    //       <EuiFlexItem key={1} grow={false}>
+    //         <EuiBadge color="hollow">???</EuiBadge>
+    //       </EuiFlexItem>
+    //       {/* ))} */}
+    //     </EuiFlexGrid>
+    //   ),
+    //   mobileOptions: {
+    //     show: false,
+    //   },
+    // },
   ];
 
   return (

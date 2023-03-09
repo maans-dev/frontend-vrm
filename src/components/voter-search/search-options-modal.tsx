@@ -10,19 +10,22 @@ import {
   EuiModalHeaderTitle,
   EuiSpacer,
 } from '@elastic/eui';
+import { PersonSearchParams } from '@lib/domain/person-search';
 import { FunctionComponent, useState } from 'react';
 import SearchOptions from './search-options';
 
 export type Props = {
-  onSubmit?: (options) => void;
+  onSubmit?: (params: Partial<PersonSearchParams>) => void;
 };
 
 const SearchOptionsModal: FunctionComponent<Props> = ({ onSubmit }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [searchParams, setSearchParams] =
+    useState<Partial<PersonSearchParams>>(null);
   const closeModal = () => setIsModalVisible(false);
   const showModal = () => setIsModalVisible(true);
   const submit = () => {
-    onSubmit({});
+    onSubmit(searchParams);
     closeModal();
   };
 
@@ -36,7 +39,7 @@ const SearchOptionsModal: FunctionComponent<Props> = ({ onSubmit }) => {
         </EuiModalHeader>
 
         <EuiModalBody>
-          <SearchOptions />
+          <SearchOptions onChange={params => setSearchParams(params)} />
         </EuiModalBody>
 
         <EuiModalFooter>

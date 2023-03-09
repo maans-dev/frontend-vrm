@@ -14,22 +14,33 @@ import { PersonSearchParams } from '@lib/domain/person-search';
 import { FormEvent, FunctionComponent, useState } from 'react';
 
 export type Props = {
+  showFormActions?: boolean;
   onSubmit?: (params: Partial<PersonSearchParams>) => void;
+  onChange?: (params: Partial<PersonSearchParams>) => void;
 };
 
-const SearchOptions: FunctionComponent<Props> = ({ onSubmit }) => {
-  const [searchParams, setSearchParams] = useState<Partial<PersonSearchParams>>(
-    {}
-  );
+const SearchOptions: FunctionComponent<Props> = ({
+  showFormActions,
+  onSubmit,
+  onChange,
+}) => {
+  const [searchParams, setSearchParams] =
+    useState<Partial<PersonSearchParams>>(null);
 
-  const onChange = (event: FormEvent<HTMLFormElement>) => {
+  const doChange = (event: FormEvent<HTMLFormElement>) => {
     const target = event.target as HTMLFormElement;
     const name = target.name;
     const value = target.value;
-    setSearchParams(previousValue => ({
-      ...previousValue,
-      [name]: value,
-    }));
+    setSearchParams(previousValue => {
+      const newValue = {
+        ...previousValue,
+        [name]: value,
+      };
+
+      if (onChange) onChange(newValue);
+
+      return newValue;
+    });
   };
 
   const formActions = (
@@ -50,7 +61,7 @@ const SearchOptions: FunctionComponent<Props> = ({ onSubmit }) => {
   );
 
   return (
-    <EuiForm fullWidth component="form" onChange={onChange}>
+    <EuiForm fullWidth component="form" onChange={doChange}>
       <EuiFormRow label="Identity" display="rowCompressed">
         <EuiFieldText
           name="identity"
@@ -61,7 +72,6 @@ const SearchOptions: FunctionComponent<Props> = ({ onSubmit }) => {
 
       <EuiSpacer />
 
-      {/* <EuiFormFieldset legend={{ children: 'Personal details' }}> */}
       <EuiFormRow display="rowCompressed" label="Date of birth">
         <EuiDatePicker name="dob" />
       </EuiFormRow>
@@ -76,16 +86,14 @@ const SearchOptions: FunctionComponent<Props> = ({ onSubmit }) => {
 
       <EuiFormRow display="rowCompressed" label="First names">
         <EuiFieldText
-          name="first"
+          name="firstName"
           compressed
           append={<AdvancedSearchTooltip />}
         />
       </EuiFormRow>
-      {/* </EuiFormFieldset> */}
 
       <EuiSpacer />
 
-      {/* <EuiFormFieldset legend={{ children: 'Contact details' }}> */}
       <EuiFormRow display="rowCompressed" label="Email">
         <EuiFieldText
           name="email"
@@ -101,9 +109,9 @@ const SearchOptions: FunctionComponent<Props> = ({ onSubmit }) => {
           append={<AdvancedSearchTooltip />}
         />
       </EuiFormRow>
-      {/* </EuiFormFieldset> */}
+
       <EuiSpacer />
-      {onSubmit ? formActions : null}
+      {showFormActions ? formActions : null}
     </EuiForm>
   );
 };
