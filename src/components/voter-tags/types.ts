@@ -1,4 +1,4 @@
-export interface TagInputsProps {
+export interface ITag {
   label: string;
-  onAddTag?: (tag: string) => void;
+  isDirty?: boolean;
 }

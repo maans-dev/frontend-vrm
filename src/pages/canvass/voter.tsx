@@ -346,26 +346,11 @@ const Voter: FunctionComponent = () => {
         <EuiFormFieldset legend={{ children: 'Tags' }}>
           <EuiFormRow display="rowCompressed">
             <VoterTags
-              tags={[
-                {
-                  label:
-                    'Consectetur, adipisicing elit. Unde quas Consectetur, adipisicing elit.',
-                },
-                {
-                  label:
-                    'Dolor sit amet consectetur, adipisicing elit. Unde quas.',
-                },
-                {
-                  label:
-                    'Adipisicing elit. Unde quas. Consectetur, adipisicing elit.',
-                },
-                {
-                  label:
-                    'Lorem ipsum dolor sit amet consectetur Consectetur, adipisicing elit.',
-                },
-                {
-                  label: 'Lorem isspsum dolor sit amet',
-                },
+              existingTags={[
+                { label: 'Tag 1' },
+                { label: 'Tag 2' },
+                { label: 'Tag 3' },
+                { label: 'Tag 4' },
               ]}
             />
           </EuiFormRow>
