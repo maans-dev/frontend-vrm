@@ -314,29 +314,21 @@ const Voter: FunctionComponent = () => {
             comments={[
               {
                 date: moment().subtract(4, 'days').toDate(),
+                type: 'user',
                 user: 'John Smith',
                 message: 'A short comment.',
               },
               {
                 date: moment().subtract(3, 'days').toDate(),
                 user: 'John Doe',
-                message:
-                  'A long comment. A long comment. A long comment. A long comment.',
+                type: 'member',
+                message: 'Another comment',
               },
               {
                 date: moment().subtract(2, 'days').toDate(),
                 user: 'system',
-                message: 'generated an event as a comment',
-              },
-              {
-                date: moment().subtract(1, 'days').toDate(),
-                user: 'Mary Smith',
-                message: 'Another comment.',
-              },
-              {
-                date: new Date(),
-                user: 'Mandy Someone',
-                message: 'And yet another comment.',
+                type: 'system',
+                message: 'a system event happened',
               },
             ]}
           />

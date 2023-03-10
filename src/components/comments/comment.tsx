@@ -8,13 +8,16 @@ import {
 import moment from 'moment';
 import { FunctionComponent } from 'react';
 import { IComment } from './types';
+import { CiUser } from 'react-icons/ci';
 
 export type Props = {
   comment: IComment;
 };
 
 const Comment: FunctionComponent<Props> = ({ comment }) => {
-  const isSystemComment = comment.user === 'system';
+  const isSystemComment = comment.type === 'system';
+  const isMemberComment = comment.type === 'member';
+
   const { euiTheme } = useEuiTheme();
 
   return (
@@ -34,7 +37,7 @@ const Comment: FunctionComponent<Props> = ({ comment }) => {
         ) : (
           <EuiAvatar
             name={comment.user}
-            iconType="editorComment"
+            iconType={isMemberComment ? CiUser : 'editorComment'}
             size="m"
             color={euiTheme.colors.lightShade}
           />
