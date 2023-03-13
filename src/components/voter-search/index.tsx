@@ -13,6 +13,7 @@ const VoterSearch: FunctionComponent<Props> = () => {
   const [results, setResults] = useState<VoterSearchResult[]>(null);
 
   const doSearch = options => {
+    console.log(options);
     const r: VoterSearchResult[] = [];
 
     for (let i = 0; i < 10; i++) {

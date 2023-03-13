@@ -10,20 +10,62 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
 } from '@elastic/eui';
-import { FunctionComponent } from 'react';
+import moment from 'moment';
+import { FunctionComponent, useState } from 'react';
 
 export type Props = {
   onSubmit?: (options) => void;
 };
 
 const SearchOptions: FunctionComponent<Props> = ({ onSubmit }) => {
+  const [state, setState] = useState({
+    id: '',
+    dob: null,
+    surname: '',
+    first: '',
+    email: '',
+    phone: '',
+  });
+
+  const handleChange = e => {
+    const { name, value } = e.target;
+    setState(prevState => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleDOBChange = date => {
+    setState(prevState => ({
+      ...prevState,
+      dob: date,
+    }));
+  };
+
+  const handleReset = () => {
+    setState({
+      id: '',
+      dob: null,
+      surname: '',
+      first: '',
+      email: '',
+      phone: '',
+    });
+  };
+
   const formActions = (
     <EuiFlexGroup direction="row" responsive={false} justifyContent="flexEnd">
       <EuiFlexItem grow={false}>
-        <EuiButtonEmpty size="m">Reset</EuiButtonEmpty>
+        <EuiButtonEmpty size="m" onClick={handleReset}>
+          Reset
+        </EuiButtonEmpty>
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
-        <EuiButton size="m" iconType="search" fill onClick={() => onSubmit({})}>
+        <EuiButton
+          size="m"
+          iconType="search"
+          fill
+          onClick={() => onSubmit(state)}>
           Search
         </EuiButton>
       </EuiFlexItem>
@@ -31,20 +73,28 @@ const SearchOptions: FunctionComponent<Props> = ({ onSubmit }) => {
   );
 
   return (
-    <EuiForm fullWidth>
+    <EuiForm fullWidth style={{ margin: 'auto' }} css={{ maxWidth: '600px' }}>
       <EuiFormRow label="Identity" display="rowCompressed">
         <EuiFieldText
           name="id"
           compressed
           placeholder="ID Number, DARN or Membership number"
+          value={state.id}
+          onChange={handleChange}
         />
       </EuiFormRow>
 
       <EuiSpacer />
 
-      {/* <EuiFormFieldset legend={{ children: 'Personal details' }}> */}
       <EuiFormRow display="rowCompressed" label="Date of birth">
-        <EuiDatePicker name="dob" />
+        <EuiDatePicker
+          name="dob"
+          dateFormat="D MMM YYYY"
+          selected={state.dob}
+          maxDate={moment().subtract(17, 'year')}
+          yearDropdownItemNumber={120}
+          onChange={handleDOBChange}
+        />
       </EuiFormRow>
 
       <EuiFormRow display="rowCompressed" label="Surname">
@@ -52,6 +102,8 @@ const SearchOptions: FunctionComponent<Props> = ({ onSubmit }) => {
           name="surname"
           compressed
           append={<AdvancedSearchTooltip />}
+          value={state.surname}
+          onChange={handleChange}
         />
       </EuiFormRow>
 
@@ -60,18 +112,20 @@ const SearchOptions: FunctionComponent<Props> = ({ onSubmit }) => {
           name="first"
           compressed
           append={<AdvancedSearchTooltip />}
+          value={state.first}
+          onChange={handleChange}
         />
       </EuiFormRow>
-      {/* </EuiFormFieldset> */}
 
       <EuiSpacer />
 
-      {/* <EuiFormFieldset legend={{ children: 'Contact details' }}> */}
       <EuiFormRow display="rowCompressed" label="Email">
         <EuiFieldText
           name="email"
           compressed
           append={<AdvancedSearchTooltip />}
+          value={state.email}
+          onChange={handleChange}
         />
       </EuiFormRow>
 
@@ -80,9 +134,10 @@ const SearchOptions: FunctionComponent<Props> = ({ onSubmit }) => {
           name="phone"
           compressed
           append={<AdvancedSearchTooltip />}
+          value={state.phone}
+          onChange={handleChange}
         />
       </EuiFormRow>
-      {/* </EuiFormFieldset> */}
       <EuiSpacer />
       {onSubmit ? formActions : null}
     </EuiForm>
