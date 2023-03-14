@@ -301,7 +301,7 @@ const Voter: FunctionComponent = () => {
 
         <EuiSpacer />
         <EuiFormFieldset legend={{ children: 'Canvassing tags' }}>
-          <CanvassingTags fields={tagsFromApi} />
+          {/* <CanvassingTags fields={tagsFromApi} /> */}
         </EuiFormFieldset>
 
         <EuiSpacer />
