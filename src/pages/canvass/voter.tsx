@@ -26,7 +26,7 @@ import PhoneNumbers from '@components/form/phone-numbers';
 import EmailAddress from '@components/form/email-address';
 import Comments from '@components/comments';
 import moment from 'moment';
-import CanvassingTags from '@components/canvassing-tags';
+// import CanvassingTags from '@components/canvassing-tags';
 import VoterTags from '@components/voter-tags';
 import { MdHowToVote } from 'react-icons/md';
 import { GiHouse } from 'react-icons/gi';
