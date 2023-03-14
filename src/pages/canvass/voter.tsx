@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 import {
   EuiBadge,
   EuiBreadcrumb,
@@ -31,8 +31,17 @@ import VoterTags from '@components/voter-tags';
 import { MdHowToVote } from 'react-icons/md';
 import { GiHouse } from 'react-icons/gi';
 import Address from '@components/living-address';
+import { useVoterData } from './useVoterData';
+import { ITags } from '@components/canvassing-tags/types';
 
 const Voter: FunctionComponent = () => {
+  const { voterData, error, isLoading } = useVoterData();
+  // const [formData, setFormData] = useState({
+  //   surname: voterData[0].surname,
+  //   firstNames: voterData[0].firstName,
+  //   preferredName: voterData[0].givenName,
+  //   deceased: voterData[0].deceased,
+  // });
   const router = useRouter();
   const breadcrumb: EuiBreadcrumb[] = [
     {
@@ -55,6 +64,53 @@ const Voter: FunctionComponent = () => {
       text: 'Voter',
     },
   ];
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  function formatDate(dob: number) {
+    const date = new Date(
+      dob.toString().replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3')
+    );
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}/${month}/${day}`;
+  }
+
+  function calculateAge(dob: number): number {
+    const year = Number(String(dob).substring(0, 4));
+    const month = Number(String(dob).substring(4, 6)) - 1;
+    const day = Number(String(dob).substring(6, 8));
+
+    const birthDate = new Date(year, month, day);
+    const today = new Date();
+
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+
+    return age;
+  }
+
+  function capitalizeWords(str: string): string {
+    return str
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' '); // join the array back into a string
+  }
 
   const affilitions = [
     {
@@ -101,6 +157,20 @@ const Voter: FunctionComponent = () => {
     { id: '?', label: '?' },
   ];
 
+  const tagsFromApi: ITags = {
+    fields:
+      voterData?.[0]?.fields?.map(field => ({
+        field: {
+          category: field?.field?.category,
+          code: field?.field?.code,
+          description: field?.field?.description,
+          active: field?.field?.active,
+        },
+      })) || [],
+  };
+
+  console.log(tagsFromApi);
+
   const formActions = (
     <EuiFlexGroup direction="row" responsive={false} justifyContent="flexEnd">
       <EuiFlexItem grow={false}>
@@ -117,16 +187,20 @@ const Voter: FunctionComponent = () => {
   const voterDistrict = (
     <EuiFlexGroup gutterSize="xs" justifyContent="spaceBetween">
       <EuiFlexItem>
-        <EuiPanel hasBorder={true} paddingSize="xs">
+        <EuiPanel paddingSize="xs" hasBorder={true}>
           <EuiText size="xs">
-            <EuiIcon type={MdHowToVote} /> Claremont Primary School (97090410)
+            <EuiIcon type={GiHouse} />{' '}
+            {capitalizeWords(voterData[0].livingStructure.votingDistrict)} (
+            {voterData[0].livingStructure.votingDistrict_id})
           </EuiText>
         </EuiPanel>
       </EuiFlexItem>
       <EuiFlexItem>
-        <EuiPanel paddingSize="xs" hasBorder={true}>
+        <EuiPanel hasBorder={true} paddingSize="xs">
           <EuiText size="xs">
-            <EuiIcon type={GiHouse} /> Claremont Primary School (97090410)
+            <EuiIcon type={MdHowToVote} />{' '}
+            {capitalizeWords(voterData[0].registeredStructure.votingDistrict)} (
+            {voterData[0].registeredStructure.votingDistrict_id})
           </EuiText>
         </EuiPanel>
       </EuiFlexItem>
@@ -138,12 +212,15 @@ const Voter: FunctionComponent = () => {
       <EuiFlexGroup justifyContent="spaceBetween" gutterSize="xs">
         <EuiFlexItem grow={false}>
           <EuiTitle size="xs">
-            <EuiTextColor>John Smith (42)</EuiTextColor>
+            <EuiTextColor>
+              {voterData[0].salutation} {voterData[0].firstName} (
+              {calculateAge(voterData[0].dob)})
+            </EuiTextColor>
           </EuiTitle>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiBadge color="green" iconType="checkInCircleFilled">
-            Registered Correctly
+            {voterData[0].colourCode.description}
           </EuiBadge>
         </EuiFlexItem>
       </EuiFlexGroup>
@@ -153,19 +230,20 @@ const Voter: FunctionComponent = () => {
       <EuiFlexGroup justifyContent="spaceBetween" gutterSize="xs">
         <EuiFlexItem grow={false}>
           <EuiText size="xs">
-            DOB <strong>1988/03/12</strong>
+            DOB <strong>{formatDate(voterData[0].dob)}</strong>
           </EuiText>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiText size="xs">
-            DARN <strong>2423232424</strong>
+            DARN <strong>{voterData[0].key}</strong>
           </EuiText>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiFlexGroup justifyContent="spaceBetween" gutterSize="xs">
             <EuiFlexItem grow={false}>
               <EuiText size="xs">
-                Last Canvassed on <strong>Wed, 12 Oct 2022</strong>
+                Last Canvassed on{' '}
+                <strong>{formatDate(voterData[0].modified)}</strong>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
@@ -188,21 +266,33 @@ const Voter: FunctionComponent = () => {
       <EuiSpacer />
       <EuiForm fullWidth>
         <EuiFormFieldset legend={{ children: 'Personal details' }}>
-          <EuiFormRow display="rowCompressed" label="Surname">
-            <EuiFieldText name="surname" compressed disabled value="DOE" />
-          </EuiFormRow>
-
           <EuiFormRow display="rowCompressed" label="First names">
-            <EuiFieldText name="firstNames" compressed disabled value="JOHN" />
+            <EuiFieldText
+              name="firstNames"
+              compressed
+              disabled
+              value={voterData[0].firstName}
+            />
+          </EuiFormRow>
+          <EuiFormRow display="rowCompressed" label="Surname">
+            <EuiFieldText
+              name="surname"
+              compressed
+              disabled
+              value={voterData[0].surname}
+            />
           </EuiFormRow>
           <EuiFormRow display="rowCompressed" label="Preferred name">
-            <EuiFieldText name="preferredName" compressed />
+            <EuiFieldText
+              name="preferredName"
+              compressed
+              value={voterData[0].givenName}
+            />
           </EuiFormRow>
           <EuiFormRow display="rowCompressed">
             <EuiSwitch
               label="Deceased?"
-              // compressed
-              checked={true}
+              checked={voterData[0].deceased}
               name="deceased"
               onChange={() => null}
             />
@@ -211,16 +301,7 @@ const Voter: FunctionComponent = () => {
 
         <EuiSpacer />
         <EuiFormFieldset legend={{ children: 'Canvassing tags' }}>
-          <CanvassingTags
-            tags={[
-              { tag: 'WR', description: 'Will register' },
-              { tag: 'ASTREG', description: 'Assisted to register' },
-              { tag: 'DR', description: 'Did register' },
-              { tag: 'WV', description: "Won't vote" },
-              { tag: 'CV', description: "Can't vote" },
-              { tag: 'M', description: 'Moved' },
-            ]}
-          />
+          <CanvassingTags fields={tagsFromApi} />
         </EuiFormFieldset>
 
         <EuiSpacer />
