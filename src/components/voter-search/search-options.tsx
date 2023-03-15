@@ -11,6 +11,7 @@ import {
   EuiFlexItem,
 } from '@elastic/eui';
 import { PersonSearchParams } from '@lib/domain/person-search';
+import moment, { Moment } from 'moment';
 import { FormEvent, FunctionComponent, useState } from 'react';
 
 export type Props = {
@@ -27,7 +28,7 @@ const SearchOptions: FunctionComponent<Props> = ({
   const [searchParams, setSearchParams] =
     useState<Partial<PersonSearchParams>>(null);
 
-  const doChange = (event: FormEvent<HTMLFormElement>) => {
+  const handleChange = (event: FormEvent<HTMLFormElement>) => {
     const target = event.target as HTMLFormElement;
     const name = target.name;
     const value = target.value;
@@ -43,10 +44,38 @@ const SearchOptions: FunctionComponent<Props> = ({
     });
   };
 
+  const handleDOBChange = (date: Moment) => {
+    setSearchParams(previousValue => {
+      const newValue = {
+        ...previousValue,
+        dob: date?.isValid ? date.format('YYYYMMDD') : '',
+      };
+
+      if (onChange) onChange(newValue);
+
+      console.log('dob', newValue);
+
+      return newValue;
+    });
+  };
+
+  const handleReset = () => {
+    setSearchParams({
+      identity: '',
+      dob: null,
+      surname: '',
+      firstName: '',
+      email: '',
+      phone: '',
+    });
+  };
+
   const formActions = (
     <EuiFlexGroup direction="row" responsive={false} justifyContent="flexEnd">
       <EuiFlexItem grow={false}>
-        <EuiButtonEmpty size="m">Reset</EuiButtonEmpty>
+        <EuiButtonEmpty size="m" onClick={handleReset}>
+          Reset
+        </EuiButtonEmpty>
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
         <EuiButton
@@ -61,7 +90,7 @@ const SearchOptions: FunctionComponent<Props> = ({
   );
 
   return (
-    <EuiForm fullWidth component="form" onChange={doChange}>
+    <EuiForm fullWidth component="form" onChange={handleChange}>
       <EuiFormRow label="Identity" display="rowCompressed">
         <EuiFieldText
           name="identity"
@@ -73,7 +102,17 @@ const SearchOptions: FunctionComponent<Props> = ({
       <EuiSpacer />
 
       <EuiFormRow display="rowCompressed" label="Date of birth">
-        <EuiDatePicker name="dob" />
+        <EuiDatePicker
+          name="dob"
+          dateFormat={['DD MMM YYYY', 'YYYYMMDD']}
+          adjustDateOnChange={false}
+          selected={
+            searchParams?.dob ? moment(searchParams.dob, 'YYYYMMDD') : null
+          }
+          maxDate={moment().subtract(17, 'year')}
+          yearDropdownItemNumber={120}
+          onSelect={handleDOBChange}
+        />
       </EuiFormRow>
 
       <EuiFormRow display="rowCompressed" label="Surname">

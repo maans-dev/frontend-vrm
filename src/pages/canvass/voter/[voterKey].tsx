@@ -3,8 +3,6 @@ import {
   EuiBreadcrumb,
   EuiButton,
   EuiButtonEmpty,
-  EuiCallOut,
-  EuiComboBox,
   EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
@@ -28,7 +26,7 @@ import usePersonFetcher from '@lib/fetcher/person/person.fetcher';
 import VoterInfo from '@components/voter-info';
 import CanvassingTags from '@components/canvassing-tags';
 import Affiliation from '@components/affiliation/affiliation';
-import ContactDetails from '@components/contact-details/contact-details';
+// import ContactDetails from '@components/contact-details/contact-details';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
@@ -144,7 +142,7 @@ const Voter: FunctionComponent = () => {
         <EuiSpacer />
 
         <EuiFormFieldset legend={{ children: 'Contact details' }}>
-          <ContactDetails language={person.language} />
+          {/* <ContactDetails language={person.language} /> */}
 
           <EuiFormRow display="rowCompressed" label="Phone Numbers">
             <PhoneNumbers

@@ -1,21 +1,16 @@
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent } from 'react';
 import {
   EuiBasicTableColumn,
   EuiBasicTable,
   EuiText,
-  EuiSpacer,
   EuiBadge,
-  EuiFlexItem,
-  EuiFlexGrid,
   Criteria,
   useIsWithinBreakpoints,
 } from '@elastic/eui';
 import moment from 'moment';
 import router from 'next/router';
-import { VoterSearchResult } from './types';
 import { css, Global } from '@emotion/react';
 import { Person } from '@lib/domain/person';
-import { capitalize } from 'lodash';
 
 export type Props = {
   results?: Person[];
@@ -40,7 +35,7 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
       className: 'voter-search-row',
       css: {
         borderLeft: isMobile
-          ? `5px solid ${voter.colourCode.colour} !important`
+          ? `5px solid #${voter.colourCode.colour} !important`
           : null,
       },
       onClick: () => router.push(`/canvass/voter/${voter.key}`),

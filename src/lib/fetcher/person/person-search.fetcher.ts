@@ -8,10 +8,26 @@ export default function usePersonSearchFetcher(
   params: Partial<PersonSearchParams>
 ) {
   const shouldFetch = params ? true : false;
+  let contactibility = null;
+  if (shouldFetch) {
+    if (params.phone || params.email) {
+      contactibility = {}
+      if (params.phone) {
+        contactibility['PHONE'] = { canContact: true, value: params.phone }
+        delete params.phone;
+      }
+      if (params.email) {
+        contactibility['EMAIL'] = { canContact: true, value: params.email }
+        delete params.email;
+      }
+
+      params.contactability = JSON.stringify(contactibility);
+    }
+  }
 
   const { data, error, isLoading } = useSWR<Person[]>(
     shouldFetch
-      ? `/person?template=["Address", "IEC"]&${new URLSearchParams(
+      ? `/person?template=["Address","IEC","Contact"]&limit=10&${new URLSearchParams(
         params as never
       ).toString()}`
       : null,
