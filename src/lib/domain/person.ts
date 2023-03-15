@@ -25,12 +25,44 @@ export interface Person {
   created: Date;
   modifiedBy: string; //TODO: this field should contain a name
   modified: Date;
-  canvassedBy: number;
+  canvassedBy: CanvassedBy;
   canvassed: Date;
   event: string;
   comments: Comment[];
   contacts: Contact[];
   fields: Field[];
+}
+
+export interface Key {
+  key: number;
+  firstName: string;
+  surname: string;
+}
+
+export interface MetaData {
+  refresh: string;
+}
+
+export interface Type {
+  key: string;
+  createdBy: number;
+  modifiedBy: number;
+  modified: Date;
+  created: Date;
+  category: string;
+  name: string;
+  description: string;
+  metaData: MetaData;
+}
+export interface Activity {
+  key: string;
+  type: Type;
+  name: string;
+}
+
+export interface CanvassedBy {
+  key: Key;
+  activity: Activity;
 }
 
 export interface Affiliation {
@@ -155,7 +187,7 @@ export interface Comment {
 export interface Contact2 {
   key: string;
   type: string;
-  value: string;
+  value?: string;
   source?: any;
   created: Date;
   modified: Date;
@@ -169,6 +201,7 @@ export interface Contact {
   type: string;
   person: number;
   contact: Contact2;
+  value?: string;
   canContact: boolean;
   confirmed: Date;
   createdBy: number;

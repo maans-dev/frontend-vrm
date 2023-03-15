@@ -12,6 +12,7 @@ import {
 } from '@elastic/eui';
 import moment from 'moment';
 import {
+  CanvassedBy,
   ColourCode,
   LivingStructure,
   RegisteredStructure,
@@ -27,7 +28,7 @@ export type Props = {
   dob: Date;
   colourCode: ColourCode;
   modified: Date;
-  modifiedBy: string;
+  canvassedBy: CanvassedBy;
   livingStructure: LivingStructure;
   registeredStructure: RegisteredStructure;
 };
@@ -40,7 +41,7 @@ const VoterInfo: FunctionComponent<Props> = ({
   dob,
   colourCode,
   modified,
-  modifiedBy,
+  canvassedBy,
   livingStructure,
   registeredStructure,
 }) => {
@@ -90,7 +91,10 @@ const VoterInfo: FunctionComponent<Props> = ({
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size="xs">
-                by <strong>{modifiedBy}</strong>
+                by{' '}
+                <strong>
+                  {canvassedBy.key.firstName} {canvassedBy.key.surname}
+                </strong>
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGroup>

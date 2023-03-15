@@ -1,18 +1,22 @@
 import { FunctionComponent } from 'react';
 import { EuiPanel } from '@elastic/eui';
-import { Phone } from './types';
 import PhoneNumberLine from './phone-number';
 import AddEditNumber from './add-edit-number';
+import { Contact } from '@lib/domain/person';
 
 export type Props = {
-  items: Phone[];
+  contacts: Contact[];
 };
 
-const PhoneNumbers: FunctionComponent<Props> = ({ items }) => {
+const PhoneNumbers: FunctionComponent<Props> = ({ contacts }) => {
+  function filterContactsByNumber(contacts: Contact[]): Contact[] {
+    return contacts.filter(contact => contact.contact.type !== 'EMAIL');
+  }
+  const filteredContacts = filterContactsByNumber(contacts);
   return (
     <EuiPanel hasBorder={true} paddingSize="s">
-      {items.map((item: Phone, i) => (
-        <PhoneNumberLine phone={item} key={i} border={true} />
+      {filteredContacts.map((contact: Contact, i) => (
+        <PhoneNumberLine contact={contact} key={i} border={true} />
       ))}
       <AddEditNumber />
     </EuiPanel>

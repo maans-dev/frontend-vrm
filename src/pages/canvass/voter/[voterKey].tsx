@@ -9,24 +9,22 @@ import {
   EuiForm,
   EuiFormFieldset,
   EuiFormRow,
+  EuiLoadingSpinner,
   EuiPanel,
   EuiSpacer,
   EuiSwitch,
 } from '@elastic/eui';
 import MainLayout from '@layouts/main';
 import { useRouter } from 'next/router';
-import PhoneNumbers from '@components/form/phone-numbers';
-import EmailAddress from '@components/form/email-address';
 import Comments from '@components/comments';
 import moment from 'moment';
-// import CanvassingTags from '@components/canvassing-tags';
 import VoterTags from '@components/voter-tags';
 import Address from '@components/living-address';
 import usePersonFetcher from '@lib/fetcher/person/person.fetcher';
 import VoterInfo from '@components/voter-info';
 import CanvassingTags from '@components/canvassing-tags';
 import Affiliation from '@components/affiliation/affiliation';
-// import ContactDetails from '@components/contact-details/contact-details';
+import ContactDetails from '@components/contact-details/contact-details';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
@@ -56,9 +54,18 @@ const Voter: FunctionComponent = () => {
   ];
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div
+        style={{
+          height: '100vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <EuiLoadingSpinner size="xxl" />
+      </div>
+    );
   }
-
   if (error) {
     return <div>{error}</div>;
   }
@@ -86,8 +93,8 @@ const Voter: FunctionComponent = () => {
           surname={person.surname}
           dob={moment(person.dob, 'YYYYMMDD').toDate()}
           colourCode={person.colourCode}
+          canvassedBy={person.canvassedBy}
           modified={person.modified}
-          modifiedBy={person.modifiedBy}
           livingStructure={person.livingStructure}
           registeredStructure={person.registeredStructure}
         />
@@ -142,40 +149,10 @@ const Voter: FunctionComponent = () => {
         <EuiSpacer />
 
         <EuiFormFieldset legend={{ children: 'Contact details' }}>
-          {/* <ContactDetails language={person.language} /> */}
-
-          <EuiFormRow display="rowCompressed" label="Phone Numbers">
-            <PhoneNumbers
-              items={[
-                { type: 'Mobile', number: '123 456 7890' },
-                {
-                  type: 'Home',
-                  number: '123 456 7890',
-                  isConfirmed: true,
-                },
-                { type: 'Work', number: '123 456 7890', isDnc: true },
-                { type: 'International', number: '+27 123 456 7890' },
-                {
-                  type: 'Other',
-                  number: '123 456 7890',
-                  isConfirmed: true,
-                  isDnc: true,
-                },
-              ]}
-            />
-          </EuiFormRow>
-
-          <EuiFormRow display="rowCompressed" label="Email Addresses">
-            <EmailAddress
-              items={[
-                {
-                  email: 'example@gmail.com',
-                },
-                { email: 'example@gmail.com', isConfirmed: true },
-                { email: 'example@gmail.com', isDnc: true },
-              ]}
-            />
-          </EuiFormRow>
+          <ContactDetails
+            language={person.language}
+            contacts={person.contacts}
+          />
         </EuiFormFieldset>
 
         <EuiSpacer />
