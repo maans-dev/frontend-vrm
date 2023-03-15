@@ -10,20 +10,39 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
 } from '@elastic/eui';
-import { FunctionComponent } from 'react';
+import { PersonSearchParams } from '@lib/domain/person-search';
+import { FormEvent, FunctionComponent, useState } from 'react';
 
 export type Props = {
-  onSubmit?: (options) => void;
+  onSubmit?: (params: Partial<PersonSearchParams>) => void;
 };
 
 const SearchOptions: FunctionComponent<Props> = ({ onSubmit }) => {
+  const [searchParams, setSearchParams] = useState<Partial<PersonSearchParams>>(
+    {}
+  );
+
+  const onChange = (event: FormEvent<HTMLFormElement>) => {
+    const target = event.target as HTMLFormElement;
+    const name = target.name;
+    const value = target.value;
+    setSearchParams(previousValue => ({
+      ...previousValue,
+      [name]: value,
+    }));
+  };
+
   const formActions = (
     <EuiFlexGroup direction="row" responsive={false} justifyContent="flexEnd">
       <EuiFlexItem grow={false}>
         <EuiButtonEmpty size="m">Reset</EuiButtonEmpty>
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
-        <EuiButton size="m" iconType="search" fill onClick={() => onSubmit({})}>
+        <EuiButton
+          size="m"
+          iconType="search"
+          fill
+          onClick={() => onSubmit(searchParams)}>
           Search
         </EuiButton>
       </EuiFlexItem>
@@ -31,10 +50,10 @@ const SearchOptions: FunctionComponent<Props> = ({ onSubmit }) => {
   );
 
   return (
-    <EuiForm fullWidth>
+    <EuiForm fullWidth component="form" onChange={onChange}>
       <EuiFormRow label="Identity" display="rowCompressed">
         <EuiFieldText
-          name="id"
+          name="identity"
           compressed
           placeholder="ID Number, DARN or Membership number"
         />
