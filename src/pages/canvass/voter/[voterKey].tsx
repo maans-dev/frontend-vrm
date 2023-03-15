@@ -27,6 +27,8 @@ import Address from '@components/living-address';
 import usePersonFetcher from '@lib/fetcher/person/person.fetcher';
 import VoterInfo from '@components/voter-info';
 import CanvassingTags from '@components/canvassing-tags';
+import Affiliation from '@components/affiliation/affiliation';
+import ContactDetails from '@components/contact-details/contact-details';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
@@ -62,51 +64,6 @@ const Voter: FunctionComponent = () => {
   if (error) {
     return <div>{error}</div>;
   }
-
-  const affilitions = [
-    {
-      label: 'Titan',
-    },
-    {
-      label: 'Enceladus',
-    },
-    {
-      label: 'Mimas',
-    },
-    {
-      label: 'Dione',
-    },
-    {
-      label: 'Iapetus',
-    },
-    {
-      label: 'Phoebe',
-    },
-    {
-      label: 'Rhea',
-    },
-    {
-      label: 'Tethys',
-    },
-    {
-      label: 'Hyperion',
-    },
-  ];
-
-  const languages = [
-    { id: 'Eng', label: 'Eng' },
-    { id: 'Afr', label: 'Afr' },
-    { id: 'Xho', label: 'Xho' },
-    { id: 'Zul', label: 'Zul' },
-    { id: 'Sot', label: 'Sot' },
-    { id: 'Sep', label: 'Sep' },
-    { id: 'Tsn', label: 'Tsn' },
-    { id: 'Tso', label: 'Tso' },
-    { id: 'Ven', label: 'Ven' },
-    { id: 'Nbi', label: 'Nbi' },
-    { id: 'Ssw', label: 'Ssw' },
-    { id: '?', label: '?' },
-  ];
 
   const formActions = (
     <EuiFlexGroup direction="row" responsive={false} justifyContent="flexEnd">
@@ -181,42 +138,13 @@ const Voter: FunctionComponent = () => {
         <EuiSpacer />
 
         <EuiFormFieldset legend={{ children: 'Affiliation' }}>
-          <EuiFormRow display="row">
-            <EuiCallOut
-              title="Have you confirmed this voter's affiliation?"
-              size="s"
-              iconType="search"
-            />
-          </EuiFormRow>
-          <EuiFormRow display="rowCompressed">
-            <EuiComboBox
-              compressed
-              isClearable={false}
-              aria-label="Select an affiliation"
-              placeholder="Select an affiliation"
-              singleSelection={{ asPlainText: true }}
-              options={affilitions}
-              selectedOptions={[affilitions[2]]}
-              onChange={() => null}
-            />
-          </EuiFormRow>
+          <Affiliation affiliation={person.affiliation} />
         </EuiFormFieldset>
 
         <EuiSpacer />
 
         <EuiFormFieldset legend={{ children: 'Contact details' }}>
-          <EuiFormRow display="rowCompressed" label="Language">
-            <EuiComboBox
-              compressed
-              isClearable={false}
-              aria-label="Select voter language(s)"
-              placeholder="Select voter language(s)"
-              singleSelection={{ asPlainText: true }}
-              options={languages}
-              selectedOptions={[languages[2]]}
-              onChange={() => null}
-            />
-          </EuiFormRow>
+          <ContactDetails language={person.language} />
 
           <EuiFormRow display="rowCompressed" label="Phone Numbers">
             <PhoneNumbers

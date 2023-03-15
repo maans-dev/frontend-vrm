@@ -4,7 +4,7 @@ import { fetcherAPI } from '../api.fetcher';
 
 export default function usePersonFetcher(key: string) {
   const { data, error, isLoading } = useSWR<Person[]>(
-    `/person?key=${key}&template=["Address","Contact","Field","Comment"]`,
+    `/person?key=${key}&template=["Address","Contact","Field","Comment","Canvass"]`,
     fetcherAPI
   );
 
