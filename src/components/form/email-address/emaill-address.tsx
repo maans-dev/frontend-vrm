@@ -11,18 +11,20 @@ import {
 } from '@elastic/eui';
 import { FunctionComponent, useState } from 'react';
 import AddEditEmail from './add-edit-email';
-import { EmailTypes } from './types';
 import { GoCircleSlash } from 'react-icons/go';
+import { Contact } from '@lib/domain/person';
 
 export type Props = {
-  email: EmailTypes;
+  contact: Contact;
   border?: boolean;
 };
 
-const EmailAddressLine: FunctionComponent<Props> = ({ email, border }) => {
+const EmailAddressLine: FunctionComponent<Props> = ({ contact, border }) => {
   const [showActions, setShowActions] = useState(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const { euiTheme } = useEuiTheme();
+
+  // console.log(contact, 'email address');
 
   const onActionsClick = () => setShowActions(showActions => !showActions);
   const hideActions = () => setShowActions(false);
@@ -38,10 +40,10 @@ const EmailAddressLine: FunctionComponent<Props> = ({ email, border }) => {
           <EuiFlexItem
             grow={true}
             css={{ minWidth: '100px' }}
-            color={email?.isDnc ? euiTheme.colors.disabledText : null}>
+            color={contact.canContact ? euiTheme.colors.disabledText : null}>
             <EuiTextColor
-              color={email?.isDnc ? euiTheme.colors.disabledText : null}>
-              {email.email}
+              color={contact.canContact ? euiTheme.colors.disabledText : null}>
+              {contact.contact.value}
             </EuiTextColor>
           </EuiFlexItem>
           <EuiFlexGroup
@@ -50,7 +52,7 @@ const EmailAddressLine: FunctionComponent<Props> = ({ email, border }) => {
             alignItems="center"
             css={{ maxWidth: '60px' }}
             gutterSize="xs">
-            {email.isConfirmed ? (
+            {/* {email.isConfirmed ? (
               <EuiFlexItem grow={false}>
                 <EuiAvatar
                   name="Confirmed"
@@ -60,8 +62,8 @@ const EmailAddressLine: FunctionComponent<Props> = ({ email, border }) => {
                   color={euiTheme.colors.success}
                 />
               </EuiFlexItem>
-            ) : null}
-            {email.isDnc ? (
+            ) : null} */}
+            {contact.canContact ? (
               <EuiFlexItem grow={false}>
                 <EuiAvatar
                   name="Do not contact"
@@ -145,7 +147,7 @@ const EmailAddressLine: FunctionComponent<Props> = ({ email, border }) => {
   );
 
   const renderEditMode = (
-    <AddEditEmail item={email} onUpdate={() => setIsEditing(false)} />
+    <AddEditEmail contact={contact} onUpdate={() => setIsEditing(false)} />
   );
 
   return (

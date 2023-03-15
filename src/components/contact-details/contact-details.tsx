@@ -49,20 +49,13 @@ const ContactDetails: FunctionComponent<Props> = ({ language, contacts }) => {
           onChange={() => null}
         />
       </EuiFormRow>
+
       <EuiFormRow display="rowCompressed" label="Phone Numbers">
         <PhoneNumbers contacts={contacts} />
       </EuiFormRow>
 
       <EuiFormRow display="rowCompressed" label="Email Addresses">
-        <EmailAddress
-          items={[
-            {
-              email: 'example@gmail.com',
-            },
-            { email: 'example@gmail.com', isConfirmed: true },
-            { email: 'example@gmail.com', isDnc: true },
-          ]}
-        />
+        <EmailAddress contacts={contacts} />
       </EuiFormRow>
     </>
   );

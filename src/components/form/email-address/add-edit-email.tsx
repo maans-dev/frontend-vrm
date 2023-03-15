@@ -6,14 +6,14 @@ import {
   EuiFlexItem,
   EuiFormRow,
 } from '@elastic/eui';
-import { EmailTypes } from './types';
+import { Contact2 } from '@lib/domain/person';
 
 export type Props = {
-  item?: EmailTypes;
-  onUpdate?: (item: EmailTypes) => void;
+  contact?: Contact2;
+  onUpdate?: (item: Contact2) => void;
 };
 
-const AddEditEmail: FunctionComponent<Props> = ({ item, onUpdate }) => {
+const AddEditEmail: FunctionComponent<Props> = ({ contact, onUpdate }) => {
   return (
     <EuiFlexGroup responsive={false} gutterSize="xs">
       <EuiFlexItem>
@@ -21,7 +21,7 @@ const AddEditEmail: FunctionComponent<Props> = ({ item, onUpdate }) => {
           <EuiFieldText
             compressed
             placeholder="dave@example.com"
-            value={item ? item?.email : null}
+            value={contact ? contact?.value : null}
           />
         </EuiFormRow>
       </EuiFlexItem>
@@ -30,8 +30,8 @@ const AddEditEmail: FunctionComponent<Props> = ({ item, onUpdate }) => {
           <EuiButtonEmpty
             size="s"
             css={{ minWidth: '50px' }}
-            onClick={() => (item ? onUpdate(item) : null)}>
-            {item ? 'Save' : 'Add'}
+            onClick={() => (contact ? onUpdate(contact) : null)}>
+            {contact ? 'Save' : 'Add'}
           </EuiButtonEmpty>
         </EuiFormRow>
       </EuiFlexItem>

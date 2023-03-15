@@ -108,15 +108,15 @@ const PhoneNumberLine: FunctionComponent<Props> = ({ contact, border }) => {
           // justifyContent="flexStart"
           alignItems="center"
           gutterSize="xs">
-          <EuiFormRow>
-            <EuiFieldText
-              compressed
-              readOnly={true}
-              disabled
-              value={getContactValue(contact)}
-            />
-          </EuiFormRow>
-
+          <EuiFlexItem
+            grow={true}
+            css={{ minWidth: '100px' }}
+            color={contact.canContact ? euiTheme.colors.disabledText : null}>
+            <EuiTextColor
+              color={contact.canContact ? euiTheme.colors.disabledText : null}>
+              {getContactValue(contact)}
+            </EuiTextColor>
+          </EuiFlexItem>
           <EuiFlexItem
             grow={true}
             css={{ minWidth: '100px' }}
