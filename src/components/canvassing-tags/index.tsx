@@ -1,93 +1,106 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useState } from 'react';
 import { EuiFlexGrid, EuiFlexItem, useIsWithinBreakpoints } from '@elastic/eui';
-import { ITags } from './types';
 import CanvassingTag from './canvassing-tag';
+import { Field } from '@lib/domain/person';
 
 export type Props = {
-  fields: ITags;
-  onTagClick?: (tag: ITags) => void;
+  fields: Field[];
+  onTagClick?: (tag: Field) => void;
 };
 
-const presetTags: ITags = {
-  fields: [
-    {
-      field: {
-        category: 'Canvassing',
-        code: 'WR',
-        description: 'Will Register',
-        active: false,
-      },
+const presetFields: Partial<Field>[] = [
+  {
+    field: {
+      category: 'Canvassing',
+      code: 'WR',
+      name: 'Will Register',
+      active_status: true,
     },
-    {
-      field: {
-        category: 'Canvassing',
-        code: 'ASTREG',
-        description: 'Assisted to register',
-        active: false,
-      },
+    value: false,
+  },
+  {
+    field: {
+      category: 'Canvassing',
+      code: 'ASTREG',
+      name: 'Assisted to register',
+      active_status: true,
     },
-    {
-      field: {
-        category: 'Canvassing',
-        code: 'DR',
-        description: 'Did register',
-        active: false,
-      },
+    value: false,
+  },
+  {
+    field: {
+      category: 'Canvassing',
+      code: 'DR',
+      name: 'Did (Re-)register',
+      active_status: true,
     },
-    {
-      field: {
-        category: 'Canvassing',
-        code: 'WV',
-        description: "Won't vote",
-        active: false,
-      },
+    value: false,
+  },
+  {
+    field: {
+      category: 'Canvassing',
+      code: 'WV',
+      name: "Won't vote",
+      active_status: true,
     },
-    {
-      field: {
-        category: 'Canvassing',
-        code: 'CV',
-        description: "Can't vote",
-        active: false,
-      },
+    value: false,
+  },
+  {
+    field: {
+      category: 'Canvassing',
+      code: 'CV',
+      name: "Can't vote",
+      active_status: true,
     },
-    {
-      field: {
-        category: 'Canvassing',
-        code: 'M',
-        description: 'Moved',
-        active: false,
-      },
+    value: false,
+  },
+  {
+    field: {
+      category: 'Canvassing',
+      code: 'M',
+      name: 'Moved',
+      active_status: true,
     },
-  ],
-};
+    value: false,
+  },
+];
+
+const shortCodes = ['WR', 'ASTREG', 'DR', 'WV', 'CV', 'M'];
 
 const CanvassingTags: FunctionComponent<Props> = ({ fields, onTagClick }) => {
   const isMobile = useIsWithinBreakpoints(['xs', 's']);
+  const [internalFields, setInternalFields] = useState<Field[]>(
+    fields.filter(f => shortCodes.includes(f.field.code))
+  );
 
-  // extract the fields array from the fields object
-  const tagFields = fields?.fields || [];
+  const getField = (field: Partial<Field>) => {
+    console.log(internalFields);
+    const found = internalFields.find(f => {
+      return f.field.code === field.field.code;
+    });
+    return found;
+  };
 
   return (
-    // <EuiFlexGrid
-    //   columns={isMobile ? 1 : 3}
-    //   direction="row"
-    //   gutterSize="s"
-    //   responsive={true}>
-    //   {tagFields.map((tag: ITags, i) => {
-    //     return (
-    //       <EuiFlexItem key={i} grow={false} style={{ minWidth: 100 }}>
-    //         <CanvassingTag
-    //           tag={tag}
-    //           selected={tag.active}
-    //           onChange={() => {
-    //             const updatedTag = { ...tag, enabled: !tag.enabled };
-    //             onTagClick && onTagClick(updatedTag);
-    //           }}
-    //         />
-    //       </EuiFlexItem>
-    //     );
-    //   })}
-    // </EuiFlexGrid>
+    <EuiFlexGrid
+      columns={isMobile ? 1 : 3}
+      direction="row"
+      gutterSize="s"
+      responsive={true}>
+      {presetFields.map((f, i) => {
+        return (
+          <EuiFlexItem key={i} grow={false} style={{ minWidth: 100 }}>
+            <CanvassingTag
+              field={getField(f) || f}
+              onChange={() => {
+                // const updatedTag = { ...tag, enabled: !tag.enabled };
+                // onTagClick && onTagClick(updatedTag);
+              }}
+            />
+          </EuiFlexItem>
+        );
+      })}
+    </EuiFlexGrid>
   );
 };
 
