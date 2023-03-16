@@ -15,15 +15,23 @@ const VoterSearch: FunctionComponent<Props> = () => {
 
   const { results, isLoading, error } = usePersonSearchFetcher(searchParams);
 
+  console.log('results', results);
+
   const doSearch = (params: Partial<PersonSearchParams>) => {
     if (!params) return;
+    // remove empty keys
+    for (const key in params) {
+      if (!params[key] || params[key] === '') delete params[key];
+    }
     setSearchParams(params);
   };
 
   return (
     <>
-      {!results ? <SearchOptions showFormActions onSubmit={doSearch} /> : null}
-      {results ? <SearchOptionsModal onSubmit={doSearch} /> : null}
+      <SearchOptions
+        onSubmit={doSearch}
+        as={results === null || results === undefined ? 'form' : 'modal'}
+      />
       {results ? <SearchResults results={results} /> : null}
     </>
   );
