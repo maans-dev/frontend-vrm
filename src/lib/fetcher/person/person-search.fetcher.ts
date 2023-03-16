@@ -8,6 +8,8 @@ export default function usePersonSearchFetcher(
   params: Partial<PersonSearchParams>
 ) {
   const shouldFetch = params ? true : false;
+
+  // handle phone and email params
   let contactibility = null;
   if (shouldFetch) {
     if (params.phone || params.email) {
@@ -24,6 +26,8 @@ export default function usePersonSearchFetcher(
       params.contactability = JSON.stringify(contactibility);
     }
   }
+
+  console.log(params);
 
   const { data, error, isLoading } = useSWR<Person[]>(
     shouldFetch

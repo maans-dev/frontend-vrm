@@ -28,9 +28,15 @@ const SearchOptions: FunctionComponent<Props> = ({
   const [searchParams, setSearchParams] =
     useState<Partial<PersonSearchParams>>();
 
+  const [dob, setDob] = useState<Moment>();
+
   const handleChange = (event: FormEvent<HTMLFormElement>) => {
+    console.log(event);
     const target = event.target as HTMLFormElement;
     const name = target.name;
+
+    if (target.name === 'dob') return;
+
     const value = target.value;
     setSearchParams(previousValue => {
       const newValue = {
@@ -45,10 +51,11 @@ const SearchOptions: FunctionComponent<Props> = ({
   };
 
   const handleDOBChange = (date: Moment) => {
+    setDob(date);
     setSearchParams(previousValue => {
       const newValue = {
         ...previousValue,
-        dob: date?.isValid ? date.format('YYYYMMDD') : '',
+        dob: date?.isValid ? date.format('YYYYMMDD') : null,
       };
 
       if (onChange) onChange(newValue);
@@ -71,6 +78,7 @@ const SearchOptions: FunctionComponent<Props> = ({
       email: '',
       phone: '',
     });
+    setDob(null);
   };
 
   const formActions = (
@@ -100,6 +108,7 @@ const SearchOptions: FunctionComponent<Props> = ({
           name="identity"
           compressed
           placeholder="ID Number, DARN or Membership number"
+          value={searchParams?.identity}
         />
       </EuiFormRow>
 
@@ -108,14 +117,11 @@ const SearchOptions: FunctionComponent<Props> = ({
       <EuiFormRow display="rowCompressed" label="Date of birth">
         <EuiDatePicker
           name="dob"
-          dateFormat={['DD MMM YYYY', 'YYYYMMDD']}
-          adjustDateOnChange={false}
-          selected={
-            searchParams?.dob ? moment(searchParams.dob, 'YYYYMMDD') : null
-          }
+          dateFormat={['D MMM YYYY']}
+          selected={dob}
           maxDate={moment().subtract(17, 'year')}
           yearDropdownItemNumber={120}
-          onSelect={handleDOBChange}
+          onChange={handleDOBChange}
         />
       </EuiFormRow>
 
@@ -124,6 +130,7 @@ const SearchOptions: FunctionComponent<Props> = ({
           name="surname"
           compressed
           append={<AdvancedSearchTooltip />}
+          value={searchParams?.surname}
         />
       </EuiFormRow>
 
@@ -132,6 +139,7 @@ const SearchOptions: FunctionComponent<Props> = ({
           name="firstName"
           compressed
           append={<AdvancedSearchTooltip />}
+          value={searchParams?.firstName}
         />
       </EuiFormRow>
 
@@ -142,6 +150,7 @@ const SearchOptions: FunctionComponent<Props> = ({
           name="email"
           compressed
           append={<AdvancedSearchTooltip />}
+          value={searchParams?.email}
         />
       </EuiFormRow>
 
@@ -150,6 +159,7 @@ const SearchOptions: FunctionComponent<Props> = ({
           name="phone"
           compressed
           append={<AdvancedSearchTooltip />}
+          value={searchParams?.phone}
         />
       </EuiFormRow>
 

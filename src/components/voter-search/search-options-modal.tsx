@@ -24,10 +24,16 @@ const SearchOptionsModal: FunctionComponent<Props> = ({ onSubmit }) => {
     useState<Partial<PersonSearchParams>>();
   const closeModal = () => setIsModalVisible(false);
   const showModal = () => setIsModalVisible(true);
+
   const submit = () => {
     if (!searchParams) return;
     onSubmit(searchParams);
     closeModal();
+    setSearchParams(null);
+  };
+
+  const reset = () => {
+    if (!searchParams) return;
     setSearchParams(null);
   };
 
@@ -45,7 +51,7 @@ const SearchOptionsModal: FunctionComponent<Props> = ({ onSubmit }) => {
         </EuiModalBody>
 
         <EuiModalFooter>
-          <EuiButtonEmpty onClick={closeModal}>Cancel</EuiButtonEmpty>
+          <EuiButtonEmpty onClick={reset}>Reset</EuiButtonEmpty>
 
           <EuiButton
             iconType="search"

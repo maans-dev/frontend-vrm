@@ -1,6 +1,6 @@
 export interface PersonSearchParams {
   identity: string;
-  dob: string;
+  dob: number | string;
   surname: string;
   firstName: string;
   email: string;

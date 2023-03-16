@@ -16,7 +16,6 @@ const VoterSearch: FunctionComponent<Props> = () => {
   const { results, isLoading, error } = usePersonSearchFetcher(searchParams);
 
   const doSearch = (params: Partial<PersonSearchParams>) => {
-    console.log('params', params);
     if (!params) return;
     setSearchParams(params);
   };
