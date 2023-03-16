@@ -1,10 +1,8 @@
 import {
   EuiAvatar,
   EuiButtonIcon,
-  EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiFormRow,
   EuiHorizontalRule,
   EuiListGroup,
   EuiPopover,
@@ -28,7 +26,6 @@ export type Props = {
 };
 
 const PhoneNumberLine: FunctionComponent<Props> = ({ contact, border }) => {
-  console.log(contact, 'single object withn another object inside');
   const [typeIcon, setTypeIcon] = useState<ReactElement>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const { euiTheme } = useEuiTheme();

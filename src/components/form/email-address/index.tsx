@@ -13,7 +13,6 @@ const EmailAddress: FunctionComponent<Props> = ({ contacts }) => {
     return contacts.filter(contact => contact.contact.type === 'EMAIL');
   }
   const filteredContacts = filterContactsByEmail(contacts);
-  console.log(filteredContacts, 'email index');
   return (
     <EuiPanel hasBorder={true} paddingSize="s">
       {filteredContacts.map((contact: Contact, i) => (

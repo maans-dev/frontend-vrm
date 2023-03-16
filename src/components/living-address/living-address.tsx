@@ -14,13 +14,14 @@ import {
   FaStoreAltSlash,
 } from 'react-icons/fa';
 import SearchAddressModal from './search-address-modal';
+import { Address } from '@lib/domain/person';
 
 export type Props = {
-  prop?: string;
+  address: Address;
   onSubmit?: (options) => void;
 };
 
-const LivingAddress: FunctionComponent<Props> = () => {
+const LivingAddress: FunctionComponent<Props> = ({ address }) => {
   const [value, setValue] = useState('');
 
   const onChange = e => {
@@ -73,16 +74,12 @@ const LivingAddress: FunctionComponent<Props> = () => {
             <EuiFieldText name="Building Name" compressed />
           </EuiFormRow>
           <EuiFormRow display="rowCompressed" label="Address on File">
-            <EuiFieldText
-              compressed
-              disabled
-              value="19 GEELHOUT STREET in CAPE TOWN (Western Cape)"
-            />
+            <EuiFieldText compressed disabled value={address.formatted} />
           </EuiFormRow>
         </EuiFlexItem>
         <EuiFormRow display="rowCompressed" label="Address Geocoded">
           <EuiButton type="submit" iconType={FaThumbtack} fill>
-            -33.983723/18.472338
+            {address.latitude} {address.longitude}
           </EuiButton>
         </EuiFormRow>
       </EuiFlexGroup>

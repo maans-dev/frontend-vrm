@@ -9,15 +9,16 @@ import {
   EuiFlexItem,
   useEuiTheme,
 } from '@elastic/eui';
-import { IComment } from './types';
-import Comment from './comment';
+import Commenter from './comment';
 import { css, Global } from '@emotion/react';
+import { Comment } from '@lib/domain/person';
 
 export type Props = {
-  comments: IComment[];
+  comments: Comment[];
 };
 
 const Comments: FunctionComponent<Props> = ({ comments }) => {
+  // console.log(comments, 'comment i');
   const { euiTheme } = useEuiTheme();
 
   if (!comments) return <></>;
@@ -33,8 +34,8 @@ const Comments: FunctionComponent<Props> = ({ comments }) => {
         `}
       />
       <EuiCommentList aria-label="Comments" gutterSize="m">
-        {comments?.map((item: IComment, i) => {
-          return <Comment comment={item} key={i} />;
+        {comments?.map((comment: Comment, i) => {
+          return <Commenter comment={comment} key={i} />;
         })}
         <EuiComment
           username="Current User"

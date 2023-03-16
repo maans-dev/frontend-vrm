@@ -158,34 +158,13 @@ const Voter: FunctionComponent = () => {
         <EuiSpacer />
 
         <EuiFormFieldset legend={{ children: 'Living Address' }}>
-          <Address />
+          <Address address={person.address} />
         </EuiFormFieldset>
 
         <EuiSpacer />
 
         <EuiFormFieldset legend={{ children: 'Comments' }}>
-          <Comments
-            comments={[
-              {
-                date: moment().subtract(4, 'days').toDate(),
-                type: 'user',
-                user: 'John Smith',
-                message: 'A short comment.',
-              },
-              {
-                date: moment().subtract(3, 'days').toDate(),
-                user: 'John Doe',
-                type: 'member',
-                message: 'Another comment',
-              },
-              {
-                date: moment().subtract(2, 'days').toDate(),
-                user: 'system',
-                type: 'system',
-                message: 'a system event happened',
-              },
-            ]}
-          />
+          <Comments comments={person.comments} />
         </EuiFormFieldset>
 
         <EuiSpacer />
