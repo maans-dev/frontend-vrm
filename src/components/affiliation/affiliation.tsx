@@ -1,6 +1,6 @@
 import { EuiFormRow, EuiCallOut, EuiComboBox } from '@elastic/eui';
 import { Affiliation } from '@lib/domain/person';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useState } from 'react';
 import useAffiliationFetcher from '@lib/fetcher/affiliation/affiliation';
 
 export type Props = {
@@ -8,17 +8,23 @@ export type Props = {
 };
 
 const Affiliation: FunctionComponent<Props> = ({ affiliation }) => {
-  console.log(affiliation.description);
+  // console.log(affiliation.description);
   const { affiliations, isLoading, error } = useAffiliationFetcher();
+  const [searchValue, setSearchValue] = useState('');
   if (error) {
     console.log(error);
   }
 
-  const options = affiliations
-    ? affiliations.map(affiliation => ({
-        label: affiliation.description,
-      }))
+  const filteredOptions = affiliations
+    ? affiliations.filter(
+        affiliation =>
+          affiliation.description
+            .toLowerCase()
+            .indexOf(searchValue.toLowerCase()) !== -1
+      )
     : [];
+
+  const options = searchValue ? filteredOptions : [];
 
   return (
     <>
@@ -37,9 +43,12 @@ const Affiliation: FunctionComponent<Props> = ({ affiliation }) => {
           aria-label="Select an affiliation"
           placeholder="Select an affiliation"
           singleSelection={{ asPlainText: true }}
-          options={options}
+          options={options.map(affiliation => ({
+            label: affiliation.description,
+          }))}
           selectedOptions={[{ label: affiliation.description }]}
           onChange={() => null}
+          onSearchChange={value => setSearchValue(value)}
         />
       </EuiFormRow>
     </>

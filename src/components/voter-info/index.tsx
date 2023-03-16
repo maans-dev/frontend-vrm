@@ -106,8 +106,7 @@ const VoterInfo: FunctionComponent<Props> = ({
         <EuiFlexItem>
           <EuiPanel paddingSize="xs" hasBorder={true}>
             <EuiText size="xs" css={{ textTransform: 'capitalize' }}>
-              <EuiIcon type={GiHouse} />{' '}
-              {livingStructure.votingDistrict.toLowerCase()} (
+              <EuiIcon type={GiHouse} /> {livingStructure.votingDistrict} (
               {livingStructure.votingDistrict_id})
             </EuiText>
           </EuiPanel>
@@ -116,7 +115,7 @@ const VoterInfo: FunctionComponent<Props> = ({
           <EuiPanel hasBorder={true} paddingSize="xs">
             <EuiText size="xs" css={{ textTransform: 'capitalize' }}>
               <EuiIcon type={MdHowToVote} />{' '}
-              {registeredStructure.votingDistrict.toLowerCase()} (
+              {registeredStructure.votingDistrict} (
               {registeredStructure.votingDistrict_id})
             </EuiText>
           </EuiPanel>

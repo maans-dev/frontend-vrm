@@ -23,7 +23,7 @@ export interface Person {
   enabled: boolean;
   createdBy: number;
   created: Date;
-  modifiedBy: string; //TODO: this field should contain a name
+  modifiedBy: string;
   modified: Date;
   canvassedBy: CanvassedBy;
   canvassed: Date;
