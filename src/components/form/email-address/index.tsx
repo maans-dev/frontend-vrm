@@ -10,8 +10,11 @@ export type Props = {
 
 const EmailAddress: FunctionComponent<Props> = ({ contacts }) => {
   function filterContactsByEmail(contacts: Contact[]): Contact[] {
-    return contacts.filter(contact => contact.contact.type === 'EMAIL');
+    return contacts.filter(
+      contact => contact.contact && contact.contact.type === 'EMAIL'
+    );
   }
+
   const filteredContacts = filterContactsByEmail(contacts);
   return (
     <EuiPanel hasBorder={true} paddingSize="s">
