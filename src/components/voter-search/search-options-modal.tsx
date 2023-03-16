@@ -21,12 +21,14 @@ export type Props = {
 const SearchOptionsModal: FunctionComponent<Props> = ({ onSubmit }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [searchParams, setSearchParams] =
-    useState<Partial<PersonSearchParams>>(null);
+    useState<Partial<PersonSearchParams>>();
   const closeModal = () => setIsModalVisible(false);
   const showModal = () => setIsModalVisible(true);
   const submit = () => {
+    if (!searchParams) return;
     onSubmit(searchParams);
     closeModal();
+    setSearchParams(null);
   };
 
   let modal;
@@ -45,7 +47,12 @@ const SearchOptionsModal: FunctionComponent<Props> = ({ onSubmit }) => {
         <EuiModalFooter>
           <EuiButtonEmpty onClick={closeModal}>Cancel</EuiButtonEmpty>
 
-          <EuiButton iconType="search" type="submit" onClick={submit} fill>
+          <EuiButton
+            iconType="search"
+            type="submit"
+            onClick={submit}
+            fill
+            disabled={!searchParams}>
             Search
           </EuiButton>
         </EuiModalFooter>

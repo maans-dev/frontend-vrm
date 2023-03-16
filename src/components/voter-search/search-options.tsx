@@ -26,7 +26,7 @@ const SearchOptions: FunctionComponent<Props> = ({
   onChange,
 }) => {
   const [searchParams, setSearchParams] =
-    useState<Partial<PersonSearchParams>>(null);
+    useState<Partial<PersonSearchParams>>();
 
   const handleChange = (event: FormEvent<HTMLFormElement>) => {
     const target = event.target as HTMLFormElement;
@@ -53,10 +53,13 @@ const SearchOptions: FunctionComponent<Props> = ({
 
       if (onChange) onChange(newValue);
 
-      console.log('dob', newValue);
-
       return newValue;
     });
+  };
+
+  const handleSubmit = () => {
+    onSubmit(searchParams);
+    handleReset();
   };
 
   const handleReset = () => {
@@ -82,7 +85,8 @@ const SearchOptions: FunctionComponent<Props> = ({
           size="m"
           iconType="search"
           fill
-          onClick={() => onSubmit(searchParams)}>
+          onClick={() => handleSubmit()}
+          disabled={!searchParams}>
           Search
         </EuiButton>
       </EuiFlexItem>

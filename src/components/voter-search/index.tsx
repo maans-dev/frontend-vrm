@@ -17,6 +17,7 @@ const VoterSearch: FunctionComponent<Props> = () => {
 
   const doSearch = (params: Partial<PersonSearchParams>) => {
     console.log('params', params);
+    if (!params) return;
     setSearchParams(params);
   };
 
