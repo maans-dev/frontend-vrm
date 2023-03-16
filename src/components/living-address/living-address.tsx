@@ -57,7 +57,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address }) => {
           responsive={true}
           gutterSize="s">
           <EuiFlexItem>
-            <SearchAddressModal />
+            <SearchAddressModal address={address} />
           </EuiFlexItem>
           <EuiFlexItem>
             <EuiButton iconType={FaStoreAltSlash}>Moved</EuiButton>

@@ -10,30 +10,32 @@ export type Props = {
 };
 
 const languages = [
-  { value: 'AFRIKAANS', text: 'Afrikaans' },
-  { value: 'ENGLISH', text: 'English' },
-  { value: 'ISINDEBELE', text: 'IsiNdebele' },
-  { value: 'ISIXHOSA', text: 'IsiXhosa' },
-  { value: 'ISIZULU', text: 'IsiZulu' },
-  { value: 'SEPEDI', text: 'Sepedi' },
-  { value: 'SESOTHO', text: 'Sesotho' },
-  { value: 'SETSWANA', text: 'Setswana' },
-  { value: 'SISWATI', text: 'Siswati' },
-  { value: 'TSHIVENDA', text: 'Tshivenda' },
-  { value: 'XITSONGA', text: 'Xitsonga' },
+  { value: 'AFRIKAANS' },
+  { value: 'ENGLISH' },
+  { value: 'ISINDEBELE' },
+  { value: 'ISIXHOSA' },
+  { value: 'ISIZULU' },
+  { value: 'SEPEDI' },
+  { value: 'SESOTHO' },
+  { value: 'SETSWANA' },
+  { value: 'SISWATI' },
+  { value: 'TSHIVENDA' },
+  { value: 'XITSONGA' },
 ];
 
 const ContactDetails: FunctionComponent<Props> = ({ language, contacts }) => {
   const getSelectedOption = (value: string) => {
     const option = languages.find(option => option.value === value);
-    return option ? [{ label: option.text }] : [];
+    return option
+      ? [{ value: option.value.toUpperCase(), label: option.value }]
+      : [];
   };
   const selectedOptions = getSelectedOption(language);
-  const getOptions = (value: string) => {
-    const options = languages.filter(option => option.value !== value);
-    return options.map(option => ({ label: option.text }));
-  };
-  const options = getOptions(language);
+
+  const options = languages.map(language => ({
+    label: language.value,
+    value: language.value,
+  }));
 
   return (
     <>
