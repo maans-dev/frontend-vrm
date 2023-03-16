@@ -1,19 +1,21 @@
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 import SearchResults from './search-results';
-import SearchOptionsModal from './search-options-modal';
 import SearchOptions from './search-options';
 import { PersonSearchParams } from '@lib/domain/person-search';
 import usePersonSearchFetcher from '@lib/fetcher/person/person-search.fetcher';
+import { useRouter } from 'next/router';
+import Spinner from '@components/spinner/spinner';
 
 export type Props = {
   prop?: string;
 };
 
 const VoterSearch: FunctionComponent<Props> = () => {
+  const router = useRouter();
   const [searchParams, setSearchParams] =
     useState<Partial<PersonSearchParams>>(null);
 
-  const { results, isLoading, error } = usePersonSearchFetcher(searchParams);
+  const { results, isLoading } = usePersonSearchFetcher(searchParams);
 
   console.log('results', results);
 
@@ -26,13 +28,21 @@ const VoterSearch: FunctionComponent<Props> = () => {
     setSearchParams(params);
   };
 
+  useEffect(() => {
+    if (results?.length === 1) router.push(`/canvass/voter/${results[0].key}`);
+  }, [results, router]);
+
   return (
     <>
+      <Spinner show={isLoading || results?.length === 1} />
       <SearchOptions
         onSubmit={doSearch}
         as={results === null || results === undefined ? 'form' : 'modal'}
+        isLoading={isLoading}
       />
-      {results ? <SearchResults results={results} /> : null}
+      {results && !isLoading && results.length > 1 ? (
+        <SearchResults results={results} />
+      ) : null}
     </>
   );
 };

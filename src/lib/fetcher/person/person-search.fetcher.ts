@@ -35,7 +35,10 @@ export default function usePersonSearchFetcher(
         params as never
       ).toString()}`
       : null,
-    fetcherAPI
+    fetcherAPI,
+    {
+      revalidateOnFocus: false,
+    }
   );
 
   return {

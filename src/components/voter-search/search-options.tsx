@@ -22,16 +22,24 @@ import { FormEvent, FunctionComponent, useState } from 'react';
 export type Props = {
   onSubmit?: (params: Partial<PersonSearchParams>) => void;
   as: 'form' | 'modal';
+  isLoading: boolean;
 };
 
-const SearchOptions: FunctionComponent<Props> = ({ onSubmit, as }) => {
+const SearchOptions: FunctionComponent<Props> = ({
+  onSubmit,
+  as,
+  isLoading,
+}) => {
   const [searchParams, setSearchParams] =
     useState<Partial<PersonSearchParams>>();
 
   const [dob, setDob] = useState<Moment>();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const closeModal = () => setIsModalVisible(false);
-  const showModal = () => setIsModalVisible(true);
+  const showModal = () => {
+    setIsModalVisible(true);
+    console.log('params', searchParams);
+  };
 
   const handleChange = (event: FormEvent<HTMLFormElement>) => {
     console.log(event);
@@ -73,18 +81,11 @@ const SearchOptions: FunctionComponent<Props> = ({ onSubmit, as }) => {
 
   const handleSubmit = () => {
     onSubmit(searchParams);
-    // handleReset();
+    if (isModalVisible) closeModal();
   };
 
   const handleReset = () => {
-    // setSearchParams({
-    //   identity: '',
-    //   dob: null,
-    //   surname: '',
-    //   firstName: '',
-    //   email: '',
-    //   phone: '',
-    // });
+    setSearchParams({});
     setDob(null);
   };
 
@@ -101,7 +102,10 @@ const SearchOptions: FunctionComponent<Props> = ({ onSubmit, as }) => {
           iconType="search"
           fill
           onClick={() => handleSubmit()}
-          disabled={!searchParams || !Object.keys(searchParams).length}>
+          isLoading={isLoading}
+          disabled={
+            !searchParams || !Object.keys(searchParams).length || isLoading
+          }>
           Search
         </EuiButton>
       </EuiFlexItem>
@@ -115,7 +119,7 @@ const SearchOptions: FunctionComponent<Props> = ({ onSubmit, as }) => {
           name="identity"
           compressed
           placeholder="ID Number, DARN or Membership number"
-          value={searchParams?.identity}
+          value={searchParams?.identity || ''}
         />
       </EuiFormRow>
 
@@ -137,7 +141,7 @@ const SearchOptions: FunctionComponent<Props> = ({ onSubmit, as }) => {
           name="surname"
           compressed
           append={<AdvancedSearchTooltip />}
-          value={searchParams?.surname}
+          value={searchParams?.surname || ''}
         />
       </EuiFormRow>
 
@@ -146,7 +150,7 @@ const SearchOptions: FunctionComponent<Props> = ({ onSubmit, as }) => {
           name="firstName"
           compressed
           append={<AdvancedSearchTooltip />}
-          value={searchParams?.firstName}
+          value={searchParams?.firstName || ''}
         />
       </EuiFormRow>
 
@@ -157,7 +161,7 @@ const SearchOptions: FunctionComponent<Props> = ({ onSubmit, as }) => {
           name="email"
           compressed
           append={<AdvancedSearchTooltip />}
-          value={searchParams?.email}
+          value={searchParams?.email || ''}
         />
       </EuiFormRow>
 
@@ -166,7 +170,7 @@ const SearchOptions: FunctionComponent<Props> = ({ onSubmit, as }) => {
           name="phone"
           compressed
           append={<AdvancedSearchTooltip />}
-          value={searchParams?.phone}
+          value={searchParams?.phone || ''}
         />
       </EuiFormRow>
 
