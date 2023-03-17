@@ -27,8 +27,6 @@ export default function usePersonSearchFetcher(
     }
   }
 
-  console.log(params);
-
   const { data, error, isLoading } = useSWR<Person[]>(
     shouldFetch
       ? `/person?template=["Address","IEC","Contact"]&limit=10&${new URLSearchParams(

@@ -38,11 +38,9 @@ const SearchOptions: FunctionComponent<Props> = ({
   const closeModal = () => setIsModalVisible(false);
   const showModal = () => {
     setIsModalVisible(true);
-    console.log('params', searchParams);
   };
 
   const handleChange = (event: FormEvent<HTMLFormElement>) => {
-    console.log(event);
     const target = event.target as HTMLFormElement;
     const name = target.name;
 
@@ -68,7 +66,7 @@ const SearchOptions: FunctionComponent<Props> = ({
     setSearchParams(previousValue => {
       const newValue = {
         ...previousValue,
-        dob: date?.isValid ? date.format('YYYYMMDD') : null,
+        dob: date?.isValid ? date.format('YYYY-MM-DD') : null,
       };
 
       for (const key in newValue) {

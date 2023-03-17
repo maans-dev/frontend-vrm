@@ -17,8 +17,6 @@ const VoterSearch: FunctionComponent<Props> = () => {
 
   const { results, isLoading } = usePersonSearchFetcher(searchParams);
 
-  console.log('results', results);
-
   const doSearch = (params: Partial<PersonSearchParams>) => {
     if (!params) return;
     // remove empty keys
@@ -40,9 +38,7 @@ const VoterSearch: FunctionComponent<Props> = () => {
         as={results === null || results === undefined ? 'form' : 'modal'}
         isLoading={isLoading}
       />
-      {results && !isLoading && results.length > 1 ? (
-        <SearchResults results={results} />
-      ) : null}
+      {results && !isLoading ? <SearchResults results={results} /> : null}
     </>
   );
 };
