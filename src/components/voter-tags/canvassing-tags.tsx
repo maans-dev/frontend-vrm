@@ -1,12 +1,12 @@
 import React from 'react';
 import { EuiComboBox, EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
-import { ITag } from './types';
+import { PartyTags } from './types';
 import Tag from './tag';
 import { Field } from '@lib/domain/person';
 import { shortCodes } from '@components/canvassing-tags';
 
 export interface Props {
-  options?: ITag[];
+  options?: PartyTags[];
   // existingTags?: ITag[];
   // newTags?: ITag[];
   fields: Field[];
@@ -35,6 +35,8 @@ const VoterTags: React.FC<Props> = ({
       </EuiFlexItem>
     )
   );
+  // options={options.map(field => ({ label: field.description }))}
+  // console.log(options, 'options')
 
   return (
     <>
@@ -42,7 +44,7 @@ const VoterTags: React.FC<Props> = ({
         compressed
         placeholder="Search for a tag"
         singleSelection={{ asPlainText: true }}
-        options={options}
+        // options={options}
         isLoading={isLoading}
         // selectedOptions={selectedOption}
         // onChange={options => onSelect(options[0])}
