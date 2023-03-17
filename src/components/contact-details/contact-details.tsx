@@ -1,41 +1,77 @@
 import EmailAddress from '@components/form/email-address';
 import PhoneNumbers from '@components/form/phone-numbers';
 import { EuiComboBox, EuiFormRow } from '@elastic/eui';
-import { Contact, Contact2 } from '@lib/domain/person';
-import { FunctionComponent } from 'react';
+import { Contact } from '@lib/domain/person';
+import { FunctionComponent, useState } from 'react';
 
-export type Props = {
+interface Props {
   language: string;
   contacts: Contact[];
-};
+}
 
-const languages = [
-  { value: 'AFRIKAANS' },
-  { value: 'ENGLISH' },
-  { value: 'ISINDEBELE' },
-  { value: 'ISIXHOSA' },
-  { value: 'ISIZULU' },
-  { value: 'SEPEDI' },
-  { value: 'SESOTHO' },
-  { value: 'SETSWANA' },
-  { value: 'SISWATI' },
-  { value: 'TSHIVENDA' },
-  { value: 'XITSONGA' },
-];
+function getLanguageEnumValue(language: string): Language {
+  switch (language) {
+    case 'AFRIKAANS':
+      return Language.AFRIKAANS;
+    case 'ENGLISH':
+      return Language.ENGLISH;
+    case 'ISINDEBELE':
+      return Language.ISINDEBELE;
+    case 'ISIXHOSA':
+      return Language.ISIXHOSA;
+    case 'ISIZULU':
+      return Language.ISIZULU;
+    case 'SEPEDI':
+      return Language.SEPEDI;
+    case 'SESOTHO':
+      return Language.SESOTHO;
+    case 'SETSWANA':
+      return Language.SETSWANA;
+    case 'SISWATI':
+      return Language.SISWATI;
+    case 'TSHIVENDA':
+      return Language.TSHIVENDA;
+    case 'XITSONGA':
+      return Language.XITSONGA;
+    default:
+      throw new Error(`Invalid language: ${language}`);
+  }
+}
+
+enum Language {
+  AFRIKAANS = 'AFRIKAANS',
+  ENGLISH = 'ENGLISH',
+  ISINDEBELE = 'ISINDEBELE',
+  ISIXHOSA = 'ISIXHOSA',
+  ISIZULU = 'ISIZULU',
+  SEPEDI = 'SEPEDI',
+  SESOTHO = 'SESOTHO',
+  SETSWANA = 'SETSWANA',
+  SISWATI = 'SISWATI',
+  TSHIVENDA = 'TSHIVENDA',
+  XITSONGA = 'XITSONGA',
+}
 
 const ContactDetails: FunctionComponent<Props> = ({ language, contacts }) => {
-  const getSelectedOption = (value: string) => {
-    const option = languages.find(option => option.value === value);
-    return option
-      ? [{ value: option.value.toUpperCase(), label: option.value }]
-      : [];
-  };
-  const selectedOptions = getSelectedOption(language);
-
-  const options = languages.map(language => ({
-    label: language.value,
-    value: language.value,
+  const [selectedLanguage, setSelectedLanguage] = useState<Language>(
+    getLanguageEnumValue(language)
+  );
+  const languageOptions = Object.values(Language).map(languageOption => ({
+    label: languageOption,
+    value: languageOption,
   }));
+
+  const handleLanguageChange = (
+    selectedOptions: {
+      label: string;
+      value: string;
+    }[]
+  ) => {
+    const selectedLanguageValue = selectedOptions[0]?.value;
+    if (selectedLanguageValue) {
+      setSelectedLanguage(selectedLanguageValue as Language);
+    }
+  };
 
   return (
     <>
@@ -46,9 +82,11 @@ const ContactDetails: FunctionComponent<Props> = ({ language, contacts }) => {
           aria-label="Select voter language(s)"
           placeholder="Select voter language(s)"
           singleSelection={{ asPlainText: true }}
-          options={options}
-          selectedOptions={selectedOptions}
-          onChange={() => null}
+          options={languageOptions}
+          selectedOptions={[
+            { value: selectedLanguage, label: selectedLanguage },
+          ]}
+          onChange={handleLanguageChange}
         />
       </EuiFormRow>
 

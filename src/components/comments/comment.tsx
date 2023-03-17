@@ -15,17 +15,20 @@ export type Props = {
 };
 
 const Commenter: FunctionComponent<Props> = ({ comment }) => {
-  // console.log(comment, 'comment i');
+  console.log(comment, 'comment i');
   const isSystemComment = comment.type === 'system';
   const isMemberComment = comment.type === 'membership';
 
   const { euiTheme } = useEuiTheme();
+  function formatTimestamp(timestamp) {
+    return moment(timestamp).format('D MMM YYYY');
+  }
 
   return (
     <EuiComment
       username={`${comment.createdBy.firstName}  ${comment.createdBy.surname}`}
       event={isSystemComment ? <>{comment.value}</> : 'added a comment'}
-      timestamp={moment(comment.created).fromNow()}
+      timestamp={formatTimestamp(comment.created)}
       timelineAvatarAriaLabel={comment.createdBy.firstName}
       timelineAvatar={
         isSystemComment ? (

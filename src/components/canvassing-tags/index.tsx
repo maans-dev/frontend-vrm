@@ -65,7 +65,7 @@ const presetFields: Partial<Field>[] = [
   },
 ];
 
-const shortCodes = ['WR', 'ASTREG', 'DR', 'WV', 'CV', 'M'];
+export const shortCodes = ['WR', 'ASTREG', 'DR', 'WV', 'CV', 'M'];
 
 const CanvassingTags: FunctionComponent<Props> = ({ fields, onTagClick }) => {
   const isMobile = useIsWithinBreakpoints(['xs', 's']);

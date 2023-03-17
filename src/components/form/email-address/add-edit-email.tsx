@@ -20,8 +20,11 @@ const AddEditEmail: FunctionComponent<Props> = ({ contact, onUpdate }) => {
         <EuiFormRow display="rowCompressed">
           <EuiFieldText
             compressed
-            placeholder="dave@example.com"
+            placeholder="Enter an email address"
             value={contact ? contact?.value : null}
+            type="email"
+            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+            autoComplete="email"
           />
         </EuiFormRow>
       </EuiFlexItem>

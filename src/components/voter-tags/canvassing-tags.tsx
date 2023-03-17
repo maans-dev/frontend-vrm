@@ -2,15 +2,17 @@ import React from 'react';
 import { EuiComboBox, EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
 import { ITag } from './types';
 import Tag from './tag';
+import { Field } from '@lib/domain/person';
+import { shortCodes } from '@components/canvassing-tags';
 
 export interface Props {
   options?: ITag[];
   // existingTags?: ITag[];
   // newTags?: ITag[];
-  tags: ITag[];
+  fields: Field[];
   isLoading?: boolean;
-  onSearch: (searchValue: string, hasMatchingOptions?: boolean) => void;
-  onSelect: (tag: ITag) => void;
+  onSearch?: (searchValue: string, hasMatchingOptions?: boolean) => void;
+  onSelect?: (tag: Field) => void;
   onRemoveTag: (label: string) => void;
 }
 
@@ -19,14 +21,20 @@ const VoterTags: React.FC<Props> = ({
   onSelect,
   onRemoveTag,
   options,
-  tags,
+  fields,
   isLoading,
 }: Props) => {
-  const tagBadges = [...tags].map((tag, i) => (
-    <EuiFlexItem key={i}>
-      <Tag label={tag.label} isNew={tag.isDirty} onDelete={onRemoveTag} />
-    </EuiFlexItem>
-  ));
+  const tagBadges = [...fields].map((field, i) =>
+    shortCodes.includes(field.field.code) ? null : (
+      <EuiFlexItem key={i}>
+        <Tag
+          label={field.field.description}
+          // isNew={tag.isDirty}
+          onDelete={onRemoveTag}
+        />
+      </EuiFlexItem>
+    )
+  );
 
   return (
     <>
@@ -37,7 +45,7 @@ const VoterTags: React.FC<Props> = ({
         options={options}
         isLoading={isLoading}
         // selectedOptions={selectedOption}
-        onChange={options => onSelect(options[0])}
+        // onChange={options => onSelect(options[0])}
         onSearchChange={onSearch}
         fullWidth
         isClearable={false}

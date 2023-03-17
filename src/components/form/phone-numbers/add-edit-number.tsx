@@ -52,17 +52,13 @@ const AddEditNumber: FunctionComponent<Props> = ({ contact, onUpdate }) => {
       inputDisplay: <ImUserTie />,
     },
   ];
-
   const [selectedPhoneType, setSelectedPhoneType] = useState(null);
-
   const onChangePhoneType = value => {
     setSelectedPhoneType(value);
   };
-
   useEffect(() => {
     if (contact) setSelectedPhoneType(contact.type);
   }, [contact]);
-
   return (
     <EuiFlexGroup responsive={false} gutterSize="xs">
       <EuiFlexItem grow={false} css={{ minWidth: '40px' }}>
@@ -85,8 +81,9 @@ const AddEditNumber: FunctionComponent<Props> = ({ contact, onUpdate }) => {
         <EuiFormRow display="rowCompressed">
           <EuiFieldText
             compressed
-            placeholder="012 456 7890"
+            placeholder="Enter a phone number"
             value={contact ? contact.contact.value : null}
+            inputMode="numeric"
           />
         </EuiFormRow>
       </EuiFlexItem>
