@@ -23,10 +23,13 @@ import CanvassingTags from '@components/canvassing-tags';
 import Affiliation from '@components/affiliation/affiliation';
 import ContactDetails from '@components/contact-details/contact-details';
 import Spinner from '@components/spinner/spinner';
+import { PersonUpdate } from '@lib/domain/person-update';
+import { Person } from '@lib/domain/person';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
   const voterKey = router.query.voterKey as string;
+  const [updatePayload, setUpdatePayload] = useState<Partial<Person>>();
   const { person, error, isLoading } = usePersonFetcher(voterKey);
   const breadcrumb: EuiBreadcrumb[] = [
     {
@@ -63,6 +66,37 @@ const Voter: FunctionComponent = () => {
     </EuiFlexGroup>
   );
 
+  const onChange = (update: PersonUpdate<unknown>) => {
+    // data is not an object and must be deleted
+    if (!update.data) {
+      setUpdatePayload(prev => {
+        delete prev[update.field];
+        return prev;
+      });
+      return;
+    }
+
+    // data is an object so scan it's fields for deletions
+    if (
+      typeof update.data === 'object' &&
+      !Array.isArray(update.data) &&
+      update.data !== null
+    ) {
+      for (const key in update.data as any) {
+        if (update.data[key] === null) delete update.data[key];
+      }
+    }
+
+    setUpdatePayload(prev => ({
+      ...prev,
+      [update.field]: update.data,
+    }));
+  };
+
+  useEffect(() => {
+    console.log('UPDATE_PAYLOAD', updatePayload);
+  }, [updatePayload]);
+
   return (
     <>
       {error && <div>{error}</div>}
@@ -91,13 +125,17 @@ const Voter: FunctionComponent = () => {
             </EuiFormFieldset>
             <EuiSpacer />
             <EuiFormFieldset legend={{ children: 'Affiliation' }}>
-              <Affiliation affiliation={person.affiliation} />
+              <Affiliation
+                affiliation={person.affiliation}
+                onChange={onChange}
+              />
             </EuiFormFieldset>
             <EuiSpacer />
             <EuiFormFieldset legend={{ children: 'Contact details' }}>
               <ContactDetails
                 language={person.language}
                 contacts={person.contacts}
+                onLanguageChange={onChange}
               />
             </EuiFormFieldset>
             <EuiSpacer />

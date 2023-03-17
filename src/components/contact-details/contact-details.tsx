@@ -2,11 +2,14 @@ import EmailAddress from '@components/form/email-address';
 import PhoneNumbers from '@components/form/phone-numbers';
 import { EuiComboBox, EuiFormRow } from '@elastic/eui';
 import { Contact } from '@lib/domain/person';
+import { Language } from '@lib/domain/person-enum';
+import { LanguageUpdate, PersonUpdate } from '@lib/domain/person-update';
 import { FunctionComponent, useState } from 'react';
 
 interface Props {
   language: string;
   contacts: Contact[];
+  onLanguageChange: (update: PersonUpdate<LanguageUpdate>) => void;
 }
 
 function getLanguageEnumValue(language: string): Language {
@@ -38,21 +41,11 @@ function getLanguageEnumValue(language: string): Language {
   }
 }
 
-enum Language {
-  AFRIKAANS = 'AFRIKAANS',
-  ENGLISH = 'ENGLISH',
-  ISINDEBELE = 'ISINDEBELE',
-  ISIXHOSA = 'ISIXHOSA',
-  ISIZULU = 'ISIZULU',
-  SEPEDI = 'SEPEDI',
-  SESOTHO = 'SESOTHO',
-  SETSWANA = 'SETSWANA',
-  SISWATI = 'SISWATI',
-  TSHIVENDA = 'TSHIVENDA',
-  XITSONGA = 'XITSONGA',
-}
-
-const ContactDetails: FunctionComponent<Props> = ({ language, contacts }) => {
+const ContactDetails: FunctionComponent<Props> = ({
+  language,
+  contacts,
+  onLanguageChange,
+}) => {
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(
     getLanguageEnumValue(language)
   );
@@ -70,6 +63,14 @@ const ContactDetails: FunctionComponent<Props> = ({ language, contacts }) => {
     const selectedLanguageValue = selectedOptions[0]?.value;
     if (selectedLanguageValue) {
       setSelectedLanguage(selectedLanguageValue as Language);
+
+      onLanguageChange({
+        field: 'language',
+        data:
+          language !== selectedLanguageValue
+            ? (selectedLanguageValue as Language)
+            : null,
+      });
     }
   };
 
