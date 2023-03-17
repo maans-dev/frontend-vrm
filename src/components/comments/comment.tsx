@@ -7,36 +7,40 @@ import {
 } from '@elastic/eui';
 import moment from 'moment';
 import { FunctionComponent } from 'react';
-import { IComment } from './types';
 import { CiUser } from 'react-icons/ci';
+import { Comment } from '@lib/domain/person';
 
 export type Props = {
-  comment: IComment;
+  comment: Comment;
 };
 
-const Comment: FunctionComponent<Props> = ({ comment }) => {
+const Commenter: FunctionComponent<Props> = ({ comment }) => {
+  console.log(comment, 'comment i');
   const isSystemComment = comment.type === 'system';
-  const isMemberComment = comment.type === 'member';
+  const isMemberComment = comment.type === 'membership';
 
   const { euiTheme } = useEuiTheme();
+  function formatTimestamp(timestamp) {
+    return moment(timestamp).format('D MMM YYYY');
+  }
 
   return (
     <EuiComment
-      username={comment.user}
-      event={isSystemComment ? <>{comment.message}</> : 'added a comment'}
-      timestamp={moment(comment.date).fromNow()}
-      timelineAvatarAriaLabel={comment.user}
+      username={`${comment.createdBy.firstName}  ${comment.createdBy.surname}`}
+      event={isSystemComment ? <>{comment.value}</> : 'added a comment'}
+      timestamp={formatTimestamp(comment.created)}
+      timelineAvatarAriaLabel={comment.createdBy.firstName}
       timelineAvatar={
         isSystemComment ? (
           <EuiAvatar
-            name={comment.user}
+            name={comment.createdBy.firstName}
             iconType="bell"
             size="m"
             color={euiTheme.colors.warning}
           />
         ) : (
           <EuiAvatar
-            name={comment.user}
+            name={comment.createdBy.firstName}
             iconType={isMemberComment ? CiUser : 'editorComment'}
             size="m"
             color={euiTheme.colors.lightShade}
@@ -58,11 +62,11 @@ const Comment: FunctionComponent<Props> = ({ comment }) => {
       }>
       {!isSystemComment ? (
         <EuiText size="xs">
-          <p>{comment.message}</p>
+          <p>{comment.value}</p>
         </EuiText>
       ) : null}
     </EuiComment>
   );
 };
 
-export default Comment;
+export default Commenter;

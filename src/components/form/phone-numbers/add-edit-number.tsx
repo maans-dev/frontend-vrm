@@ -8,7 +8,6 @@ import {
   EuiSuperSelect,
   EuiText,
 } from '@elastic/eui';
-import { Phone } from './types';
 import {
   FaMobileAlt,
   FaRegQuestionCircle,
@@ -16,16 +15,17 @@ import {
   FaGlobe,
 } from 'react-icons/fa';
 import { ImUserTie } from 'react-icons/im';
+import { Contact, Contact2 } from '@lib/domain/person';
 
 export type Props = {
-  item?: Phone;
-  onUpdate?: (item: Phone) => void;
+  contact?: Contact;
+  onUpdate?: (item: Contact2) => void;
 };
 
-const AddEditNumber: FunctionComponent<Props> = ({ item, onUpdate }) => {
+const AddEditNumber: FunctionComponent<Props> = ({ contact, onUpdate }) => {
   const phoneTypeOptions = [
     {
-      value: 'Mobile',
+      value: 'WORK',
       dropdownDisplay: (
         <EuiText size="s">
           <FaMobileAlt /> Mobile
@@ -34,7 +34,7 @@ const AddEditNumber: FunctionComponent<Props> = ({ item, onUpdate }) => {
       inputDisplay: <FaMobileAlt />,
     },
     {
-      value: 'Home',
+      value: 'HOME',
       dropdownDisplay: (
         <EuiText size="s">
           <FaHome /> Home
@@ -43,7 +43,7 @@ const AddEditNumber: FunctionComponent<Props> = ({ item, onUpdate }) => {
       inputDisplay: <FaHome />,
     },
     {
-      value: 'Work',
+      value: 'CELL',
       dropdownDisplay: (
         <EuiText size="s">
           <ImUserTie /> Work
@@ -51,36 +51,14 @@ const AddEditNumber: FunctionComponent<Props> = ({ item, onUpdate }) => {
       ),
       inputDisplay: <ImUserTie />,
     },
-    {
-      value: 'International',
-      dropdownDisplay: (
-        <EuiText size="s">
-          <FaGlobe /> International
-        </EuiText>
-      ),
-      inputDisplay: <FaGlobe />,
-    },
-    {
-      value: 'Other',
-      dropdownDisplay: (
-        <EuiText size="s">
-          <FaRegQuestionCircle /> Other
-        </EuiText>
-      ),
-      inputDisplay: <FaRegQuestionCircle />,
-    },
   ];
-
   const [selectedPhoneType, setSelectedPhoneType] = useState(null);
-
   const onChangePhoneType = value => {
     setSelectedPhoneType(value);
   };
-
   useEffect(() => {
-    if (item) setSelectedPhoneType(item.type);
-  }, [item]);
-
+    if (contact) setSelectedPhoneType(contact.type);
+  }, [contact]);
   return (
     <EuiFlexGroup responsive={false} gutterSize="xs">
       <EuiFlexItem grow={false} css={{ minWidth: '40px' }}>
@@ -103,8 +81,9 @@ const AddEditNumber: FunctionComponent<Props> = ({ item, onUpdate }) => {
         <EuiFormRow display="rowCompressed">
           <EuiFieldText
             compressed
-            placeholder="012 456 7890"
-            value={item ? item.number : null}
+            placeholder="Enter a phone number"
+            value={contact ? contact.contact.value : null}
+            inputMode="numeric"
           />
         </EuiFormRow>
       </EuiFlexItem>
@@ -113,8 +92,8 @@ const AddEditNumber: FunctionComponent<Props> = ({ item, onUpdate }) => {
           <EuiButtonEmpty
             size="s"
             css={{ minWidth: '50px' }}
-            onClick={() => (item ? onUpdate(item) : null)}>
-            {item ? 'Save' : 'Add'}
+            onClick={() => (contact ? onUpdate(contact) : null)}>
+            {contact ? 'Save' : 'Add'}
           </EuiButtonEmpty>
         </EuiFormRow>
       </EuiFlexItem>

@@ -3,7 +3,7 @@ import { FunctionComponent } from 'react';
 import { FaTimesCircle } from 'react-icons/fa';
 
 export type Props = {
-  label: string;
+  label?: string;
   isNew?: boolean;
   onDelete: (label: string) => void;
 };

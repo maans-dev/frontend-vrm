@@ -1,50 +1,50 @@
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent } from 'react';
 import {
   EuiBasicTableColumn,
   EuiBasicTable,
   EuiText,
-  EuiSpacer,
   EuiBadge,
-  EuiFlexItem,
-  EuiFlexGrid,
   Criteria,
   useIsWithinBreakpoints,
 } from '@elastic/eui';
 import moment from 'moment';
 import router from 'next/router';
-import { VoterSearchResult } from './types';
 import { css, Global } from '@emotion/react';
+import { Person } from '@lib/domain/person';
 
 export type Props = {
-  results?: VoterSearchResult[];
+  results?: Person[];
 };
 
 const SearchResults: FunctionComponent<Props> = ({ results }) => {
-  const [sortField, setSortField] = useState<keyof VoterSearchResult>('name');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  // const [sortField, setSortField] = useState<keyof Person>('name');
+  // const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const isMobile = useIsWithinBreakpoints(['xs', 's']);
 
-  const onTableChange = ({ sort }: Criteria<VoterSearchResult>) => {
+  const onTableChange = ({ sort }: Criteria<Person>) => {
     if (sort) {
       const { field: sortField, direction: sortDirection } = sort;
-      setSortField(sortField);
-      setSortDirection(sortDirection);
+      // setSortField(sortField);
+      // setSortDirection(sortDirection);
     }
   };
 
-  const getRowProps = (voter: VoterSearchResult) => {
-    const { darn, colour } = voter;
+  const getRowProps = (voter: Person) => {
     return {
-      'data-test-subj': `row-${darn}`,
+      'data-test-subj': `row-${voter.key}`,
       className: 'voter-search-row',
-      css: { borderLeft: isMobile ? `5px solid ${colour} !important` : null },
-      onClick: () => router.push('/canvass/voter'),
+      css: {
+        borderLeft: isMobile
+          ? `5px solid #${voter.colourCode.colour} !important`
+          : null,
+      },
+      onClick: () => router.push(`/canvass/voter/${voter.key}`),
     };
   };
 
-  const columns: Array<EuiBasicTableColumn<VoterSearchResult>> = [
+  const columns: Array<EuiBasicTableColumn<Person>> = [
     {
-      field: 'darn',
+      field: 'key',
       name: 'DARN',
       valign: 'top',
       mobileOptions: {
@@ -53,13 +53,21 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
       css: { minWidth: '80px' },
     },
     {
-      field: 'name',
       name: 'Full Name',
       valign: 'top',
+      render: (item: Person) => (
+        <div>
+          {item.salutation} {item.firstName} {item.surname}
+        </div>
+      ),
       mobileOptions: {
         header: false,
         width: '100%',
-        render: item => <strong>{item.name}</strong>,
+        render: (item: Person) => (
+          <strong>
+            {item.salutation} {item.firstName} {item.surname}
+          </strong>
+        ),
       },
     },
     {
@@ -67,9 +75,9 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
       name: 'DOB (Age)',
       valign: 'top',
       dataType: 'date',
-      render: (dob: VoterSearchResult['dob']) =>
-        `${moment(dob).format('D MMM YYYY')} (${moment().diff(
-          dob,
+      render: (dob: Person['dob']) =>
+        `${moment(dob, 'YYYYMMDD').format('D MMM YYYY')} (${moment().diff(
+          moment(dob, 'YYYYMMDD'),
           'years',
           false
         )})`,
@@ -79,7 +87,7 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
       },
     },
     {
-      field: 'address',
+      field: 'address.formatted',
       name: 'Address',
       valign: 'top',
       css: { minWidth: '150px' },
@@ -88,26 +96,29 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
       },
     },
     {
-      field: 'livingVd',
+      field: 'livingStructure',
       valign: 'top',
       name: 'Living VD',
       css: { minWidth: '100px' },
-      render: (vd: VoterSearchResult['livingVd']) => (
-        <EuiText size="relative" css={{ textTransform: 'capitalize' }}>
-          {vd.name}
-          <EuiSpacer size="xs" />({vd.number})
-        </EuiText>
+      render: (vd: Person['livingStructure']) => (
+        <div>
+          {vd.votingDistrict} ({vd.votingDistrict_id})
+        </div>
       ),
       mobileOptions: {
         show: false,
       },
     },
     {
-      field: 'colour',
+      field: 'colourCode',
       name: 'Colour Code',
       valign: 'top',
-      render: (color: VoterSearchResult['colour']) => (
-        <EuiBadge color={color}>{color}</EuiBadge>
+      render: (color: Person['colourCode']) => (
+        <EuiBadge
+          css={{ color: 'white !important' }}
+          color={`#${color.colour}`}>
+          {color.description}
+        </EuiBadge>
       ),
       mobileOptions: {
         header: false,
@@ -115,7 +126,7 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
       },
     },
     {
-      field: 'status',
+      field: 'iec.regStatus',
       name: 'Reg Status',
       valign: 'top',
       css: { minWidth: '90px' },
@@ -124,40 +135,37 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
       },
     },
     {
-      field: 'registeredVd',
+      field: 'registeredStructure',
       name: 'Registered VD',
       valign: 'top',
       css: { minWidth: '100px' },
-      render: (vd: VoterSearchResult['registeredVd']) => (
-        <EuiText size="relative" css={{ textTransform: 'capitalize' }}>
-          {vd.name}
-          <EuiSpacer size="xs" />({vd.number})
-        </EuiText>
+      render: (vd: Person['registeredStructure']) => (
+        <div>
+          {vd.votingDistrict} ({vd.votingDistrict_id})
+        </div>
       ),
       mobileOptions: {
         show: false,
       },
     },
-    {
-      field: 'involvement',
-      name: 'Involvement',
-      valign: 'top',
-      css: { minWidth: '100px' },
-      render: (involvement: VoterSearchResult['involvement']) => (
-        <EuiFlexGrid gutterSize="s" columns={1}>
-          {involvement.map(item => (
-            <EuiFlexItem key={item} grow={false}>
-              <EuiBadge color="hollow" key={item}>
-                {item}
-              </EuiBadge>
-            </EuiFlexItem>
-          ))}
-        </EuiFlexGrid>
-      ),
-      mobileOptions: {
-        show: false,
-      },
-    },
+    // {
+    //   field: 'involvement',
+    //   name: 'Involvement',
+    //   valign: 'top',
+    //   css: { minWidth: '100px' },
+    //   render: () => (
+    //     <EuiFlexGrid gutterSize="s" columns={1}>
+    //       {/* {involvement.map(item => ( */}
+    //       <EuiFlexItem key={1} grow={false}>
+    //         <EuiBadge color="hollow">???</EuiBadge>
+    //       </EuiFlexItem>
+    //       {/* ))} */}
+    //     </EuiFlexGrid>
+    //   ),
+    //   mobileOptions: {
+    //     show: false,
+    //   },
+    // },
   ];
 
   return (
@@ -187,13 +195,13 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
         rowHeader="darn"
         columns={columns}
         tableLayout="auto"
-        sorting={{
-          sort: {
-            field: sortField,
-            direction: sortDirection,
-          },
-          enableAllColumns: true,
-        }}
+        // sorting={{
+        //   sort: {
+        //     field: sortField,
+        //     direction: sortDirection,
+        //   },
+        //   enableAllColumns: true,
+        // }}
         rowProps={getRowProps}
         onChange={onTableChange}
         noItemsMessage={

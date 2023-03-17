@@ -10,20 +10,31 @@ import {
   EuiModalHeaderTitle,
   EuiSpacer,
 } from '@elastic/eui';
+import { PersonSearchParams } from '@lib/domain/person-search';
 import { FunctionComponent, useState } from 'react';
 import SearchOptions from './search-options';
 
 export type Props = {
-  onSubmit?: (options) => void;
+  onSubmit?: (params: Partial<PersonSearchParams>) => void;
 };
 
 const SearchOptionsModal: FunctionComponent<Props> = ({ onSubmit }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [searchParams, setSearchParams] =
+    useState<Partial<PersonSearchParams>>();
   const closeModal = () => setIsModalVisible(false);
   const showModal = () => setIsModalVisible(true);
+
   const submit = () => {
-    onSubmit({});
+    if (!searchParams) return;
+    onSubmit(searchParams);
     closeModal();
+    setSearchParams(null);
+  };
+
+  const reset = () => {
+    if (!searchParams) return;
+    setSearchParams(null);
   };
 
   let modal;
@@ -36,13 +47,18 @@ const SearchOptionsModal: FunctionComponent<Props> = ({ onSubmit }) => {
         </EuiModalHeader>
 
         <EuiModalBody>
-          <SearchOptions />
+          <SearchOptions onChange={params => setSearchParams(params)} />
         </EuiModalBody>
 
         <EuiModalFooter>
-          <EuiButtonEmpty onClick={closeModal}>Cancel</EuiButtonEmpty>
+          <EuiButtonEmpty onClick={reset}>Reset</EuiButtonEmpty>
 
-          <EuiButton iconType="search" type="submit" onClick={submit} fill>
+          <EuiButton
+            iconType="search"
+            type="submit"
+            onClick={submit}
+            fill
+            disabled={!searchParams}>
             Search
           </EuiButton>
         </EuiModalFooter>

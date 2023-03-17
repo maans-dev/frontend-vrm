@@ -10,67 +10,55 @@ import {
   useEuiTheme,
 } from '@elastic/eui';
 import { FunctionComponent, ReactElement, useEffect, useState } from 'react';
-import { Phone } from './types';
 import {
   FaMobileAlt,
   FaRegQuestionCircle,
   FaHome,
   FaGlobe,
 } from 'react-icons/fa';
-import { ImUserTie } from 'react-icons/im';
 import AddEditNumber from './add-edit-number';
 import { GoCircleSlash } from 'react-icons/go';
+import { Contact } from '@lib/domain/person';
 
 export type Props = {
-  phone: Phone;
+  contact: Contact;
   border?: boolean;
 };
 
-const PhoneNumberLine: FunctionComponent<Props> = ({ phone, border }) => {
+const PhoneNumberLine: FunctionComponent<Props> = ({ contact, border }) => {
   const [typeIcon, setTypeIcon] = useState<ReactElement>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const { euiTheme } = useEuiTheme();
 
   useEffect(() => {
-    switch (phone.type) {
-      case 'Mobile':
+    switch (contact.type) {
+      case 'WORK':
         setTypeIcon(
           <FaMobileAlt
             color={
-              phone.isDnc
+              contact.canContact
                 ? euiTheme.colors.disabledText
                 : euiTheme.colors.subduedText
             }
           />
         );
         break;
-      case 'Home':
+      case 'HOME':
         setTypeIcon(
           <FaHome
             color={
-              phone.isDnc
+              contact.canContact
                 ? euiTheme.colors.disabledText
                 : euiTheme.colors.subduedText
             }
           />
         );
         break;
-      case 'International':
+      case 'CELL':
         setTypeIcon(
           <FaGlobe
             color={
-              phone.isDnc
-                ? euiTheme.colors.disabledText
-                : euiTheme.colors.subduedText
-            }
-          />
-        );
-        break;
-      case 'Work':
-        setTypeIcon(
-          <ImUserTie
-            color={
-              phone.isDnc
+              contact.canContact
                 ? euiTheme.colors.disabledText
                 : euiTheme.colors.subduedText
             }
@@ -81,19 +69,28 @@ const PhoneNumberLine: FunctionComponent<Props> = ({ phone, border }) => {
         setTypeIcon(
           <FaRegQuestionCircle
             color={
-              phone.isDnc
+              contact.canContact
                 ? euiTheme.colors.disabledText
                 : euiTheme.colors.subduedText
             }
           />
         );
     }
-  }, [euiTheme.colors.disabledText, euiTheme.colors.subduedText, phone]);
+  }, [contact, euiTheme.colors.disabledText, euiTheme.colors.subduedText]);
 
   const [showActions, setShowActions] = useState(false);
 
   const onActionsClick = () => setShowActions(showActions => !showActions);
   const hideActions = () => setShowActions(false);
+
+  function getContactValue(contact) {
+    const value = contact?.contact?.value;
+    if (value && !isNaN(value)) {
+      return value;
+    } else {
+      return null;
+    }
+  }
 
   const renderReadOnlyMode = (
     <EuiFlexGroup
@@ -111,10 +108,19 @@ const PhoneNumberLine: FunctionComponent<Props> = ({ phone, border }) => {
           <EuiFlexItem
             grow={true}
             css={{ minWidth: '100px' }}
-            color={phone.isDnc ? euiTheme.colors.disabledText : null}>
+            color={contact.canContact ? euiTheme.colors.disabledText : null}>
             <EuiTextColor
-              color={phone.isDnc ? euiTheme.colors.disabledText : null}>
-              {phone.number}
+              color={contact.canContact ? euiTheme.colors.disabledText : null}>
+              {getContactValue(contact)}
+            </EuiTextColor>
+          </EuiFlexItem>
+          <EuiFlexItem
+            grow={true}
+            css={{ minWidth: '100px' }}
+            color={contact.canContact ? euiTheme.colors.disabledText : null}>
+            <EuiTextColor
+              color={contact.canContact ? euiTheme.colors.disabledText : null}>
+              {contact.canContact}
             </EuiTextColor>
           </EuiFlexItem>
           <EuiFlexGroup
@@ -123,7 +129,7 @@ const PhoneNumberLine: FunctionComponent<Props> = ({ phone, border }) => {
             alignItems="center"
             css={{ maxWidth: '60px' }}
             gutterSize="xs">
-            {phone.isConfirmed ? (
+            {/* {phone.isConfirmed ? (
               <EuiFlexItem grow={false}>
                 <EuiAvatar
                   name="Confirmed"
@@ -133,8 +139,8 @@ const PhoneNumberLine: FunctionComponent<Props> = ({ phone, border }) => {
                   color={euiTheme.colors.success}
                 />
               </EuiFlexItem>
-            ) : null}
-            {phone.isDnc ? (
+            ) : null} */}
+            {contact.canContact ? (
               <EuiFlexItem grow={false}>
                 <EuiAvatar
                   name="Do not contact"
@@ -218,7 +224,7 @@ const PhoneNumberLine: FunctionComponent<Props> = ({ phone, border }) => {
   );
 
   const renderEditMode = (
-    <AddEditNumber item={phone} onUpdate={() => setIsEditing(false)} />
+    <AddEditNumber contact={contact} onUpdate={() => setIsEditing(false)} />
   );
 
   return (
