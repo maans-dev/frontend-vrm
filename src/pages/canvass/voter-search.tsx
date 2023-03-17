@@ -21,11 +21,7 @@ const Index: FunctionComponent = () => {
   ];
 
   return (
-    <MainLayout
-      breadcrumb={breadcrumb}
-      // pageTitle="Select a voter"
-      panelled={true}
-      restrictWidth={true}>
+    <MainLayout breadcrumb={breadcrumb} panelled={true} restrictWidth={true}>
       <VoterSearch />
     </MainLayout>
   );
