@@ -9,48 +9,82 @@ import {
   EuiButtonEmpty,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiModal,
+  EuiModalBody,
+  EuiModalFooter,
+  EuiModalHeader,
+  EuiModalHeaderTitle,
 } from '@elastic/eui';
-import moment from 'moment';
-import { FunctionComponent, useState } from 'react';
+import { PersonSearchParams } from '@lib/domain/person-search';
+import moment, { Moment } from 'moment';
+import { FormEvent, FunctionComponent, useState } from 'react';
 
 export type Props = {
-  onSubmit?: (options) => void;
+  onSubmit?: (params: Partial<PersonSearchParams>) => void;
+  as: 'form' | 'modal';
+  isLoading: boolean;
 };
 
-const SearchOptions: FunctionComponent<Props> = ({ onSubmit }) => {
-  const [state, setState] = useState({
-    id: '',
-    dob: null,
-    surname: '',
-    first: '',
-    email: '',
-    phone: '',
-  });
+const SearchOptions: FunctionComponent<Props> = ({
+  onSubmit,
+  as,
+  isLoading,
+}) => {
+  const [searchParams, setSearchParams] =
+    useState<Partial<PersonSearchParams>>();
 
-  const handleChange = e => {
-    const { name, value } = e.target;
-    setState(prevState => ({
-      ...prevState,
-      [name]: value,
-    }));
+  const [dob, setDob] = useState<Moment>();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const closeModal = () => setIsModalVisible(false);
+  const showModal = () => {
+    setIsModalVisible(true);
   };
 
-  const handleDOBChange = date => {
-    setState(prevState => ({
-      ...prevState,
-      dob: date,
-    }));
+  const handleChange = (event: FormEvent<HTMLFormElement>) => {
+    const target = event.target as HTMLFormElement;
+    const name = target.name;
+
+    if (target.name === 'dob') return;
+
+    const value = target.value;
+    setSearchParams(previousValue => {
+      const newValue = {
+        ...previousValue,
+        [name]: value,
+      };
+
+      for (const key in newValue) {
+        if (!newValue[key] || newValue[key] === '') delete newValue[key];
+      }
+
+      return newValue;
+    });
+  };
+
+  const handleDOBChange = (date: Moment) => {
+    setDob(date);
+    setSearchParams(previousValue => {
+      const newValue = {
+        ...previousValue,
+        dob: date?.isValid ? date.format('YYYY-MM-DD') : null,
+      };
+
+      for (const key in newValue) {
+        if (!newValue[key] || newValue[key] === '') delete newValue[key];
+      }
+
+      return newValue;
+    });
+  };
+
+  const handleSubmit = () => {
+    onSubmit(searchParams);
+    if (isModalVisible) closeModal();
   };
 
   const handleReset = () => {
-    setState({
-      id: '',
-      dob: null,
-      surname: '',
-      first: '',
-      email: '',
-      phone: '',
-    });
+    setSearchParams({});
+    setDob(null);
   };
 
   const formActions = (
@@ -65,22 +99,25 @@ const SearchOptions: FunctionComponent<Props> = ({ onSubmit }) => {
           size="m"
           iconType="search"
           fill
-          onClick={() => onSubmit(state)}>
+          onClick={() => handleSubmit()}
+          isLoading={isLoading}
+          disabled={
+            !searchParams || !Object.keys(searchParams).length || isLoading
+          }>
           Search
         </EuiButton>
       </EuiFlexItem>
     </EuiFlexGroup>
   );
 
-  return (
-    <EuiForm fullWidth style={{ margin: 'auto' }} css={{ maxWidth: '600px' }}>
+  const form = (
+    <EuiForm fullWidth component="form" onChange={handleChange}>
       <EuiFormRow label="Identity" display="rowCompressed">
         <EuiFieldText
-          name="id"
+          name="identity"
           compressed
           placeholder="ID Number, DARN or Membership number"
-          value={state.id}
-          onChange={handleChange}
+          value={searchParams?.identity || ''}
         />
       </EuiFormRow>
 
@@ -89,8 +126,8 @@ const SearchOptions: FunctionComponent<Props> = ({ onSubmit }) => {
       <EuiFormRow display="rowCompressed" label="Date of birth">
         <EuiDatePicker
           name="dob"
-          dateFormat="D MMM YYYY"
-          selected={state.dob}
+          dateFormat={['D MMM YYYY']}
+          selected={dob}
           maxDate={moment().subtract(17, 'year')}
           yearDropdownItemNumber={120}
           onChange={handleDOBChange}
@@ -102,18 +139,16 @@ const SearchOptions: FunctionComponent<Props> = ({ onSubmit }) => {
           name="surname"
           compressed
           append={<AdvancedSearchTooltip />}
-          value={state.surname}
-          onChange={handleChange}
+          value={searchParams?.surname || ''}
         />
       </EuiFormRow>
 
       <EuiFormRow display="rowCompressed" label="First names">
         <EuiFieldText
-          name="first"
+          name="firstName"
           compressed
           append={<AdvancedSearchTooltip />}
-          value={state.first}
-          onChange={handleChange}
+          value={searchParams?.firstName || ''}
         />
       </EuiFormRow>
 
@@ -124,8 +159,7 @@ const SearchOptions: FunctionComponent<Props> = ({ onSubmit }) => {
           name="email"
           compressed
           append={<AdvancedSearchTooltip />}
-          value={state.email}
-          onChange={handleChange}
+          value={searchParams?.email || ''}
         />
       </EuiFormRow>
 
@@ -134,14 +168,52 @@ const SearchOptions: FunctionComponent<Props> = ({ onSubmit }) => {
           name="phone"
           compressed
           append={<AdvancedSearchTooltip />}
-          value={state.phone}
-          onChange={handleChange}
+          value={searchParams?.phone || ''}
         />
       </EuiFormRow>
+
       <EuiSpacer />
-      {onSubmit ? formActions : null}
     </EuiForm>
   );
+
+  let modal;
+
+  if (isModalVisible) {
+    modal = (
+      <EuiModal onClose={closeModal} initialFocus="[name=popswitch]">
+        <EuiModalHeader>
+          <EuiModalHeaderTitle size="s">Search for a voter</EuiModalHeaderTitle>
+        </EuiModalHeader>
+
+        <EuiModalBody>{form}</EuiModalBody>
+
+        <EuiModalFooter>{formActions}</EuiModalFooter>
+      </EuiModal>
+    );
+  }
+
+  const renderAsModal = (
+    <>
+      <EuiFlexGroup justifyContent="flexEnd">
+        <EuiFlexItem grow={false}>
+          <EuiButton iconType="search" onClick={showModal} size="s">
+            Search again
+          </EuiButton>
+        </EuiFlexItem>
+      </EuiFlexGroup>
+      <EuiSpacer />
+      {modal}
+    </>
+  );
+
+  const renderAsForm = (
+    <>
+      {form}
+      {formActions}
+    </>
+  );
+
+  return as === 'modal' ? renderAsModal : renderAsForm;
 };
 
 export default SearchOptions;

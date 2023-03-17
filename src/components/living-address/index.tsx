@@ -1,14 +1,15 @@
+import { Address } from '@lib/domain/person';
 import { FunctionComponent } from 'react';
 import LivingAddress from './living-address';
 
 export type Props = {
-  prop?: string;
+  address: Address;
 };
 
-const Address: FunctionComponent<Props> = () => {
+const Address: FunctionComponent<Props> = ({ address }) => {
   return (
     <>
-      <LivingAddress />
+      <LivingAddress address={address} />
     </>
   );
 };

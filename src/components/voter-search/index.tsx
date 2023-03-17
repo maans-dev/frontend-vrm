@@ -1,56 +1,44 @@
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 import SearchResults from './search-results';
-import { VoterSearchResult } from './types';
-import SearchOptionsModal from './search-options-modal';
 import SearchOptions from './search-options';
-import { faker } from '@faker-js/faker';
+import { PersonSearchParams } from '@lib/domain/person-search';
+import usePersonSearchFetcher from '@lib/fetcher/person/person-search.fetcher';
+import { useRouter } from 'next/router';
+import Spinner from '@components/spinner/spinner';
 
 export type Props = {
   prop?: string;
 };
 
 const VoterSearch: FunctionComponent<Props> = () => {
-  const [results, setResults] = useState<VoterSearchResult[]>(null);
+  const router = useRouter();
+  const [searchParams, setSearchParams] =
+    useState<Partial<PersonSearchParams>>(null);
 
-  const doSearch = options => {
-    console.log(options);
-    const r: VoterSearchResult[] = [];
+  const { results, isLoading } = usePersonSearchFetcher(searchParams);
 
-    for (let i = 0; i < 10; i++) {
-      r.push({
-        darn: faker.datatype.number({ min: 12345674, max: 99999999 }),
-        dob: faker.date.past(65, '2005-01-01T00:00:00.000Z'),
-        name: `${faker.name.firstName()} ${faker.name.middleName()} ${faker.name.lastName()}`,
-        address: `${faker.address.streetAddress()}, ${faker.address.cityName()}, ${faker.address.county()}, ${faker.address.zipCode(
-          '####'
-        )}`,
-        livingVd: {
-          name: faker.random.words(2),
-          number: faker.datatype.number({ min: 12345674, max: 99999999 }),
-        },
-        colour: faker.color.human(),
-        status: faker.helpers.arrayElement(['Registered', 'Not Registered']),
-        registeredVd: {
-          name: faker.random.words(2),
-          number: faker.datatype.number({ min: 12345674, max: 99999999 }),
-        },
-        involvement: faker.helpers.arrayElements([
-          'Activist',
-          'Member',
-          'Public Rep',
-          'Staff',
-        ]),
-      });
+  const doSearch = (params: Partial<PersonSearchParams>) => {
+    if (!params) return;
+    // remove empty keys
+    for (const key in params) {
+      if (!params[key] || params[key] === '') delete params[key];
     }
-
-    setResults(r);
+    setSearchParams(params);
   };
+
+  useEffect(() => {
+    if (results?.length === 1) router.push(`/canvass/voter/${results[0].key}`);
+  }, [results, router]);
 
   return (
     <>
-      {!results ? <SearchOptions onSubmit={doSearch} /> : null}
-      {results ? <SearchOptionsModal onSubmit={doSearch} /> : null}
-      {results ? <SearchResults results={results} /> : null}
+      <Spinner show={isLoading || results?.length === 1} />
+      <SearchOptions
+        onSubmit={doSearch}
+        as={results === null || results === undefined ? 'form' : 'modal'}
+        isLoading={isLoading}
+      />
+      {results && !isLoading ? <SearchResults results={results} /> : null}
     </>
   );
 };

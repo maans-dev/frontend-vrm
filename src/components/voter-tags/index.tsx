@@ -1,73 +1,66 @@
 import { FunctionComponent, useEffect, useState } from 'react';
-import { ITag } from './types';
 import VoterTags from './canvassing-tags';
-import { faker } from '@faker-js/faker';
+import { Field } from '@lib/domain/person';
+import useTagFetcher from '@lib/fetcher/tags/tags';
+import { shortCodes } from '@components/canvassing-tags';
+import { PartyTags, PartyTags2 } from './types';
 
 export type Props = {
-  existingTags: ITag[];
+  fields: Field[];
 };
 
-const allOptionsStatic: ITag[] = [];
+const Tags: FunctionComponent<Props> = ({ fields }) => {
+  const [tags, setTags] = useState<Field[]>(fields);
+  const [partyTags, setPartyTags] = useState<PartyTags[]>([]);
+  const { data, error, isLoading } = useTagFetcher();
+  if (error) {
+    console.log(error);
+  }
 
-const Tags: FunctionComponent<Props> = ({ existingTags }) => {
-  const [allOptions] = useState(allOptionsStatic);
-  const [tags, setTags] = useState<ITag[]>([]);
-  const [isLoading, setLoading] = useState(false);
-  const [options, setOptions] = useState([]);
+  useEffect(() => {
+    setTags(fields);
+  }, [fields]);
 
-  let searchTimeout;
+  useEffect(() => {
+    if (data) {
+      setPartyTags(data);
+    }
+  }, [data]);
 
-  const onSearch = searchValue => {
-    console.log('OnSearch');
-    setOptions([]);
+  // function getOptions(fields: Field[], partyTags: PartyTags) {
+  //   const options = [];
+  //   for (const tag of partyTags) {
+  //     const { code, name } = tag;
+  //     if (shortCodes.includes(code)) {
+  //       continue;
+  //     }
+  //     const option = { value: code, label: name };
+  //     const matchingField = fields.find(field => field.field.code === code);
+  //     if (!matchingField) {
+  //       options.push(option);
+  //     }
+  //   }
+  //   return options;
+  // }
+  // console.log(getOptions(fields, partyTags), 'options');
 
-    if (searchValue === '') return;
-
-    setLoading(true);
-
-    clearTimeout(searchTimeout);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    searchTimeout = setTimeout(() => {
-      setLoading(false);
-      setOptions(
-        allOptions.filter(
-          option =>
-            option.label.toLowerCase().includes(searchValue.toLowerCase()) &&
-            !tags.includes(option)
-        )
-      );
-    }, 100);
-  };
-
-  const onSelect = (tag: ITag) => {
-    tag.isDirty = true;
-    setTags([tag, ...tags]);
-    setOptions([]);
-  };
+  // console.log(partyTags, 'party');
 
   const onRemove = (label: string) => {
-    setTags(tags.filter(tag => tag.label !== label));
+    setTags(tags.filter(tag => tag.field.description !== label));
   };
 
-  useEffect(() => {
-    setTags([...existingTags]);
-  }, [existingTags]);
-
-  useEffect(() => {
-    for (let i = 0; i < 100; i++) {
-      allOptionsStatic.push({ label: faker.random.words(5) });
-    }
-    allOptionsStatic.push(...existingTags);
-  }, [existingTags]);
+  const onSelect = (tag: Field) => {
+    setTags([tag, ...tags]);
+  };
 
   return (
     <VoterTags
-      options={options}
-      tags={tags}
-      onSearch={onSearch}
-      onSelect={onSelect}
+      fields={fields}
       onRemoveTag={onRemove}
+      // options={getOptions(fields, partyTags)}
+      onSelect={onSelect}
+      // onSearch={onSearch}
       isLoading={isLoading}
     />
   );
