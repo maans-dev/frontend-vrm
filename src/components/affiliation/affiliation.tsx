@@ -22,9 +22,10 @@ const AffiliationComponent: FunctionComponent<Props> = ({
 }) => {
   const { affiliations, isLoading, error } = useAffiliationFetcher();
   const [searchValue, setSearchValue] = useState<string>('');
-  const [selectedOptions, setSelectedOptions] = useState<AffliationOption[]>([
-    { label: affiliation.description, value: affiliation },
-  ]);
+  const [selectedOption, setSelectedOption] = useState<AffliationOption>({
+    label: affiliation.description,
+    value: affiliation,
+  });
 
   const filteredOptions = useMemo(() => {
     return (
@@ -36,10 +37,8 @@ const AffiliationComponent: FunctionComponent<Props> = ({
 
   const options = searchValue ? filteredOptions : [];
 
-  const handleChange = (selectedOptions: AffliationOption[]) => {
-    setSelectedOptions(selectedOptions);
-
-    if (selectedOptions.length === 0) return;
+  const handleChange = (selectedOptions: AffliationOption) => {
+    setSelectedOption(selectedOptions);
 
     let updateData: AffiliateUpdate;
     if (affiliation.key !== selectedOptions?.[0]?.value?.key) {
@@ -87,8 +86,8 @@ const AffiliationComponent: FunctionComponent<Props> = ({
             label: item.description,
             value: item,
           }))}
-          selectedOptions={selectedOptions}
-          onChange={selectedOptions => handleChange(selectedOptions)}
+          selectedOptions={[selectedOption]}
+          onChange={selectedOptions => handleChange(selectedOptions[0])}
           onSearchChange={value => setSearchValue(value)}
         />
       </EuiFormRow>

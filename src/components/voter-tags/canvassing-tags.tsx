@@ -1,54 +1,98 @@
-import React from 'react';
-import { EuiComboBox, EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
-import { PartyTags } from './types';
+import React, { useEffect, useState } from 'react';
+import {
+  EuiComboBox,
+  EuiComboBoxOptionOption,
+  EuiFlexGroup,
+  EuiFlexItem,
+} from '@elastic/eui';
+import { PartyTags } from '@lib/domain/person';
 import Tag from './tag';
 import { Field } from '@lib/domain/person';
 import { shortCodes } from '@components/canvassing-tags';
 
 export interface Props {
-  options?: PartyTags[];
-  // existingTags?: ITag[];
-  // newTags?: ITag[];
+  data: PartyTags[];
   fields: Field[];
-  isLoading?: boolean;
-  onSearch?: (searchValue: string, hasMatchingOptions?: boolean) => void;
-  onSelect?: (tag: Field) => void;
-  onRemoveTag: (label: string) => void;
+  onSelect?: (tag: PartyTags) => void;
+  onRemoveTag?: (label: string) => void;
 }
 
+type VoterTagsOption = EuiComboBoxOptionOption<PartyTags>;
+
 const VoterTags: React.FC<Props> = ({
-  onSearch,
   onSelect,
   onRemoveTag,
-  options,
+  data,
   fields,
-  isLoading,
 }: Props) => {
-  const tagBadges = [...fields].map((field, i) =>
-    shortCodes.includes(field.field.code) ? null : (
+  const [filteredOptions, setFilteredOptions] = useState<VoterTagsOption[]>([]);
+  const [selectedTags, setSelectedTags] = useState<PartyTags[]>([]);
+  const [searchValue, setSearchValue] = useState<string>('');
+
+  useEffect(() => {
+    setFilteredOptions(
+      data
+        .filter(item => !shortCodes.includes(item.code))
+        .map(item => ({ label: item.description, value: item }))
+    );
+  }, [data]);
+
+  const handleOnChange = (selectedOptions: VoterTagsOption[]) => {
+    if (selectedOptions.length > 0) {
+      const selectedTag = selectedOptions[0].value;
+      if (
+        !selectedTags.some(tag => tag.description === selectedTag.description)
+      ) {
+        onSelect?.(selectedTag);
+        setSelectedTags(prevSelectedTags => [
+          { ...selectedTag, isNew: true },
+          ...prevSelectedTags.filter(
+            tag => tag.description !== selectedTag.description
+          ),
+        ]);
+      }
+    }
+  };
+
+  const handleOnRemoveTag = (label: string) => {
+    onRemoveTag?.(label);
+    setSelectedTags(prevSelectedTags =>
+      prevSelectedTags.filter(tag => tag.description !== label)
+    );
+  };
+
+  const tagBadges = [
+    ...selectedTags.map((tag, i) => (
       <EuiFlexItem key={i}>
         <Tag
-          label={field.field.description}
-          // isNew={tag.isDirty}
-          onDelete={onRemoveTag}
+          label={tag.description}
+          isNew={tag.isNew}
+          onDelete={() => handleOnRemoveTag(tag.description)}
         />
       </EuiFlexItem>
-    )
-  );
-  // options={options.map(field => ({ label: field.description }))}
-  // console.log(options, 'options')
+    )),
+    ...fields.map((field, i) =>
+      shortCodes.includes(field.field.code) ? null : (
+        <EuiFlexItem key={selectedTags.length + i}>
+          <Tag
+            label={field.field.description}
+            onDelete={() => handleOnRemoveTag(field.field.description)}
+          />
+        </EuiFlexItem>
+      )
+    ),
+  ];
 
   return (
     <>
       <EuiComboBox
         compressed
+        aria-label="Search for a tag"
         placeholder="Search for a tag"
         singleSelection={{ asPlainText: true }}
-        // options={options}
-        isLoading={isLoading}
-        // selectedOptions={selectedOption}
-        // onChange={options => onSelect(options[0])}
-        onSearchChange={onSearch}
+        options={searchValue ? filteredOptions : []}
+        onChange={handleOnChange}
+        onSearchChange={value => setSearchValue(value)}
         fullWidth
         isClearable={false}
         css={{

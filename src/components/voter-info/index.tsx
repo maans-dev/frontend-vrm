@@ -58,7 +58,6 @@ const VoterInfo: FunctionComponent<Props> = ({
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiBadge
-            css={{ color: 'white !important' }} //TODO: Figure out how to get the font colour to invert dynamically based on bg colour.  https://eui.elastic.co/#/theming/colors/utilities
             color={`#${colourCode.colour}`}
             iconType={
               colourCode.name == 'Green' ? 'checkInCircleFilled' : null

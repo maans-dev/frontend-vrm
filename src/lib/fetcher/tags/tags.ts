@@ -1,4 +1,4 @@
-import { PartyTags } from '@components/voter-tags/types';
+import { PartyTags } from '@lib/domain/person';
 import useSWR from 'swr';
 import { fetcherAPI } from '../api.fetcher';
 

@@ -74,7 +74,6 @@ const CanvassingTags: FunctionComponent<Props> = ({ fields, onTagClick }) => {
   );
 
   const getField = (field: Partial<Field>) => {
-    console.log(internalFields);
     const found = internalFields.find(f => {
       return f.field.code === field.field.code;
     });

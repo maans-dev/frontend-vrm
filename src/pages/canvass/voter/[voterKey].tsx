@@ -3,6 +3,7 @@ import {
   EuiBreadcrumb,
   EuiButton,
   EuiButtonEmpty,
+  EuiCallOut,
   EuiFlexGroup,
   EuiFlexItem,
   EuiForm,
@@ -97,67 +98,75 @@ const Voter: FunctionComponent = () => {
     console.log('UPDATE_PAYLOAD', updatePayload);
   }, [updatePayload]);
 
+  if (isLoading) {
+    return (
+      <>
+        {/* <MainLayout breadcrumb={breadcrumb}> */}
+        <Spinner show={isLoading} />
+        {/* </MainLayout> */}
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <EuiCallOut title="Error" color="danger" iconType="alert">
+        {error}
+      </EuiCallOut>
+    );
+  }
+
   return (
-    <>
-      {error && <div>{error}</div>}
-      {isLoading && <Spinner show={isLoading} />}
-      {!error && !isLoading && (
-        <MainLayout breadcrumb={breadcrumb}>
-          <EuiSpacer />
-          <EuiForm fullWidth>
-            <EuiPanel>
-              <VoterInfo
-                darn={person.key}
-                salutation={person.salutation}
-                givenName={person.givenName}
-                surname={person.surname}
-                dob={moment(person.dob, 'YYYYMMDD').toDate()}
-                colourCode={person.colourCode}
-                canvassedBy={person.canvassedBy}
-                modified={person.modified}
-                livingStructure={person.livingStructure}
-                registeredStructure={person.registeredStructure}
-              />
-            </EuiPanel>
-            <EuiSpacer />
-            <EuiFormFieldset legend={{ children: 'Canvassing tags' }}>
-              <CanvassingTags fields={person.fields} />
-            </EuiFormFieldset>
-            <EuiSpacer />
-            <EuiFormFieldset legend={{ children: 'Affiliation' }}>
-              <Affiliation
-                affiliation={person.affiliation}
-                onChange={onChange}
-              />
-            </EuiFormFieldset>
-            <EuiSpacer />
-            <EuiFormFieldset legend={{ children: 'Contact details' }}>
-              <ContactDetails
-                language={person.language}
-                contacts={person.contacts}
-                onLanguageChange={onChange}
-              />
-            </EuiFormFieldset>
-            <EuiSpacer />
-            <EuiFormFieldset legend={{ children: 'Living Address' }}>
-              <Address address={person.address} />
-            </EuiFormFieldset>
-            <EuiSpacer />
-            <EuiFormFieldset legend={{ children: 'Comments' }}>
-              <Comments comments={person.comments} />
-            </EuiFormFieldset>
-            <EuiSpacer />
-            <EuiFormFieldset legend={{ children: 'Tags' }}>
-              <EuiFormRow display="rowCompressed">
-                <VoterTags fields={person.fields} />
-              </EuiFormRow>
-            </EuiFormFieldset>
-            <EuiSpacer />
-            {formActions}
-          </EuiForm>
-        </MainLayout>
-      )}
-    </>
+    <MainLayout breadcrumb={breadcrumb}>
+      <EuiForm fullWidth>
+        <EuiPanel>
+          <VoterInfo
+            darn={person.key}
+            salutation={person.salutation}
+            givenName={person.givenName}
+            surname={person.surname}
+            dob={moment(person.dob, 'YYYYMMDD').toDate()}
+            colourCode={person.colourCode}
+            canvassedBy={person.canvassedBy}
+            modified={person.modified}
+            livingStructure={person.livingStructure}
+            registeredStructure={person.registeredStructure}
+          />
+        </EuiPanel>
+        <EuiSpacer />
+        <EuiFormFieldset legend={{ children: 'Canvassing tags' }}>
+          <CanvassingTags fields={person.fields} />
+        </EuiFormFieldset>
+        <EuiSpacer />
+        <EuiFormFieldset legend={{ children: 'Affiliation' }}>
+          <Affiliation affiliation={person.affiliation} onChange={onChange} />
+        </EuiFormFieldset>
+        <EuiSpacer />
+        <EuiFormFieldset legend={{ children: 'Contact details' }}>
+          <ContactDetails
+            language={person.language}
+            contacts={person.contacts}
+            onLanguageChange={onChange}
+          />
+        </EuiFormFieldset>
+        <EuiSpacer />
+        <EuiFormFieldset legend={{ children: 'Living Address' }}>
+          <Address address={person.address} />
+        </EuiFormFieldset>
+        <EuiSpacer />
+        <EuiFormFieldset legend={{ children: 'Comments' }}>
+          <Comments comments={person.comments} />
+        </EuiFormFieldset>
+        <EuiSpacer />
+        <EuiFormFieldset legend={{ children: 'Tags' }}>
+          <EuiFormRow display="rowCompressed">
+            <VoterTags fields={person.fields} />
+          </EuiFormRow>
+        </EuiFormFieldset>
+        <EuiSpacer />
+        {formActions}
+      </EuiForm>
+    </MainLayout>
   );
 };
 

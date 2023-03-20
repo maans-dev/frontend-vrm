@@ -33,6 +33,27 @@ export interface Person {
   fields: Field[];
 }
 
+export interface PartyTags {
+  key: string;
+  category: string;
+  type: string;
+  code: string;
+  name: string;
+  description: string;
+  active: boolean;
+  value?: Partial<Value>;
+  isNew?: boolean;
+  createdBy: number;
+  modifiedBy: number;
+  created: string;
+  modified: string;
+}
+
+export interface Value {
+  values: boolean[];
+  default?: boolean;
+}
+
 export interface Key {
   key: number;
   firstName: string;
