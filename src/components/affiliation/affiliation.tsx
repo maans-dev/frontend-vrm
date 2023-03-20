@@ -39,7 +39,6 @@ const AffiliationComponent: FunctionComponent<Props> = ({
 
   const handleChange = (selectedOptions: AffliationOption) => {
     setSelectedOption(selectedOptions);
-
     let updateData: AffiliateUpdate;
     if (affiliation.key !== selectedOptions?.[0]?.value?.key) {
       updateData = {
