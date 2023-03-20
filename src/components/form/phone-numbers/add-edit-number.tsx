@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useState } from 'react';
+import { FunctionComponent, useState } from 'react';
 import {
   EuiButtonEmpty,
   EuiFieldText,
@@ -15,23 +15,35 @@ import {
   FaGlobe,
 } from 'react-icons/fa';
 import { ImUserTie } from 'react-icons/im';
-import { Contact, Contact2 } from '@lib/domain/person';
+import { PhoneContact } from '@lib/domain/phone-numbers';
 
 export type Props = {
-  contact?: Contact;
-  onUpdate?: (item: Contact2) => void;
+  phoneContact?: PhoneContact;
+  onUpdate?: (data: PhoneContact) => void;
 };
 
-const AddEditNumber: FunctionComponent<Props> = ({ contact, onUpdate }) => {
+const AddEditNumber: FunctionComponent<Props> = ({
+  phoneContact,
+  onUpdate,
+}) => {
   const phoneTypeOptions = [
     {
-      value: 'WORK',
+      value: 'CELL',
       dropdownDisplay: (
         <EuiText size="s">
           <FaMobileAlt /> Mobile
         </EuiText>
       ),
       inputDisplay: <FaMobileAlt />,
+    },
+    {
+      value: 'WORK',
+      dropdownDisplay: (
+        <EuiText size="s">
+          <ImUserTie /> Work
+        </EuiText>
+      ),
+      inputDisplay: <ImUserTie />,
     },
     {
       value: 'HOME',
@@ -43,22 +55,56 @@ const AddEditNumber: FunctionComponent<Props> = ({ contact, onUpdate }) => {
       inputDisplay: <FaHome />,
     },
     {
-      value: 'CELL',
+      value: 'INTERNATIONAL',
       dropdownDisplay: (
         <EuiText size="s">
-          <ImUserTie /> Work
+          <FaGlobe /> International
         </EuiText>
       ),
-      inputDisplay: <ImUserTie />,
+      inputDisplay: <FaGlobe />,
+    },
+    {
+      value: 'CUSTOM',
+      dropdownDisplay: (
+        <EuiText size="s">
+          <FaRegQuestionCircle /> Other
+        </EuiText>
+      ),
+      inputDisplay: <FaRegQuestionCircle />,
     },
   ];
-  const [selectedPhoneType, setSelectedPhoneType] = useState(null);
+  const [phoneType, setSelectedPhoneType] = useState(
+    phoneContact?.type || phoneTypeOptions[0].value
+  );
+  const [phoneNumber, setPhoneNumber] = useState(phoneContact?.value || null);
+  const [nextId, setNextId] = useState(0); // sequential numeric id's for new items. TODO: this may need to change
+
   const onChangePhoneType = value => {
     setSelectedPhoneType(value);
   };
-  useEffect(() => {
-    if (contact) setSelectedPhoneType(contact.type);
-  }, [contact]);
+
+  const handleUpdate = () => {
+    if (phoneContact) {
+      // do edit
+      onUpdate({
+        ...phoneContact,
+        value: phoneNumber,
+        type: phoneType,
+      });
+    } else {
+      // do add
+      onUpdate({
+        key: nextId,
+        value: phoneNumber,
+        type: phoneType,
+        canContact: true,
+      });
+      setNextId(nextId + 1);
+      setSelectedPhoneType(phoneTypeOptions[0].value);
+      setPhoneNumber('');
+    }
+  };
+
   return (
     <EuiFlexGroup responsive={false} gutterSize="xs">
       <EuiFlexItem grow={false} css={{ minWidth: '40px' }}>
@@ -69,7 +115,7 @@ const AddEditNumber: FunctionComponent<Props> = ({ contact, onUpdate }) => {
             aria-label="Select phone number type"
             placeholder="Select..."
             options={phoneTypeOptions}
-            valueOfSelected={selectedPhoneType || phoneTypeOptions[0].value}
+            valueOfSelected={phoneType || phoneTypeOptions[0].value}
             onChange={onChangePhoneType}
             popoverProps={{
               panelStyle: { minWidth: '140px' },
@@ -82,18 +128,20 @@ const AddEditNumber: FunctionComponent<Props> = ({ contact, onUpdate }) => {
           <EuiFieldText
             compressed
             placeholder="Enter a phone number"
-            value={contact ? contact.contact.value : null}
+            value={phoneNumber}
             inputMode="numeric"
+            onChange={e => setPhoneNumber(e.target.value)}
           />
         </EuiFormRow>
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
         <EuiFormRow display="rowCompressed">
           <EuiButtonEmpty
+            disabled={!phoneNumber}
             size="s"
             css={{ minWidth: '50px' }}
-            onClick={() => (contact ? onUpdate(contact) : null)}>
-            {contact ? 'Save' : 'Add'}
+            onClick={handleUpdate}>
+            {phoneContact?.key ? 'Save' : 'Add'}
           </EuiButtonEmpty>
         </EuiFormRow>
       </EuiFlexItem>

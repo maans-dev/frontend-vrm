@@ -24,7 +24,7 @@ import CanvassingTags from '@components/canvassing-tags';
 import Affiliation from '@components/affiliation/affiliation';
 import ContactDetails from '@components/contact-details/contact-details';
 import Spinner from '@components/spinner/spinner';
-import { PersonUpdate } from '@lib/domain/person-update';
+import { GeneralUpdate, PersonUpdate } from '@lib/domain/person-update';
 import { Person } from '@lib/domain/person';
 
 const Voter: FunctionComponent = () => {
@@ -67,7 +67,7 @@ const Voter: FunctionComponent = () => {
     </EuiFlexGroup>
   );
 
-  const onChange = (update: PersonUpdate<unknown>) => {
+  const onChange = (update: PersonUpdate<GeneralUpdate>) => {
     // data is not an object and must be deleted
     if (!update.data) {
       setUpdatePayload(prev => {
@@ -83,15 +83,59 @@ const Voter: FunctionComponent = () => {
       !Array.isArray(update.data) &&
       update.data !== null
     ) {
-      for (const key in update.data as any) {
+      for (const key in update.data as object) {
         if (update.data[key] === null) delete update.data[key];
       }
     }
 
-    setUpdatePayload(prev => ({
-      ...prev,
-      [update.field]: update.data,
-    }));
+    setUpdatePayload(prev => {
+      let next = update.data as any;
+
+      // if update is for a multivalue field/array
+      if (Array.isArray(person[update.field])) {
+        // 1st update for this multivalue field so add as array
+        if (updatePayload?.hasOwnProperty(update.field)) {
+          next = [
+            ...updatePayload[update.field].filter(
+              (d: GeneralUpdate) => d.key !== update.data?.key
+            ),
+            update.data,
+          ];
+        } else {
+          next = [update.data];
+        }
+
+        // if update is empty it will only contain a key so remove the data
+        if (Object.keys(update.data).length === 1 && update.data?.key) {
+          if (prev?.[update.field]) {
+            next = [
+              ...prev[update.field].filter(
+                (d: GeneralUpdate) => d.key !== update.data?.key
+              ),
+            ];
+          } else {
+            return prev;
+          }
+        }
+
+        // a new entry has been removed so remove the data
+        if (update.data?.deleted && typeof update.data.key === 'number') {
+          next = [
+            ...prev[update.field].filter(
+              (d: GeneralUpdate) => d.key !== update.data?.key
+            ),
+          ];
+        }
+
+        // no elements so remove completely
+        if (next.length === 0) {
+          delete prev[update.field];
+          return prev;
+        }
+      }
+
+      return { ...prev, [update.field]: next };
+    });
   };
 
   useEffect(() => {
@@ -147,6 +191,7 @@ const Voter: FunctionComponent = () => {
             language={person.language}
             contacts={person.contacts}
             onLanguageChange={onChange}
+            onPhoneChange={onChange}
           />
         </EuiFormFieldset>
         <EuiSpacer />

@@ -18,27 +18,33 @@ import {
 } from 'react-icons/fa';
 import AddEditNumber from './add-edit-number';
 import { GoCircleSlash } from 'react-icons/go';
-import { Contact } from '@lib/domain/person';
+import { ImUserTie } from 'react-icons/im';
+import { PhoneContact } from '@lib/domain/phone-numbers';
 
 export type Props = {
-  contact: Contact;
+  phoneContact: PhoneContact;
   border?: boolean;
+  onUpdate?: (update: PhoneContact) => void;
 };
 
-const PhoneNumberLine: FunctionComponent<Props> = ({ contact, border }) => {
+const PhoneNumberLine: FunctionComponent<Props> = ({
+  phoneContact,
+  border,
+  onUpdate,
+}) => {
   const [typeIcon, setTypeIcon] = useState<ReactElement>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const { euiTheme } = useEuiTheme();
 
   useEffect(() => {
-    switch (contact.type) {
+    switch (phoneContact.type) {
       case 'WORK':
         setTypeIcon(
-          <FaMobileAlt
+          <ImUserTie
             color={
-              contact.canContact
-                ? euiTheme.colors.disabledText
-                : euiTheme.colors.subduedText
+              phoneContact.canContact
+                ? euiTheme.colors.subduedText
+                : euiTheme.colors.disabledText
             }
           />
         );
@@ -47,20 +53,31 @@ const PhoneNumberLine: FunctionComponent<Props> = ({ contact, border }) => {
         setTypeIcon(
           <FaHome
             color={
-              contact.canContact
-                ? euiTheme.colors.disabledText
-                : euiTheme.colors.subduedText
+              phoneContact.canContact
+                ? euiTheme.colors.subduedText
+                : euiTheme.colors.disabledText
             }
           />
         );
         break;
       case 'CELL':
         setTypeIcon(
+          <FaMobileAlt
+            color={
+              phoneContact.canContact
+                ? euiTheme.colors.subduedText
+                : euiTheme.colors.disabledText
+            }
+          />
+        );
+        break;
+      case 'INTERNATIONAL':
+        setTypeIcon(
           <FaGlobe
             color={
-              contact.canContact
-                ? euiTheme.colors.disabledText
-                : euiTheme.colors.subduedText
+              phoneContact.canContact
+                ? euiTheme.colors.subduedText
+                : euiTheme.colors.disabledText
             }
           />
         );
@@ -69,28 +86,39 @@ const PhoneNumberLine: FunctionComponent<Props> = ({ contact, border }) => {
         setTypeIcon(
           <FaRegQuestionCircle
             color={
-              contact.canContact
-                ? euiTheme.colors.disabledText
-                : euiTheme.colors.subduedText
+              phoneContact.canContact
+                ? euiTheme.colors.subduedText
+                : euiTheme.colors.disabledText
             }
           />
         );
     }
-  }, [contact, euiTheme.colors.disabledText, euiTheme.colors.subduedText]);
+  }, [phoneContact, euiTheme.colors.disabledText, euiTheme.colors.subduedText]);
 
   const [showActions, setShowActions] = useState(false);
 
   const onActionsClick = () => setShowActions(showActions => !showActions);
   const hideActions = () => setShowActions(false);
 
-  function getContactValue(contact) {
-    const value = contact?.contact?.value;
-    if (value && !isNaN(value)) {
-      return value;
-    } else {
-      return null;
-    }
-  }
+  const handleUpdate = (contact: PhoneContact) => {
+    setIsEditing(false);
+    onUpdate(contact);
+  };
+
+  const handleRemove = () => {
+    onUpdate({ ...phoneContact, deleted: true }); // TODO: find out how were supposed to flag contact for removal
+  };
+
+  const toggleConfirm = () => {
+    onUpdate({
+      ...phoneContact,
+      confirmed: phoneContact?.confirmed ? null : true,
+    });
+  };
+
+  const toggleDNC = () => {
+    onUpdate({ ...phoneContact, canContact: !phoneContact?.canContact });
+  };
 
   const renderReadOnlyMode = (
     <EuiFlexGroup
@@ -108,19 +136,27 @@ const PhoneNumberLine: FunctionComponent<Props> = ({ contact, border }) => {
           <EuiFlexItem
             grow={true}
             css={{ minWidth: '100px' }}
-            color={contact.canContact ? euiTheme.colors.disabledText : null}>
+            color={
+              phoneContact.canContact ? null : euiTheme.colors.disabledText
+            }>
             <EuiTextColor
-              color={contact.canContact ? euiTheme.colors.disabledText : null}>
-              {getContactValue(contact)}
+              color={
+                phoneContact.canContact ? null : euiTheme.colors.disabledText
+              }>
+              {phoneContact.value}
             </EuiTextColor>
           </EuiFlexItem>
           <EuiFlexItem
             grow={true}
             css={{ minWidth: '100px' }}
-            color={contact.canContact ? euiTheme.colors.disabledText : null}>
+            color={
+              phoneContact.canContact ? null : euiTheme.colors.disabledText
+            }>
             <EuiTextColor
-              color={contact.canContact ? euiTheme.colors.disabledText : null}>
-              {contact.canContact}
+              color={
+                phoneContact.canContact ? null : euiTheme.colors.disabledText
+              }>
+              {phoneContact.canContact}
             </EuiTextColor>
           </EuiFlexItem>
           <EuiFlexGroup
@@ -129,7 +165,7 @@ const PhoneNumberLine: FunctionComponent<Props> = ({ contact, border }) => {
             alignItems="center"
             css={{ maxWidth: '60px' }}
             gutterSize="xs">
-            {/* {phone.isConfirmed ? (
+            {phoneContact?.confirmed ? (
               <EuiFlexItem grow={false}>
                 <EuiAvatar
                   name="Confirmed"
@@ -139,8 +175,8 @@ const PhoneNumberLine: FunctionComponent<Props> = ({ contact, border }) => {
                   color={euiTheme.colors.success}
                 />
               </EuiFlexItem>
-            ) : null} */}
-            {contact.canContact ? (
+            ) : null}
+            {!phoneContact?.canContact ? (
               <EuiFlexItem grow={false}>
                 <EuiAvatar
                   name="Do not contact"
@@ -189,11 +225,24 @@ const PhoneNumberLine: FunctionComponent<Props> = ({ contact, border }) => {
                   },
                 },
                 {
-                  label: 'Confirm',
+                  label: phoneContact?.confirmed ? 'Unconfirm' : 'Confirm',
                   href: '#',
                   iconType: 'check',
                   iconProps: { size: 's' },
                   onClick: e => {
+                    hideActions();
+                    toggleConfirm();
+                    e.preventDefault();
+                  },
+                },
+                {
+                  label: phoneContact?.canContact ? 'Set DNC' : 'Unset DNC',
+                  href: '#',
+                  iconType: GoCircleSlash,
+                  iconProps: { size: 's' },
+                  onClick: e => {
+                    hideActions();
+                    toggleDNC();
                     e.preventDefault();
                   },
                 },
@@ -203,15 +252,8 @@ const PhoneNumberLine: FunctionComponent<Props> = ({ contact, border }) => {
                   iconType: 'trash',
                   iconProps: { size: 's' },
                   onClick: e => {
-                    e.preventDefault();
-                  },
-                },
-                {
-                  label: 'DNC',
-                  href: '#',
-                  iconType: GoCircleSlash,
-                  iconProps: { size: 's' },
-                  onClick: e => {
+                    hideActions();
+                    handleRemove();
                     e.preventDefault();
                   },
                 },
@@ -224,7 +266,7 @@ const PhoneNumberLine: FunctionComponent<Props> = ({ contact, border }) => {
   );
 
   const renderEditMode = (
-    <AddEditNumber contact={contact} onUpdate={() => setIsEditing(false)} />
+    <AddEditNumber phoneContact={phoneContact} onUpdate={handleUpdate} />
   );
 
   return (
