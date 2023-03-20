@@ -20,30 +20,27 @@ const AffiliationComponent: FunctionComponent<Props> = ({
   affiliation,
   onChange,
 }) => {
-  const { affiliations, isLoading, error } = useAffiliationFetcher();
   const [searchValue, setSearchValue] = useState<string>('');
+  const { affiliations, isLoading, error } = useAffiliationFetcher(true);
   const [selectedOption, setSelectedOption] = useState<AffliationOption>({
     label: affiliation.description,
     value: affiliation,
   });
 
-  const filteredOptions = useMemo(() => {
-    return (
-      affiliations?.filter(
-        affiliation => affiliation.description.indexOf(searchValue) !== -1
-      ) || []
-    );
-  }, [affiliations, searchValue]);
+  const options = useMemo(() => {
+    return affiliations?.map(a => ({ label: a.description, value: a }));
+  }, [affiliations]);
 
-  const options = searchValue ? filteredOptions : [];
+  const handleChange = (selectedOptions: AffliationOption[]) => {
+    if (!selectedOptions?.[0]?.value) return;
 
-  const handleChange = (selectedOptions: AffliationOption) => {
-    setSelectedOption(selectedOptions);
+    setSelectedOption(selectedOptions[0]);
+
     let updateData: AffiliateUpdate;
-    if (affiliation.key !== selectedOptions?.[0]?.value?.key) {
+    if (affiliation.key !== selectedOptions[0]?.value?.key) {
       updateData = {
-        key: selectedOptions?.[0]?.value?.key,
-        name: selectedOptions?.[0]?.value?.name,
+        key: selectedOptions[0]?.value?.key,
+        name: selectedOptions[0]?.value?.name,
       };
     } else {
       updateData = null;
@@ -81,13 +78,10 @@ const AffiliationComponent: FunctionComponent<Props> = ({
           aria-label="Select an affiliation"
           placeholder="Select an affiliation"
           singleSelection={{ asPlainText: true }}
-          options={options.map(item => ({
-            label: item.description,
-            value: item,
-          }))}
+          options={searchValue ? options : []}
           selectedOptions={[selectedOption]}
-          onChange={selectedOptions => handleChange(selectedOptions[0])}
-          onSearchChange={value => setSearchValue(value)}
+          onChange={handleChange}
+          onSearchChange={value => setSearchValue(value || '')}
         />
       </EuiFormRow>
     </>
