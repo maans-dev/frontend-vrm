@@ -11,12 +11,18 @@ import { css, Global } from '@emotion/react';
 
 export type Props = {
   campaigns: ICampaign[];
+  onChange: (campaign: ICampaign) => void;
 };
 
-const CampaignSelect: FunctionComponent<Props> = ({ campaigns }) => {
+const CampaignSelect: FunctionComponent<Props> = ({ campaigns, onChange }) => {
   // const isMobile = useIsWithinBreakpoints(['xs', 's']);
   const generateId = htmlIdGenerator('campaign');
   const [selected, setSelected] = useState('');
+
+  const handleChange = (campaign: ICampaign) => {
+    setSelected(campaign.name);
+    onChange(campaign);
+  };
 
   return (
     <>
@@ -46,10 +52,10 @@ const CampaignSelect: FunctionComponent<Props> = ({ campaigns }) => {
                 label={item.name}
                 value={item.name}
                 checked={selected === item.name}
-                onChange={() => setSelected(item.name)}>
+                onChange={() => handleChange(item)}>
                 <EuiText
                   size="xs"
-                  onClick={() => setSelected(item.name)}
+                  onClick={() => handleChange(item)}
                   css={{ cursor: 'pointer' }}>
                   {item.district}
                 </EuiText>

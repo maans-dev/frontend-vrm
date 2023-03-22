@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useContext } from 'react';
 import {
   EuiBreadcrumb,
   EuiButton,
@@ -12,18 +12,37 @@ import { useRouter } from 'next/router';
 import { css, Global } from '@emotion/react';
 import CampaignSelect from '@components/canvassing-type/campaign-select';
 import CanvassingTypeSelect from '@components/canvassing-type/canvassing-type-select';
+import { CanvassingContext } from '@lib/context/canvassing.context';
 
 const campaignData = [
-  { name: 'Red/Pink registration calling', district: 'A placeholder' },
-  { name: 'Campaign 2024 Registration', district: 'A placeholder' },
-  { name: 'Campaign 2024 DAFor Confirm', district: 'A placeholder' },
-  { name: 'Comprehensive Telephone Canvassing', district: 'A placeholder' },
-  { name: 'Registration telephone and foot', district: 'A placeholder' },
+  {
+    key: '1',
+    name: 'Red/Pink registration calling',
+    district: 'A placeholder',
+  },
+  { key: '2', name: 'Campaign 2024 Registration', district: 'A placeholder' },
+  { key: '3', name: 'Campaign 2024 DAFor Confirm', district: 'A placeholder' },
+  {
+    key: '4',
+    name: 'Comprehensive Telephone Canvassing',
+    district: 'A placeholder',
+  },
+  {
+    key: '5',
+    name: 'Registration telephone and foot',
+    district: 'A placeholder',
+  },
 ];
 
 const canvassTypeData = [{ name: 'Face to face' }, { name: 'Telephone' }];
 
 const CanvassingType: FunctionComponent = () => {
+  const { setUpdatePayload } = useContext(CanvassingContext);
+  // const { campaign, setCampaign } = useState<ICampaign>();
+  // const { campaignType, setCampaignType } = useState<ICanvassType>();
+
+  // const onChange = (update: )
+
   const router = useRouter();
   const breadcrumb: EuiBreadcrumb[] = [
     {
@@ -64,7 +83,17 @@ const CanvassingType: FunctionComponent = () => {
 
       <EuiSpacer size="m" />
 
-      <CampaignSelect campaigns={campaignData} />
+      <CampaignSelect
+        campaigns={campaignData}
+        onChange={update =>
+          setUpdatePayload({
+            field: 'canvass',
+            data: {
+              activity: update.key,
+            },
+          })
+        }
+      />
 
       <EuiSpacer size="l" />
 
@@ -74,7 +103,17 @@ const CanvassingType: FunctionComponent = () => {
 
       <EuiSpacer size="s" />
 
-      <CanvassingTypeSelect canvassTypes={canvassTypeData} />
+      <CanvassingTypeSelect
+        canvassTypes={canvassTypeData}
+        onChange={update =>
+          setUpdatePayload({
+            field: 'canvass',
+            data: {
+              type: update.name,
+            },
+          })
+        }
+      />
       <EuiSpacer />
       {formActions}
     </MainLayout>

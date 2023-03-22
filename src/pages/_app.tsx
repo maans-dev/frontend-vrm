@@ -8,6 +8,7 @@ import { Global } from '@emotion/react';
 import Chrome from '../components/chrome';
 import { Theme } from '../components/theme';
 import { globalStyes } from '../styles/global.styles';
+import CanvassingProvider from '@lib/context/canvassing.context';
 
 /**
  * Next.js uses the App component to initialize pages. You can override it
@@ -25,9 +26,11 @@ const EuiApp: FunctionComponent<AppProps> = ({ Component, pageProps }) => (
     <Global styles={globalStyes} />
     <Theme>
       <Chrome>
-        <EuiErrorBoundary>
-          <Component {...pageProps} />
-        </EuiErrorBoundary>
+        <CanvassingProvider>
+          <EuiErrorBoundary>
+            <Component {...pageProps} />
+          </EuiErrorBoundary>
+        </CanvassingProvider>
       </Chrome>
     </Theme>
   </>

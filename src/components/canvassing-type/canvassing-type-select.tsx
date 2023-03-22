@@ -10,12 +10,21 @@ import { css, Global } from '@emotion/react';
 
 export type Props = {
   canvassTypes: ICanvassType[];
+  onChange: (type: ICanvassType) => void;
 };
 
-const CanvassTypeSelect: FunctionComponent<Props> = ({ canvassTypes }) => {
+const CanvassTypeSelect: FunctionComponent<Props> = ({
+  canvassTypes,
+  onChange,
+}) => {
   // const isMobile = useIsWithinBreakpoints(['xs', 's']);
   const generateId = htmlIdGenerator('campaign');
   const [selected, setSelected] = useState('');
+
+  const handleChange = (type: ICanvassType) => {
+    setSelected(type.name);
+    onChange(type);
+  };
 
   return (
     <>
@@ -43,7 +52,7 @@ const CanvassTypeSelect: FunctionComponent<Props> = ({ canvassTypes }) => {
                 label={item.name}
                 value={item.name}
                 checked={selected === item.name}
-                onChange={() => setSelected(item.name)}
+                onChange={() => handleChange(item)}
               />
             </EuiFlexItem>
           );
