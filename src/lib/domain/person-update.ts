@@ -26,9 +26,9 @@ export type GeneralUpdate = AffiliateUpdate &
   EmailUpdate;
 export type VoterTagsUpdate = Pick<
   Partial<VoterTagsType>,
-  'key' | 'field' | 'value' 
+  'key' | 'field' | 'value'
 >;
 export type CommentsUpdate = Pick<
-Partial<CommentsType>,
-'key' | 'type' | 'value' | 'archived' 
+  Partial<CommentsType>,
+  'key' | 'type' | 'value' | 'archived'
 >;

@@ -15,7 +15,6 @@ export type Props = {
 
 const Tags: FunctionComponent<Props> = ({ fields, onTagChange }) => {
   const [voterFields, setVoterFields] = useState<Field[]>([]);
-  
   useEffect(() => {
     const filteredVoterFields = fields.filter(
       f => !shortCodes.includes(f.field.code)

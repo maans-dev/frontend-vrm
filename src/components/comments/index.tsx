@@ -21,19 +21,16 @@ export type Props = {
 };
 
 const Comments: FunctionComponent<Props> = ({ comments }) => {
-  const [comment, setComment] = useState<CommentsType[]>(
-    comments.map(comment => ({key: comment.key, type: comment.type, value: comment.value }))
-  );
-
+  // const [comment, setComment] = useState<CommentsType[]>(
+  //   comments.map(comment => ({
+  //     key: comment.key,
+  //     type: comment.type,
+  //     value: comment.value,
+  //   }))
+  // );
   const { euiTheme } = useEuiTheme();
 
-  // console.log(comment, 'comments')
-
   if (!comments) return <></>;
-
-  const handleClick = () => {
-    setComment(comments);
-  };
 
   return (
     <>
@@ -70,9 +67,7 @@ const Comments: FunctionComponent<Props> = ({ comments }) => {
               />
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiButtonEmpty size="s" onClick={handleClick}>
-                Add
-              </EuiButtonEmpty>
+              <EuiButtonEmpty size="s">Add</EuiButtonEmpty>
             </EuiFlexItem>
           </EuiFlexGroup>
         </EuiComment>
