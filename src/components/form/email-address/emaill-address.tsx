@@ -13,21 +13,45 @@ import { FunctionComponent, useState } from 'react';
 import AddEditEmail from './add-edit-email';
 import { GoCircleSlash } from 'react-icons/go';
 import { Contact } from '@lib/domain/person';
+import { EmailContact } from '@lib/domain/email-address';
 
 export type Props = {
-  contact: Contact;
+  emailContact: EmailContact;
   border?: boolean;
+  onUpdate: (data: EmailContact) => void;
 };
 
-const EmailAddressLine: FunctionComponent<Props> = ({ contact, border }) => {
+const EmailAddressLine: FunctionComponent<Props> = ({
+  emailContact,
+  border,
+  onUpdate,
+}) => {
   const [showActions, setShowActions] = useState(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const { euiTheme } = useEuiTheme();
 
-  // console.log(contact, 'email address');
-
   const onActionsClick = () => setShowActions(showActions => !showActions);
   const hideActions = () => setShowActions(false);
+
+  const handleUpdate = (contact: EmailContact) => {
+    setIsEditing(false);
+    onUpdate(contact);
+  };
+
+  const handleRemove = () => {
+    onUpdate({ ...emailContact, deleted: true }); // TODO: find out how were supposed to flag contact for removal
+  };
+
+  const toggleConfirm = () => {
+    onUpdate({
+      ...emailContact,
+      confirmed: emailContact?.confirmed ? null : true,
+    });
+  };
+
+  const toggleDNC = () => {
+    onUpdate({ ...emailContact, canContact: !emailContact?.canContact });
+  };
 
   const renderReadOnlyMode = (
     <EuiFlexGroup
@@ -40,10 +64,14 @@ const EmailAddressLine: FunctionComponent<Props> = ({ contact, border }) => {
           <EuiFlexItem
             grow={true}
             css={{ minWidth: '100px' }}
-            color={contact.canContact ? euiTheme.colors.disabledText : null}>
+            color={
+              emailContact.canContact ? null : euiTheme.colors.disabledText
+            }>
             <EuiTextColor
-              color={contact.canContact ? euiTheme.colors.disabledText : null}>
-              {contact.contact.value}
+              color={
+                emailContact.canContact ? null : euiTheme.colors.disabledText
+              }>
+              {emailContact.value}
             </EuiTextColor>
           </EuiFlexItem>
           <EuiFlexGroup
@@ -52,7 +80,7 @@ const EmailAddressLine: FunctionComponent<Props> = ({ contact, border }) => {
             alignItems="center"
             css={{ maxWidth: '60px' }}
             gutterSize="xs">
-            {/* {email.isConfirmed ? (
+            {emailContact.confirmed ? (
               <EuiFlexItem grow={false}>
                 <EuiAvatar
                   name="Confirmed"
@@ -62,8 +90,8 @@ const EmailAddressLine: FunctionComponent<Props> = ({ contact, border }) => {
                   color={euiTheme.colors.success}
                 />
               </EuiFlexItem>
-            ) : null} */}
-            {contact.canContact ? (
+            ) : null}
+            {emailContact.canContact ? (
               <EuiFlexItem grow={false}>
                 <EuiAvatar
                   name="Do not contact"
@@ -117,6 +145,8 @@ const EmailAddressLine: FunctionComponent<Props> = ({ contact, border }) => {
                   iconType: 'check',
                   iconProps: { size: 's' },
                   onClick: e => {
+                    hideActions();
+                    toggleConfirm();
                     e.preventDefault();
                   },
                 },
@@ -126,15 +156,19 @@ const EmailAddressLine: FunctionComponent<Props> = ({ contact, border }) => {
                   iconType: 'trash',
                   iconProps: { size: 's' },
                   onClick: e => {
+                    hideActions();
+                    handleRemove();
                     e.preventDefault();
                   },
                 },
                 {
-                  label: 'DNC',
+                  label: emailContact?.canContact ? 'Unset DNC' : 'Set DNC',
                   href: '#',
                   iconType: GoCircleSlash,
                   iconProps: { size: 's' },
                   onClick: e => {
+                    hideActions();
+                    toggleDNC();
                     e.preventDefault();
                   },
                 },
@@ -147,7 +181,7 @@ const EmailAddressLine: FunctionComponent<Props> = ({ contact, border }) => {
   );
 
   const renderEditMode = (
-    <AddEditEmail contact={contact} onUpdate={() => setIsEditing(false)} />
+    <AddEditEmail emailContact={emailContact} onUpdate={handleUpdate} />
   );
 
   return (

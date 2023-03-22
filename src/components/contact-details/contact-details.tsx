@@ -1,9 +1,11 @@
 import EmailAddress from '@components/form/email-address';
 import PhoneNumbers from '@components/form/phone-numbers';
 import { EuiComboBox, EuiFormRow } from '@elastic/eui';
+import { EmailContact } from '@lib/domain/email-address';
 import { Contact } from '@lib/domain/person';
 import { Language } from '@lib/domain/person-enum';
 import {
+  EmailUpdate,
   LanguageUpdate,
   PersonUpdate,
   PhoneUpdate,
@@ -16,6 +18,7 @@ interface Props {
   contacts: Contact[];
   onLanguageChange: (update: PersonUpdate<LanguageUpdate>) => void;
   onPhoneChange: (update: PersonUpdate<PhoneUpdate>) => void;
+  onEmailChange: (update: PersonUpdate<EmailUpdate>) => void;
 }
 
 function getLanguageEnumValue(language: string): Language {
@@ -52,26 +55,15 @@ const ContactDetails: FunctionComponent<Props> = ({
   contacts,
   onLanguageChange,
   onPhoneChange,
+  onEmailChange,
 }) => {
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(
     getLanguageEnumValue(language)
   );
-  const [phoneContacts, setPhoneContacts] = useState<PhoneContact[]>(
-    contacts
-      .filter(contact => contact.contact && contact.contact.type !== 'EMAIL')
-      .map(contact => ({
-        key: contact.key,
-        value: contact?.value || contact.contact?.value,
-        type: contact.type,
-        canContact: contact.canContact,
-      }))
-  );
-
   const languageOptions = Object.values(Language).map(languageOption => ({
     label: languageOption,
     value: languageOption,
   }));
-
   const handleLanguageChange = (
     selectedOptions: {
       label: string;
@@ -91,10 +83,17 @@ const ContactDetails: FunctionComponent<Props> = ({
       });
     }
   };
-
+  const [phoneContacts, setPhoneContacts] = useState<PhoneContact[]>(
+    contacts
+      .filter(contact => contact.contact && contact.contact.type !== 'EMAIL')
+      .map(contact => ({
+        key: contact.key,
+        value: contact?.value || contact.contact?.value,
+        type: contact.type,
+        canContact: contact.canContact,
+      }))
+  );
   const handlePhoneNumberChange = (data: PhoneContact) => {
-    console.log(data);
-
     if (phoneContacts.find(contact => contact?.key === data.key)) {
       if (data?.deleted) {
         // Remove
@@ -122,6 +121,44 @@ const ContactDetails: FunctionComponent<Props> = ({
     }
     onPhoneChange({ field: 'contacts', data: update });
   };
+  const [emailContacts, setEmailContacts] = useState<EmailContact[]>(
+    contacts
+      .filter(contact => contact.contact && contact.contact.type === 'EMAIL')
+      .map(contact => ({
+        key: contact.key,
+        value: contact?.value || contact.contact?.value,
+        type: contact.type,
+        canContact: contact.canContact,
+      }))
+  );
+  const handleEmailChange = (data: EmailContact) => {
+    if (emailContacts.find(contact => contact?.key === data.key)) {
+      if (data?.deleted) {
+        // Remove
+        setEmailContacts([...emailContacts.filter(c => c.key !== data.key)]);
+      } else {
+        // Update
+        setEmailContacts(
+          emailContacts.map(contact =>
+            contact.key === data.key ? data : contact
+          )
+        );
+      }
+    } else {
+      // Add
+      setEmailContacts([...emailContacts, data]);
+    }
+
+    const update = { ...data };
+    const prev = contacts.find(contact => contact.key === update.key);
+    if (prev) {
+      if (prev.value === update.value || prev.contact.value === update.value)
+        delete update.value;
+      if (prev.type === update.type) delete update.type;
+      if (prev.canContact === update.canContact) delete update.canContact;
+    }
+    onEmailChange({ field: 'contacts', data: update });
+  };
 
   return (
     <>
@@ -148,7 +185,10 @@ const ContactDetails: FunctionComponent<Props> = ({
       </EuiFormRow>
 
       <EuiFormRow display="rowCompressed" label="Email Addresses">
-        <EmailAddress contacts={contacts} />
+        <EmailAddress
+          emailContacts={emailContacts}
+          onUpdate={handleEmailChange}
+        />
       </EuiFormRow>
     </>
   );

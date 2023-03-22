@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 import {
   EuiAvatar,
   EuiButtonEmpty,
@@ -12,16 +12,28 @@ import {
 import Commenter from './comment';
 import { css, Global } from '@emotion/react';
 import { Comment } from '@lib/domain/person';
+import { CommentsUpdate, PersonUpdate } from '@lib/domain/person-update';
+import { CommentsType } from '@lib/domain/comments';
 
 export type Props = {
   comments: Comment[];
+  onCommentChange: (update: PersonUpdate<CommentsUpdate>) => void;
 };
 
 const Comments: FunctionComponent<Props> = ({ comments }) => {
-  // console.log(comments, 'comment i');
+  const [comment, setComment] = useState<CommentsType[]>(
+    comments.map(comment => ({key: comment.key, type: comment.type, value: comment.value }))
+  );
+
   const { euiTheme } = useEuiTheme();
 
+  // console.log(comment, 'comments')
+
   if (!comments) return <></>;
+
+  const handleClick = () => {
+    setComment(comments);
+  };
 
   return (
     <>
@@ -58,7 +70,9 @@ const Comments: FunctionComponent<Props> = ({ comments }) => {
               />
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiButtonEmpty size="s">Add</EuiButtonEmpty>
+              <EuiButtonEmpty size="s" onClick={handleClick}>
+                Add
+              </EuiButtonEmpty>
             </EuiFlexItem>
           </EuiFlexGroup>
         </EuiComment>

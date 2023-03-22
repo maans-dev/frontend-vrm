@@ -5,7 +5,7 @@ import { FaTimesCircle } from 'react-icons/fa';
 export type Props = {
   label?: string;
   isNew?: boolean;
-  onDelete: (label: string) => void;
+  onDelete?: (label: string) => void;
 };
 
 const Tag: FunctionComponent<Props> = ({ label, isNew, onDelete }) => {

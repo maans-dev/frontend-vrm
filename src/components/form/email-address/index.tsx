@@ -3,25 +3,28 @@ import { EuiPanel } from '@elastic/eui';
 import EmailAddressLine from './emaill-address';
 import AddEditEmail from './add-edit-email';
 import { Contact } from '@lib/domain/person';
+import { EmailContact } from '@lib/domain/email-address';
 
 export type Props = {
-  contacts: Contact[];
+  emailContacts: EmailContact[];
+  onUpdate: (update: EmailContact) => void;
 };
 
-const EmailAddress: FunctionComponent<Props> = ({ contacts }) => {
-  function filterContactsByEmail(contacts: Contact[]): Contact[] {
-    return contacts.filter(
-      contact => contact.contact && contact.contact.type === 'EMAIL'
-    );
-  }
-
-  const filteredContacts = filterContactsByEmail(contacts);
+const EmailAddress: FunctionComponent<Props> = ({
+  emailContacts,
+  onUpdate,
+}) => {
   return (
     <EuiPanel hasBorder={true} paddingSize="s">
-      {filteredContacts.map((contact: Contact, i) => (
-        <EmailAddressLine contact={contact} key={i} border={true} />
+      {emailContacts.map(emailContact => (
+        <EmailAddressLine
+          emailContact={emailContact}
+          key={emailContact.key}
+          border={true}
+          onUpdate={onUpdate}
+        />
       ))}
-      <AddEditEmail />
+      <AddEditEmail onUpdate={onUpdate} />
     </EuiPanel>
   );
 };

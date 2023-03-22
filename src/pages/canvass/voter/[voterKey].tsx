@@ -192,6 +192,7 @@ const Voter: FunctionComponent = () => {
             contacts={person.contacts}
             onLanguageChange={onChange}
             onPhoneChange={onChange}
+            onEmailChange={onChange}
           />
         </EuiFormFieldset>
         <EuiSpacer />
@@ -200,12 +201,12 @@ const Voter: FunctionComponent = () => {
         </EuiFormFieldset>
         <EuiSpacer />
         <EuiFormFieldset legend={{ children: 'Comments' }}>
-          <Comments comments={person.comments} />
+          <Comments comments={person.comments} onCommentChange={onChange} />
         </EuiFormFieldset>
         <EuiSpacer />
         <EuiFormFieldset legend={{ children: 'Tags' }}>
           <EuiFormRow display="rowCompressed">
-            <VoterTags fields={person.fields} />
+            <VoterTags fields={person.fields} onTagChange={onChange} />
           </EuiFormRow>
         </EuiFormFieldset>
         <EuiSpacer />

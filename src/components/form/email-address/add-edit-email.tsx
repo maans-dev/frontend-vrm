@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useState } from 'react';
 import {
   EuiButtonEmpty,
   EuiFieldText,
@@ -6,14 +6,36 @@ import {
   EuiFlexItem,
   EuiFormRow,
 } from '@elastic/eui';
-import { Contact2 } from '@lib/domain/person';
+import { EmailContact } from '@lib/domain/email-address';
 
 export type Props = {
-  contact?: Contact2;
-  onUpdate?: (item: Contact2) => void;
+  emailContact?: EmailContact;
+  onUpdate?: (data: EmailContact) => void;
 };
 
-const AddEditEmail: FunctionComponent<Props> = ({ contact, onUpdate }) => {
+const AddEditEmail: FunctionComponent<Props> = ({ emailContact, onUpdate }) => {
+  const [email, setEmail] = useState(emailContact?.value || null);
+  const [nextId, setNextId] = useState(0);
+
+  const handleUpdate = () => {
+    if (emailContact) {
+      // do edit
+      onUpdate({
+        ...emailContact,
+        value: email,
+      });
+    } else {
+      // do add
+      onUpdate({
+        key: nextId,
+        value: email,
+        canContact: true,
+      });
+      setNextId(nextId + 1);
+      setEmail('');
+    }
+  };
+
   return (
     <EuiFlexGroup responsive={false} gutterSize="xs">
       <EuiFlexItem>
@@ -21,20 +43,22 @@ const AddEditEmail: FunctionComponent<Props> = ({ contact, onUpdate }) => {
           <EuiFieldText
             compressed
             placeholder="Enter an email address"
-            value={contact ? contact?.value : null}
+            value={email}
             type="email"
             pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
             autoComplete="email"
+            onChange={e => setEmail(e.target.value)}
           />
         </EuiFormRow>
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
         <EuiFormRow display="rowCompressed">
           <EuiButtonEmpty
+            disabled={!email}
             size="s"
             css={{ minWidth: '50px' }}
-            onClick={() => (contact ? onUpdate(contact) : null)}>
-            {contact ? 'Save' : 'Add'}
+            onClick={handleUpdate}>
+            {emailContact?.key ? 'Save' : 'Add'}
           </EuiButtonEmpty>
         </EuiFormRow>
       </EuiFlexItem>

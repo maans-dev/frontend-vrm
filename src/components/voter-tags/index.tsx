@@ -1,30 +1,31 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 import VoterTags from './canvassing-tags';
-import { Field } from '@lib/domain/person';
+import { Field, PartyTags } from '@lib/domain/person';
 import useTagFetcher from '@lib/fetcher/tags/tags';
 import Spinner from '@components/spinner/spinner';
 import { EuiCallOut } from '@elastic/eui';
+import { PersonUpdate, VoterTagsUpdate } from '@lib/domain/person-update';
+import { shortCodes } from '@components/canvassing-tags';
+import { VoterTagsType } from '@lib/domain/voter-tags';
 
 export type Props = {
   fields: Field[];
+  onTagChange: (update: PersonUpdate<VoterTagsUpdate>) => void;
 };
 
-const Tags: FunctionComponent<Props> = ({ fields }) => {
-  const { data, error, isLoading } = useTagFetcher();
+const Tags: FunctionComponent<Props> = ({ fields, onTagChange }) => {
+  const [voterFields, setVoterFields] = useState<Field[]>([]);
+  
+  useEffect(() => {
+    const filteredVoterFields = fields.filter(
+      f => !shortCodes.includes(f.field.code)
+    );
+    setVoterFields(filteredVoterFields);
+  }, [fields]);
+
   return (
     <>
-      {isLoading && <Spinner show={isLoading} />}
-      {error && (
-        <EuiCallOut
-          title="Error"
-          color="danger"
-          iconType="alert"
-          size="s"
-          style={{ marginBottom: '1rem' }}>
-          Error fetching tags. Please try again later.
-        </EuiCallOut>
-      )}
-      {!isLoading && !error && <VoterTags fields={fields} data={data} />}
+      <VoterTags fields={voterFields} onTagChange={onTagChange} />
     </>
   );
 };

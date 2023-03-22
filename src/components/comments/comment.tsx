@@ -15,7 +15,6 @@ export type Props = {
 };
 
 const Commenter: FunctionComponent<Props> = ({ comment }) => {
-  console.log(comment, 'comment i');
   const isSystemComment = comment.type === 'system';
   const isMemberComment = comment.type === 'membership';
 
