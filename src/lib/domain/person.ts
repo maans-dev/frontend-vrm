@@ -255,7 +255,7 @@ export interface Field {
   key: string;
   person: number;
   field?: Partial<FieldMetaData>;
-  value?: Value;
+  value?: unknown;
   created: Date;
   modified: Date;
   createdBy: number;
