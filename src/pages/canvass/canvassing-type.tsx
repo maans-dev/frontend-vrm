@@ -1,7 +1,8 @@
-import { FunctionComponent, useContext } from 'react';
+import { FunctionComponent, useContext, useEffect, useState } from 'react';
 import {
   EuiBreadcrumb,
   EuiButton,
+  EuiCallOut,
   EuiFlexGroup,
   EuiFlexItem,
   EuiSpacer,
@@ -13,35 +14,21 @@ import { css, Global } from '@emotion/react';
 import CampaignSelect from '@components/canvassing-type/campaign-select';
 import CanvassingTypeSelect from '@components/canvassing-type/canvassing-type-select';
 import { CanvassingContext } from '@lib/context/canvassing.context';
-
-const campaignData = [
-  {
-    key: '1',
-    name: 'Red/Pink registration calling',
-    district: 'A placeholder',
-  },
-  { key: '2', name: 'Campaign 2024 Registration', district: 'A placeholder' },
-  { key: '3', name: 'Campaign 2024 DAFor Confirm', district: 'A placeholder' },
-  {
-    key: '4',
-    name: 'Comprehensive Telephone Canvassing',
-    district: 'A placeholder',
-  },
-  {
-    key: '5',
-    name: 'Registration telephone and foot',
-    district: 'A placeholder',
-  },
-];
+import useCanvassTypeFetcher from '@lib/fetcher/campaign-type/campaign-type';
+import Spinner from '@components/spinner/spinner';
+import { CanvassType } from '@lib/domain/person';
 
 const canvassTypeData = [{ name: 'Face to face' }, { name: 'Telephone' }];
 
 const CanvassingType: FunctionComponent = () => {
-  const { setUpdatePayload } = useContext(CanvassingContext);
-  // const { campaign, setCampaign } = useState<ICampaign>();
-  // const { campaignType, setCampaignType } = useState<ICanvassType>();
+  const { campaignType, isLoading, error } = useCanvassTypeFetcher();
+  const [campaignData, setCampaignData] = useState<CanvassType[]>([]);
 
-  // const onChange = (update: )
+  useEffect(() => {
+    setCampaignData(campaignType);
+  }, [campaignType]);
+
+  const { setUpdatePayload } = useContext(CanvassingContext);
 
   const router = useRouter();
   const breadcrumb: EuiBreadcrumb[] = [
@@ -49,6 +36,8 @@ const CanvassingType: FunctionComponent = () => {
       text: 'Canvass',
     },
   ];
+
+  // const onChange = (update: )
 
   const formActions = (
     <EuiFlexGroup direction="row" responsive={false} justifyContent="flexEnd">
@@ -64,6 +53,22 @@ const CanvassingType: FunctionComponent = () => {
       </EuiFlexItem>
     </EuiFlexGroup>
   );
+
+  if (isLoading) {
+    return (
+      <MainLayout breadcrumb={breadcrumb}>
+        <Spinner show={isLoading} />
+      </MainLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <EuiCallOut title="Error" color="danger" iconType="alert">
+        {error}
+      </EuiCallOut>
+    );
+  }
 
   return (
     <MainLayout breadcrumb={breadcrumb}>

@@ -6,12 +6,12 @@ import {
   EuiText,
   htmlIdGenerator,
 } from '@elastic/eui';
-import { ICampaign } from './type';
 import { css, Global } from '@emotion/react';
+import { CanvassType } from '@lib/domain/person';
 
 export type Props = {
-  campaigns: ICampaign[];
-  onChange: (campaign: ICampaign) => void;
+  campaigns: CanvassType[];
+  onChange: (campaign: CanvassType) => void;
 };
 
 const CampaignSelect: FunctionComponent<Props> = ({ campaigns, onChange }) => {
@@ -19,7 +19,7 @@ const CampaignSelect: FunctionComponent<Props> = ({ campaigns, onChange }) => {
   const generateId = htmlIdGenerator('campaign');
   const [selected, setSelected] = useState('');
 
-  const handleChange = (campaign: ICampaign) => {
+  const handleChange = (campaign: CanvassType) => {
     setSelected(campaign.name);
     onChange(campaign);
   };
@@ -44,7 +44,7 @@ const CampaignSelect: FunctionComponent<Props> = ({ campaigns, onChange }) => {
         direction="row"
         gutterSize="s"
         responsive={true}>
-        {campaigns?.map((item: ICampaign, i) => {
+        {campaigns?.map((item: CanvassType, i) => {
           return (
             <EuiFlexItem key={i} grow={false} style={{ minWidth: 100 }}>
               <EuiCheckableCard
@@ -57,7 +57,7 @@ const CampaignSelect: FunctionComponent<Props> = ({ campaigns, onChange }) => {
                   size="xs"
                   onClick={() => handleChange(item)}
                   css={{ cursor: 'pointer' }}>
-                  {item.district}
+                  {item.type.description}
                 </EuiText>
               </EuiCheckableCard>
             </EuiFlexItem>

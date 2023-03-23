@@ -86,6 +86,30 @@ export interface CanvassedBy {
   activity: Activity;
 }
 
+export interface CanvassType {
+  key: string;
+  name: string;
+  type: Type;
+  description: any;
+  active: boolean;
+  createdBy: number;
+  modifiedBy: number;
+  created: string;
+  modified: string;
+}
+
+export interface CanvassTypeMetaData {
+  key: string;
+  createdBy: number;
+  modifiedBy: number;
+  modified: string;
+  created: string;
+  category: string;
+  name: string;
+  description: string;
+  metaData?: unknown;
+}
+
 export interface Affiliation {
   key: string;
   name: string;
