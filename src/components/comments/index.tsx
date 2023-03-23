@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useState } from 'react';
+import { FunctionComponent, useContext, useEffect, useState } from 'react';
 import {
   EuiAvatar,
   EuiButtonEmpty,
@@ -13,6 +13,7 @@ import Commenter from './comment';
 import { css, Global } from '@emotion/react';
 import { Comment } from '@lib/domain/person';
 import { CommentsUpdate, PersonUpdate } from '@lib/domain/person-update';
+import { CanvassingContext } from '@lib/context/canvassing.context';
 // import { CommentsType } from '@lib/domain/comments';
 
 export type Props = {
@@ -20,9 +21,10 @@ export type Props = {
   onCommentChange: (update: PersonUpdate<CommentsUpdate>) => void;
 };
 
-const Comments: FunctionComponent<Props> = ({ comments }) => {
+const Comments: FunctionComponent<Props> = ({ comments, onCommentChange }) => {
   const [newComment, setNewComment] = useState('');
   const [comment, setComment] = useState<Partial<Comment>[]>([]);
+  const { nextId } = useContext(CanvassingContext);
 
   useEffect(() => {
     setComment(comments);
@@ -45,6 +47,15 @@ const Comments: FunctionComponent<Props> = ({ comments }) => {
 
     setComment(prevComments => [...prevComments, newCommentObj]);
 
+    onCommentChange({
+      field: 'comments',
+      data: {
+        type: newCommentObj.type,
+        value: newCommentObj.value,
+        key: nextId(),
+      },
+    });
+
     setNewComment('');
   };
 
@@ -64,7 +75,7 @@ const Comments: FunctionComponent<Props> = ({ comments }) => {
             <Commenter
               comment={comment}
               key={i}
-              // handleArchive={handleArchiveComment}
+            // handleArchive={handleArchiveComment}
             />
           );
         })}

@@ -1,5 +1,5 @@
 export interface CommentsType {
-  key: string;
+  key: string | number;
   type: string;
   value: string;
   archived?: boolean;
