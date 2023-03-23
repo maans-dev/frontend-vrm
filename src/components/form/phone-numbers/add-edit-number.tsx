@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent, useContext, useState } from 'react';
 import {
   EuiButtonEmpty,
   EuiFieldText,
@@ -16,6 +16,7 @@ import {
 } from 'react-icons/fa';
 import { ImUserTie } from 'react-icons/im';
 import { PhoneContact } from '@lib/domain/phone-numbers';
+import { CanvassingContext } from '@lib/context/canvassing.context';
 
 export type Props = {
   phoneContact?: PhoneContact;
@@ -77,7 +78,7 @@ const AddEditNumber: FunctionComponent<Props> = ({
     phoneContact?.type || phoneTypeOptions[0].value
   );
   const [phoneNumber, setPhoneNumber] = useState(phoneContact?.value || null);
-  const [nextId, setNextId] = useState(0); // sequential numeric id's for new items. TODO: this may need to change
+  const { nextId } = useContext(CanvassingContext);
 
   const onChangePhoneType = value => {
     setSelectedPhoneType(value);
@@ -94,12 +95,11 @@ const AddEditNumber: FunctionComponent<Props> = ({
     } else {
       // do add
       onUpdate({
-        key: nextId,
+        key: nextId(),
         value: phoneNumber,
         type: phoneType,
         canContact: true,
       });
-      setNextId(nextId + 1);
       setSelectedPhoneType(phoneTypeOptions[0].value);
       setPhoneNumber('');
     }

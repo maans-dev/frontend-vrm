@@ -14,6 +14,7 @@ export type CanvassingContextType = {
   isContextReady: boolean;
   setPerson: (person: Person) => void;
   setUpdatePayload: (update: PersonUpdate<GeneralUpdate>) => void;
+  nextId: () => number;
   // submitUpdatePayload: () => void;
 };
 
@@ -26,6 +27,7 @@ const CanvassingProvider = ({ children }) => {
     Partial<Person> & Partial<{ canvass: CanvassUpdate }>
   >({});
   const [person, setPersonInternal] = useState<Person | null>(null);
+  const [sequence, setSequence] = useState(0);
   const router = useRouter();
 
   const setPerson = (person: Person) => setPersonInternal(person);
@@ -48,6 +50,17 @@ const CanvassingProvider = ({ children }) => {
     ) {
       for (const key in update.data as object) {
         if (update.data[key] === null) delete update.data[key];
+      }
+    }
+
+    // is a deleted item so remove all other updates for this item, leaving only key and deleted flag
+    if (
+      typeof update.data === 'object' &&
+      !Array.isArray(update.data) &&
+      'deleted' in update.data
+    ) {
+      for (const key in update.data) {
+        if (key !== 'key' && key !== 'deleted') delete update.data[key];
       }
     }
 
@@ -86,15 +99,19 @@ const CanvassingProvider = ({ children }) => {
           }
         }
 
-        // a new entry has been removed so remove the data
-        if ('deleted' in update.data && typeof update.data.key === 'number') {
-          next = [
-            ...prev[update.field].filter((d: GeneralUpdate) => {
-              assertHasFields(['key'], d);
-              assertHasFields(['key'], update.data);
-              return d.key !== update.data?.key;
-            }),
-          ];
+        // handle deletions
+        if ('deleted' in update.data) {
+          if (typeof update.data.key === 'number') {
+            // completely remove if this is a new item
+            next = [
+              ...prev[update.field].filter((d: GeneralUpdate) => {
+                assertHasFields(['key'], d);
+                assertHasFields(['key'], update.data);
+                return d.key !== update.data?.key;
+              }),
+            ];
+          } else {
+          }
         }
 
         // no elements so remove completely
@@ -115,6 +132,12 @@ const CanvassingProvider = ({ children }) => {
 
       return { ...prev, [update.field]: next };
     });
+  };
+
+  const nextId = () => {
+    const next = sequence + 1;
+    setSequence(next);
+    return next;
   };
 
   useEffect(() => {
@@ -147,6 +170,7 @@ const CanvassingProvider = ({ children }) => {
         isContextReady: true,
         setPerson: setPerson,
         setUpdatePayload: setUpdatePayload,
+        nextId: nextId,
       }}>
       {children}
     </CanvassingContext.Provider>

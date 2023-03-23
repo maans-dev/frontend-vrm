@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent, useContext, useState } from 'react';
 import {
   EuiButtonEmpty,
   EuiFieldText,
@@ -7,6 +7,7 @@ import {
   EuiFormRow,
 } from '@elastic/eui';
 import { EmailContact } from '@lib/domain/email-address';
+import { CanvassingContext } from '@lib/context/canvassing.context';
 
 export type Props = {
   emailContact?: EmailContact;
@@ -15,7 +16,7 @@ export type Props = {
 
 const AddEditEmail: FunctionComponent<Props> = ({ emailContact, onUpdate }) => {
   const [email, setEmail] = useState(emailContact?.value || null);
-  const [nextId, setNextId] = useState(0);
+  const { nextId } = useContext(CanvassingContext);
 
   const handleUpdate = () => {
     if (emailContact) {
@@ -27,11 +28,10 @@ const AddEditEmail: FunctionComponent<Props> = ({ emailContact, onUpdate }) => {
     } else {
       // do add
       onUpdate({
-        key: nextId,
+        key: nextId(),
         value: email,
         canContact: true,
       });
-      setNextId(nextId + 1);
       setEmail('');
     }
   };

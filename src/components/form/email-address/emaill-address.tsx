@@ -12,7 +12,6 @@ import {
 import { FunctionComponent, useState } from 'react';
 import AddEditEmail from './add-edit-email';
 import { GoCircleSlash } from 'react-icons/go';
-import { Contact } from '@lib/domain/person';
 import { EmailContact } from '@lib/domain/email-address';
 
 export type Props = {
@@ -91,7 +90,7 @@ const EmailAddressLine: FunctionComponent<Props> = ({
                 />
               </EuiFlexItem>
             ) : null}
-            {emailContact.canContact ? (
+            {!emailContact.canContact ? (
               <EuiFlexItem grow={false}>
                 <EuiAvatar
                   name="Do not contact"
