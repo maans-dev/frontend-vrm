@@ -85,10 +85,10 @@ const ContactDetails: FunctionComponent<Props> = ({
   };
   const [phoneContacts, setPhoneContacts] = useState<PhoneContact[]>(
     contacts
-      .filter(contact => contact.contact && contact.contact.type !== 'EMAIL')
+      .filter(contact => contact.category !== 'EMAIL')
       .map(contact => ({
         key: contact.key,
-        value: contact?.value || contact.contact?.value,
+        value: contact?.value,
         type: contact.type,
         canContact: contact.canContact,
       }))
@@ -114,7 +114,7 @@ const ContactDetails: FunctionComponent<Props> = ({
     const update = { ...data };
     const prev = contacts.find(contact => contact.key === update.key);
     if (prev) {
-      if (prev.value === update.value || prev.contact.value === update.value)
+      if (prev.value === update.value || prev.value === update.value)
         delete update.value;
       if (prev.type === update.type) delete update.type;
       if (prev.canContact === update.canContact) delete update.canContact;
@@ -123,10 +123,10 @@ const ContactDetails: FunctionComponent<Props> = ({
   };
   const [emailContacts, setEmailContacts] = useState<EmailContact[]>(
     contacts
-      .filter(contact => contact.contact && contact.contact.type === 'EMAIL')
+      .filter(contact => contact.category === 'EMAIL')
       .map(contact => ({
         key: contact.key,
-        value: contact?.value || contact.contact?.value,
+        value: contact?.value || contact.value,
         type: contact.type,
         canContact: contact.canContact,
       }))
@@ -152,7 +152,7 @@ const ContactDetails: FunctionComponent<Props> = ({
     const update = { ...data };
     const prev = contacts.find(contact => contact.key === update.key);
     if (prev) {
-      if (prev.value === update.value || prev.contact.value === update.value)
+      if (prev.value === update.value || prev.value === update.value)
         delete update.value;
       if (prev.type === update.type) delete update.type;
       if (prev.canContact === update.canContact) delete update.canContact;

@@ -183,7 +183,7 @@ export interface ColourCode {
 }
 
 export interface CreatedBy {
-  key: number;
+  key?: number;
   firstName: string;
   surname: string;
 }
@@ -197,7 +197,7 @@ export interface ModifiedBy {
 export interface Comment {
   key: string;
   person: number;
-  type: string;
+  type?: string;
   value: string;
   createdBy: CreatedBy;
   modifiedBy: ModifiedBy;
@@ -205,30 +205,18 @@ export interface Comment {
   modified: any;
 }
 
-export interface Contact2 {
-  key: string;
-  type: string;
-  value?: string;
-  source?: any;
-  created: Date;
-  modified: Date;
-  createdBy: number;
-  canContact: boolean;
-  modifiedBy: number;
-}
-
 export interface Contact {
   key: string;
+  category: string;
   type: string;
   person: number;
-  contact: Contact2;
-  value?: string;
+  value: string;
   canContact: boolean;
-  confirmed: Date;
+  confirmed: string;
   createdBy: number;
   modifiedBy: number;
-  created: Date;
-  modified: Date;
+  created: string;
+  modified: string;
 }
 
 export interface Value {
@@ -255,7 +243,7 @@ export interface Field {
   key: string;
   person: number;
   field?: Partial<FieldMetaData>;
-  value?: unknown;
+  value?: boolean;
   created: Date;
   modified: Date;
   createdBy: number;
