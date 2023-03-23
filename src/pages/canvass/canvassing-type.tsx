@@ -46,6 +46,7 @@ const CanvassingType: FunctionComponent = () => {
     <EuiFlexGroup direction="row" responsive={false} justifyContent="flexEnd">
       <EuiFlexItem grow={false}>
         <EuiButton
+          isDisabled={!data?.canvass?.activity || !data?.canvass?.type}
           iconType="arrowRight"
           iconSide="right"
           size="m"
