@@ -14,7 +14,7 @@ import { css, Global } from '@emotion/react';
 import CampaignSelect from '@components/canvassing-type/campaign-select';
 import CanvassingTypeSelect from '@components/canvassing-type/canvassing-type-select';
 import { CanvassingContext } from '@lib/context/canvassing.context';
-import useCanvassTypeFetcher from '@lib/fetcher/campaign-type/campaign-type';
+import useCanvassTypeFetcher from '@lib/fetcher/campaign-type/campaign';
 import Spinner from '@components/spinner/spinner';
 import { CanvassType } from '@lib/domain/person';
 

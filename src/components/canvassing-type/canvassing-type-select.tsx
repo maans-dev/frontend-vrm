@@ -7,10 +7,9 @@ import {
 } from '@elastic/eui';
 import { ICanvassType } from './type';
 import { css, Global } from '@emotion/react';
-import { CanvassType } from '@lib/domain/person';
 
 export type Props = {
-  canvassTypes: CanvassType[];
+  canvassTypes: ICanvassType[];
   onChange: (type: ICanvassType) => void;
 };
 
