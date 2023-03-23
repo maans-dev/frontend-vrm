@@ -1,7 +1,9 @@
-export interface VoterTagsType {
-  key: string | number;
+export type VoterTagsType = {
+  key?: string | number;
   field: {
     key: string | number;
+    description?: string;
+    isNew?: boolean;
   };
-  value: unknown;
-}
+  value?: boolean;
+};

@@ -9,10 +9,10 @@ import {
 import { PartyTags } from '@lib/domain/person';
 import Tag from './tag';
 import { Field } from '@lib/domain/person';
-import { shortCodes } from '@components/canvassing-tags';
 import { PersonUpdate, VoterTagsUpdate } from '@lib/domain/person-update';
 import useTagFetcher from '@lib/fetcher/tags/tags';
 import Spinner from '@components/spinner/spinner';
+import { VoterTagsType } from '@lib/domain/voter-tags';
 
 export interface Props {
   fields: Field[];
@@ -21,7 +21,7 @@ export interface Props {
   onRemoveTag?: (label: string) => void;
 }
 
-type VoterTagsOption = EuiComboBoxOptionOption<PartyTags>;
+type VoterTagsOption = EuiComboBoxOptionOption<VoterTagsType>;
 
 const VoterTags: React.FC<Props> = ({
   onSelect,
@@ -31,119 +31,205 @@ const VoterTags: React.FC<Props> = ({
 }: Props) => {
   const { data, error, isLoading } = useTagFetcher();
   const [partyTags, setPartyTags] = useState<PartyTags[]>();
-
+  const [selectedFields, setSelectedFields] = useState<
+    Partial<VoterTagsType[]>
+  >([]);
   const [tags, setTags] = useState<VoterTagsOption[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
-  const [selectedTags, setSelectedTags] = useState<PartyTags[]>([]);
-  const [selectedFields, setSelectedFields] = useState<Field[]>([]);
-  const [removedFields, setRemovedFields] = useState<Field[]>([]);
 
-  useEffect(() => {
-    if (data && fields.length > 0) {
-      const filteredPartyTags = data.filter(tag =>
-        [...fields, ...removedFields].every(
-          field => field.field.code !== tag.code
-        )
-      );
-      setPartyTags(filteredPartyTags);
-    }
-  }, [data, fields, removedFields]);
-
-  useEffect(() => {
-    const voterTags = partyTags?.map(tag => ({
-      label: tag.description,
-      value: tag,
+  const map = (
+    fields: Field[],
+    partyTags: PartyTags[]
+  ): Partial<VoterTagsType[]> => {
+    const fieldsOptions = fields.map(field => ({
+      key: field.key,
+      field: {
+        key: field.field.key,
+        description: field.field.description,
+      },
+      value: field.value,
     }));
-    setTags(voterTags);
-  }, [partyTags]);
-
-  console.log(tags, 'tags');
+    const partyTagsOptions = partyTags.map(tag => ({
+      field: {
+        key: tag.key,
+        description: tag.description,
+      },
+      value: false,
+    }));
+    return [...fieldsOptions, ...partyTagsOptions];
+  };
 
   useEffect(() => {
-    setSelectedFields(fields);
-  }, [fields]);
+    setPartyTags(data);
+  }, [data]);
+
+  useEffect(() => {
+    setPartyTags(data);
+  }, [data]);
+
+  useEffect(() => {
+    if (partyTags && fields) {
+      const mappedData = map(fields, partyTags);
+      setSelectedFields(mappedData);
+    }
+  }, [fields, partyTags]);
+
+  const tagBadges = selectedFields.map((field, i) => {
+    if (field.value === true) {
+      return (
+        <EuiFlexItem key={i}>
+          <Tag
+            label={field.field.description}
+            onDelete={() => handleOnRemoveTag(field)}
+            isNew={field.field?.isNew}
+          />
+        </EuiFlexItem>
+      );
+    }
+    return null;
+  });
+
+  const [deletedDescriptions, setDeletedDescriptions] = useState([]);
+
+  useEffect(() => {
+    const currentTags = selectedFields
+      ?.filter(
+        tag =>
+          !fields.some(
+            field => field.field.description === tag.field.description
+          ) && !deletedDescriptions.includes(tag.field.description)
+      )
+      .map(tag => ({
+        label: tag.field.description,
+        value: tag,
+      }));
+
+    const deletedTags = deletedDescriptions
+      .filter(d =>
+        selectedFields.some(
+          tag => tag.field.description === d.field.description
+        )
+      )
+      .map(d => ({
+        label: d.field.description,
+        value: d.field,
+      }));
+
+    setTags([...currentTags, ...deletedTags]);
+  }, [partyTags, selectedFields, fields, deletedDescriptions]);
 
   const handleOnChange = selectedOptions => {
+    const selectedNew =
+      selectedOptions[0]?.value !== selectedOptions[0]?.value.key;
     const selectedField = selectedOptions[0]?.value;
-    if (selectedField) {
+    const hasDeletedTags = deletedDescriptions.some(
+      desc => desc.key !== undefined
+    );
+    console.log(hasDeletedTags, 'deleted');
+
+    if (selectedOptions[0]?.value.key) {
+      setSelectedFields(prevState => {
+        const updatedFields = [...prevState];
+        deletedDescriptions.forEach(deletedTag => {
+          const existingFieldIndex = updatedFields.findIndex(
+            field => field.field.description === deletedTag.field.description
+          );
+
+          if (existingFieldIndex >= 0) {
+            // Update existing field
+            updatedFields[existingFieldIndex] = {
+              key: deletedTag.key,
+              field: {
+                key: deletedTag.field.key,
+                description: deletedTag.field.description,
+              },
+              value: true,
+            };
+          } else {
+            // Add new field
+            updatedFields.push({
+              key: deletedTag.key,
+              field: {
+                key: deletedTag.field.key,
+                description: deletedTag.field.description,
+              },
+              value: true,
+            });
+          }
+        });
+
+        return updatedFields;
+      });
+    } else if (selectedNew) {
       const selectedTag = {
         ...selectedField,
-        description: selectedField.description,
+        description: selectedField.field.description,
         isNew: true,
       };
-      if (
-        !selectedTags.some(tag => tag.description === selectedTag.description)
-      ) {
+      console.log(selectedTag, 'selected tag');
+
+      // Check if the tag already exists in selectedFields
+      const isTagAlreadySelected = selectedFields.some(
+        tag => tag.field.description === selectedTag.description
+      );
+      console.log(isTagAlreadySelected);
+
+      if (isTagAlreadySelected) {
+        setSelectedFields(prevState => [
+          {
+            field: {
+              key: selectedTag.field.key,
+              description: selectedTag.field.description,
+              isNew: true,
+            },
+            value: true,
+          },
+          ...prevState.filter(
+            tag => tag.field.description !== selectedTag.description
+          ),
+        ]);
         onSelect?.(selectedTag);
-        setSelectedTags(prevSelectedTags => [selectedTag, ...prevSelectedTags]);
-        // let updateData;
-        // onTagChange({
-        //   field: 'voter-tags',
-        //   data: updateData,
-        // });
       }
     }
   };
 
-  const tagBadges = [
-    ...selectedTags.map((tag, i) => (
-      <EuiFlexItem key={i}>
-        <Tag
-          label={tag.description}
-          onDelete={() => handleOnRemoveTag(tag)}
-          isNew={tag.isNew}
-        />
-      </EuiFlexItem>
-    )),
-    ...selectedFields.map((field, i) => (
-      <EuiFlexItem key={selectedTags.length + i}>
-        <Tag
-          label={field.field.description}
-          onDelete={() => handleOnRemoveTag(field)}
-        />
-      </EuiFlexItem>
-    )),
-  ];
-
-  const handleOnRemoveTag = selectedTagOrField => {
-    onRemoveTag?.(selectedTagOrField.description);
-
-    if ('code' in selectedTagOrField) {
-      // Remove the tag from selectedTags
-      const updatedTags = selectedTags.filter(
-        tag => tag.description !== selectedTagOrField.description
-      );
-      setSelectedTags(updatedTags);
-    } else {
-      // Remove the field from selectedFields
-      const updatedFields = selectedFields.filter(
-        field =>
-          (field.field.code ?? field.field.description) !==
-          (selectedTagOrField.field.code ??
-            selectedTagOrField.field.description)
-      );
-      setRemovedFields(prevRemovedFields => [
-        selectedTagOrField,
-        ...prevRemovedFields,
-      ]);
-      setSelectedFields(updatedFields);
-
-      // Add the removed field to selectedTags
-      const removedCode = selectedTagOrField.field.code;
-      if (removedCode) {
-        const tag = partyTags.find(tag => tag.code === removedCode);
-        if (tag && !selectedTags.some(t => t.code === tag.code)) {
-          const selectedTag = {
-            ...tag,
-            description: tag.description,
-            isNew: false,
-          };
-          setSelectedTags(prevSelectedTags => [
-            selectedTag,
-            ...prevSelectedTags,
-          ]);
+  const handleOnRemoveTag = selected => {
+    const tagDescription = selected.field.description;
+    const deleted = selected;
+    if (selected.field.key) {
+      setDeletedDescriptions(prevState => {
+        // Check if the new object already exists in the array
+        if (prevState.some(desc => desc.key === deleted.key)) {
+          return prevState; // Return the existing array if object already exists
+        } else {
+          // Add the new object to the array if it doesn't exist
+          return [...prevState, deleted];
         }
-      }
+      });
+      setSelectedFields(prevVeld =>
+        prevVeld.map(tag => {
+          if (tag.field.description === tagDescription) {
+            return {
+              field: tag.field,
+              value: false,
+            };
+          }
+          return tag;
+        })
+      );
+    }
+    if (selected.field.isNew === true) {
+      setSelectedFields(prevVeld =>
+        prevVeld.map(tag => {
+          if (tag.field.description === tagDescription) {
+            return {
+              field: tag.field,
+              value: false,
+            };
+          }
+          return tag;
+        })
+      );
     }
   };
 

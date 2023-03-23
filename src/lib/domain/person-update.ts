@@ -37,16 +37,11 @@ export type EmailUpdate = Pick<
   Partial<EmailContact>,
   'key' | 'type' | 'value' | 'canContact' | 'deleted' | 'confirmed'
 >;
-
-export type VoterTagsUpdate = Pick<
-  Partial<VoterTagsType>,
-  'key' | 'field' | 'value'
->;
+export type VoterTagsUpdate = VoterTagsType;
 export type CommentsUpdate = Pick<
   Partial<CommentsType>,
   'key' | 'type' | 'value' | 'archived'
 >;
-
 export type CanvassUpdate = {
   key?: string;
   date?: Date;
