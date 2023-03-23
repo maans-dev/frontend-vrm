@@ -90,6 +90,7 @@ const AddEditNumber: FunctionComponent<Props> = ({
       onUpdate({
         ...phoneContact,
         value: phoneNumber,
+        category: 'PHONE',
         type: phoneType,
       });
     } else {
@@ -98,6 +99,7 @@ const AddEditNumber: FunctionComponent<Props> = ({
         key: nextId(),
         value: phoneNumber,
         type: phoneType,
+        category: 'PHONE',
         canContact: true,
       });
       setSelectedPhoneType(phoneTypeOptions[0].value);

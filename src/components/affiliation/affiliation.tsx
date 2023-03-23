@@ -23,7 +23,7 @@ const AffiliationComponent: FunctionComponent<Props> = ({
   const [searchValue, setSearchValue] = useState<string>('');
   const { affiliations, isLoading, error } = useAffiliationFetcher(true);
   const [selectedOption, setSelectedOption] = useState<AffliationOption>({
-    label: affiliation.description,
+    label: affiliation?.description || affiliation.name,
     value: affiliation,
   });
 

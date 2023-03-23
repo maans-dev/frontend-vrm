@@ -4,13 +4,14 @@ import SearchOptions from './search-options';
 import { PersonSearchParams } from '@lib/domain/person-search';
 import usePersonSearchFetcher from '@lib/fetcher/person/person-search.fetcher';
 import { useRouter } from 'next/router';
-import Spinner from '@components/spinner/spinner';
+import MainLayout from '@layouts/main';
+import { EuiBreadcrumb } from '@elastic/eui';
 
 export type Props = {
-  prop?: string;
+  breadcrumb: EuiBreadcrumb[];
 };
 
-const VoterSearch: FunctionComponent<Props> = () => {
+const VoterSearch: FunctionComponent<Props> = ({ breadcrumb }) => {
   const router = useRouter();
   const [searchParams, setSearchParams] =
     useState<Partial<PersonSearchParams>>(null);
@@ -31,15 +32,20 @@ const VoterSearch: FunctionComponent<Props> = () => {
   }, [results, router]);
 
   return (
-    <>
-      <Spinner show={isLoading || results?.length === 1} />
+    <MainLayout
+      breadcrumb={breadcrumb}
+      panelled={true}
+      restrictWidth={true}
+      showSpinner={isLoading || results?.length === 1}>
       <SearchOptions
         onSubmit={doSearch}
         as={results === null || results === undefined ? 'form' : 'modal'}
         isLoading={isLoading}
       />
-      {results && !isLoading ? <SearchResults results={results} /> : null}
-    </>
+      {results && !isLoading && results.length > 1 ? (
+        <SearchResults results={results} />
+      ) : null}
+    </MainLayout>
   );
 };
 

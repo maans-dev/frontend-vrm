@@ -10,16 +10,20 @@ import { css, Global } from '@emotion/react';
 
 export type Props = {
   canvassTypes: ICanvassType[];
+  selectedType: string;
   onChange: (type: ICanvassType) => void;
 };
 
 const CanvassTypeSelect: FunctionComponent<Props> = ({
   canvassTypes,
+  selectedType,
   onChange,
 }) => {
   // const isMobile = useIsWithinBreakpoints(['xs', 's']);
   const generateId = htmlIdGenerator('campaign');
-  const [selected, setSelected] = useState('');
+  const [selected, setSelected] = useState(
+    canvassTypes.find(i => i.id === selectedType)?.name || ''
+  );
 
   const handleChange = (type: ICanvassType) => {
     setSelected(type.name);

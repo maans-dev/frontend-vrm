@@ -4,18 +4,23 @@ import {
   CanvassUpdate,
   GeneralUpdate,
   PersonUpdate,
+  PersonUpdateRequest,
 } from '@lib/domain/person-update';
+import { cloneDeep } from 'lodash';
 import { useRouter } from 'next/router';
 import { createContext, useEffect, useState } from 'react';
 
 export type CanvassingContextType = {
-  data: Partial<Person>;
+  data: Partial<PersonUpdateRequest> & Partial<{ canvass: CanvassUpdate }>;
   person: Person | null;
   isContextReady: boolean;
+  isSubmitting: boolean;
+  isComplete: boolean;
+  hasServerError: boolean;
   setPerson: (person: Person) => void;
   setUpdatePayload: (update: PersonUpdate<GeneralUpdate>) => void;
   nextId: () => number;
-  // submitUpdatePayload: () => void;
+  submitUpdatePayload: () => void;
 };
 
 export const CanvassingContext = createContext<Partial<CanvassingContextType>>(
@@ -24,10 +29,13 @@ export const CanvassingContext = createContext<Partial<CanvassingContextType>>(
 
 const CanvassingProvider = ({ children }) => {
   const [data, setData] = useState<
-    Partial<Person> & Partial<{ canvass: CanvassUpdate }>
+    Partial<PersonUpdateRequest> & Partial<{ canvass: CanvassUpdate }>
   >({});
   const [person, setPersonInternal] = useState<Person | null>(null);
   const [sequence, setSequence] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
+  // const [hasServerError, setHasServerError] = useState(false);
   const router = useRouter();
 
   const setPerson = (person: Person) => setPersonInternal(person);
@@ -140,13 +148,67 @@ const CanvassingProvider = ({ children }) => {
     return next;
   };
 
+  const submitUpdatePayload = async () => {
+    setIsSubmitting(true);
+    try {
+      const requestBody = cloneDeep(data);
+      requestBody.key = person.key;
+      requestBody.username = 12345678; // TODO: Get this from logged in user
+      requestBody.canvass.activity = 'dbb882d6-7fd4-4826-aa05-528b52b749f2'; // TODO: remove this once campaign list is hooked up to API
+      requestBody.canvass.date = new Date(); // TODO: remove this once campaign list is hooked up to API
+      requestBody.canvass.key = 12345678; // TODO: Get this from logged in user
+
+      // remove numeric keys as these represent new items
+      if ('comments' in data) {
+        requestBody.comments.forEach(item => {
+          if ('key' in item && typeof item.key === 'number') delete item.key;
+        });
+      }
+
+      if ('contacts' in data) {
+        requestBody.contacts.forEach(item => {
+          if ('key' in item && typeof item.key === 'number') delete item.key;
+        });
+      }
+
+      console.log('[PERSON EVENT PAYLOAD]', requestBody);
+
+      const response = await fetch(
+        `https://sturdy-giggle.da-io.net/event/canvass/`, // TODO: the base url shouldn't be hard-coded
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestBody),
+        }
+      );
+
+      const respPayload = await response.json();
+
+      setIsComplete(true);
+
+      console.log('[PERSON EVENT RESPONSE]', respPayload);
+    } catch (error) {
+      // TODO: Need to display these error in a Toast.
+      console.error('Something went wrong. Please try again later', error);
+    }
+    setIsSubmitting(false);
+  };
+
   useEffect(() => {
-    if (
-      !router.asPath.includes('/canvass') ||
-      router.asPath.includes('/canvassing-type')
-    ) {
-      setData({});
+    if (!router.asPath.includes('/canvass')) {
+      setIsComplete(false);
       setPerson(null);
+      setData(null);
+    }
+    if (router.asPath.includes('/canvassing-type')) {
+      setIsComplete(false);
+      setPerson(null);
+      setData(prev => ({
+        canvass: {
+          activity: prev?.canvass?.activity,
+          type: prev?.canvass?.type,
+        },
+      }));
     }
     if (router.asPath.includes('/voter-search')) {
       setData(prev => {
@@ -168,9 +230,12 @@ const CanvassingProvider = ({ children }) => {
         data,
         person,
         isContextReady: true,
-        setPerson: setPerson,
-        setUpdatePayload: setUpdatePayload,
-        nextId: nextId,
+        isSubmitting,
+        isComplete,
+        setPerson,
+        setUpdatePayload,
+        nextId,
+        submitUpdatePayload,
       }}>
       {children}
     </CanvassingContext.Provider>

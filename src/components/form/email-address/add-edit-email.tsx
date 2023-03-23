@@ -30,6 +30,8 @@ const AddEditEmail: FunctionComponent<Props> = ({ emailContact, onUpdate }) => {
       onUpdate({
         key: nextId(),
         value: email,
+        type: 'HOME',
+        category: 'EMAIL',
         canContact: true,
       });
       setEmail('');

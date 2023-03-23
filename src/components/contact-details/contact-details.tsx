@@ -90,6 +90,7 @@ const ContactDetails: FunctionComponent<Props> = ({
         key: contact.key,
         value: contact?.value,
         type: contact.type,
+        category: contact.category,
         canContact: contact.canContact,
       }))
   );
@@ -128,6 +129,7 @@ const ContactDetails: FunctionComponent<Props> = ({
         key: contact.key,
         value: contact?.value || contact.value,
         type: contact.type,
+        category: contact.category,
         canContact: contact.canContact,
       }))
   );

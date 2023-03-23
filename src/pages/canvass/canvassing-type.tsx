@@ -18,7 +18,10 @@ import useCanvassTypeFetcher from '@lib/fetcher/campaign-type/campaign';
 import Spinner from '@components/spinner/spinner';
 import { CanvassType } from '@lib/domain/person';
 
-const canvassTypeData = [{ name: 'Face to face' }, { name: 'Telephone' }];
+const canvassTypeData = [
+  { id: 'face', name: 'Face to face' },
+  { id: 'phone', name: 'Telephone' },
+];
 
 const CanvassingType: FunctionComponent = () => {
   const { campaignType, isLoading, error } = useCanvassTypeFetcher();
@@ -28,7 +31,7 @@ const CanvassingType: FunctionComponent = () => {
     setCampaignData(campaignType);
   }, [campaignType]);
 
-  const { setUpdatePayload } = useContext(CanvassingContext);
+  const { data, setUpdatePayload } = useContext(CanvassingContext);
 
   const router = useRouter();
   const breadcrumb: EuiBreadcrumb[] = [
@@ -55,11 +58,7 @@ const CanvassingType: FunctionComponent = () => {
   );
 
   if (isLoading) {
-    return (
-      <MainLayout breadcrumb={breadcrumb}>
-        <Spinner show={isLoading} />
-      </MainLayout>
-    );
+    return <MainLayout breadcrumb={breadcrumb} showSpinner={isLoading} />;
   }
 
   if (error) {
@@ -90,6 +89,7 @@ const CanvassingType: FunctionComponent = () => {
 
       <CampaignSelect
         campaigns={campaignData}
+        selectedKey={data?.canvass?.activity}
         onChange={update =>
           setUpdatePayload({
             field: 'canvass',
@@ -110,11 +110,12 @@ const CanvassingType: FunctionComponent = () => {
 
       <CanvassingTypeSelect
         canvassTypes={canvassTypeData}
+        selectedType={data?.canvass?.type}
         onChange={update =>
           setUpdatePayload({
             field: 'canvass',
             data: {
-              type: update.name,
+              type: update.id,
             },
           })
         }

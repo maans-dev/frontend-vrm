@@ -20,11 +20,7 @@ const Index: FunctionComponent = () => {
     },
   ];
 
-  return (
-    <MainLayout breadcrumb={breadcrumb} panelled={true} restrictWidth={true}>
-      <VoterSearch />
-    </MainLayout>
-  );
+  return <VoterSearch breadcrumb={breadcrumb} />;
 };
 
 export default Index;

@@ -12,18 +12,15 @@ const Spinner: FunctionComponent<Props> = ({ show }) => {
     <div
       style={{
         // backdropFilter: 'blur(3px)',
-        top: 0,
-        bottom: 0,
-        right: 0,
-        left: 0,
-        background: '#ffffff',
+        width: '100vw',
+        height: '100vh',
+        background: '#ffffff80',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         zIndex: 99,
-        position: 'absolute',
+        position: 'fixed',
       }}>
-      {/* <EuiLoadingSpinner size="xxl" /> */}
       <EuiLoadingChart mono size="xl" />
     </div>
   );

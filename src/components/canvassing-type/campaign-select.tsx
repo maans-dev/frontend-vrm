@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 import {
   EuiCheckableCard,
   EuiFlexGrid,
@@ -11,10 +11,15 @@ import { CanvassType } from '@lib/domain/person';
 
 export type Props = {
   campaigns: CanvassType[];
+  selectedKey?: string;
   onChange: (campaign: CanvassType) => void;
 };
 
-const CampaignSelect: FunctionComponent<Props> = ({ campaigns, onChange }) => {
+const CampaignSelect: FunctionComponent<Props> = ({
+  campaigns,
+  selectedKey,
+  onChange,
+}) => {
   // const isMobile = useIsWithinBreakpoints(['xs', 's']);
   const generateId = htmlIdGenerator('campaign');
   const [selected, setSelected] = useState('');
@@ -23,6 +28,11 @@ const CampaignSelect: FunctionComponent<Props> = ({ campaigns, onChange }) => {
     setSelected(campaign.name);
     onChange(campaign);
   };
+
+  useEffect(() => {
+    if (selectedKey)
+      setSelected(campaigns.find(c => c.key === selectedKey)?.name);
+  }, [campaigns, selectedKey]);
 
   return (
     <>

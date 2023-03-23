@@ -1,9 +1,13 @@
 import { CommentsType } from './comments';
 import { EmailContact } from './email-address';
-import { Affiliation } from './person';
+import { Affiliation, Person } from './person';
 import { Language } from './person-enum';
 import { PhoneContact } from './phone-numbers';
 import { VoterTagsType } from './voter-tags';
+
+export interface PersonUpdateRequest extends Person {
+  username: number;
+}
 
 export interface PersonUpdate<T> {
   field: string;
@@ -43,7 +47,7 @@ export type CommentsUpdate = Pick<
   'key' | 'type' | 'value' | 'archived'
 >;
 export type CanvassUpdate = {
-  key?: string;
+  key?: number;
   date?: Date;
   activity?: string;
   type?: string | 'FACE' | 'TELE';
