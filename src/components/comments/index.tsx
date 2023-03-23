@@ -13,7 +13,7 @@ import Commenter from './comment';
 import { css, Global } from '@emotion/react';
 import { Comment } from '@lib/domain/person';
 import { CommentsUpdate, PersonUpdate } from '@lib/domain/person-update';
-import { CommentsType } from '@lib/domain/comments';
+// import { CommentsType } from '@lib/domain/comments';
 
 export type Props = {
   comments: Comment[];
@@ -21,16 +21,32 @@ export type Props = {
 };
 
 const Comments: FunctionComponent<Props> = ({ comments }) => {
-  // const [comment, setComment] = useState<CommentsType[]>(
-  //   comments.map(comment => ({
-  //     key: comment.key,
-  //     type: comment.type,
-  //     value: comment.value,
-  //   }))
-  // );
+  const [newComment, setNewComment] = useState('');
+  const [comment, setComment] = useState<Partial<Comment>[]>([]);
+
+  useEffect(() => {
+    setComment(comments);
+  }, [comments]);
+
   const { euiTheme } = useEuiTheme();
 
   if (!comments) return <></>;
+
+  const handleAddComment = () => {
+    const newCommentObj = {
+      value: newComment,
+      createdBy: {
+        firstName: 'Current',
+        surname: 'User',
+      },
+      created: new Date(),
+      type: 'person',
+    };
+
+    setComment(prevComments => [...prevComments, newCommentObj]);
+
+    setNewComment('');
+  };
 
   return (
     <>
@@ -43,8 +59,14 @@ const Comments: FunctionComponent<Props> = ({ comments }) => {
         `}
       />
       <EuiCommentList aria-label="Comments" gutterSize="m">
-        {comments?.map((comment: Comment, i) => {
-          return <Commenter comment={comment} key={i} />;
+        {comment?.map((comment: Comment, i) => {
+          return (
+            <Commenter
+              comment={comment}
+              key={i}
+              // handleArchive={handleArchiveComment}
+            />
+          );
         })}
         <EuiComment
           username="Current User"
@@ -63,11 +85,17 @@ const Comments: FunctionComponent<Props> = ({ comments }) => {
                 compressed
                 fullWidth
                 placeholder="Enter a new comment..."
-                onChange={() => null}
+                onChange={e => setNewComment(e.target.value)}
+                value={newComment}
               />
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiButtonEmpty size="s">Add</EuiButtonEmpty>
+              <EuiButtonEmpty
+                size="s"
+                onClick={handleAddComment}
+                disabled={!newComment}>
+                Add
+              </EuiButtonEmpty>
             </EuiFlexItem>
           </EuiFlexGroup>
         </EuiComment>
