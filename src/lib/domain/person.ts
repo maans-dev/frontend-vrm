@@ -195,7 +195,7 @@ export interface ModifiedBy {
 }
 
 export interface Comment {
-  key: string;
+  key: string | number;
   person: number;
   type?: string;
   value: string;

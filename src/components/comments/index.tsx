@@ -36,6 +36,7 @@ const Comments: FunctionComponent<Props> = ({ comments, onCommentChange }) => {
 
   const handleAddComment = () => {
     const newCommentObj = {
+      key: nextId(),
       value: newComment,
       createdBy: {
         firstName: 'Current',
@@ -45,18 +46,33 @@ const Comments: FunctionComponent<Props> = ({ comments, onCommentChange }) => {
       type: 'person',
     };
 
-    setComment(prevComments => [...prevComments, newCommentObj]);
+    setComment(prevComments => {
+      return [...prevComments, newCommentObj];
+    });
 
     onCommentChange({
       field: 'comments',
       data: {
         type: newCommentObj.type,
         value: newCommentObj.value,
-        key: nextId(),
+        key: newCommentObj.key,
       },
     });
 
     setNewComment('');
+  };
+
+  const handleArchive = (comment: Comment) => {
+    setComment(prev => prev.filter(c => c.key !== comment.key));
+    onCommentChange({
+      field: 'comments',
+      data: {
+        key: comment.key,
+        type: null,
+        value: null,
+        archived: typeof comment.key === 'number' ? null : true,
+      },
+    });
   };
 
   return (
@@ -74,8 +90,8 @@ const Comments: FunctionComponent<Props> = ({ comments, onCommentChange }) => {
           return (
             <Commenter
               comment={comment}
-              key={i}
-            // handleArchive={handleArchiveComment}
+              key={comment.key}
+              onArchive={handleArchive}
             />
           );
         })}

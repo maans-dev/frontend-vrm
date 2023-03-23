@@ -12,9 +12,10 @@ import { Comment } from '@lib/domain/person';
 
 export type Props = {
   comment: Comment;
+  onArchive: (comment: Comment) => void;
 };
 
-const Commenter: FunctionComponent<Props> = ({ comment }) => {
+const Commenter: FunctionComponent<Props> = ({ comment, onArchive }) => {
   const isSystemComment = comment.type === 'system';
   const isMemberComment = comment.type === 'membership';
 
@@ -56,6 +57,7 @@ const Commenter: FunctionComponent<Props> = ({ comment }) => {
             iconType="trash"
             iconSize="s"
             size="xs"
+            onClick={() => onArchive(comment)}
           />
         ) : null
       }>
