@@ -2,7 +2,6 @@ import { FunctionComponent } from 'react';
 import { EuiPanel } from '@elastic/eui';
 import EmailAddressLine from './emaill-address';
 import AddEditEmail from './add-edit-email';
-import { Contact } from '@lib/domain/person';
 import { EmailContact } from '@lib/domain/email-address';
 
 export type Props = {
