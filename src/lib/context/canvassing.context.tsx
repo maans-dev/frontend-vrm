@@ -16,6 +16,7 @@ export type CanvassingContextType = {
   isContextReady: boolean;
   isSubmitting: boolean;
   isComplete: boolean;
+  isDirty: boolean;
   hasServerError: boolean;
   setPerson: (person: Person) => void;
   setUpdatePayload: (update: PersonUpdate<GeneralUpdate>) => void;
@@ -35,6 +36,7 @@ const CanvassingProvider = ({ children }) => {
   const [sequence, setSequence] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
   // const [hasServerError, setHasServerError] = useState(false);
   const router = useRouter();
 
@@ -45,6 +47,7 @@ const CanvassingProvider = ({ children }) => {
     if (!update.data) {
       setData(prev => {
         delete prev[update.field];
+        checkIsDirty(prev);
         return prev;
       });
       return;
@@ -138,7 +141,11 @@ const CanvassingProvider = ({ children }) => {
         next = { ...prev[update.field], ...next };
       }
 
-      return { ...prev, [update.field]: next };
+      const updatedData = { ...prev, [update.field]: next };
+
+      checkIsDirty(updatedData);
+
+      return updatedData;
     });
   };
 
@@ -194,6 +201,11 @@ const CanvassingProvider = ({ children }) => {
     setIsSubmitting(false);
   };
 
+  const checkIsDirty = updatedData =>
+    updatedData && Object.keys(updatedData).length > 1
+      ? setIsDirty(true)
+      : setIsDirty(false);
+
   useEffect(() => {
     if (!router.asPath.includes('/canvass')) {
       setIsComplete(false);
@@ -224,6 +236,10 @@ const CanvassingProvider = ({ children }) => {
     console.log('[CANVASSING CONTEXT]', { data, person });
   }, [data, person]);
 
+  // useEffect(() => {
+  //   checkIsDirty();
+  // }, [data, checkIsDirty]);
+
   return (
     <CanvassingContext.Provider
       value={{
@@ -232,6 +248,7 @@ const CanvassingProvider = ({ children }) => {
         isContextReady: true,
         isSubmitting,
         isComplete,
+        isDirty,
         setPerson,
         setUpdatePayload,
         nextId,

@@ -92,7 +92,7 @@ const VoterInfo: FunctionComponent<Props> = ({
               <EuiText size="xs">
                 by{' '}
                 <strong>
-                  {canvassedBy.key.firstName} {canvassedBy.key.surname}
+                  {canvassedBy?.key?.firstName} {canvassedBy?.key?.surname}
                 </strong>
               </EuiText>
             </EuiFlexItem>

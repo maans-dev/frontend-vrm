@@ -39,6 +39,7 @@ const Voter: FunctionComponent = () => {
     submitUpdatePayload,
     isSubmitting,
     isComplete,
+    isDirty,
   } = useContext(CanvassingContext);
 
   const breadcrumb: EuiBreadcrumb[] = [
@@ -75,7 +76,7 @@ const Voter: FunctionComponent = () => {
           size="m"
           fill
           iconType="save"
-          // disabled={isSubmitting}
+          disabled={!isDirty}
           isLoading={isSubmitting}
           onClick={() => submitUpdatePayload()}>
           Save
