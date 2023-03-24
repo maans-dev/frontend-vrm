@@ -17,8 +17,22 @@ export type Props = {
 const AddEditEmail: FunctionComponent<Props> = ({ emailContact, onUpdate }) => {
   const [email, setEmail] = useState(emailContact?.value || null);
   const { nextId } = useContext(CanvassingContext);
+  const [isInvalid, setIsInvalid] = useState(false);
+
+  function isEmail(value: string): boolean {
+    const pattern =
+      /^[A-Za-z0-9.!#$%&''*+-/=?^_`{|}~]+@[A-Za-z0-9.-]+[.][A-Za-z]+$/i;
+    const valid = pattern.test(value);
+    return valid;
+  }
 
   const handleUpdate = () => {
+    if (!isEmail(email)) {
+      setIsInvalid(true);
+      return;
+    }
+    setIsInvalid(false);
+
     if (emailContact) {
       // do edit
       onUpdate({
@@ -41,14 +55,16 @@ const AddEditEmail: FunctionComponent<Props> = ({ emailContact, onUpdate }) => {
   return (
     <EuiFlexGroup responsive={false} gutterSize="xs">
       <EuiFlexItem>
-        <EuiFormRow display="rowCompressed">
+        <EuiFormRow
+          display="rowCompressed"
+          isInvalid={isInvalid}
+          error="Enter a valid email address">
           <EuiFieldText
             compressed
             placeholder="Enter an email address"
             value={email}
+            isInvalid={isInvalid}
             type="email"
-            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-            // autoComplete="email"
             onChange={e => setEmail(e.target.value.replace(/\s+/g, ''))}
           />
         </EuiFormRow>

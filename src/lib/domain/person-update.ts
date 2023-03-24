@@ -1,12 +1,13 @@
 import { CommentsType } from './comments';
 import { EmailContact } from './email-address';
-import { Affiliation, Person } from './person';
+import { Affiliation, Field, Person } from './person';
 import { Language } from './person-enum';
 import { PhoneContact } from './phone-numbers';
 import { VoterTagsType } from './voter-tags';
 
 export interface PersonUpdateRequest extends Person {
   username: number;
+  field: Field[];
 }
 
 export interface PersonUpdate<T> {

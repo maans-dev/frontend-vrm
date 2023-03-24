@@ -79,15 +79,59 @@ const AddEditNumber: FunctionComponent<Props> = ({
   );
   const [phoneNumber, setPhoneNumber] = useState(phoneContact?.value || null);
   const [isInvalid, setIsInvalid] = useState(false);
+  const [error, setError] = useState('');
   const { nextId } = useContext(CanvassingContext);
 
   const onChangePhoneType = value => {
     setSelectedPhoneType(value);
   };
 
+  function isPhoneNumber(value: string): boolean {
+    const pattern = /^((?:\+27|27|0027)|0)(\d{9})$/i;
+    const valid = pattern.test(value);
+    return valid;
+  }
+
+  function isCellPhoneNumber(value: string): boolean {
+    if (isPhoneNumber(value)) {
+      for (const p of [/^0[67]/i, /^08[1-4]/i]) {
+        if (p.test(value)) return true;
+      }
+    }
+    return false;
+  }
+
+  function isIntlPhoneNumber(value: string): boolean {
+    const pattern = /^(?:\+[1-9])(\d{4,18})$/;
+    const excludePattern = /^(?:\+27|27|0027)(\d{0,18})$/;
+    const cleanedPhoneNumber = value ? value.trim() : '';
+
+    return (
+      pattern.test(cleanedPhoneNumber) &&
+      !excludePattern.test(cleanedPhoneNumber)
+    );
+  }
+
   const handleUpdate = () => {
     // validate
-    if (phoneNumber.length !== 10) {
+    let valid = false;
+    switch (phoneType) {
+      case 'CELL':
+        valid = isCellPhoneNumber(phoneNumber);
+        setError('Enter a valid mobile number');
+        break;
+      case 'WORK':
+      case 'HOME':
+        valid = isPhoneNumber(phoneNumber);
+        setError('Enter a valid phone number');
+        break;
+      case 'INTERNATIONAL':
+        valid = isIntlPhoneNumber(phoneNumber);
+        setError('Enter a valid international number');
+        break;
+    }
+
+    if (!valid) {
       setIsInvalid(true);
       return;
     }
@@ -134,10 +178,7 @@ const AddEditNumber: FunctionComponent<Props> = ({
         </EuiFormRow>
       </EuiFlexItem>
       <EuiFlexItem>
-        <EuiFormRow
-          display="rowCompressed"
-          isInvalid={isInvalid}
-          error="Enter a valid 10 digit phone number ">
+        <EuiFormRow display="rowCompressed" isInvalid={isInvalid} error={error}>
           <EuiFieldText
             compressed
             placeholder="Enter a phone number"
@@ -145,7 +186,7 @@ const AddEditNumber: FunctionComponent<Props> = ({
             isInvalid={isInvalid}
             inputMode="numeric"
             onChange={e =>
-              setPhoneNumber(e.target.value.replace(/[^0-9]/g, ''))
+              setPhoneNumber(e.target.value.replace(/[^0-9,+]/g, ''))
             }
           />
         </EuiFormRow>
