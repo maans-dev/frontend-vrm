@@ -178,6 +178,12 @@ const CanvassingProvider = ({ children }) => {
           if ('key' in item && typeof item.key === 'number') delete item.key;
         });
       }
+      
+      if ('fields' in data) {
+        requestBody.contacts.forEach(item => {
+          if ('key' in item && typeof item.key === 'number') delete item.key;
+        });
+      }
 
       console.log('[PERSON EVENT PAYLOAD]', requestBody);
 

@@ -1,6 +1,6 @@
 export type VoterTagsType = {
   key?: string | number;
-  field: {
+  field?: {
     key: string | number;
     description?: string;
     isNew?: boolean;

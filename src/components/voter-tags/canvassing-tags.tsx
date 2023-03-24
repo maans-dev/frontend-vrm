@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   EuiCallOut,
   EuiComboBox,
@@ -13,6 +13,14 @@ import { PersonUpdate, VoterTagsUpdate } from '@lib/domain/person-update';
 import useTagFetcher from '@lib/fetcher/tags/tags';
 import Spinner from '@components/spinner/spinner';
 import { VoterTagsType } from '@lib/domain/voter-tags';
+import { CanvassingContext } from '@lib/context/canvassing.context';
+
+export type IPartyTags = {
+  key: string | number;
+  description?: string;
+  isNew?: boolean;
+  existingTag?: string | number;
+};
 
 export interface Props {
   fields: Field[];
@@ -21,7 +29,7 @@ export interface Props {
   onRemoveTag?: (label: string) => void;
 }
 
-type VoterTagsOption = EuiComboBoxOptionOption<VoterTagsType>;
+type VoterTagsOption = EuiComboBoxOptionOption<IPartyTags>;
 
 const VoterTags: React.FC<Props> = ({
   onSelect,
@@ -30,16 +38,24 @@ const VoterTags: React.FC<Props> = ({
   fields,
 }: Props) => {
   const { data, error, isLoading } = useTagFetcher();
-  const [partyTags, setPartyTags] = useState<PartyTags[]>();
+  const [partyTags, setPartyTags] = useState<PartyTags[]>(); 
   const [selectedFields, setSelectedFields] = useState<
     Partial<VoterTagsType[]>
   >([]);
   const [tags, setTags] = useState<VoterTagsOption[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
+  const { nextId } = useContext(CanvassingContext);
+
+  useEffect(() => {
+    setPartyTags(data);
+    if (fields) {
+      const mappedData = map(fields);
+      setSelectedFields(mappedData);
+    }
+  }, [fields, data]);
 
   const map = (
     fields: Field[],
-    partyTags: PartyTags[]
   ): Partial<VoterTagsType[]> => {
     const fieldsOptions = fields.map(field => ({
       key: field.key,
@@ -49,30 +65,11 @@ const VoterTags: React.FC<Props> = ({
       },
       value: field.value,
     }));
-    const partyTagsOptions = partyTags.map(tag => ({
-      field: {
-        key: tag.key,
-        description: tag.description,
-      },
-      value: false,
-    }));
-    return [...fieldsOptions, ...partyTagsOptions];
+    
+    return [...fieldsOptions];
   };
 
-  useEffect(() => {
-    setPartyTags(data);
-  }, [data]);
-
-  useEffect(() => {
-    setPartyTags(data);
-  }, [data]);
-
-  useEffect(() => {
-    if (partyTags && fields) {
-      const mappedData = map(fields, partyTags);
-      setSelectedFields(mappedData);
-    }
-  }, [fields, partyTags]);
+  const [deleted, isDeleted] = useState([]);
 
   const tagBadges = selectedFields.map((field, i) => {
     if (field.value === true) {
@@ -89,150 +86,106 @@ const VoterTags: React.FC<Props> = ({
     return null;
   });
 
-  const [deletedDescriptions, setDeletedDescriptions] = useState([]);
-
   useEffect(() => {
-    const currentTags = selectedFields
+    const currentTags = partyTags
       ?.filter(
         tag =>
           !fields.some(
-            field => field.field.description === tag.field.description
-          ) && !deletedDescriptions.includes(tag.field.description)
+            field => field.field.description === tag.description
+          ) 
       )
       .map(tag => ({
-        label: tag.field.description,
+        label: tag.description,
         value: tag,
       }));
+    setTags(currentTags);
+  }, [partyTags, fields ]);
 
-    const deletedTags = deletedDescriptions
-      .filter(d =>
-        selectedFields.some(
-          tag => tag.field.description === d.field.description
-        )
-      )
-      .map(d => ({
-        label: d.field.description,
-        value: d.field,
-      }));
-
-    setTags([...currentTags, ...deletedTags]);
-  }, [partyTags, selectedFields, fields, deletedDescriptions]);
-
-  const handleOnChange = selectedOptions => {
-    const selectedNew =
-      selectedOptions[0]?.value !== selectedOptions[0]?.value.key;
-    const selectedField = selectedOptions[0]?.value;
-    const hasDeletedTags = deletedDescriptions.some(
-      desc => desc.key !== undefined
-    );
-    console.log(hasDeletedTags, 'deleted');
-
-    if (selectedOptions[0]?.value.key) {
-      setSelectedFields(prevState => {
-        const updatedFields = [...prevState];
-        deletedDescriptions.forEach(deletedTag => {
-          const existingFieldIndex = updatedFields.findIndex(
-            field => field.field.description === deletedTag.field.description
-          );
-
-          if (existingFieldIndex >= 0) {
-            // Update existing field
-            updatedFields[existingFieldIndex] = {
-              key: deletedTag.key,
-              field: {
-                key: deletedTag.field.key,
-                description: deletedTag.field.description,
-              },
-              value: true,
-            };
-          } else {
-            // Add new field
-            updatedFields.push({
-              key: deletedTag.key,
-              field: {
-                key: deletedTag.field.key,
-                description: deletedTag.field.description,
-              },
-              value: true,
-            });
+const handleOnChange = selectedOptions => {
+    const newFields = selectedOptions.map(option => {
+      const selectedField = option.value;
+      if (selectedField.existingTag) { 
+        const existingTag = {
+          key: selectedField.existingTag,
+          field: {
+            key: selectedField.key,
+            description: selectedField.description,
+            isNew: false,
+          },
+          value: true,
+        };
+        setTags(prevTags => prevTags.filter(tag => tag.value.description !== existingTag.field.description));
+        return existingTag;
+      } else if (selectedField) { 
+          const isTagSelected = selectedFields?.some(tag => tag.field?.description === selectedField.description);
+          if (isTagSelected) {
+            return null; 
           }
-        });
-
-        return updatedFields;
-      });
-    } else if (selectedNew) {
-      const selectedTag = {
-        ...selectedField,
-        description: selectedField.field.description,
-        isNew: true,
-      };
-      console.log(selectedTag, 'selected tag');
-
-      // Check if the tag already exists in selectedFields
-      const isTagAlreadySelected = selectedFields.some(
-        tag => tag.field.description === selectedTag.description
-      );
-      console.log(isTagAlreadySelected);
-
-      if (isTagAlreadySelected) {
-        setSelectedFields(prevState => [
-          {
+          const newTag = {
+            key: nextId(),
             field: {
-              key: selectedTag.field.key,
-              description: selectedTag.field.description,
+              key: selectedField.key,
+              description: selectedField.description,
               isNew: true,
             },
             value: true,
-          },
-          ...prevState.filter(
-            tag => tag.field.description !== selectedTag.description
-          ),
-        ]);
-        onSelect?.(selectedTag);
-      }
-    }
+          };
+          const existingTags = selectedFields.filter(tag => typeof tag.key === "number" && tag.field !== undefined);
+          const update = {
+            field: 'field',
+            data: [...existingTags, newTag]
+          } as PersonUpdate<VoterTagsType>;
+          onTagChange(update);
+          isDeleted(selectedFields);
+          return newTag;
+        }
+      }).filter(Boolean);;
+  
+    setSelectedFields(state => [...newFields, ...state]);
   };
-
-  const handleOnRemoveTag = selected => {
+  
+  const handleOnRemoveTag = (selected) => {
     const tagDescription = selected.field.description;
     const deleted = selected;
-    if (selected.field.key) {
-      setDeletedDescriptions(prevState => {
-        // Check if the new object already exists in the array
-        if (prevState.some(desc => desc.key === deleted.key)) {
-          return prevState; // Return the existing array if object already exists
-        } else {
-          // Add the new object to the array if it doesn't exist
-          return [...prevState, deleted];
+    
+    setSelectedFields((prevSelectedFields) => {
+      const updatedFields = prevSelectedFields.map((tag) => {
+        if (tag.field && tag.field.description === tagDescription) {
+          if (typeof tag.key === 'string') {
+            setTags((prevTags) => [...prevTags, {
+              label: deleted.field.description,
+              value: {
+                key: deleted.field.key,
+                description: deleted.field.description,
+                existingTag: tag.key,
+                value: false, 
+              },
+            }]);
+            const newTag = {
+              key: tag.key,
+              value: false,
+            };
+            const update = {
+              field: 'field',
+              data: newTag,
+            } as PersonUpdate<VoterTagsType>;
+            onTagChange(update);
+          }
+          if (typeof tag.key === "number") {
+            const update = {
+              field: 'field',
+              data: undefined, 
+            } as PersonUpdate<VoterTagsType>;
+            onTagChange(update);
+            tag.value = false; 
+          }
         }
+        return tag;
       });
-      setSelectedFields(prevVeld =>
-        prevVeld.map(tag => {
-          if (tag.field.description === tagDescription) {
-            return {
-              field: tag.field,
-              value: false,
-            };
-          }
-          return tag;
-        })
-      );
-    }
-    if (selected.field.isNew === true) {
-      setSelectedFields(prevVeld =>
-        prevVeld.map(tag => {
-          if (tag.field.description === tagDescription) {
-            return {
-              field: tag.field,
-              value: false,
-            };
-          }
-          return tag;
-        })
-      );
-    }
+      return updatedFields;
+    });
   };
-
+  
   return (
     <>
       {isLoading && <Spinner show={isLoading} />}
@@ -272,5 +225,4 @@ const VoterTags: React.FC<Props> = ({
     </>
   );
 };
-
 export default VoterTags;
