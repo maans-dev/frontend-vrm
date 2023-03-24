@@ -170,6 +170,7 @@ const handleOnChange = selectedOptions => {
               data: newTag,
             } as PersonUpdate<VoterTagsType>;
             onTagChange(update);
+            tag.value = false; 
           }
           if (typeof tag.key === "number") {
             const update = {
