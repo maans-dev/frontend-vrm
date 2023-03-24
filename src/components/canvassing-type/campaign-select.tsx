@@ -25,13 +25,14 @@ const CampaignSelect: FunctionComponent<Props> = ({
   const [selected, setSelected] = useState('');
 
   const handleChange = (campaign: CanvassType) => {
-    setSelected(campaign.name);
+    console.log('CAMPAIGN', campaign);
+    setSelected(campaign.key);
     onChange(campaign);
   };
 
   useEffect(() => {
-    if (selectedKey)
-      setSelected(campaigns.find(c => c.key === selectedKey)?.name);
+    console.log(campaigns);
+    if (selectedKey) setSelected(selectedKey);
   }, [campaigns, selectedKey]);
 
   return (
@@ -54,14 +55,14 @@ const CampaignSelect: FunctionComponent<Props> = ({
         direction="row"
         gutterSize="s"
         responsive={true}>
-        {campaigns?.map((item: CanvassType, i) => {
+        {campaigns?.map((item: CanvassType) => {
           return (
-            <EuiFlexItem key={i} grow={false} style={{ minWidth: 100 }}>
+            <EuiFlexItem key={item.key} grow={false} style={{ minWidth: 100 }}>
               <EuiCheckableCard
                 id={generateId()}
                 label={item.name}
-                value={item.name}
-                checked={selected === item.name}
+                value={item.key}
+                checked={selected === item.key}
                 onChange={() => handleChange(item)}>
                 <EuiText
                   size="xs"

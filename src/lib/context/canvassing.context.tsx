@@ -150,6 +150,12 @@ const CanvassingProvider = ({ children }) => {
 
       checkIsDirty(updatedData);
 
+      // campaign or canvass type update
+      if (update.field === 'canvass') {
+        // persist in local storage
+        localStorage.setItem('canvass', JSON.stringify(next));
+      }
+
       return updatedData;
     });
   };
@@ -275,6 +281,21 @@ const CanvassingProvider = ({ children }) => {
       setIsDirty(false);
     }
   }, [router]);
+
+  // Load campaign & canvassing type from local storage
+  useEffect(() => {
+    if (!router.asPath.includes('/canvass')) return;
+
+    console.log('[INJECT CANVASS]', { data, person });
+    if (!data?.canvass || !data?.canvass?.activity || !data?.canvass?.type) {
+      const data = JSON.parse(localStorage.getItem('canvass'));
+      if (data) {
+        setData(prev => ({
+          canvass: { ...prev?.canvass, ...data },
+        }));
+      }
+    }
+  }, [data, person, router.asPath]);
 
   // TODO: Remove this when stable as it's just for debugging
   useEffect(() => {
