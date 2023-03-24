@@ -7,6 +7,7 @@ import { EuiCallOut } from '@elastic/eui';
 import { PersonUpdate, VoterTagsUpdate } from '@lib/domain/person-update';
 import { shortCodes } from '@components/canvassing-tags';
 import { VoterTagsType } from '@lib/domain/voter-tags';
+import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
 
 export type Props = {
   fields: Field[];
@@ -15,6 +16,11 @@ export type Props = {
 
 const Tags: FunctionComponent<Props> = ({ fields, onTagChange }) => {
   const [voterFields, setVoterFields] = useState<Field[]>([]);
+
+  useCanvassFormReset(() => {
+    setVoterFields(fields.filter(f => !shortCodes.includes(f.field.code)));
+  });
+
   useEffect(() => {
     const filteredVoterFields = fields.filter(
       f => !shortCodes.includes(f.field.code)
