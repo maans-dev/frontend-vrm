@@ -8,10 +8,6 @@ import {
   EuiForm,
   EuiFormFieldset,
   EuiFormRow,
-  EuiModal,
-  EuiModalFooter,
-  EuiModalHeader,
-  EuiModalHeaderTitle,
   EuiPanel,
   EuiSpacer,
 } from '@elastic/eui';
@@ -32,13 +28,13 @@ import { CanvassingContext } from '@lib/context/canvassing.context';
 const Voter: FunctionComponent = () => {
   const router = useRouter();
   const voterKey = router.query.voterKey as string;
-  const { person, error, isLoading } = usePersonFetcher(voterKey);
+  const { person, isLoading } = usePersonFetcher(voterKey);
+
   const {
     setPerson,
     setUpdatePayload,
     submitUpdatePayload,
     isSubmitting,
-    isComplete,
     isDirty,
     serverError,
   } = useContext(CanvassingContext);
@@ -86,20 +82,6 @@ const Voter: FunctionComponent = () => {
     </EuiFlexGroup>
   );
 
-  const successModal = (
-    <EuiModal onClose={() => router.push('/canvass/canvassing-type')}>
-      <EuiModalHeader>
-        <EuiModalHeaderTitle>Voter successfully updated</EuiModalHeaderTitle>
-      </EuiModalHeader>
-
-      <EuiModalFooter>
-        <EuiButton onClick={() => router.push('/canvass/canvassing-type')} fill>
-          Continue
-        </EuiButton>
-      </EuiModalFooter>
-    </EuiModal>
-  );
-
   const onChange = (update: PersonUpdate<GeneralUpdate>) => {
     setUpdatePayload(update);
   };
@@ -122,7 +104,7 @@ const Voter: FunctionComponent = () => {
 
   return (
     <MainLayout breadcrumb={breadcrumb} showSpinner={isSubmitting}>
-      {isComplete && successModal}
+      {/* {isComplete && successModal} */}
       <EuiPanel>
         <VoterInfo
           darn={person.key}

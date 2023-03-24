@@ -9,6 +9,7 @@ import Chrome from '../components/chrome';
 import { Theme } from '../components/theme';
 import { globalStyes } from '../styles/global.styles';
 import CanvassingProvider from '@lib/context/canvassing.context';
+import ToastProvider from '@lib/context/toast.context';
 
 /**
  * Next.js uses the App component to initialize pages. You can override it
@@ -26,11 +27,13 @@ const EuiApp: FunctionComponent<AppProps> = ({ Component, pageProps }) => (
     <Global styles={globalStyes} />
     <Theme>
       <Chrome>
-        <CanvassingProvider>
-          <EuiErrorBoundary>
-            <Component {...pageProps} />
-          </EuiErrorBoundary>
-        </CanvassingProvider>
+        <ToastProvider>
+          <CanvassingProvider>
+            <EuiErrorBoundary>
+              <Component {...pageProps} />
+            </EuiErrorBoundary>
+          </CanvassingProvider>
+        </ToastProvider>
       </Chrome>
     </Theme>
   </>

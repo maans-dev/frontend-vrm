@@ -8,7 +8,8 @@ import {
 } from '@lib/domain/person-update';
 import { cloneDeep } from 'lodash';
 import { useRouter } from 'next/router';
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { ToastContext } from './toast.context';
 
 export type CanvassingContextType = {
   data: Partial<PersonUpdateRequest> & Partial<{ canvass: CanvassUpdate }>;
@@ -39,6 +40,7 @@ const CanvassingProvider = ({ children }) => {
   const [isDirty, setIsDirty] = useState(false);
   const [serverError, setServerError] = useState('');
   const router = useRouter();
+  const { addToast } = useContext(ToastContext);
 
   const setPerson = (person: Person) => setPersonInternal(person);
 
@@ -198,9 +200,17 @@ const CanvassingProvider = ({ children }) => {
 
       const respPayload = await response.json();
 
-      response.ok
-        ? setIsComplete(true)
-        : setServerError(respPayload?.message || 'Something went wrong');
+      if (response.ok) {
+        setIsComplete(true);
+        router.push('/canvass/canvassing-type');
+        addToast({
+          id: 'voter-submitted-success',
+          title: 'Voter has been successfully updated',
+          color: 'success',
+        });
+      } else {
+        setServerError(respPayload?.message || 'Something went wrong');
+      }
 
       console.log('[PERSON EVENT RESPONSE]', respPayload);
     } catch (error) {
