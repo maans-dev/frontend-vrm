@@ -38,7 +38,7 @@ const VoterTags: React.FC<Props> = ({
   fields,
 }: Props) => {
   const { data, error, isLoading } = useTagFetcher();
-  const [partyTags, setPartyTags] = useState<PartyTags[]>(); 
+  const [partyTags, setPartyTags] = useState<PartyTags[]>();
   const [selectedFields, setSelectedFields] = useState<
     Partial<VoterTagsType[]>
   >([]);
@@ -54,9 +54,7 @@ const VoterTags: React.FC<Props> = ({
     }
   }, [fields, data]);
 
-  const map = (
-    fields: Field[],
-  ): Partial<VoterTagsType[]> => {
+  const map = (fields: Field[]): Partial<VoterTagsType[]> => {
     const fieldsOptions = fields.map(field => ({
       key: field.key,
       field: {
@@ -65,7 +63,7 @@ const VoterTags: React.FC<Props> = ({
       },
       value: field.value,
     }));
-    
+
     return [...fieldsOptions];
   };
 
@@ -90,36 +88,41 @@ const VoterTags: React.FC<Props> = ({
     const currentTags = partyTags
       ?.filter(
         tag =>
-          !fields.some(
-            field => field.field.description === tag.description
-          ) 
+          !fields.some(field => field.field.description === tag.description)
       )
       .map(tag => ({
         label: tag.description,
         value: tag,
       }));
     setTags(currentTags);
-  }, [partyTags, fields ]);
+  }, [partyTags, fields]);
 
-const handleOnChange = selectedOptions => {
-    const newFields = selectedOptions.map(option => {
-      const selectedField = option.value;
-      if (selectedField.existingTag) { 
-        const existingTag = {
-          key: selectedField.existingTag,
-          field: {
-            key: selectedField.key,
-            description: selectedField.description,
-            isNew: false,
-          },
-          value: true,
-        };
-        setTags(prevTags => prevTags.filter(tag => tag.value.description !== existingTag.field.description));
-        return existingTag;
-      } else if (selectedField) { 
-          const isTagSelected = selectedFields?.some(tag => tag.field?.description === selectedField.description);
+  const handleOnChange = selectedOptions => {
+    const newFields = selectedOptions
+      .map(option => {
+        const selectedField = option.value;
+        if (selectedField.existingTag) {
+          const existingTag = {
+            key: selectedField.existingTag,
+            field: {
+              key: selectedField.key,
+              description: selectedField.description,
+              isNew: false,
+            },
+            value: true,
+          };
+          setTags(prevTags =>
+            prevTags.filter(
+              tag => tag.value.description !== existingTag.field.description
+            )
+          );
+          return existingTag;
+        } else if (selectedField) {
+          const isTagSelected = selectedFields?.some(
+            tag => tag.field?.description === selectedField.description
+          );
           if (isTagSelected) {
-            return null; 
+            return null;
           }
           const newTag = {
             key: nextId(),
@@ -130,37 +133,43 @@ const handleOnChange = selectedOptions => {
             },
             value: true,
           };
-          const existingTags = selectedFields.filter(tag => typeof tag.key === "number" && tag.field !== undefined);
+          const existingTags = selectedFields.filter(
+            tag => typeof tag.key === 'number' && tag.field !== undefined
+          );
           const update = {
             field: 'field',
-            data: [...existingTags, newTag]
+            data: [...existingTags, newTag],
           } as PersonUpdate<VoterTagsType>;
           onTagChange(update);
           isDeleted(selectedFields);
           return newTag;
         }
-      }).filter(Boolean);;
-  
+      })
+      .filter(Boolean);
+
     setSelectedFields(state => [...newFields, ...state]);
   };
-  
-  const handleOnRemoveTag = (selected) => {
+
+  const handleOnRemoveTag = selected => {
     const tagDescription = selected.field.description;
     const deleted = selected;
-    
-    setSelectedFields((prevSelectedFields) => {
-      const updatedFields = prevSelectedFields.map((tag) => {
+
+    setSelectedFields(prevSelectedFields => {
+      const updatedFields = prevSelectedFields.map(tag => {
         if (tag.field && tag.field.description === tagDescription) {
           if (typeof tag.key === 'string') {
-            setTags((prevTags) => [...prevTags, {
-              label: deleted.field.description,
-              value: {
-                key: deleted.field.key,
-                description: deleted.field.description,
-                existingTag: tag.key,
-                value: false, 
+            setTags(prevTags => [
+              ...prevTags,
+              {
+                label: deleted.field.description,
+                value: {
+                  key: deleted.field.key,
+                  description: deleted.field.description,
+                  existingTag: tag.key,
+                  value: false,
+                },
               },
-            }]);
+            ]);
             const newTag = {
               key: tag.key,
               value: false,
@@ -170,15 +179,15 @@ const handleOnChange = selectedOptions => {
               data: newTag,
             } as PersonUpdate<VoterTagsType>;
             onTagChange(update);
-            tag.value = false; 
+            tag.value = false;
           }
-          if (typeof tag.key === "number") {
+          if (typeof tag.key === 'number') {
             const update = {
               field: 'field',
-              data: undefined, 
+              data: undefined,
             } as PersonUpdate<VoterTagsType>;
             onTagChange(update);
-            tag.value = false; 
+            tag.value = false;
           }
         }
         return tag;
@@ -186,7 +195,7 @@ const handleOnChange = selectedOptions => {
       return updatedFields;
     });
   };
-  
+
   return (
     <>
       {isLoading && <Spinner show={isLoading} />}
