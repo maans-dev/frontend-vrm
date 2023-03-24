@@ -8,6 +8,7 @@ import { Affiliation } from '@lib/domain/person';
 import { FunctionComponent, useMemo, useState } from 'react';
 import useAffiliationFetcher from '@lib/fetcher/affiliation/affiliation';
 import { AffiliateUpdate, PersonUpdate } from '@lib/domain/person-update';
+import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
 
 type Props = {
   affiliation: Affiliation;
@@ -50,6 +51,13 @@ const AffiliationComponent: FunctionComponent<Props> = ({
       data: updateData,
     });
   };
+
+  useCanvassFormReset(() => {
+    setSelectedOption({
+      label: affiliation?.description || affiliation.name,
+      value: affiliation,
+    });
+  });
 
   return (
     <>

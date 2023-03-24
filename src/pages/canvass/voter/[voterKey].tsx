@@ -37,6 +37,7 @@ const Voter: FunctionComponent = () => {
     isSubmitting,
     isDirty,
     serverError,
+    resetForm,
   } = useContext(CanvassingContext);
 
   const breadcrumb: EuiBreadcrumb[] = [
@@ -64,7 +65,10 @@ const Voter: FunctionComponent = () => {
   const formActions = (
     <EuiFlexGroup direction="row" responsive={false} justifyContent="flexEnd">
       <EuiFlexItem grow={false}>
-        <EuiButtonEmpty size="m" disabled={isSubmitting}>
+        <EuiButtonEmpty
+          size="m"
+          disabled={isSubmitting}
+          onClick={() => resetForm()}>
           Reset
         </EuiButtonEmpty>
       </EuiFlexItem>
