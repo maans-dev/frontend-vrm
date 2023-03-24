@@ -40,6 +40,7 @@ const Voter: FunctionComponent = () => {
     isSubmitting,
     isComplete,
     isDirty,
+    serverError,
   } = useContext(CanvassingContext);
 
   const breadcrumb: EuiBreadcrumb[] = [
@@ -122,22 +123,22 @@ const Voter: FunctionComponent = () => {
   return (
     <MainLayout breadcrumb={breadcrumb} showSpinner={isSubmitting}>
       {isComplete && successModal}
-      <EuiForm fullWidth>
-        <EuiPanel>
-          <VoterInfo
-            darn={person.key}
-            salutation={person.salutation}
-            givenName={person.givenName}
-            surname={person.surname}
-            dob={moment(person.dob, 'YYYYMMDD').toDate()}
-            colourCode={person.colourCode}
-            canvassedBy={person.canvassedBy}
-            modified={person.modified}
-            livingStructure={person.livingStructure}
-            registeredStructure={person.registeredStructure}
-          />
-        </EuiPanel>
-        <EuiSpacer />
+      <EuiPanel>
+        <VoterInfo
+          darn={person.key}
+          salutation={person.salutation}
+          givenName={person.givenName}
+          surname={person.surname}
+          dob={moment(person.dob, 'YYYYMMDD').toDate()}
+          colourCode={person.colourCode}
+          canvassedBy={person.canvassedBy}
+          modified={person.modified}
+          livingStructure={person.livingStructure}
+          registeredStructure={person.registeredStructure}
+        />
+      </EuiPanel>
+      <EuiSpacer />
+      <EuiForm fullWidth isInvalid={serverError !== ''} error={[serverError]}>
         <EuiFormFieldset legend={{ children: 'Canvassing tags' }}>
           <CanvassingTags fields={person.fields} />
         </EuiFormFieldset>

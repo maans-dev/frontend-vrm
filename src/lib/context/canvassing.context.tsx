@@ -17,7 +17,7 @@ export type CanvassingContextType = {
   isSubmitting: boolean;
   isComplete: boolean;
   isDirty: boolean;
-  hasServerError: boolean;
+  serverError: string;
   setPerson: (person: Person) => void;
   setUpdatePayload: (update: PersonUpdate<GeneralUpdate>) => void;
   nextId: () => number;
@@ -37,7 +37,7 @@ const CanvassingProvider = ({ children }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
-  // const [hasServerError, setHasServerError] = useState(false);
+  const [serverError, setServerError] = useState('');
   const router = useRouter();
 
   const setPerson = (person: Person) => setPersonInternal(person);
@@ -157,6 +157,7 @@ const CanvassingProvider = ({ children }) => {
 
   const submitUpdatePayload = async () => {
     setIsSubmitting(true);
+    setServerError('');
     try {
       const requestBody = cloneDeep(data);
       requestBody.key = person.key;
@@ -191,7 +192,9 @@ const CanvassingProvider = ({ children }) => {
 
       const respPayload = await response.json();
 
-      setIsComplete(true);
+      response.ok
+        ? setIsComplete(true)
+        : setServerError(respPayload?.message || 'Something went wrong');
 
       console.log('[PERSON EVENT RESPONSE]', respPayload);
     } catch (error) {
@@ -206,11 +209,13 @@ const CanvassingProvider = ({ children }) => {
       ? setIsDirty(true)
       : setIsDirty(false);
 
+  // reset context state based on url
   useEffect(() => {
     if (!router.asPath.includes('/canvass')) {
       setIsComplete(false);
       setPerson(null);
       setData(null);
+      setServerError('');
     }
     if (router.asPath.includes('/canvassing-type')) {
       setIsComplete(false);
@@ -221,6 +226,7 @@ const CanvassingProvider = ({ children }) => {
           type: prev?.canvass?.type,
         },
       }));
+      setServerError('');
     }
     if (router.asPath.includes('/voter-search')) {
       setData(prev => {
@@ -229,16 +235,14 @@ const CanvassingProvider = ({ children }) => {
         };
       });
       setPerson(null);
+      setServerError('');
     }
   }, [router]);
 
+  // TODO: Remove this when stable as it's just for debugging
   useEffect(() => {
     console.log('[CANVASSING CONTEXT]', { data, person });
   }, [data, person]);
-
-  // useEffect(() => {
-  //   checkIsDirty();
-  // }, [data, checkIsDirty]);
 
   return (
     <CanvassingContext.Provider
@@ -249,6 +253,7 @@ const CanvassingProvider = ({ children }) => {
         isSubmitting,
         isComplete,
         isDirty,
+        serverError,
         setPerson,
         setUpdatePayload,
         nextId,

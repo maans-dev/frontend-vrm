@@ -78,6 +78,7 @@ const AddEditNumber: FunctionComponent<Props> = ({
     phoneContact?.type || phoneTypeOptions[0].value
   );
   const [phoneNumber, setPhoneNumber] = useState(phoneContact?.value || null);
+  const [isInvalid, setIsInvalid] = useState(false);
   const { nextId } = useContext(CanvassingContext);
 
   const onChangePhoneType = value => {
@@ -85,6 +86,13 @@ const AddEditNumber: FunctionComponent<Props> = ({
   };
 
   const handleUpdate = () => {
+    // validate
+    if (phoneNumber.length !== 10) {
+      setIsInvalid(true);
+      return;
+    }
+    setIsInvalid(false);
+
     if (phoneContact) {
       // do edit
       onUpdate({
@@ -126,13 +134,19 @@ const AddEditNumber: FunctionComponent<Props> = ({
         </EuiFormRow>
       </EuiFlexItem>
       <EuiFlexItem>
-        <EuiFormRow display="rowCompressed">
+        <EuiFormRow
+          display="rowCompressed"
+          isInvalid={isInvalid}
+          error="Enter a valid 10 digit phone number ">
           <EuiFieldText
             compressed
             placeholder="Enter a phone number"
             value={phoneNumber}
+            isInvalid={isInvalid}
             inputMode="numeric"
-            onChange={e => setPhoneNumber(e.target.value)}
+            onChange={e =>
+              setPhoneNumber(e.target.value.replace(/[^0-9]/g, ''))
+            }
           />
         </EuiFormRow>
       </EuiFlexItem>
