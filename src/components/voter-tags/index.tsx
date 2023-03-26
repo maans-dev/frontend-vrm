@@ -1,12 +1,11 @@
 import { FunctionComponent, useMemo } from 'react';
-import VoterTags, { IPartyTags } from './canvassing-tags';
-import { Field, PartyTags } from '@lib/domain/person';
+import VoterTags from './canvassing-tags';
+import { Field } from '@lib/domain/person';
 import useTagFetcher from '@lib/fetcher/tags/tags';
 import Spinner from '@components/spinner/spinner';
 import { EuiCallOut } from '@elastic/eui';
 import { PersonUpdate, VoterTagsUpdate } from '@lib/domain/person-update';
 import { shortCodes } from '@components/canvassing-tags';
-import { VoterTagsType } from '@lib/domain/voter-tags';
 
 export type Props = {
   fields: Field[];
@@ -18,7 +17,7 @@ const Tags: FunctionComponent<Props> = ({ fields, onTagChange }) => {
   const voterFields = useMemo(() => {
     return fields.filter(f => !shortCodes.includes(f.field.code));
   }, [fields]);
-  //Get list of party tags
+
   const { data: partyTags, error, isLoading } = useTagFetcher();
 
   if (isLoading) {
@@ -38,7 +37,13 @@ const Tags: FunctionComponent<Props> = ({ fields, onTagChange }) => {
     );
   }
 
-  return <VoterTags fields={voterFields} onTagChange={onTagChange} partyTags={partyTags} />;
+  return (
+    <VoterTags
+      fields={voterFields}
+      onTagChange={onTagChange}
+      partyTags={partyTags}
+    />
+  );
 };
 
 export default Tags;
