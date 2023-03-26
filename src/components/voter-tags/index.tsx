@@ -1,5 +1,5 @@
-import { FunctionComponent, useEffect, useState } from 'react';
-import VoterTags from './canvassing-tags';
+import { FunctionComponent, useMemo } from 'react';
+import VoterTags, { IPartyTags } from './canvassing-tags';
 import { Field, PartyTags } from '@lib/domain/person';
 import useTagFetcher from '@lib/fetcher/tags/tags';
 import Spinner from '@components/spinner/spinner';
@@ -14,19 +14,31 @@ export type Props = {
 };
 
 const Tags: FunctionComponent<Props> = ({ fields, onTagChange }) => {
-  const [voterFields, setVoterFields] = useState<Field[]>([]);
-  useEffect(() => {
-    const filteredVoterFields = fields.filter(
-      f => !shortCodes.includes(f.field.code)
-    );
-    setVoterFields(filteredVoterFields);
+  //Voter fields exclude shortCodes
+  const voterFields = useMemo(() => {
+    return fields.filter(f => !shortCodes.includes(f.field.code));
   }, [fields]);
+  //Get list of party tags
+  const { data: partyTags, error, isLoading } = useTagFetcher();
 
-  return (
-    <>
-      <VoterTags fields={voterFields} onTagChange={onTagChange} />
-    </>
-  );
+  if (isLoading) {
+    return <Spinner show={isLoading} />;
+  }
+
+  if (error) {
+    return (
+      <EuiCallOut
+        title="Error"
+        color="danger"
+        iconType="alert"
+        size="s"
+        style={{ marginBottom: '1rem' }}>
+        Error fetching tags. Please try again later.
+      </EuiCallOut>
+    );
+  }
+
+  return <VoterTags fields={voterFields} onTagChange={onTagChange} partyTags={partyTags} />;
 };
 
 export default Tags;

@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
 import {
-  EuiCallOut,
   EuiComboBox,
   EuiComboBoxOptionOption,
   EuiFlexGroup,
@@ -10,13 +9,13 @@ import { PartyTags } from '@lib/domain/person';
 import Tag from './tag';
 import { Field } from '@lib/domain/person';
 import { PersonUpdate, VoterTagsUpdate } from '@lib/domain/person-update';
-import useTagFetcher from '@lib/fetcher/tags/tags';
-import Spinner from '@components/spinner/spinner';
 import { VoterTagsType } from '@lib/domain/voter-tags';
 import { CanvassingContext } from '@lib/context/canvassing.context';
+import { useRef } from 'react';
 
 export type IPartyTags = {
   key: string | number;
+  person?: number;
   description?: string;
   isNew?: boolean;
   existingTag?: string | number;
@@ -25,192 +24,186 @@ export type IPartyTags = {
 export interface Props {
   fields: Field[];
   onTagChange: (data: PersonUpdate<VoterTagsUpdate>) => void;
-  onSelect?: (tag: PartyTags) => void;
-  onRemoveTag?: (label: string) => void;
+  partyTags: PartyTags[];
 }
 
 type VoterTagsOption = EuiComboBoxOptionOption<IPartyTags>;
 
 const VoterTags: React.FC<Props> = ({
-  onSelect,
-  onRemoveTag,
   onTagChange,
   fields,
+  partyTags,
 }: Props) => {
-  const { data, error, isLoading } = useTagFetcher();
-  const [partyTags, setPartyTags] = useState<PartyTags[]>();
-  const [selectedFields, setSelectedFields] = useState<
-    Partial<VoterTagsType[]>
-  >([]);
-  const [tags, setTags] = useState<VoterTagsOption[]>([]);
-  const [searchValue, setSearchValue] = useState<string>('');
+  //Refrence Array
+  const fieldsRefrenceArray = useRef(fields);
+
+  //State for New Tags being added
+  const [newTag, setNewTag] = useState([]);
+
+  //Rendered Array
+  const [renderedArray, setRenderedArray] = useState<VoterTagsType[]>([]);
+
+  //Search value
+  const [searchValue, setSearchValue] = useState('');
+
+  //Canvassing context
   const { nextId } = useContext(CanvassingContext);
 
+  //Set combo box
+  const [tags, setTags] = useState<VoterTagsOption[]>([]);
   useEffect(() => {
-    setPartyTags(data);
-    if (fields) {
-      const mappedData = map(fields);
-      setSelectedFields(mappedData);
-    }
-  }, [fields, data]);
+    const currentTags = partyTags?.map(tag => ({
+      label: tag.description,
+      value: tag,
+    }));
+    setTags(currentTags || []);
+  }, [partyTags]);
 
-  const map = (fields: Field[]): Partial<VoterTagsType[]> => {
-    const fieldsOptions = fields.map(field => ({
+  //Set RenderedArray
+  useEffect(() => {
+    const mappedFields = fieldsRefrenceArray.current.map(field => ({
       key: field.key,
+      person: field.person,
       field: {
         key: field.field.key,
         description: field.field.description,
       },
       value: field.value,
     }));
+    setRenderedArray(mappedFields);
+  }, [fieldsRefrenceArray]);
 
-    return [...fieldsOptions];
-  };
-
-  const [deleted, isDeleted] = useState([]);
-
-  const tagBadges = selectedFields.map((field, i) => {
-    if (field.value === true) {
-      return (
-        <EuiFlexItem key={i}>
-          <Tag
-            label={field.field.description}
-            onDelete={() => handleOnRemoveTag(field)}
-            isNew={field.field?.isNew}
-          />
-        </EuiFlexItem>
-      );
-    }
-    return null;
-  });
-
-  useEffect(() => {
-    const currentTags = partyTags
-      ?.filter(
-        tag =>
-          !fields.some(field => field.field.description === tag.description)
-      )
-      .map(tag => ({
-        label: tag.description,
-        value: tag,
-      }));
-    setTags(currentTags);
-  }, [partyTags, fields]);
+  //Set Rendered Badges
+  const renderedBadges = [...renderedArray]
+    .reverse()
+    .filter(field => field.value === true)
+    .map((field, i) => (
+      <EuiFlexItem key={i}>
+        <Tag
+          label={field.field.description}
+          onDelete={() => handleOnRemoveTag(field)}
+          isNew={field.field?.isNew}
+        />
+      </EuiFlexItem>
+    ));
 
   const handleOnChange = selectedOptions => {
     const newFields = selectedOptions
       .map(option => {
         const selectedField = option.value;
-        if (selectedField.existingTag) {
-          const existingTag = {
-            key: selectedField.existingTag,
-            field: {
-              key: selectedField.key,
-              description: selectedField.description,
-              isNew: false,
-            },
-            value: true,
-          };
-          setTags(prevTags =>
-            prevTags.filter(
-              tag => tag.value.description !== existingTag.field.description
-            )
-          );
-          return existingTag;
-        } else if (selectedField) {
-          const isTagSelected = selectedFields?.some(
-            tag => tag.field?.description === selectedField.description
-          );
-          if (isTagSelected) {
-            return null;
-          }
-          const newTag = {
+        //Check on Ref if an existing
+        const existingField = fieldsRefrenceArray.current.find(
+          field => field.field.description === selectedField.description
+        );
+
+        if (!existingField) {
+          // New field, add to new tag state
+          const newT = {
             key: nextId(),
             field: {
               key: selectedField.key,
-              description: selectedField.description,
-              isNew: true,
             },
             value: true,
           };
-          const existingTags = selectedFields.filter(
-            tag => typeof tag.key === 'number' && tag.field !== undefined
-          );
+          setNewTag(state => [...state, newT]);
+
+          // New field, add to rendered array
+          const updatedFields = [
+            ...renderedArray,
+            {
+              key: newT.key,
+              field: {
+                key: newT.field.key,
+                description: selectedField.description,
+                isNew: true,
+              },
+              value: newT.value,
+            },
+          ];
+          setRenderedArray(updatedFields);
+
+          // Update Payload
+          const updatedTags = newTag.filter(field => field.value === true);
           const update = {
             field: 'field',
-            data: [...existingTags, newTag],
+            data: updatedTags,
           } as PersonUpdate<VoterTagsType>;
           onTagChange(update);
-          isDeleted(selectedFields);
-          return newTag;
+        } else if (selectedField) {
+          // Existing Field
+          const updatedFields = renderedArray.map(field => {
+            if (field.field.description === selectedField.description) {
+              return {
+                ...field,
+                value: true,
+              };
+            }
+            return field;
+          });
+
+          setRenderedArray(updatedFields);
+
+          return null;
         }
       })
       .filter(Boolean);
 
-    setSelectedFields(state => [...newFields, ...state]);
+    setRenderedArray(state => [...newFields, ...state]);
   };
+
+  // console.log(newTag, 'newtag');
 
   const handleOnRemoveTag = selected => {
     const tagDescription = selected.field.description;
-    const deleted = selected;
-
-    setSelectedFields(prevSelectedFields => {
-      const updatedFields = prevSelectedFields.map(tag => {
-        if (tag.field && tag.field.description === tagDescription) {
-          if (typeof tag.key === 'string') {
-            setTags(prevTags => [
-              ...prevTags,
-              {
-                label: deleted.field.description,
-                value: {
-                  key: deleted.field.key,
-                  description: deleted.field.description,
-                  existingTag: tag.key,
-                  value: false,
-                },
-              },
-            ]);
-            const newTag = {
-              key: tag.key,
-              value: false,
-            };
+    const updatedFields = renderedArray
+      .map(tag => {
+        if (tag.field.description === tagDescription) {
+          if (tag.field.isNew) {
+            // New tag was removed, remove from rendered array and new tag state
+            setNewTag(state => state.filter(t => t.key !== tag.key));
+            //Update Payload
             const update = {
               field: 'field',
               data: newTag,
             } as PersonUpdate<VoterTagsType>;
             onTagChange(update);
-            tag.value = false;
-          }
-          if (typeof tag.key === 'number') {
+            return null;
+          } else {
+            // Existing tag was removed, update rendered array and payload
+            const existingTag = {
+              key: tag.key,
+              field: {
+                key: tag.field.key,
+                description: tagDescription,
+                isNew: false,
+              },
+              value: false,
+            };
+            //Update
+            const updatePayload = {
+              key: tag.key,
+              value: false,
+            };
             const update = {
               field: 'field',
-              data: undefined,
+              data: updatePayload,
             } as PersonUpdate<VoterTagsType>;
             onTagChange(update);
-            tag.value = false;
+            return existingTag;
           }
         }
         return tag;
-      });
-      return updatedFields;
-    });
+      })
+      .filter(Boolean);
+
+    setRenderedArray(updatedFields);
   };
 
   return (
     <>
-      {isLoading && <Spinner show={isLoading} />}
-      {error && (
-        <EuiCallOut
-          title="Error"
-          color="danger"
-          iconType="alert"
-          size="s"
-          style={{ marginBottom: '1rem' }}>
-          Error fetching tags. Please try again later.
-        </EuiCallOut>
-      )}
       <EuiComboBox
         compressed
+        async
         aria-label="Search for a tag"
         placeholder="Search for a tag"
         singleSelection={{ asPlainText: true }}
@@ -230,7 +223,7 @@ const VoterTags: React.FC<Props> = ({
         gutterSize="xs"
         direction="column"
         style={{ maxHeight: '250px', overflow: 'auto' }}>
-        {tagBadges}
+        {renderedBadges}
       </EuiFlexGroup>
     </>
   );
