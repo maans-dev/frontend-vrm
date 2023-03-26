@@ -19,10 +19,12 @@ export type CanvassingContextType = {
   isComplete: boolean;
   isDirty: boolean;
   serverError: string;
+  doFormReset: Date;
   setPerson: (person: Person) => void;
   setUpdatePayload: (update: PersonUpdate<GeneralUpdate>) => void;
   nextId: () => number;
   submitUpdatePayload: () => void;
+  resetForm: () => void;
 };
 
 export const CanvassingContext = createContext<Partial<CanvassingContextType>>(
@@ -40,6 +42,7 @@ const CanvassingProvider = ({ children }) => {
   const [isDirty, setIsDirty] = useState(false);
   const [serverError, setServerError] = useState('');
   const router = useRouter();
+  const [doFormReset, setDoFormReset] = useState(new Date());
   const { addToast } = useContext(ToastContext);
 
   const setPerson = (person: Person) => setPersonInternal(person);
@@ -225,6 +228,21 @@ const CanvassingProvider = ({ children }) => {
       ? setIsDirty(true)
       : setIsDirty(false);
 
+  const resetForm = () => {
+    console.log('RESET FORM');
+    setDoFormReset(new Date());
+
+    setIsComplete(false);
+    setPerson(null);
+    setData(prev => ({
+      canvass: {
+        activity: prev?.canvass?.activity,
+        type: prev?.canvass?.type,
+      },
+    }));
+    setServerError('');
+    setIsDirty(false);
+  };
   // reset context state based on url
   useEffect(() => {
     if (!router.asPath.includes('/canvass')) {
@@ -232,6 +250,7 @@ const CanvassingProvider = ({ children }) => {
       setPerson(null);
       setData(null);
       setServerError('');
+      setIsDirty(false);
     }
     if (router.asPath.includes('/canvassing-type')) {
       setIsComplete(false);
@@ -243,6 +262,7 @@ const CanvassingProvider = ({ children }) => {
         },
       }));
       setServerError('');
+      setIsDirty(false);
     }
     if (router.asPath.includes('/voter-search')) {
       setData(prev => {
@@ -252,6 +272,7 @@ const CanvassingProvider = ({ children }) => {
       });
       setPerson(null);
       setServerError('');
+      setIsDirty(false);
     }
   }, [router]);
 
@@ -270,10 +291,12 @@ const CanvassingProvider = ({ children }) => {
         isComplete,
         isDirty,
         serverError,
+        doFormReset,
         setPerson,
         setUpdatePayload,
         nextId,
         submitUpdatePayload,
+        resetForm,
       }}>
       {children}
     </CanvassingContext.Provider>

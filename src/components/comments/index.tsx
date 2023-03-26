@@ -14,6 +14,7 @@ import { css, Global } from '@emotion/react';
 import { Comment } from '@lib/domain/person';
 import { CommentsUpdate, PersonUpdate } from '@lib/domain/person-update';
 import { CanvassingContext } from '@lib/context/canvassing.context';
+import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
 // import { CommentsType } from '@lib/domain/comments';
 
 export type Props = {
@@ -31,6 +32,10 @@ const Comments: FunctionComponent<Props> = ({ comments, onCommentChange }) => {
   }, [comments]);
 
   const { euiTheme } = useEuiTheme();
+
+  useCanvassFormReset(() => {
+    setComment(comments);
+  });
 
   if (!comments) return <></>;
 
@@ -86,7 +91,7 @@ const Comments: FunctionComponent<Props> = ({ comments, onCommentChange }) => {
         `}
       />
       <EuiCommentList aria-label="Comments" gutterSize="m">
-        {comment?.map((comment: Comment, i) => {
+        {comment?.map((comment: Comment) => {
           return (
             <Commenter
               comment={comment}

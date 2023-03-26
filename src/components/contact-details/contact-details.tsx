@@ -11,6 +11,7 @@ import {
   PhoneUpdate,
 } from '@lib/domain/person-update';
 import { PhoneContact } from '@lib/domain/phone-numbers';
+import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
 import { FunctionComponent, useState } from 'react';
 
 interface Props {
@@ -64,6 +65,8 @@ const ContactDetails: FunctionComponent<Props> = ({
     label: languageOption,
     value: languageOption,
   }));
+  // const { registerResetHandler } = useContext(CanvassingContext);
+
   const handleLanguageChange = (
     selectedOptions: {
       label: string;
@@ -161,6 +164,32 @@ const ContactDetails: FunctionComponent<Props> = ({
     }
     onEmailChange({ field: 'contacts', data: update });
   };
+
+  useCanvassFormReset(() => {
+    setSelectedLanguage(getLanguageEnumValue(language));
+    setPhoneContacts(
+      contacts
+        .filter(contact => contact.category !== 'EMAIL')
+        .map(contact => ({
+          key: contact.key,
+          value: contact?.value,
+          type: contact.type,
+          category: contact.category,
+          canContact: contact.canContact,
+        }))
+    );
+    setEmailContacts(
+      contacts
+        .filter(contact => contact.category === 'EMAIL')
+        .map(contact => ({
+          key: contact.key,
+          value: contact?.value || contact.value,
+          type: contact.type,
+          category: contact.category,
+          canContact: contact.canContact,
+        }))
+    );
+  });
 
   return (
     <>
