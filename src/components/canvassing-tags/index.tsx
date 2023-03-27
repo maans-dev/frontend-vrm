@@ -4,12 +4,11 @@ import CanvassingTag from './canvassing-tag';
 import { Field } from '@lib/domain/person';
 import { VoterTagsType } from '@lib/domain/voter-tags';
 import { PersonUpdate, VoterTagsUpdate } from '@lib/domain/person-update';
-import { GiConsoleController } from 'react-icons/gi';
 import { CanvassingContext } from '@lib/context/canvassing.context';
 
 export type Props = {
   fields: Field[];
-  onTagChange: (data: PersonUpdate<VoterTagsUpdate>) => void;
+  onTagChange?: (data: PersonUpdate<VoterTagsUpdate>) => void;
 };
 
 const presetFields: Partial<Field>[] = [
@@ -131,8 +130,6 @@ const CanvassingTags: FunctionComponent<Props> = ({ fields, onTagChange }) => {
   //   data: tags,
   // } as PersonUpdate<VoterTagsType>;
   // onTagChange && onTagChange(update);
-
-  console.log(tags, 'tags');
 
   return (
     <EuiFlexGrid
