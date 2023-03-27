@@ -37,31 +37,9 @@ const VoterTags: React.FC<Props> = ({
   //Refrence Array
   const fieldsRefrenceArray = useRef(fields);
 
-  //State for New Tags being added
-  const [newTag, setNewTag] = useState([]);
-
   //Rendered Array
-  const [renderedArray, setRenderedArray] = useState<VoterTagsType[]>([]);
-
-  //Search value
-  const [searchValue, setSearchValue] = useState('');
-
-  //Canvassing context
-  const { nextId } = useContext(CanvassingContext);
-
-  //Set combo box
-  const [tags, setTags] = useState<VoterTagsOption[]>([]);
-  useEffect(() => {
-    const currentTags = partyTags?.map(tag => ({
-      label: tag.description,
-      value: tag,
-    }));
-    setTags(currentTags || []);
-  }, [partyTags]);
-
-  //Set RenderedArray
-  useEffect(() => {
-    const mappedFields = fieldsRefrenceArray.current.map(field => ({
+  const [renderedArray, setRenderedArray] = useState<VoterTagsType[]>(
+    fieldsRefrenceArray.current.map(field => ({
       key: field.key,
       person: field.person,
       field: {
@@ -69,9 +47,33 @@ const VoterTags: React.FC<Props> = ({
         description: field.field.description,
       },
       value: field.value,
-    }));
-    setRenderedArray(mappedFields);
-  }, [fieldsRefrenceArray]);
+    }))
+  );
+
+  const [tags, setTags] = useState<VoterTagsOption[]>([]);
+
+  useEffect(() => {
+    const newTags =
+      partyTags
+        ?.filter(
+          tag =>
+            !renderedArray.some(
+              field => field.field.description === tag.description
+            )
+        )
+        .map(tag => ({
+          label: tag.description,
+          value: tag,
+        })) || [];
+
+    setTags(newTags);
+  }, [renderedArray, partyTags]);
+
+  //Search value
+  const [searchValue, setSearchValue] = useState('');
+
+  //Canvassing context
+  const { nextId } = useContext(CanvassingContext);
 
   //Set Rendered Badges
   const renderedBadges = [...renderedArray]
@@ -97,53 +99,62 @@ const VoterTags: React.FC<Props> = ({
         );
 
         if (!existingField) {
-          // New field, add to new tag state
-          const newT = {
-            key: nextId(),
+          // New field, add to rendered array
+          const newId = nextId();
+          const newField = {
+            key: newId,
             field: {
               key: selectedField.key,
+              description: selectedField.description,
+              isNew: true,
             },
             value: true,
           };
-          setNewTag(state => [...state, newT]);
-
-          // New field, add to rendered array
-          const updatedFields = [
-            ...renderedArray,
-            {
-              key: newT.key,
-              field: {
-                key: newT.field.key,
-                description: selectedField.description,
-                isNew: true,
-              },
-              value: newT.value,
-            },
-          ];
+          const updatedFields = [...renderedArray, newField];
           setRenderedArray(updatedFields);
 
           // Update Payload
-          const updatedTags = newTag.filter(field => field.value === true);
+          const filteredFields = updatedFields.filter(field => {
+            const existsInRef = fieldsRefrenceArray.current.some(
+              refField => refField.field.description === field.field.description
+            );
+            return !existsInRef;
+          });
+          const updatedTags = filteredFields.map(field => ({
+            key: field.key,
+            field: { key: field.field.key },
+            value: field.value,
+          }));
           const update = {
             field: 'field',
             data: updatedTags,
           } as PersonUpdate<VoterTagsType>;
           onTagChange(update);
         } else if (selectedField) {
-          // Existing Field
-          const updatedFields = renderedArray.map(field => {
-            if (field.field.description === selectedField.description) {
-              return {
-                ...field,
-                value: true,
-              };
-            }
-            return field;
-          });
-
-          setRenderedArray(updatedFields);
-
-          return null;
+          // Check if the selectedField is already present in the fieldsReferenceArray
+          const existingField = fieldsRefrenceArray.current.find(
+            field => field.field.description === selectedField.description
+          );
+          if (existingField) {
+            // Existing Field
+            const updatedFields = renderedArray.map(field => {
+              if (field.field.key === existingField.field.key) {
+                return {
+                  key: existingField.key,
+                  person: field.person,
+                  field: {
+                    key: existingField.field.key,
+                    description: existingField.field.description,
+                  },
+                  value: true,
+                };
+              } else {
+                return field;
+              }
+            });
+            setRenderedArray(updatedFields);
+            return null;
+          }
         }
       })
       .filter(Boolean);
@@ -151,20 +162,20 @@ const VoterTags: React.FC<Props> = ({
     setRenderedArray(state => [...newFields, ...state]);
   };
 
-  // console.log(newTag, 'newtag');
-
   const handleOnRemoveTag = selected => {
     const tagDescription = selected.field.description;
     const updatedFields = renderedArray
       .map(tag => {
         if (tag.field.description === tagDescription) {
           if (tag.field.isNew) {
-            // New tag was removed, remove from rendered array and new tag state
-            setNewTag(state => state.filter(t => t.key !== tag.key));
-            //Update Payload
+            // New tag was removed, remove from rendered array
+            const filteredNewTags = renderedArray.filter(
+              t => t.field.description !== tagDescription && !t.person
+            );
+            // Update Payload
             const update = {
               field: 'field',
-              data: newTag,
+              data: filteredNewTags,
             } as PersonUpdate<VoterTagsType>;
             onTagChange(update);
             return null;
@@ -174,21 +185,10 @@ const VoterTags: React.FC<Props> = ({
               key: tag.key,
               field: {
                 key: tag.field.key,
-                description: tagDescription,
                 isNew: false,
               },
               value: false,
             };
-            //Update
-            const updatePayload = {
-              key: tag.key,
-              value: false,
-            };
-            const update = {
-              field: 'field',
-              data: updatePayload,
-            } as PersonUpdate<VoterTagsType>;
-            onTagChange(update);
             return existingTag;
           }
         }
@@ -197,13 +197,26 @@ const VoterTags: React.FC<Props> = ({
       .filter(Boolean);
 
     setRenderedArray(updatedFields);
+
+    //Update Payload
+    const updatedTags = updatedFields
+      .filter(field => !field.value)
+      .map(field => ({
+        key: field.key,
+        value: field.value,
+      }));
+
+    const update = {
+      field: 'field',
+      data: updatedTags,
+    } as PersonUpdate<VoterTagsType>;
+    onTagChange(update);
   };
 
   return (
     <>
       <EuiComboBox
         compressed
-        async
         aria-label="Search for a tag"
         placeholder="Search for a tag"
         singleSelection={{ asPlainText: true }}
