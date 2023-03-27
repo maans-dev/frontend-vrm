@@ -17,6 +17,7 @@ import { useRouter } from 'next/router';
 import { HeaderPrimary } from '@components/header/header-primary';
 import { HeaderSecondary } from '@components/header/header-secondary';
 import Spinner from '@components/spinner/spinner';
+import { HeaderCanvassing } from '@components/header/header-canvassing';
 
 export type Props = {
   breadcrumb?: EuiBreadcrumb[];
@@ -41,10 +42,13 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
   // const { euiTheme } = useEuiTheme();
 
   const [showSubHeader, setShowSubHeader] = useState(false);
+  const [showCanvassHeader, setShowCanvassHeader] = useState(false);
 
   useEffect(() => {
     setShowSubHeader(router.route !== '/');
-  }, [router.route]);
+    // eslint-disable-next-line prettier/prettier
+    setShowCanvassHeader(router.route === '/canvass/voter-search' || router.route === '/canvass/voter/[voterKey]');
+  }, [router, router.route]);
 
   const renderPageTitle = (
     <>
@@ -60,7 +64,11 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
       <Spinner show={showSpinner} />
       <EuiPageTemplate
         style={{
-          paddingTop: showSubHeader ? '96px' : '0px',
+          paddingTop: showSubHeader
+            ? showCanvassHeader
+              ? '120px'
+              : '96px'
+            : '0px',
         }}
         // css={{ minHeight: 'calc(100vh -  96px)' }}
         panelled={panelled}
@@ -69,6 +77,7 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
         <HeaderPrimary />
 
         {showSubHeader ? <HeaderSecondary breadcrumb={breadcrumb} /> : null}
+        {showCanvassHeader ? <HeaderCanvassing /> : null}
 
         <EuiPageTemplate.Section
           grow={true}

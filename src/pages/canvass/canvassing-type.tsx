@@ -15,7 +15,7 @@ import CampaignSelect from '@components/canvassing-type/campaign-select';
 import CanvassingTypeSelect from '@components/canvassing-type/canvassing-type-select';
 import { CanvassingContext } from '@lib/context/canvassing.context';
 import useCanvassTypeFetcher from '@lib/fetcher/campaign-type/campaign';
-import { CanvassType } from '@lib/domain/person';
+import { Campaign } from '@lib/domain/person';
 
 const canvassTypeData = [
   { id: 'face', name: 'Face to face' },
@@ -24,13 +24,14 @@ const canvassTypeData = [
 
 const CanvassingType: FunctionComponent = () => {
   const { campaignType, isLoading, error } = useCanvassTypeFetcher();
-  const [campaignData, setCampaignData] = useState<CanvassType[]>([]);
+  const [campaignData, setCampaignData] = useState<Campaign[]>([]);
 
   useEffect(() => {
     setCampaignData(campaignType);
   }, [campaignType]);
 
-  const { data, setUpdatePayload } = useContext(CanvassingContext);
+  const { data, setUpdatePayload, setCampaign, setCanvassingType } =
+    useContext(CanvassingContext);
 
   const router = useRouter();
   const breadcrumb: EuiBreadcrumb[] = [
@@ -90,14 +91,15 @@ const CanvassingType: FunctionComponent = () => {
       <CampaignSelect
         campaigns={campaignData}
         selectedKey={data?.canvass?.activity}
-        onChange={update =>
+        onChange={update => {
           setUpdatePayload({
             field: 'canvass',
             data: {
               activity: update.key,
             },
-          })
-        }
+          });
+          setCampaign(update);
+        }}
       />
 
       <EuiSpacer size="l" />
@@ -111,14 +113,16 @@ const CanvassingType: FunctionComponent = () => {
       <CanvassingTypeSelect
         canvassTypes={canvassTypeData}
         selectedType={data?.canvass?.type}
-        onChange={update =>
+        onChange={update => {
           setUpdatePayload({
             field: 'canvass',
             data: {
               type: update.id,
             },
-          })
-        }
+          });
+          console.log(update);
+          setCanvassingType(update);
+        }}
       />
       <EuiSpacer />
       {formActions}

@@ -86,7 +86,7 @@ export interface CanvassedBy {
   activity: Activity;
 }
 
-export interface CanvassType {
+export interface Campaign {
   key: string;
   name: string;
   type: Type;
@@ -98,7 +98,7 @@ export interface CanvassType {
   modified: string;
 }
 
-export interface CanvassTypeMetaData {
+export interface CampaignMetaData {
   key: string;
   createdBy: number;
   modifiedBy: number;

@@ -1,9 +1,9 @@
-import { CanvassType } from '@lib/domain/person';
+import { Campaign } from '@lib/domain/person';
 import useSWR from 'swr';
 import { fetcherAPI } from '../api.fetcher';
 
 export default function useCanvassTypeFetcher() {
-  const { data, error, isLoading } = useSWR<CanvassType[]>(
+  const { data, error, isLoading } = useSWR<Campaign[]>(
     '/activity/campaign/',
     fetcherAPI
   );

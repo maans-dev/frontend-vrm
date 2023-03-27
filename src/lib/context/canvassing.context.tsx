@@ -1,4 +1,5 @@
-import { Person } from '@lib/domain/person';
+import { ICanvassType } from '@components/canvassing-type/type';
+import { Campaign, Person } from '@lib/domain/person';
 import {
   assertHasFields,
   CanvassUpdate,
@@ -20,7 +21,11 @@ export type CanvassingContextType = {
   isDirty: boolean;
   serverError: string;
   doFormReset: Date;
+  campaign: Campaign;
+  canvassingType: ICanvassType;
   setPerson: (person: Person) => void;
+  setCampaign: (campaign: Campaign) => void;
+  setCanvassingType: (type: ICanvassType) => void;
   setUpdatePayload: (update: PersonUpdate<GeneralUpdate>) => void;
   nextId: () => number;
   submitUpdatePayload: () => void;
@@ -42,6 +47,8 @@ const CanvassingProvider = ({ children }) => {
   const [isDirty, setIsDirty] = useState(false);
   const [serverError, setServerError] = useState('');
   const router = useRouter();
+  const [campaign, setCampaignInternal] = useState(null);
+  const [canvassingType, setCanvassingTypeInternal] = useState(null);
   const [doFormReset, setDoFormReset] = useState(new Date());
   const { addToast } = useContext(ToastContext);
 
@@ -150,12 +157,6 @@ const CanvassingProvider = ({ children }) => {
 
       checkIsDirty(updatedData);
 
-      // campaign or canvass type update
-      if (update.field === 'canvass') {
-        // persist in local storage
-        localStorage.setItem('canvass', JSON.stringify(next));
-      }
-
       return updatedData;
     });
   };
@@ -229,6 +230,15 @@ const CanvassingProvider = ({ children }) => {
     setIsSubmitting(false);
   };
 
+  const setCampaign = (campaign: Campaign) => {
+    localStorage.setItem('campaign', JSON.stringify(campaign));
+    setCampaignInternal(campaign);
+  };
+  const setCanvassingType = (type: ICanvassType) => {
+    localStorage.setItem('canvassType', JSON.stringify(type));
+    setCanvassingTypeInternal(type);
+  };
+
   const checkIsDirty = updatedData =>
     updatedData && Object.keys(updatedData).length > 1
       ? setIsDirty(true)
@@ -284,18 +294,36 @@ const CanvassingProvider = ({ children }) => {
 
   // Load campaign & canvassing type from local storage
   useEffect(() => {
-    if (!router.asPath.includes('/canvass')) return;
+    if (!router.route.includes('/canvass')) {
+      // remove local storage when not in canvassing
+      localStorage.removeItem('campaign');
+      localStorage.removeItem('canvassType');
+      return;
+    }
 
-    console.log('[INJECT CANVASS]', { data, person });
+    const campaign = JSON.parse(localStorage.getItem('campaign'));
+    const type = JSON.parse(localStorage.getItem('canvassType'));
+
+    // rediect to canvass type page if campaign/type not set
+    if (router.route.includes('/canvass')) {
+      if (!campaign || !type) {
+        router.push('/canvass/canvassing-type');
+      }
+    }
+
     if (!data?.canvass || !data?.canvass?.activity || !data?.canvass?.type) {
-      const data = JSON.parse(localStorage.getItem('canvass'));
-      if (data) {
+      setCampaign(campaign);
+      setCanvassingType(type);
+      if (campaign && type) {
         setData(prev => ({
-          canvass: { ...prev?.canvass, ...data },
+          canvass: {
+            ...prev?.canvass,
+            ...{ activity: campaign.key, type: type.id },
+          },
         }));
       }
     }
-  }, [data, person, router.asPath]);
+  }, [data, person, router]);
 
   // TODO: Remove this when stable as it's just for debugging
   useEffect(() => {
@@ -313,7 +341,11 @@ const CanvassingProvider = ({ children }) => {
         isDirty,
         serverError,
         doFormReset,
+        campaign,
+        canvassingType,
         setPerson,
+        setCampaign,
+        setCanvassingType,
         setUpdatePayload,
         nextId,
         submitUpdatePayload,

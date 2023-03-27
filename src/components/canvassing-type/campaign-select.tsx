@@ -7,12 +7,12 @@ import {
   htmlIdGenerator,
 } from '@elastic/eui';
 import { css, Global } from '@emotion/react';
-import { CanvassType } from '@lib/domain/person';
+import { Campaign } from '@lib/domain/person';
 
 export type Props = {
-  campaigns: CanvassType[];
+  campaigns: Campaign[];
   selectedKey?: string;
-  onChange: (campaign: CanvassType) => void;
+  onChange: (campaign: Campaign) => void;
 };
 
 const CampaignSelect: FunctionComponent<Props> = ({
@@ -24,7 +24,7 @@ const CampaignSelect: FunctionComponent<Props> = ({
   const generateId = htmlIdGenerator('campaign');
   const [selected, setSelected] = useState('');
 
-  const handleChange = (campaign: CanvassType) => {
+  const handleChange = (campaign: Campaign) => {
     console.log('CAMPAIGN', campaign);
     setSelected(campaign.key);
     onChange(campaign);
@@ -55,7 +55,7 @@ const CampaignSelect: FunctionComponent<Props> = ({
         direction="row"
         gutterSize="s"
         responsive={true}>
-        {campaigns?.map((item: CanvassType) => {
+        {campaigns?.map((item: Campaign) => {
           return (
             <EuiFlexItem key={item.key} grow={false} style={{ minWidth: 100 }}>
               <EuiCheckableCard
