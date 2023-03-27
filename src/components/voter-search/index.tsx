@@ -16,10 +16,11 @@ const VoterSearch: FunctionComponent<Props> = ({ breadcrumb }) => {
   const [searchParams, setSearchParams] =
     useState<Partial<PersonSearchParams>>(null);
 
-  const { results, isLoading } = usePersonSearchFetcher(searchParams);
+  const { results, isLoading, mutate } = usePersonSearchFetcher(searchParams);
 
   const doSearch = (params: Partial<PersonSearchParams>) => {
     if (!params) return;
+    mutate();
     // remove empty keys
     for (const key in params) {
       if (!params[key] || params[key] === '') delete params[key];
@@ -37,12 +38,14 @@ const VoterSearch: FunctionComponent<Props> = ({ breadcrumb }) => {
       panelled={true}
       restrictWidth={true}
       showSpinner={isLoading || results?.length === 1}>
-      <SearchOptions
-        onSubmit={doSearch}
-        as={results === null || results === undefined ? 'form' : 'modal'}
-        isLoading={isLoading}
-      />
-      {results && !isLoading && results.length > 1 ? (
+      {!isLoading || results?.length > 1 ? (
+        <SearchOptions
+          onSubmit={doSearch}
+          as={results === null || results === undefined ? 'form' : 'modal'}
+          isLoading={isLoading}
+        />
+      ) : null}
+      {!isLoading && (results?.length > 1 || results?.length === 0) ? (
         <SearchResults results={results} />
       ) : null}
     </MainLayout>
