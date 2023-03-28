@@ -2,7 +2,7 @@ import { FieldMetaData } from '@lib/domain/person';
 import useSWR from 'swr';
 import { fetcherAPI } from '../api.fetcher';
 
-export default function useTagFetcher(searchTerm?: string) {
+export default function useTagFetcher(searchTerm: string) {
   const query = new URLSearchParams();
   if (searchTerm) {
     query.set('names', `*${searchTerm}*`);
