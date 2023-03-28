@@ -1,135 +1,65 @@
 import { FunctionComponent, useContext, useEffect, useState } from 'react';
 import { EuiFlexGrid, EuiFlexItem, useIsWithinBreakpoints } from '@elastic/eui';
 import CanvassingTag from './canvassing-tag';
-import { Field } from '@lib/domain/person';
-import { VoterTagsType } from '@lib/domain/voter-tags';
-import { PersonUpdate, VoterTagsUpdate } from '@lib/domain/person-update';
+import { Field, FieldMetaData } from '@lib/domain/person';
+import { FieldsUpdate, PersonUpdate } from '@lib/domain/person-update';
+import useCanvassingTagFetcher from '@lib/fetcher/tags/canvassing-tags';
+import { CanvassingTagCodes } from '@lib/domain/tags';
 import { CanvassingContext } from '@lib/context/canvassing.context';
 
 export type Props = {
   fields: Field[];
-  onTagChange?: (data: PersonUpdate<VoterTagsUpdate>) => void;
+  onChange: (data: PersonUpdate<FieldsUpdate>) => void;
 };
 
-const presetFields: Partial<Field>[] = [
-  {
-    field: {
-      category: 'Canvassing',
-      code: 'WR',
-      description: 'Will Register',
-      active_status: true,
-    },
-    value: false,
-  },
-  {
-    field: {
-      category: 'Canvassing',
-      code: 'ASTREG',
-      description: 'Assisted to register',
-      active_status: true,
-    },
-    value: false,
-  },
-  {
-    field: {
-      category: 'Canvassing',
-      code: 'DR',
-      description: 'Did (Re-)register',
-      active_status: true,
-    },
-    value: false,
-  },
-  {
-    field: {
-      category: 'Canvassing',
-      code: 'WV',
-      description: "Won't vote",
-      active_status: true,
-    },
-    value: false,
-  },
-  {
-    field: {
-      category: 'Canvassing',
-      code: 'CNVT',
-      description: "Can't vote",
-      active_status: true,
-    },
-    value: false,
-  },
-  {
-    field: {
-      category: 'Canvassing',
-      code: 'M',
-      description: 'Moved',
-      active_status: true,
-    },
-    value: false,
-  },
-];
-
-export const shortCodes = ['WR', 'ASTREG', 'DR', 'WV', 'CNVT', 'M'];
-
-const CanvassingTags: FunctionComponent<Props> = ({ fields, onTagChange }) => {
+const CanvassingTags: FunctionComponent<Props> = ({ fields, onChange }) => {
   const isMobile = useIsWithinBreakpoints(['xs', 's']);
-  const [internalFields, setInternalFields] = useState<Field[]>(
-    fields.filter(f => shortCodes.includes(f.field.code))
+  const [internalFields] = useState<Field[]>(
+    fields.filter(f => CanvassingTagCodes.includes(f.field.code))
   );
-  const [tags, setTags] = useState<VoterTagsType[]>(
-    fields
-      .filter(field => shortCodes.includes(field.field.code))
-      .map(field => ({ field }))
-  );
-  const { nextId } = useContext(CanvassingContext);
 
-  console.log(tags, 'tags');
+  const { data } = useCanvassingTagFetcher();
+  const [presetFields, setPresetFields] = useState<Partial<Field>[]>(null);
+  const { nextId } = useContext(CanvassingContext);
 
   const getField = (field: Partial<Field>) => {
     const found = internalFields.find(f => {
       return f.field.code === field.field.code;
     });
-    return found;
+
+    if (!found && !('key' in field)) field.key = nextId();
+
+    return found || field;
   };
 
-  const handlePayload = (field: Partial<Field>) => {
-    //Payload Data
-    const tagDescription = field;
-    //Existed Tag
-    const tagExisted = getField(field);
+  const handleOnChange = (updatedField: Partial<Field>) => {
+    const originalField = presetFields
+      ?.map(f => getField(f))
+      ?.find(f => f.key === updatedField.key);
 
-    if (tagExisted) {
-      // If the tag already exists, update its value
-      const updatedTags = tags.map(tag => {
-        if (tagDescription.field.code === tagExisted.field.code) {
-          return {
-            key: tagExisted.key,
-            value: false,
-          };
-        } else {
-          return tag;
-        }
-      });
-
-      setTags(updatedTags);
-    } else if (tagDescription) {
-      // If the tag is new and doesn't exist in the tags array, add it to the array
-      const newTag: VoterTagsType = {
-        key: nextId(),
-        field: {
-          key: field.field.key,
-        },
-        value: true,
-      };
-
-      setTags(tags.concat(newTag));
+    if (originalField?.value === updatedField.value) {
+      updatedField = { key: updatedField.key } as Partial<Field>;
+    } else {
+      updatedField = {
+        key: updatedField.key,
+        value: updatedField.value,
+        field: { key: updatedField.field.key },
+      } as Partial<Field>;
     }
+
+    onChange({
+      field: 'fields',
+      data: { ...updatedField },
+    });
   };
 
-  // const update = {
-  //   field: 'field',
-  //   data: tags,
-  // } as PersonUpdate<VoterTagsType>;
-  // onTagChange && onTagChange(update);
+  useEffect(() => {
+    const f = data?.map(f => ({
+      field: f as Partial<FieldMetaData>,
+      value: false,
+    }));
+    setPresetFields(f);
+  }, [data]);
 
   return (
     <EuiFlexGrid
@@ -137,15 +67,10 @@ const CanvassingTags: FunctionComponent<Props> = ({ fields, onTagChange }) => {
       direction="row"
       gutterSize="s"
       responsive={true}>
-      {presetFields.map((f, i) => {
+      {presetFields?.map((f, i) => {
         return (
           <EuiFlexItem key={i} grow={false} style={{ minWidth: 100 }}>
-            <CanvassingTag
-              field={getField(f) || f}
-              onChange={() => {
-                handlePayload(f);
-              }}
-            />
+            <CanvassingTag field={getField(f)} onChange={handleOnChange} />
           </EuiFlexItem>
         );
       })}

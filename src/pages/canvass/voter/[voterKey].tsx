@@ -126,7 +126,7 @@ const Voter: FunctionComponent = () => {
       <EuiSpacer />
       <EuiForm fullWidth isInvalid={serverError !== ''} error={[serverError]}>
         <EuiFormFieldset legend={{ children: 'Canvassing tags' }}>
-          <CanvassingTags fields={person.fields} />
+          <CanvassingTags fields={person.fields} onChange={onChange} />
         </EuiFormFieldset>
         <EuiSpacer />
         <EuiFormFieldset legend={{ children: 'Affiliation' }}>
@@ -153,7 +153,7 @@ const Voter: FunctionComponent = () => {
         <EuiSpacer />
         <EuiFormFieldset legend={{ children: 'Tags' }}>
           <EuiFormRow display="rowCompressed">
-            <VoterTags fields={person.fields} onTagChange={onChange} />
+            <VoterTags fields={person.fields} onChange={onChange} />
           </EuiFormRow>
         </EuiFormFieldset>
         <EuiSpacer />

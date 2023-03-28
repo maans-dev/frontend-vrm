@@ -9,7 +9,13 @@ import {
 } from '@lib/domain/person-update';
 import { cloneDeep } from 'lodash';
 import { useRouter } from 'next/router';
-import { createContext, useContext, useEffect, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { ToastContext } from './toast.context';
 
 export type CanvassingContextType = {
@@ -153,6 +159,15 @@ const CanvassingProvider = ({ children }) => {
         next = { ...prev[update.field], ...next };
       }
 
+      // // Existing field is an array to merge with prev
+      // if (
+      //   prev[update.field] &&
+      //   Array.isArray(prev[update.field]) &&
+      //   typeof prev[update.field] === 'object'
+      // ) {
+      //   next = [...prev[update.field], ...next];
+      // }
+
       const updatedData = { ...prev, [update.field]: next };
 
       checkIsDirty(updatedData);
@@ -161,11 +176,17 @@ const CanvassingProvider = ({ children }) => {
     });
   };
 
-  const nextId = () => {
+  // const nextId = () => {
+  //   const next = sequence + 1;
+  //   setSequence(next);
+  //   return next;
+  // };
+
+  const nextId = useCallback(() => {
     const next = sequence + 1;
     setSequence(next);
     return next;
-  };
+  }, [sequence]);
 
   const submitUpdatePayload = async () => {
     setIsSubmitting(true);
@@ -191,8 +212,8 @@ const CanvassingProvider = ({ children }) => {
         });
       }
 
-      if ('field' in data) {
-        requestBody.field.forEach(item => {
+      if ('fields' in data) {
+        requestBody.fields.forEach(item => {
           if ('key' in item && typeof item.key === 'number') delete item.key;
         });
       }

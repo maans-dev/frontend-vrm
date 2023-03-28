@@ -264,7 +264,7 @@ export interface FieldMetaData {
 }
 
 export interface Field {
-  key: string;
+  key: string | number;
   person: number;
   field?: Partial<FieldMetaData>;
   value?: boolean;

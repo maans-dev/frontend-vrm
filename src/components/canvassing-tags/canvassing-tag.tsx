@@ -5,7 +5,7 @@ import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
 
 export type Props = {
   field: Partial<Field>;
-  onChange?: () => void;
+  onChange?: (f: Partial<Field>) => void;
 };
 
 const CanvassingTag: FunctionComponent<Props> = ({ field, onChange }) => {
@@ -19,12 +19,12 @@ const CanvassingTag: FunctionComponent<Props> = ({ field, onChange }) => {
   return (
     <EuiCheckableCard
       id={checkboxCardId}
-      label={field.field.description}
+      label={field?.field?.name}
       checkableType="checkbox"
       checked={isSelected}
       onChange={() => {
         setIsSelected(!isSelected);
-        onChange();
+        onChange({ ...field, value: !isSelected });
       }}
     />
   );

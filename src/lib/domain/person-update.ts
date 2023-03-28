@@ -3,7 +3,7 @@ import { EmailContact } from './email-address';
 import { Affiliation, Field, Person } from './person';
 import { Language } from './person-enum';
 import { PhoneContact } from './phone-numbers';
-import { VoterTagsType } from './voter-tags';
+import { VoterTagsType } from './tags';
 
 export interface PersonUpdateRequest extends Person {
   username: number;
@@ -21,16 +21,16 @@ export type GeneralUpdate =
   | LanguageUpdate
   | PhoneUpdate
   | EmailUpdate
-  | VoterTagsUpdate
-  | CommentsUpdate;
+  | CommentsUpdate
+  | FieldsUpdate;
 
 export type KeyedUpdate =
   | CanvassUpdate
   | AffiliateUpdate
   | PhoneUpdate
   | EmailUpdate
-  | VoterTagsUpdate
-  | CommentsUpdate;
+  | CommentsUpdate
+  | FieldsUpdate;
 
 export type AffiliateUpdate = Pick<Affiliation, 'key' | 'name'>;
 export type LanguageUpdate = Language;
@@ -42,7 +42,7 @@ export type EmailUpdate = Pick<
   Partial<EmailContact>,
   'key' | 'type' | 'value' | 'canContact' | 'deleted' | 'confirmed'
 >;
-export type VoterTagsUpdate = VoterTagsType;
+export type FieldsUpdate = Pick<Partial<Field>, 'key' | 'field' | 'value'>;
 export type CommentsUpdate = Pick<
   Partial<CommentsType>,
   'key' | 'type' | 'value' | 'archived'

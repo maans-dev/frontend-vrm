@@ -8,3 +8,5 @@ export type VoterTagsType = {
   };
   value?: boolean;
 };
+
+export const CanvassingTagCodes = ['WR', 'ASTREG', 'DR', 'WV', 'CNVT', 'MVD'];
