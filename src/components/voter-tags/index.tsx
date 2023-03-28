@@ -5,6 +5,7 @@ import useTagFetcher from '@lib/fetcher/tags/tags';
 import { FieldsUpdate, PersonUpdate } from '@lib/domain/person-update';
 import { CanvassingTagCodes } from '@lib/domain/tags';
 import { CanvassingContext } from '@lib/context/canvassing.context';
+import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
 
 export type Props = {
   fields: Field[];
@@ -76,9 +77,11 @@ const Tags: FunctionComponent<Props> = ({ fields, onChange }) => {
 
   // const [voterFields, setVoterFields] = useState<Field[]>([]);
 
-  // useCanvassFormReset(() => {
-  //   setVoterFields(fields.filter(f => !shortCodes.includes(f.field.code)));
-  // });
+  useCanvassFormReset(() => {
+    setSelectedFields(
+      fields.filter(f => !CanvassingTagCodes.includes(f.field.code))
+    );
+  });
 
   // useEffect(() => {
   //   const filteredVoterFields = fields.filter(
