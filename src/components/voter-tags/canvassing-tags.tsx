@@ -25,6 +25,8 @@ export interface Props {
   fields: Field[];
   onTagChange: (data: PersonUpdate<VoterTagsUpdate>) => void;
   partyTags: PartyTags[];
+  handleSearchChange: (searchTerm: string) => void;
+  searchValue: string;
 }
 
 type VoterTagsOption = EuiComboBoxOptionOption<IPartyTags>;
@@ -33,6 +35,8 @@ const VoterTags: React.FC<Props> = ({
   onTagChange,
   fields,
   partyTags,
+  handleSearchChange,
+  searchValue,
 }: Props) => {
   //Refrence Array
   const fieldsRefrenceArray = useRef(fields);
@@ -68,9 +72,6 @@ const VoterTags: React.FC<Props> = ({
 
     setTags(newTags);
   }, [renderedArray, partyTags]);
-
-  //Search value
-  const [searchValue, setSearchValue] = useState('');
 
   //Canvassing context
   const { nextId } = useContext(CanvassingContext);
@@ -213,6 +214,10 @@ const VoterTags: React.FC<Props> = ({
     onTagChange(update);
   };
 
+  const filteredTags = tags.filter(tag =>
+    tag.label.toLowerCase().includes(searchValue.toLowerCase())
+  );
+
   return (
     <>
       <EuiComboBox
@@ -220,9 +225,9 @@ const VoterTags: React.FC<Props> = ({
         aria-label="Search for a tag"
         placeholder="Search for a tag"
         singleSelection={{ asPlainText: true }}
-        options={searchValue ? tags : []}
+        options={searchValue ? filteredTags : []}
         onChange={handleOnChange}
-        onSearchChange={value => setSearchValue(value)}
+        onSearchChange={handleSearchChange}
         fullWidth
         isClearable={false}
         css={{
