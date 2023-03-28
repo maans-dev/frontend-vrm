@@ -102,7 +102,7 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
       css: { minWidth: '100px' },
       render: (vd: Person['livingStructure']) => (
         <div>
-          {vd.votingDistrict} ({vd.votingDistrict_id})
+          {vd?.votingDistrict} ({vd?.votingDistrict_id})
         </div>
       ),
       mobileOptions: {
@@ -141,7 +141,7 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
       css: { minWidth: '100px' },
       render: (vd: Person['registeredStructure']) => (
         <div>
-          {vd.votingDistrict} ({vd.votingDistrict_id})
+          {vd?.votingDistrict} ({vd?.votingDistrict_id})
         </div>
       ),
       mobileOptions: {
