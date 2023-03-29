@@ -159,15 +159,6 @@ const CanvassingProvider = ({ children }) => {
         next = { ...prev[update.field], ...next };
       }
 
-      // // Existing field is an array to merge with prev
-      // if (
-      //   prev[update.field] &&
-      //   Array.isArray(prev[update.field]) &&
-      //   typeof prev[update.field] === 'object'
-      // ) {
-      //   next = [...prev[update.field], ...next];
-      // }
-
       const updatedData = { ...prev, [update.field]: next };
 
       checkIsDirty(updatedData);
@@ -175,12 +166,6 @@ const CanvassingProvider = ({ children }) => {
       return updatedData;
     });
   };
-
-  // const nextId = () => {
-  //   const next = sequence + 1;
-  //   setSequence(next);
-  //   return next;
-  // };
 
   const nextId = useCallback(() => {
     const next = sequence + 1;
@@ -280,6 +265,7 @@ const CanvassingProvider = ({ children }) => {
     setServerError('');
     setIsDirty(false);
   };
+
   // reset context state based on url
   useEffect(() => {
     if (!router.asPath.includes('/canvass')) {
@@ -326,7 +312,10 @@ const CanvassingProvider = ({ children }) => {
     const type = JSON.parse(localStorage.getItem('canvassType'));
 
     // rediect to canvass type page if campaign/type not set
-    if (router.route.includes('/canvass')) {
+    if (
+      router.route.includes('/canvass') &&
+      router.route !== '/canvass/canvassing-type'
+    ) {
       if (!campaign || !type) {
         router.push('/canvass/canvassing-type');
       }
@@ -344,7 +333,7 @@ const CanvassingProvider = ({ children }) => {
         }));
       }
     }
-  }, [data, person, router]);
+  }, [router]);
 
   // TODO: Remove this when stable as it's just for debugging
   useEffect(() => {
