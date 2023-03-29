@@ -106,7 +106,7 @@ const PhoneNumberLine: FunctionComponent<Props> = ({
   };
 
   const handleRemove = () => {
-    onUpdate({ ...phoneContact, deleted: true }); // TODO: find out how were supposed to flag contact for removal
+    onUpdate({ ...phoneContact, deleted: true });
   };
 
   const toggleConfirm = () => {

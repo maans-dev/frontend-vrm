@@ -180,8 +180,7 @@ const CanvassingProvider = ({ children }) => {
       const requestBody = cloneDeep(data);
       requestBody.key = person.key;
       requestBody.username = 12345678; // TODO: Get this from logged in user
-      requestBody.canvass.activity = 'dbb882d6-7fd4-4826-aa05-528b52b749f2'; // TODO: remove this once campaign list is hooked up to API
-      requestBody.canvass.date = new Date(); // TODO: remove this once campaign list is hooked up to API
+      requestBody.canvass.date = new Date();
       requestBody.canvass.key = 12345678; // TODO: Get this from logged in user
 
       // remove numeric keys as these represent new items
@@ -203,7 +202,7 @@ const CanvassingProvider = ({ children }) => {
         });
       }
 
-      console.log('[PERSON EVENT PAYLOAD]', requestBody);
+      console.log('[PERSON EVENT REQUEST]', requestBody);
 
       const response = await fetch(
         `https://sturdy-giggle.da-io.net/event/canvass/`, // TODO: the base url shouldn't be hard-coded

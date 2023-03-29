@@ -38,7 +38,7 @@ const EmailAddressLine: FunctionComponent<Props> = ({
   };
 
   const handleRemove = () => {
-    onUpdate({ ...emailContact, deleted: true }); // TODO: find out how were supposed to flag contact for removal
+    onUpdate({ ...emailContact, deleted: true });
   };
 
   const toggleConfirm = () => {

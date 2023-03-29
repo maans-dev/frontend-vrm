@@ -31,7 +31,6 @@ const CampaignSelect: FunctionComponent<Props> = ({
   };
 
   useEffect(() => {
-    console.log(campaigns);
     if (selectedKey) setSelected(selectedKey);
   }, [campaigns, selectedKey]);
 
