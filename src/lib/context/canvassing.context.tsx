@@ -205,7 +205,7 @@ const CanvassingProvider = ({ children }) => {
       console.log('[PERSON EVENT REQUEST]', requestBody);
 
       const response = await fetch(
-        `https://sturdy-giggle.da-io.net/event/canvass/`, // TODO: the base url shouldn't be hard-coded
+        `${process.env.NEXT_PUBLIC_API_BASE}/event/canvass/`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
