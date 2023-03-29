@@ -58,7 +58,11 @@ const VoterInfo: FunctionComponent<Props> = ({
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiBadge
-            color={`#${colourCode.colour}`}
+            color={
+              colourCode.colour === 'FFFFFF'
+                ? 'hollow'
+                : `#${colourCode.colour}`
+            }
             iconType={
               colourCode.name == 'Green' ? 'checkInCircleFilled' : null
             }>
@@ -92,7 +96,9 @@ const VoterInfo: FunctionComponent<Props> = ({
               <EuiText size="xs">
                 by{' '}
                 <strong>
-                  {canvassedBy?.key?.firstName} {canvassedBy?.key?.surname}
+                  {canvassedBy?.key
+                    ? `${canvassedBy?.key?.firstName} ${canvassedBy?.key?.surname}`
+                    : 'Unknown'}
                 </strong>
               </EuiText>
             </EuiFlexItem>
@@ -105,8 +111,11 @@ const VoterInfo: FunctionComponent<Props> = ({
         <EuiFlexItem>
           <EuiPanel paddingSize="xs" hasBorder={true}>
             <EuiText size="xs" css={{ textTransform: 'capitalize' }}>
-              <EuiIcon type={GiHouse} /> {livingStructure.votingDistrict} (
-              {livingStructure.votingDistrict_id})
+              <EuiIcon type={GiHouse} />{' '}
+              {livingStructure?.votingDistrict || 'Unknown'}{' '}
+              {livingStructure
+                ? `(${livingStructure?.votingDistrict_id})`
+                : null}
             </EuiText>
           </EuiPanel>
         </EuiFlexItem>
@@ -114,8 +123,10 @@ const VoterInfo: FunctionComponent<Props> = ({
           <EuiPanel hasBorder={true} paddingSize="xs">
             <EuiText size="xs" css={{ textTransform: 'capitalize' }}>
               <EuiIcon type={MdHowToVote} />{' '}
-              {registeredStructure.votingDistrict} (
-              {registeredStructure.votingDistrict_id})
+              {registeredStructure?.votingDistrict || 'Unknown'}{' '}
+              {registeredStructure
+                ? `(${registeredStructure?.votingDistrict_id})`
+                : null}
             </EuiText>
           </EuiPanel>
         </EuiFlexItem>

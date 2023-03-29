@@ -74,14 +74,20 @@ const LivingAddress: FunctionComponent<Props> = ({ address }) => {
             <EuiFieldText name="Building Name" compressed />
           </EuiFormRow>
           <EuiFormRow display="rowCompressed" label="Address on File">
-            <EuiFieldText compressed disabled value={address.formatted} />
+            <EuiFieldText
+              compressed
+              disabled
+              value={address?.formatted || 'Unknown'}
+            />
           </EuiFormRow>
         </EuiFlexItem>
-        <EuiFormRow display="rowCompressed" label="Address Geocoded">
-          <EuiButton type="submit" iconType={FaThumbtack} fill>
-            {address.latitude} {address.longitude}
-          </EuiButton>
-        </EuiFormRow>
+        {address?.latitude && (
+          <EuiFormRow display="rowCompressed" label="Address Geocoded">
+            <EuiButton type="submit" iconType={FaThumbtack} fill>
+              {address?.latitude} {address?.longitude}
+            </EuiButton>
+          </EuiFormRow>
+        )}
       </EuiFlexGroup>
     </>
   );

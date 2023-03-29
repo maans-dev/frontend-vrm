@@ -23,10 +23,14 @@ const AffiliationComponent: FunctionComponent<Props> = ({
 }) => {
   const [searchValue, setSearchValue] = useState<string>('');
   const { affiliations, isLoading, error } = useAffiliationFetcher(true);
-  const [selectedOption, setSelectedOption] = useState<AffliationOption>({
-    label: affiliation?.description || affiliation.name,
-    value: affiliation,
-  });
+  const [selectedOption, setSelectedOption] = useState<AffliationOption>(
+    affiliation
+      ? {
+          label: affiliation?.description || affiliation?.name,
+          value: affiliation,
+        }
+      : null
+  );
 
   const options = useMemo(() => {
     return affiliations?.map(a => ({ label: a.description, value: a }));
@@ -38,7 +42,7 @@ const AffiliationComponent: FunctionComponent<Props> = ({
     setSelectedOption(selectedOptions[0]);
 
     let updateData: AffiliateUpdate;
-    if (affiliation.key !== selectedOptions[0]?.value?.key) {
+    if (affiliation?.key !== selectedOptions[0]?.value?.key) {
       updateData = {
         key: selectedOptions[0]?.value?.key,
         name: selectedOptions[0]?.value?.name,
@@ -54,7 +58,7 @@ const AffiliationComponent: FunctionComponent<Props> = ({
 
   useCanvassFormReset(() => {
     setSelectedOption({
-      label: affiliation?.description || affiliation.name,
+      label: affiliation?.description || affiliation?.name,
       value: affiliation,
     });
   });
@@ -87,7 +91,7 @@ const AffiliationComponent: FunctionComponent<Props> = ({
           placeholder="Select an affiliation"
           singleSelection={{ asPlainText: true }}
           options={searchValue ? options : []}
-          selectedOptions={[selectedOption]}
+          selectedOptions={selectedOption ? [selectedOption] : []}
           onChange={handleChange}
           onSearchChange={value => setSearchValue(value || '')}
         />

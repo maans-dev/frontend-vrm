@@ -46,6 +46,8 @@ function getLanguageEnumValue(language: string): Language {
       return Language.TSHIVENDA;
     case 'XITSONGA':
       return Language.XITSONGA;
+    case null:
+      return null;
     default:
       throw new Error(`Invalid language: ${language}`);
   }
@@ -201,9 +203,11 @@ const ContactDetails: FunctionComponent<Props> = ({
           placeholder="Select voter language(s)"
           singleSelection={{ asPlainText: true }}
           options={languageOptions}
-          selectedOptions={[
-            { value: selectedLanguage, label: selectedLanguage },
-          ]}
+          selectedOptions={
+            selectedLanguage
+              ? [{ value: selectedLanguage, label: selectedLanguage }]
+              : []
+          }
           onChange={handleLanguageChange}
         />
       </EuiFormRow>
