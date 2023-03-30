@@ -25,7 +25,7 @@ const CampaignSelect: FunctionComponent<Props> = ({
   const [selected, setSelected] = useState('');
 
   const handleChange = (campaign: Campaign) => {
-    console.log('CAMPAIGN', campaign);
+    // console.log('CAMPAIGN', campaign);
     setSelected(campaign.key);
     onChange(campaign);
   };

@@ -3,7 +3,6 @@ import {
   EuiBreadcrumb,
   EuiButton,
   EuiButtonEmpty,
-  EuiButtonGroup,
   EuiCallOut,
   EuiComboBox,
   EuiDatePicker,
@@ -12,13 +11,8 @@ import {
   EuiFlexItem,
   EuiFormControlLayout,
   EuiFormRow,
-  EuiIcon,
-  EuiPanel,
-  EuiSelect,
   EuiSpacer,
   EuiText,
-  EuiToolTip,
-  useGeneratedHtmlId,
 } from '@elastic/eui';
 import MainLayout from '@layouts/main';
 import { useRouter } from 'next/router';
@@ -46,22 +40,45 @@ const CaptureType: FunctionComponent = () => {
   //Fetch Person
   const [voterKey, setVoterKey] = useState('');
   const { person } = usePersonFetcher(voterKey);
+  const [isValid, setIsValid] = useState(true);
+  const [toast, setToast] = useState(null);
 
   const handleInputChange = event => {
-    setVoterKey(event.target.value);
+    const value = event.target.value;
+    if (/^\d*$/.test(value)) {
+      setVoterKey(value);
+      setIsValid(true);
+    } else {
+      setIsValid(false);
+    }
   };
 
   const handleButtonClick = () => {
-    if (voterKey) {
-      console.log(person?.key, 'person');
-      setVoterKey(voterKey.trim());
+    if (voterKey && person && isValid) {
+      const name = `${person.salutation} ${person.firstName} ${person.surname}`;
+      setVoterKey(name);
       setUpdatePayload({
         field: 'canvass',
         data: {
           key: person?.key,
         },
       });
+      setIsValid(true);
+      setToast({
+        title: 'Success!',
+        color: 'success',
+        iconType: 'check',
+        text: `Voter ${voterKey} verified.`,
+      });
+      setTimeout(() => setToast(null), 2000); // close the success message after 2 seconds
+    } else {
+      setIsValid(false);
     }
+  };
+
+  const handleEditStart = () => {
+    setVoterKey('');
+    setIsValid(true);
   };
 
   const handleDOBChange = date => {
@@ -73,8 +90,6 @@ const CaptureType: FunctionComponent = () => {
       },
     });
   };
-
-  const [name, setName] = useState('');
 
   const [selectedOption, setSelectedOption] = useState('');
   const handleSelectChange = selectedOptions => {
@@ -191,6 +206,7 @@ const CaptureType: FunctionComponent = () => {
               marginBottom: '5px',
             }}
           />
+          {/* {toast && toast} */}
           {selectedOption === 'Someone Else' && (
             <EuiFormControlLayout
               isLoading={isLoading}
@@ -199,18 +215,22 @@ const CaptureType: FunctionComponent = () => {
                   Verify
                 </EuiButtonEmpty>
               }>
-              <EuiFieldText
-                name="first"
-                controlOnly
-                compressed
-                value={
-                  person && voterKey.trim() !== ''
-                    ? `${person.salutation} ${person.firstName} ${person.surname}`
-                    : voterKey
-                }
-                onChange={handleInputChange}
-                placeholder="ID or DARN Number"
-              />
+              <EuiFormRow
+                label="ID or DARN Number"
+                isInvalid={!isValid}
+                error={
+                  !isValid ? 'Voter key should only contain numbers' : null
+                }>
+                <EuiFieldText
+                  name="voter-key"
+                  value={voterKey}
+                  onChange={handleInputChange}
+                  onFocus={handleEditStart}
+                  isInvalid={!isValid}
+                  aria-invalid={!isValid}
+                  compressed
+                />
+              </EuiFormRow>
             </EuiFormControlLayout>
           )}
           {selectedOption === 'Same as last capture' && (

@@ -155,6 +155,7 @@ const CanvassingProvider = ({ children }) => {
 
       // Existing field is an object so merge with prev
       if (
+        prev &&
         prev[update.field] &&
         !Array.isArray(prev[update.field]) &&
         typeof prev[update.field] === 'object'
