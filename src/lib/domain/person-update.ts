@@ -49,7 +49,7 @@ export type CommentsUpdate = Pick<
 >;
 export type CanvassUpdate = {
   key?: number;
-  date?: Date;
+  date?: string | Date;
   activity?: string;
   type?: string | 'FACE' | 'TELE';
 };

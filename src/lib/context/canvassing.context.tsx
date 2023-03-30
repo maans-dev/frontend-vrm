@@ -1,4 +1,5 @@
 import { ICanvassType } from '@components/canvassing-type/type';
+import { ICaptureType } from '@lib/domain/capturer';
 import { Campaign, Person } from '@lib/domain/person';
 import {
   assertHasFields,
@@ -29,9 +30,11 @@ export type CanvassingContextType = {
   doFormReset: Date;
   campaign: Campaign;
   canvassingType: ICanvassType;
+  capturingType: ICaptureType;
   setPerson: (person: Person) => void;
   setCampaign: (campaign: Campaign) => void;
   setCanvassingType: (type: ICanvassType) => void;
+  setCapturingType: (type: ICaptureType) => void;
   setUpdatePayload: (update: PersonUpdate<GeneralUpdate>) => void;
   nextId: () => number;
   submitUpdatePayload: () => void;
@@ -180,8 +183,8 @@ const CanvassingProvider = ({ children }) => {
       const requestBody = cloneDeep(data);
       requestBody.key = person.key;
       requestBody.username = 12345678; // TODO: Get this from logged in user
-      requestBody.canvass.date = new Date();
-      requestBody.canvass.key = 12345678; // TODO: Get this from logged in user
+      if (!requestBody?.canvass?.date) requestBody.canvass.date = new Date();
+      if (!requestBody?.canvass?.key) requestBody.canvass.key = 123456; // TODO: Get this from logged in user
 
       // remove numeric keys as these represent new items
       if ('comments' in data) {

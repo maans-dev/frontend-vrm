@@ -29,8 +29,15 @@ const VoterSearch: FunctionComponent<Props> = ({ breadcrumb }) => {
   };
 
   useEffect(() => {
-    if (results?.length === 1) router.push(`/canvass/voter/${results[0].key}`);
-  }, [results, router]);
+    if (router.pathname === '/canvass/voter-search' && results?.length === 1) {
+      router.push(`/canvass/voter/${results[0].key}`);
+    } else if (
+      router.pathname === '/capture/capture-search' &&
+      results?.length === 1
+    ) {
+      router.push(`/capture/voter-capture/${results[0].key}`);
+    }
+  }, [results, router, router.pathname]);
 
   return (
     <MainLayout

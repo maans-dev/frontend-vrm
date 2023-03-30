@@ -30,6 +30,8 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
   };
 
   const getRowProps = (voter: Person) => {
+    const isCapturePage = router.pathname.includes('/capture/');
+
     return {
       'data-test-subj': `row-${voter.key}`,
       className: 'voter-search-row',
@@ -38,7 +40,13 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
           ? `5px solid #${voter.colourCode.colour} !important`
           : null,
       },
-      onClick: () => router.push(`/canvass/voter/${voter.key}`),
+      onClick: () => {
+        if (isCapturePage) {
+          router.push(`/capture/voter-capture/${voter.key}`);
+        } else {
+          router.push(`/canvass/voter/${voter.key}`);
+        }
+      },
     };
   };
 

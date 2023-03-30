@@ -16,8 +16,9 @@ import CanvassingTypeSelect from '@components/canvassing-type/canvassing-type-se
 import { CanvassingContext } from '@lib/context/canvassing.context';
 import useCanvassTypeFetcher from '@lib/fetcher/campaign-type/campaign';
 import { Campaign } from '@lib/domain/person';
+import { ICanvassType } from '@components/canvassing-type/type';
 
-const canvassTypeData = [
+const canvassTypeData: ICanvassType[] = [
   { id: 'face', name: 'Face to face' },
   { id: 'phone', name: 'Telephone' },
 ];
