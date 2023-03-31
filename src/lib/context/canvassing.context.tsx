@@ -1,5 +1,4 @@
 import { ICanvassType } from '@components/canvassing-type/type';
-import { ICaptureType } from '@lib/domain/capturer';
 import { Campaign, Person } from '@lib/domain/person';
 import {
   assertHasFields,
@@ -30,11 +29,9 @@ export type CanvassingContextType = {
   doFormReset: Date;
   campaign: Campaign;
   canvassingType: ICanvassType;
-  capturingType: ICaptureType;
   setPerson: (person: Person) => void;
   setCampaign: (campaign: Campaign) => void;
   setCanvassingType: (type: ICanvassType) => void;
-  setCapturingType: (type: ICaptureType) => void;
   setUpdatePayload: (update: PersonUpdate<GeneralUpdate>) => void;
   nextId: () => number;
   submitUpdatePayload: () => void;
@@ -221,7 +218,11 @@ const CanvassingProvider = ({ children }) => {
 
       if (response.ok) {
         setIsComplete(true);
-        router.push('/canvass/canvassing-type');
+        if (router.pathname.includes('/canvass/')) {
+          router.push('/canvass/canvassing-type');
+        } else if (router.pathname.includes('/capture/')) {
+          router.push('/capture/capturing-type');
+        }
         addToast({
           id: 'voter-submitted-success',
           title: 'Voter has been successfully updated',
@@ -271,14 +272,20 @@ const CanvassingProvider = ({ children }) => {
 
   // reset context state based on url
   useEffect(() => {
-    if (!router.asPath.includes('/canvass')) {
+    if (
+      !router.asPath.includes('/canvass') &&
+      !router.asPath.includes('/capture')
+    ) {
       setIsComplete(false);
       setPerson(null);
       setData(null);
       setServerError('');
       setIsDirty(false);
     }
-    if (router.asPath.includes('/canvassing-type')) {
+    if (
+      router.asPath.includes('/canvassing-type') ||
+      router.asPath.includes('/capturing-type')
+    ) {
       setIsComplete(false);
       setPerson(null);
       setData(prev => ({
@@ -290,7 +297,10 @@ const CanvassingProvider = ({ children }) => {
       setServerError('');
       setIsDirty(false);
     }
-    if (router.asPath.includes('/voter-search')) {
+    if (
+      router.asPath.includes('/voter-search') ||
+      router.asPath.includes('/capturing-search')
+    ) {
       setData(prev => {
         return {
           canvass: prev.canvass,
@@ -300,12 +310,12 @@ const CanvassingProvider = ({ children }) => {
       setServerError('');
       setIsDirty(false);
     }
-  }, [router]);
 
-  // Load campaign & canvassing type from local storage
-  useEffect(() => {
-    if (!router.route.includes('/canvass')) {
-      // remove local storage when not in canvassing
+    const captureRoute = router.route.includes('/capture');
+    const canvassRoute = router.route.includes('/canvass');
+
+    if (!captureRoute && !canvassRoute) {
+      // remove local storage when not in canvassing or capture
       localStorage.removeItem('campaign');
       localStorage.removeItem('canvassType');
       return;
@@ -314,13 +324,15 @@ const CanvassingProvider = ({ children }) => {
     const campaign = JSON.parse(localStorage.getItem('campaign'));
     const type = JSON.parse(localStorage.getItem('canvassType'));
 
-    // rediect to canvass type page if campaign/type not set
+    // rediect to canvass/capture type page if campaign/type not set
     if (
-      router.route.includes('/canvass') &&
-      router.route !== '/canvass/canvassing-type'
+      (canvassRoute && router.route !== '/canvass/canvassing-type') ||
+      (captureRoute && router.route !== '/capture/capturing-type')
     ) {
       if (!campaign || !type) {
-        router.push('/canvass/canvassing-type');
+        router.push(
+          canvassRoute ? '/canvass/canvassing-type' : '/capture/capturing-type'
+        );
       }
     }
 
