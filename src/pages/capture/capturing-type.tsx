@@ -2,15 +2,10 @@ import { FunctionComponent, useContext, useEffect, useState } from 'react';
 import {
   EuiBreadcrumb,
   EuiButton,
-  EuiButtonEmpty,
   EuiCallOut,
-  EuiComboBox,
   EuiDatePicker,
-  EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiFormControlLayout,
-  EuiFormRow,
   EuiSpacer,
   EuiText,
 } from '@elastic/eui';
@@ -24,7 +19,7 @@ import useCanvassTypeFetcher from '@lib/fetcher/campaign-type/campaign';
 import { Campaign } from '@lib/domain/person';
 import moment, { Moment } from 'moment';
 import { ICaptureType } from '@lib/domain/capturer';
-import usePersonFetcher from '@lib/fetcher/person/person.fetcher';
+import CanvasserSelect from '@components/canvassing-type/canvasser-select';
 
 const captureTypeData: ICaptureType[] = [
   { id: 'face', name: 'Face to face' },
@@ -50,50 +45,6 @@ const CaptureType: FunctionComponent = () => {
     },
   ];
 
-  //Fetch Person
-  const [voterKey, setVoterKey] = useState('');
-  const { person } = usePersonFetcher(voterKey);
-  const [isValid, setIsValid] = useState(true);
-  const [toast, setToast] = useState(null);
-
-  const handleInputChange = event => {
-    const value = event.target.value;
-    if (/^\d*$/.test(value)) {
-      setVoterKey(value);
-      setIsValid(true);
-    } else {
-      setIsValid(false);
-    }
-  };
-
-  const handleButtonClick = () => {
-    if (voterKey && person && isValid) {
-      const name = `${person.salutation} ${person.firstName} ${person.surname}`;
-      setVoterKey(name);
-      setUpdatePayload({
-        field: 'canvass',
-        data: {
-          key: person?.key,
-        },
-      });
-      setIsValid(true);
-      setToast({
-        title: 'Success!',
-        color: 'success',
-        iconType: 'check',
-        text: `Voter ${voterKey} verified.`,
-      });
-      setTimeout(() => setToast(null), 2000); // close the success message after 2 seconds
-    } else {
-      setIsValid(false);
-    }
-  };
-
-  const handleEditStart = () => {
-    setVoterKey('');
-    setIsValid(true);
-  };
-
   const handleDOBChange = date => {
     setDob(date);
     setUpdatePayload({
@@ -104,20 +55,20 @@ const CaptureType: FunctionComponent = () => {
     });
   };
 
-  const [selectedOption, setSelectedOption] = useState('');
-  const handleSelectChange = selectedOptions => {
-    if (selectedOptions.length > 0) {
-      setSelectedOption(selectedOptions[0].value);
-    } else {
-      setSelectedOption('');
-    }
+  const canSubmit = () => {
+    return (
+      !data?.canvass?.activity ||
+      !data?.canvass?.type ||
+      !data.canvass.key ||
+      !data?.canvass?.date
+    );
   };
 
   const formActions = (
     <EuiFlexGroup direction="row" responsive={false} justifyContent="flexEnd">
       <EuiFlexItem grow={false}>
         <EuiButton
-          isDisabled={!data?.canvass?.activity || !data?.canvass?.type}
+          isDisabled={canSubmit()}
           iconType="arrowRight"
           iconSide="right"
           size="m"
@@ -173,80 +124,27 @@ const CaptureType: FunctionComponent = () => {
         }}
       />
 
-      <EuiSpacer size="m" />
+      <EuiSpacer size="l" />
 
       <EuiText size="xs">
         <h3>Who did the canvass or spoke with the voter?</h3>
       </EuiText>
+
       <EuiSpacer size="s" />
 
-      <EuiFormRow
-        display="rowCompressed"
-        className={
-          selectedOption === 'Someone Else'
-            ? 'euiFormControlLayout__item--marginBottom'
-            : ''
-        }>
-        <div>
-          <EuiComboBox
-            compressed
-            singleSelection={{ asPlainText: true }}
-            options={[
-              { value: 'Me', label: 'Me' },
-              { value: 'Same as last capture', label: 'Same as last capture' },
-              { value: 'Someone Else', label: 'Someone Else' },
-            ]}
-            onChange={handleSelectChange}
-            fullWidth
-            isClearable={false}
-            css={{
-              '.euiComboBoxPill--plainText': {
-                display: 'none',
-              },
-              marginBottom: '5px',
-            }}
-          />
-          {/* {toast && toast} */}
-          {selectedOption === 'Someone Else' && (
-            <EuiFormControlLayout
-              isLoading={isLoading}
-              append={
-                <EuiButtonEmpty size="xs" onClick={handleButtonClick}>
-                  Verify
-                </EuiButtonEmpty>
-              }>
-              <EuiFormRow
-                label="ID or DARN Number"
-                isInvalid={!isValid}
-                error={
-                  !isValid ? 'Voter key should only contain numbers' : null
-                }>
-                <EuiFieldText
-                  name="voter-key"
-                  value={voterKey}
-                  onChange={handleInputChange}
-                  onFocus={handleEditStart}
-                  isInvalid={!isValid}
-                  aria-invalid={!isValid}
-                  compressed
-                />
-              </EuiFormRow>
-            </EuiFormControlLayout>
-          )}
-          {selectedOption === 'Same as last capture' && (
-            <EuiFormRow>
-              <EuiFieldText
-                name="lastCapture"
-                compressed
-                disabled
-                placeholder="John Smith (8210105080082)"
-              />
-            </EuiFormRow>
-          )}
-        </div>
-      </EuiFormRow>
+      <CanvasserSelect
+        lastCapturer={null} //TODO: Get lastCapturer from localStorage
+        onChange={update => {
+          setUpdatePayload({
+            field: 'canvass',
+            data: {
+              key: update.key,
+            },
+          });
+        }}
+      />
 
-      <EuiSpacer size="m" />
+      <EuiSpacer size="l" />
 
       <EuiText size="xs">
         <h3>When was this canvass taken?</h3>
@@ -254,6 +152,7 @@ const CaptureType: FunctionComponent = () => {
       <EuiSpacer size="s" />
       <EuiDatePicker
         name="dob"
+        placeholder="Select a date"
         dateFormat={['D MMM YYYY']}
         selected={dob}
         maxDate={moment().add(2, 'years')}
@@ -261,7 +160,7 @@ const CaptureType: FunctionComponent = () => {
         onChange={handleDOBChange}
       />
 
-      <EuiSpacer size="m" />
+      <EuiSpacer size="l" />
 
       <EuiText size="xs">
         <h3>How was this voter canvassed?</h3>
