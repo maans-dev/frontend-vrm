@@ -169,7 +169,6 @@ const CaptureType: FunctionComponent = () => {
               activity: update.key,
             },
           });
-          console.log(update, 'capture update');
           setCampaign(update);
         }}
       />
@@ -280,7 +279,6 @@ const CaptureType: FunctionComponent = () => {
               type: update.id,
             },
           });
-          console.log(update, 'capture update');
           setCanvassingType(update);
         }}
       />

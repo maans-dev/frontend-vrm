@@ -180,10 +180,9 @@ const CanvassingProvider = ({ children }) => {
     try {
       const requestBody = cloneDeep(data);
       requestBody.key = person.key;
-      requestBody.username = 12345678; // TODO: Get this from logged in user
+      requestBody.username = 17888131; // TODO: Get this from logged in user
       if (!requestBody?.canvass?.date) requestBody.canvass.date = new Date();
-      if (!requestBody?.canvass?.key) requestBody.canvass.key = 123456; // TODO: Get this from logged in user
-
+      if (!requestBody?.canvass?.key) requestBody.canvass.key = 17888131; // TODO: Get this from logged in user
       // remove numeric keys as these represent new items
       if ('comments' in data) {
         requestBody.comments.forEach(item => {
