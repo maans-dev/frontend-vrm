@@ -99,6 +99,7 @@ const CanvassingType: FunctionComponent = () => {
               activity: update.key,
             },
           });
+          // console.log(update, 'canvass update');
           setCampaign(update);
         }}
       />
@@ -121,7 +122,7 @@ const CanvassingType: FunctionComponent = () => {
               type: update.id,
             },
           });
-          console.log(update);
+          // console.log(update, 'canvass update');
           setCanvassingType(update);
         }}
       />

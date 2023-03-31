@@ -34,8 +34,21 @@ const captureTypeData: ICaptureType[] = [
 const CaptureType: FunctionComponent = () => {
   const { campaignType, isLoading, error } = useCanvassTypeFetcher();
   const [campaignData, setCampaignData] = useState<Campaign[]>([]);
-
   const [dob, setDob] = useState<Moment | null>(null);
+
+  useEffect(() => {
+    setCampaignData(campaignType);
+  }, [campaignType]);
+
+  const { data, setUpdatePayload, setCampaign, setCanvassingType } =
+    useContext(CanvassingContext);
+
+  const router = useRouter();
+  const breadcrumb: EuiBreadcrumb[] = [
+    {
+      text: 'Capturing',
+    },
+  ];
 
   //Fetch Person
   const [voterKey, setVoterKey] = useState('');
@@ -100,19 +113,6 @@ const CaptureType: FunctionComponent = () => {
     }
   };
 
-  useEffect(() => {
-    setCampaignData(campaignType);
-  }, [campaignType]);
-  const { data, setUpdatePayload, setCampaign, setCanvassingType } =
-    useContext(CanvassingContext);
-
-  const router = useRouter();
-  const breadcrumb: EuiBreadcrumb[] = [
-    {
-      text: 'Capturing',
-    },
-  ];
-
   const formActions = (
     <EuiFlexGroup direction="row" responsive={false} justifyContent="flexEnd">
       <EuiFlexItem grow={false}>
@@ -122,7 +122,7 @@ const CaptureType: FunctionComponent = () => {
           iconSide="right"
           size="m"
           fill
-          onClick={() => router.push('/capture/capture-search')}>
+          onClick={() => router.push('/capture/capturing-search')}>
           Continue
         </EuiButton>
       </EuiFlexItem>
@@ -169,6 +169,7 @@ const CaptureType: FunctionComponent = () => {
               activity: update.key,
             },
           });
+          console.log(update, 'capture update');
           setCampaign(update);
         }}
       />
@@ -279,6 +280,7 @@ const CaptureType: FunctionComponent = () => {
               type: update.id,
             },
           });
+          console.log(update, 'capture update');
           setCanvassingType(update);
         }}
       />

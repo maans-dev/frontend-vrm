@@ -47,7 +47,7 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
   useEffect(() => {
     setShowSubHeader(router.route !== '/');
     // eslint-disable-next-line prettier/prettier
-    setShowCanvassHeader(router.route === '/canvass/voter-search' || router.route === '/canvass/voter/[voterKey]');
+    setShowCanvassHeader(router.route === '/canvass/voter-search' || router.route === '/canvass/voter/[voterKey]' || router.route === '/capture/voter-capture/[voterKey]' || router.route === '/capture/capturing-search' );
   }, [router, router.route]);
 
   const renderPageTitle = (

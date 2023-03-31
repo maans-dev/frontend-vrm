@@ -25,7 +25,7 @@ const Index: FunctionComponent = () => {
             layout="horizontal"
             title="Capture"
             description="Capture a previously done canvass."
-            onClick={() => router.push('/capture/capture-type')}
+            onClick={() => router.push('/capture/capturing-type')}
           />
         </EuiFlexItem>
 

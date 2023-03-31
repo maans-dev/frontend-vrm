@@ -45,7 +45,7 @@ const Voter: FunctionComponent = () => {
       text: 'Capturing',
       href: '/capture-type',
       onClick: e => {
-        router.push('/capture/capture-type');
+        router.push('/capture/capturing-type');
         e.preventDefault();
       },
     },
@@ -53,7 +53,7 @@ const Voter: FunctionComponent = () => {
       text: 'Voter search',
       href: '/capture',
       onClick: e => {
-        router.push('/capture/capture-search');
+        router.push('/capture/capturing-search');
         e.preventDefault();
       },
     },

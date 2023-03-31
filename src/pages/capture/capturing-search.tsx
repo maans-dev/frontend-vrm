@@ -8,9 +8,9 @@ const Index: FunctionComponent = () => {
   const breadcrumb: EuiBreadcrumb[] = [
     {
       text: 'Capturing',
-      href: '/capture-type',
+      href: '/capturing-type',
       onClick: e => {
-        router.push('/capture/capture-type');
+        router.push('/capture/capturing-type');
         e.preventDefault();
       },
     },

@@ -49,7 +49,7 @@ function getLanguageEnumValue(language: string): Language {
     case null:
       return null;
     default:
-      throw new Error(`Invalid language: ${language}`);
+      return Language.ENGLISH;
   }
 }
 
