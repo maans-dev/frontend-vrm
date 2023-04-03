@@ -29,9 +29,11 @@ export type CanvassingContextType = {
   doFormReset: Date;
   campaign: Campaign;
   canvassingType: ICanvassType;
+  canvasser: Partial<Person>;
   setPerson: (person: Person) => void;
   setCampaign: (campaign: Campaign) => void;
   setCanvassingType: (type: ICanvassType) => void;
+  setCanvasser: (type: Partial<Person>) => void;
   setUpdatePayload: (update: PersonUpdate<GeneralUpdate>) => void;
   nextId: () => number;
   submitUpdatePayload: () => void;
@@ -55,6 +57,7 @@ const CanvassingProvider = ({ children }) => {
   const router = useRouter();
   const [campaign, setCampaignInternal] = useState(null);
   const [canvassingType, setCanvassingTypeInternal] = useState(null);
+  const [canvasser, setCanvasserTypeInternal] = useState(null);
   const [doFormReset, setDoFormReset] = useState(new Date());
   const { addToast } = useContext(ToastContext);
 
@@ -247,6 +250,10 @@ const CanvassingProvider = ({ children }) => {
     localStorage.setItem('canvassType', JSON.stringify(type));
     setCanvassingTypeInternal(type);
   };
+  const setCanvasser = (person: Partial<Person>) => {
+    localStorage.setItem('canvasser', JSON.stringify(person));
+    setCanvasserTypeInternal(person);
+  };
 
   const checkIsDirty = updatedData =>
     updatedData && Object.keys(updatedData).length > 1
@@ -320,8 +327,9 @@ const CanvassingProvider = ({ children }) => {
       return;
     }
 
-    const campaign = JSON.parse(localStorage.getItem('campaign'));
-    const type = JSON.parse(localStorage.getItem('canvassType'));
+    const campaign = JSON.parse(localStorage.getItem('campaign')) || null;
+    const type = JSON.parse(localStorage.getItem('canvassType')) || null;
+    const canvasser = JSON.parse(localStorage.getItem('canvasser')) || null;
 
     // rediect to canvass/capture type page if campaign/type not set
     if (
@@ -338,11 +346,15 @@ const CanvassingProvider = ({ children }) => {
     if (!data?.canvass || !data?.canvass?.activity || !data?.canvass?.type) {
       setCampaign(campaign);
       setCanvassingType(type);
+      setCanvasser(canvasser);
       if (campaign && type) {
         setData(prev => ({
           canvass: {
             ...prev?.canvass,
-            ...{ activity: campaign.key, type: type.id },
+            ...{
+              activity: campaign.key,
+              type: type.id,
+            },
           },
         }));
       }
@@ -367,9 +379,11 @@ const CanvassingProvider = ({ children }) => {
         doFormReset,
         campaign,
         canvassingType,
+        canvasser,
         setPerson,
         setCampaign,
         setCanvassingType,
+        setCanvasser,
         setUpdatePayload,
         nextId,
         submitUpdatePayload,

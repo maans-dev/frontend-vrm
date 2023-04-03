@@ -16,20 +16,18 @@ import moment from 'moment';
 import { ChangeEvent, FunctionComponent, useState } from 'react';
 
 export type Props = {
-  lastCapturer?: Partial<Person>;
+  canvasser?: Partial<Person>;
   onChange: (canvasser: Partial<Person>) => void;
 };
 
 type CanvasserOption = 'ME' | 'LAST' | 'OTHER';
 
-const CanvasserSelect: FunctionComponent<Props> = ({
-  onChange,
-  lastCapturer,
-}) => {
+const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
   const [selectedCanvasserOption, setSelectedCanvasserOption] =
-    useState<CanvasserOption>(null);
+    useState<CanvasserOption>(canvasser ? 'OTHER' : null);
 
-  const [foundCanvasser, setFoundCanvasser] = useState<Partial<Person>>(null);
+  const [foundCanvasser, setFoundCanvasser] =
+    useState<Partial<Person>>(canvasser);
 
   const [canvasserSearchText, setCanvasserSearchText] = useState('');
 
@@ -59,6 +57,8 @@ const CanvasserSelect: FunctionComponent<Props> = ({
       onChange(respPayload[0]);
     } else {
       setCanvasserSearchError('Canvasser not found');
+      setFoundCanvasser(null);
+      onChange(null);
     }
 
     console.log('[CANVASSER]', respPayload);
@@ -66,6 +66,9 @@ const CanvasserSelect: FunctionComponent<Props> = ({
 
   const handleChange = (option: CanvasserOption) => {
     setSelectedCanvasserOption(option);
+    onChange({
+      key: undefined,
+    });
 
     if (option !== 'OTHER') {
       setCanvasserSearchText('');
@@ -86,6 +89,12 @@ const CanvasserSelect: FunctionComponent<Props> = ({
         // TODO: not implemented yet
         break;
     }
+  };
+
+  const handleClear = () => {
+    setFoundCanvasser(null);
+    onChange(null);
+    setCanvasserSearchText('');
   };
 
   return (
@@ -113,26 +122,15 @@ const CanvasserSelect: FunctionComponent<Props> = ({
             value="ME"
             checked={selectedCanvasserOption === 'ME'}
             onChange={() => handleChange('ME')}>
-            <EuiText size="xs" css={{ cursor: 'pointer' }}>
+            <EuiText
+              size="xs"
+              css={{ cursor: 'pointer' }}
+              onClick={() => handleChange('ME')}>
               {/* TODO: Get this from currently logged in user, once Auth is done */}
               MR JOHN SMITH (42){' '}
             </EuiText>
           </EuiCheckableCard>
         </EuiFlexItem>
-        {lastCapturer && (
-          <EuiFlexItem grow={true}>
-            <EuiCheckableCard
-              id={generateId()}
-              label={<strong>Same as last capture</strong>}
-              value="LAST"
-              checked={selectedCanvasserOption === 'LAST'}
-              onChange={() => handleChange('LAST')}>
-              <EuiText size="xs" css={{ cursor: 'pointer' }}>
-                MR JOHN SMITH (42)
-              </EuiText>
-            </EuiCheckableCard>
-          </EuiFlexItem>
-        )}
         <EuiFlexItem grow={true}>
           <EuiCheckableCard
             id={generateId()}
@@ -142,7 +140,10 @@ const CanvasserSelect: FunctionComponent<Props> = ({
             onChange={() => handleChange('OTHER')}>
             {!foundCanvasser && (
               <>
-                <EuiFlexGroup responsive={false} gutterSize="xs">
+                <EuiFlexGroup
+                  responsive={false}
+                  gutterSize="xs"
+                  onClick={() => handleChange('OTHER')}>
                   <EuiFlexItem>
                     <EuiFormRow
                       display="centerCompressed"
@@ -154,7 +155,6 @@ const CanvasserSelect: FunctionComponent<Props> = ({
                         isInvalid={canvasserSearchError !== ''}
                         disabled={selectedCanvasserOption !== 'OTHER'}
                         value={canvasserSearchText}
-                        // isClearable={true}
                         onChange={handleSearchChange}
                       />
                     </EuiFormRow>
@@ -200,7 +200,7 @@ const CanvasserSelect: FunctionComponent<Props> = ({
                     iconType="cross"
                     aria-label="search-again"
                     disabled={selectedCanvasserOption !== 'OTHER'}
-                    onClick={() => setFoundCanvasser(null)}>
+                    onClick={handleClear}>
                     {' '}
                     Clear
                   </EuiButtonEmpty>

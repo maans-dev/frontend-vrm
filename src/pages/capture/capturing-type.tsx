@@ -35,8 +35,14 @@ const CaptureType: FunctionComponent = () => {
     setCampaignData(campaignType);
   }, [campaignType]);
 
-  const { data, setUpdatePayload, setCampaign, setCanvassingType } =
-    useContext(CanvassingContext);
+  const {
+    data,
+    canvasser,
+    setUpdatePayload,
+    setCampaign,
+    setCanvassingType,
+    setCanvasser,
+  } = useContext(CanvassingContext);
 
   const router = useRouter();
   const breadcrumb: EuiBreadcrumb[] = [
@@ -59,7 +65,7 @@ const CaptureType: FunctionComponent = () => {
     return (
       !data?.canvass?.activity ||
       !data?.canvass?.type ||
-      !data.canvass.key ||
+      !data?.canvass?.key ||
       !data?.canvass?.date
     );
   };
@@ -133,14 +139,15 @@ const CaptureType: FunctionComponent = () => {
       <EuiSpacer size="s" />
 
       <CanvasserSelect
-        lastCapturer={null} //TODO: Get lastCapturer from localStorage
+        canvasser={canvasser} //TODO: Get lastCapturer from localStorage
         onChange={update => {
           setUpdatePayload({
             field: 'canvass',
             data: {
-              key: update.key,
+              key: update?.key,
             },
           });
+          setCanvasser(update);
         }}
       />
 
