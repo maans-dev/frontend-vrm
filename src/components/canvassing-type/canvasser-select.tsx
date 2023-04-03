@@ -20,7 +20,7 @@ export type Props = {
   onChange: (canvasser: Partial<Person>) => void;
 };
 
-type CanvasserOption = 'ME' | 'LAST' | 'OTHER';
+type CanvasserOption = 'ME' | 'OTHER';
 
 const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
   const [selectedCanvasserOption, setSelectedCanvasserOption] =
@@ -73,14 +73,11 @@ const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
       key: undefined,
     });
 
-    if (option !== 'OTHER') {
-      setCanvasserSearchText('');
-      setFoundCanvasser(null);
-      setCanvasserSearchError('');
-    }
-
     switch (option) {
       case 'ME':
+        setCanvasserSearchText('');
+        setFoundCanvasser(null);
+        setCanvasserSearchError('');
         onChange({
           key: 123456789,
           givenName: 'JOHN',
@@ -88,8 +85,8 @@ const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
           dob: 19740830,
         });
         break;
-      case 'LAST':
-        // TODO: not implemented yet
+      case 'OTHER':
+        // This is handled in doCanvasserSearch()
         break;
     }
   };
