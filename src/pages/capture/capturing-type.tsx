@@ -139,7 +139,7 @@ const CaptureType: FunctionComponent = () => {
       <EuiSpacer size="s" />
 
       <CanvasserSelect
-        canvasser={canvasser} //TODO: Get lastCapturer from localStorage
+        canvasser={canvasser}
         onChange={update => {
           setUpdatePayload({
             field: 'canvass',

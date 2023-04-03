@@ -24,10 +24,13 @@ type CanvasserOption = 'ME' | 'LAST' | 'OTHER';
 
 const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
   const [selectedCanvasserOption, setSelectedCanvasserOption] =
-    useState<CanvasserOption>(canvasser ? 'OTHER' : null);
+    useState<CanvasserOption>(
+      canvasser ? (canvasser.key === 123456789 ? 'ME' : 'OTHER') : null
+    );
 
-  const [foundCanvasser, setFoundCanvasser] =
-    useState<Partial<Person>>(canvasser);
+  const [foundCanvasser, setFoundCanvasser] = useState<Partial<Person>>(
+    canvasser?.key === 123456789 ? null : canvasser
+  );
 
   const [canvasserSearchText, setCanvasserSearchText] = useState('');
 
@@ -127,7 +130,7 @@ const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
               css={{ cursor: 'pointer' }}
               onClick={() => handleChange('ME')}>
               {/* TODO: Get this from currently logged in user, once Auth is done */}
-              MR JOHN SMITH (42){' '}
+              JOHN SMITH (53){' '}
             </EuiText>
           </EuiCheckableCard>
         </EuiFlexItem>
