@@ -38,10 +38,12 @@ const CaptureType: FunctionComponent = () => {
   const {
     data,
     canvasser,
+    canvassDate,
     setUpdatePayload,
     setCampaign,
     setCanvassingType,
     setCanvasser,
+    setCanvassDate,
   } = useContext(CanvassingContext);
 
   const router = useRouter();
@@ -59,6 +61,7 @@ const CaptureType: FunctionComponent = () => {
         date: date?.isValid() ? date.format('YYYY-MM-DD') : null,
       },
     });
+    setCanvassDate(date);
   };
 
   const canSubmit = () => {
@@ -161,7 +164,7 @@ const CaptureType: FunctionComponent = () => {
         name="dob"
         placeholder="Select a date"
         dateFormat={['D MMM YYYY']}
-        selected={dob}
+        selected={canvassDate ? moment(canvassDate, 'YYYY-MM-DD') : null}
         maxDate={moment().add(2, 'years')}
         yearDropdownItemNumber={120}
         onChange={handleDOBChange}

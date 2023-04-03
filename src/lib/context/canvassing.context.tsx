@@ -17,6 +17,8 @@ import {
   useState,
 } from 'react';
 import { ToastContext } from './toast.context';
+import { Moment } from 'moment';
+import moment from 'moment';
 
 export type CanvassingContextType = {
   data: Partial<PersonUpdateRequest> & Partial<{ canvass: CanvassUpdate }>;
@@ -30,10 +32,12 @@ export type CanvassingContextType = {
   campaign: Campaign;
   canvassingType: ICanvassType;
   canvasser: Partial<Person>;
+  canvassDate: Moment;
   setPerson: (person: Person) => void;
   setCampaign: (campaign: Campaign) => void;
   setCanvassingType: (type: ICanvassType) => void;
-  setCanvasser: (type: Partial<Person>) => void;
+  setCanvasser: (canvasser: Partial<Person>) => void;
+  setCanvassDate: (data: Moment) => void;
   setUpdatePayload: (update: PersonUpdate<GeneralUpdate>) => void;
   nextId: () => number;
   submitUpdatePayload: () => void;
@@ -58,6 +62,7 @@ const CanvassingProvider = ({ children }) => {
   const [campaign, setCampaignInternal] = useState(null);
   const [canvassingType, setCanvassingTypeInternal] = useState(null);
   const [canvasser, setCanvasserTypeInternal] = useState(null);
+  const [canvassDate, setCanvassDateInternal] = useState(null);
   const [doFormReset, setDoFormReset] = useState(new Date());
   const { addToast } = useContext(ToastContext);
 
@@ -254,6 +259,13 @@ const CanvassingProvider = ({ children }) => {
     localStorage.setItem('canvasser', JSON.stringify(person));
     setCanvasserTypeInternal(person);
   };
+  const setCanvassDate = (date: Moment) => {
+    localStorage.setItem(
+      'canvassDate',
+      date ? date.format('YYYY-MM-DD') : null
+    );
+    setCanvassDateInternal(date);
+  };
 
   const checkIsDirty = updatedData =>
     updatedData && Object.keys(updatedData).length > 1
@@ -324,12 +336,15 @@ const CanvassingProvider = ({ children }) => {
       // remove local storage when not in canvassing or capture
       localStorage.removeItem('campaign');
       localStorage.removeItem('canvassType');
+      localStorage.removeItem('canvasser');
+      localStorage.removeItem('canvassDate');
       return;
     }
 
     const campaign = JSON.parse(localStorage.getItem('campaign')) || null;
     const type = JSON.parse(localStorage.getItem('canvassType')) || null;
     const canvasser = JSON.parse(localStorage.getItem('canvasser')) || null;
+    const canvassDate = localStorage.getItem('canvassDate') || null;
 
     // rediect to canvass/capture type page if campaign/type not set
     if (
@@ -347,17 +362,20 @@ const CanvassingProvider = ({ children }) => {
       setCampaign(campaign);
       setCanvassingType(type);
       setCanvasser(canvasser);
-      if (campaign && type) {
-        setData(prev => ({
-          canvass: {
-            ...prev?.canvass,
-            ...{
-              activity: campaign.key,
-              type: type.id,
-            },
-          },
-        }));
-      }
+      setCanvassDate(canvassDate ? moment(canvassDate) : null);
+
+      const canvassUpdate: CanvassUpdate = {};
+      if (campaign) canvassUpdate.activity = campaign.key;
+      if (type) canvassUpdate.type = type.id;
+      if (canvasser) canvassUpdate.key = canvasser.key;
+      if (canvassDate) canvassUpdate.date = canvassDate;
+
+      setData(prev => ({
+        canvass: {
+          ...prev?.canvass,
+          ...canvassUpdate,
+        },
+      }));
     }
   }, [router]);
 
@@ -380,10 +398,12 @@ const CanvassingProvider = ({ children }) => {
         campaign,
         canvassingType,
         canvasser,
+        canvassDate,
         setPerson,
         setCampaign,
         setCanvassingType,
         setCanvasser,
+        setCanvassDate,
         setUpdatePayload,
         nextId,
         submitUpdatePayload,
