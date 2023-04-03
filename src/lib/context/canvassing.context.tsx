@@ -248,19 +248,19 @@ const CanvassingProvider = ({ children }) => {
   };
 
   const setCampaign = (campaign: Campaign) => {
-    localStorage.setItem('campaign', JSON.stringify(campaign));
+    sessionStorage.setItem('campaign', JSON.stringify(campaign));
     setCampaignInternal(campaign);
   };
   const setCanvassingType = (type: ICanvassType) => {
-    localStorage.setItem('canvassType', JSON.stringify(type));
+    sessionStorage.setItem('canvassType', JSON.stringify(type));
     setCanvassingTypeInternal(type);
   };
   const setCanvasser = (person: Partial<Person>) => {
-    localStorage.setItem('canvasser', JSON.stringify(person));
+    sessionStorage.setItem('canvasser', JSON.stringify(person));
     setCanvasserTypeInternal(person);
   };
   const setCanvassDate = (date: Moment) => {
-    localStorage.setItem(
+    sessionStorage.setItem(
       'canvassDate',
       date ? date.format('YYYY-MM-DD') : null
     );
@@ -334,17 +334,17 @@ const CanvassingProvider = ({ children }) => {
 
     if (!captureRoute && !canvassRoute) {
       // remove local storage when not in canvassing or capture
-      localStorage.removeItem('campaign');
-      localStorage.removeItem('canvassType');
-      localStorage.removeItem('canvasser');
-      localStorage.removeItem('canvassDate');
+      sessionStorage.removeItem('campaign');
+      sessionStorage.removeItem('canvassType');
+      sessionStorage.removeItem('canvasser');
+      sessionStorage.removeItem('canvassDate');
       return;
     }
 
-    const campaign = JSON.parse(localStorage.getItem('campaign')) || null;
-    const type = JSON.parse(localStorage.getItem('canvassType')) || null;
-    const canvasser = JSON.parse(localStorage.getItem('canvasser')) || null;
-    const canvassDate = localStorage.getItem('canvassDate') || null;
+    const campaign = JSON.parse(sessionStorage.getItem('campaign')) || null;
+    const type = JSON.parse(sessionStorage.getItem('canvassType')) || null;
+    const canvasser = JSON.parse(sessionStorage.getItem('canvasser')) || null;
+    const canvassDate = sessionStorage.getItem('canvassDate') || null;
 
     // rediect to canvass/capture type page if campaign/type not set
     if (
