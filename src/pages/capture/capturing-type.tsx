@@ -29,7 +29,6 @@ const captureTypeData: ICaptureType[] = [
 const CaptureType: FunctionComponent = () => {
   const { campaignType, isLoading, error } = useCanvassTypeFetcher();
   const [campaignData, setCampaignData] = useState<Campaign[]>([]);
-  const [dob, setDob] = useState<Moment | null>(null);
 
   useEffect(() => {
     setCampaignData(campaignType);
@@ -54,7 +53,6 @@ const CaptureType: FunctionComponent = () => {
   ];
 
   const handleDOBChange = date => {
-    setDob(date);
     setUpdatePayload({
       field: 'canvass',
       data: {

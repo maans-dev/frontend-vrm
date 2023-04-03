@@ -248,23 +248,40 @@ const CanvassingProvider = ({ children }) => {
   };
 
   const setCampaign = (campaign: Campaign) => {
-    sessionStorage.setItem('campaign', JSON.stringify(campaign));
-    setCampaignInternal(campaign);
+    if (campaign) {
+      sessionStorage.setItem('campaign', JSON.stringify(campaign));
+      setCampaignInternal(campaign);
+    } else {
+      sessionStorage.removeItem('campaign');
+      setCampaignInternal(null);
+    }
   };
   const setCanvassingType = (type: ICanvassType) => {
-    sessionStorage.setItem('canvassType', JSON.stringify(type));
-    setCanvassingTypeInternal(type);
+    if (type) {
+      sessionStorage.setItem('canvassType', JSON.stringify(type));
+      setCanvassingTypeInternal(type);
+    } else {
+      sessionStorage.removeItem('canvassType');
+      setCanvassingTypeInternal(null);
+    }
   };
   const setCanvasser = (person: Partial<Person>) => {
-    sessionStorage.setItem('canvasser', JSON.stringify(person));
-    setCanvasserTypeInternal(person);
+    if (person && person.key) {
+      sessionStorage.setItem('canvasser', JSON.stringify(person));
+      setCanvasserTypeInternal(person);
+    } else {
+      sessionStorage.removeItem('canvasser');
+      setCanvasserTypeInternal(null);
+    }
   };
   const setCanvassDate = (date: Moment) => {
-    sessionStorage.setItem(
-      'canvassDate',
-      date ? date.format('YYYY-MM-DD') : null
-    );
-    setCanvassDateInternal(date);
+    if (date && date.isValid()) {
+      sessionStorage.setItem('canvassDate', date.format('YYYY-MM-DD'));
+      setCanvassDateInternal(date);
+    } else {
+      sessionStorage.removeItem('canvassDate');
+      setCanvassDateInternal(null);
+    }
   };
 
   const checkIsDirty = updatedData =>
@@ -362,7 +379,7 @@ const CanvassingProvider = ({ children }) => {
       setCampaign(campaign);
       setCanvassingType(type);
       setCanvasser(canvasser);
-      setCanvassDate(canvassDate ? moment(canvassDate) : null);
+      setCanvassDate(moment(canvassDate));
 
       const canvassUpdate: CanvassUpdate = {};
       if (campaign) canvassUpdate.activity = campaign.key;
