@@ -9,7 +9,7 @@ import {
 } from '@elastic/eui';
 import moment from 'moment';
 import router from 'next/router';
-import { css, Global } from '@emotion/react';
+import { css } from '@emotion/react';
 import { Person } from '@lib/domain/person';
 
 export type Props = {

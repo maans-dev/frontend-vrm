@@ -17,7 +17,7 @@ import CanvassingTypeSelect from '@components/canvassing-type/canvassing-type-se
 import { CanvassingContext } from '@lib/context/canvassing.context';
 import useCanvassTypeFetcher from '@lib/fetcher/campaign-type/campaign';
 import { Campaign } from '@lib/domain/person';
-import moment, { Moment } from 'moment';
+import moment from 'moment';
 import { ICaptureType } from '@lib/domain/capturer';
 import CanvasserSelect from '@components/canvassing-type/canvasser-select';
 

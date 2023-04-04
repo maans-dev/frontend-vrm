@@ -189,7 +189,8 @@ const CanvassingProvider = ({ children }) => {
       const requestBody = cloneDeep(data);
       requestBody.key = person.key;
       requestBody.username = 17888131; // TODO: Get this from logged in user
-      if (!requestBody?.canvass?.date) requestBody.canvass.date = new Date();
+      if (!requestBody?.canvass?.date)
+        requestBody.canvass.date = moment().format('YYYY-DD-MM');
       if (!requestBody?.canvass?.key) requestBody.canvass.key = 17888131; // TODO: Get this from logged in user
       // remove numeric keys as these represent new items
       if ('comments' in data) {
@@ -299,6 +300,8 @@ const CanvassingProvider = ({ children }) => {
       canvass: {
         activity: prev?.canvass?.activity,
         type: prev?.canvass?.type,
+        date: prev?.canvass?.date,
+        key: prev?.canvass?.key,
       },
     }));
     setServerError('');
@@ -327,6 +330,8 @@ const CanvassingProvider = ({ children }) => {
         canvass: {
           activity: prev?.canvass?.activity,
           type: prev?.canvass?.type,
+          date: prev?.canvass?.date,
+          key: prev?.canvass?.key,
         },
       }));
       setServerError('');
@@ -358,24 +363,30 @@ const CanvassingProvider = ({ children }) => {
       return;
     }
 
-    const campaign = JSON.parse(sessionStorage.getItem('campaign')) || null;
-    const type = JSON.parse(sessionStorage.getItem('canvassType')) || null;
-    const canvasser = JSON.parse(sessionStorage.getItem('canvasser')) || null;
-    const canvassDate = sessionStorage.getItem('canvassDate') || null;
-
     // rediect to canvass/capture type page if campaign/type not set
-    if (
-      (canvassRoute && router.route !== '/canvass/canvassing-type') ||
-      (captureRoute && router.route !== '/capture/capturing-type')
-    ) {
-      if (!campaign || !type) {
-        router.push(
-          canvassRoute ? '/canvass/canvassing-type' : '/capture/capturing-type'
-        );
-      }
-    }
+    // if (
+    //   (canvassRoute && router.route !== '/canvass/canvassing-type') ||
+    //   (captureRoute && router.route !== '/capture/capturing-type')
+    // ) {
+    //   if (!campaign || !type) {
+    //     router.push(
+    //       canvassRoute ? '/canvass/canvassing-type' : '/capture/capturing-type'
+    //     );
+    //   }
+    // }
 
-    if (!data?.canvass || !data?.canvass?.activity || !data?.canvass?.type) {
+    if (
+      !data?.canvass ||
+      !data?.canvass?.activity ||
+      !data?.canvass?.type ||
+      !data?.canvass?.date ||
+      !data?.canvass?.key
+    ) {
+      const campaign = JSON.parse(sessionStorage.getItem('campaign')) || null;
+      const type = JSON.parse(sessionStorage.getItem('canvassType')) || null;
+      const canvasser = JSON.parse(sessionStorage.getItem('canvasser')) || null;
+      const canvassDate = sessionStorage.getItem('canvassDate') || null;
+
       setCampaign(campaign);
       setCanvassingType(type);
       setCanvasser(canvasser);
