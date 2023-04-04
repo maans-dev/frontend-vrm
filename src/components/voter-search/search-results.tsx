@@ -83,6 +83,7 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
       name: 'DOB (Age)',
       valign: 'top',
       dataType: 'date',
+      width: '150px',
       render: (dob: Person['dob']) =>
         `${moment(dob, 'YYYYMMDD').format('D MMM YYYY')} (${moment().diff(
           moment(dob, 'YYYYMMDD'),
@@ -108,11 +109,14 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
       valign: 'top',
       name: 'Living VD',
       css: { minWidth: '100px' },
-      render: (vd: Person['livingStructure']) => (
-        <div>
-          {vd?.votingDistrict} ({vd?.votingDistrict_id})
-        </div>
-      ),
+      render: (vd: Person['livingStructure']) => {
+        if (!vd?.votingDistrict) return null;
+        return (
+          <div>
+            {vd?.votingDistrict} ({vd?.votingDistrict_id})
+          </div>
+        );
+      },
       mobileOptions: {
         show: false,
       },
@@ -123,7 +127,7 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
       valign: 'top',
       render: (color: Person['colourCode']) => (
         <EuiBadge
-          css={{ color: 'white !important' }}
+          // css={{ color: 'white !important' }}
           color={`#${color.colour}`}>
           {color.description}
         </EuiBadge>
@@ -147,11 +151,14 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
       name: 'Registered VD',
       valign: 'top',
       css: { minWidth: '100px' },
-      render: (vd: Person['registeredStructure']) => (
-        <div>
-          {vd?.votingDistrict} ({vd?.votingDistrict_id})
-        </div>
-      ),
+      render: (vd: Person['registeredStructure']) => {
+        if (!vd?.votingDistrict) return null;
+        return (
+          <div>
+            {vd?.votingDistrict} ({vd?.votingDistrict_id})
+          </div>
+        );
+      },
       mobileOptions: {
         show: false,
       },
@@ -178,26 +185,26 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
 
   return (
     <>
-      {isMobile ? (
-        <Global
-          styles={css`
-            .voter-search .euiTable {
-              line-height: 1.4rem;
-            }
-            .voter-search .euiTable.euiTable--responsive .euiTableRow {
-              padding: 5px;
-              padding-left: 10px;
-              border: 1px solid lightgrey;
-            }
-            .voter-search .euiTableCellContent {
-              padding: 0;
-              font-size: 12px;
-            }
-          `}
-        />
-      ) : null}
       <EuiBasicTable
         className="voter-search"
+        css={
+          isMobile
+            ? css`
+                .euiTable {
+                  line-height: 1.4rem;
+                }
+                .euiTable.euiTable--responsive .euiTableRow {
+                  padding: 5px;
+                  padding-left: 10px;
+                  border: 1px solid lightgrey;
+                }
+                .euiTableCellContent {
+                  padding: 0;
+                  font-size: 12px;
+                }
+              `
+            : null
+        }
         tableCaption="Voter search results"
         items={results}
         rowHeader="darn"
