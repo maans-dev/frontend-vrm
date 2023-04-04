@@ -13,7 +13,7 @@ import {
 import { css } from '@emotion/react';
 import { Person } from '@lib/domain/person';
 import moment from 'moment';
-import { ChangeEvent, FunctionComponent, useState } from 'react';
+import { ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
 
 export type Props = {
   canvasser?: Partial<Person>;
@@ -96,6 +96,10 @@ const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
     onChange(null);
     setCanvasserSearchText('');
   };
+
+  useEffect(() => {
+    if (canvasserSearchText.length === 13) doCanvasserSearch();
+  }, [canvasserSearchText]);
 
   return (
     <>
