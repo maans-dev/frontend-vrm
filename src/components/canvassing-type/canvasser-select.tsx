@@ -206,7 +206,7 @@ const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
                     disabled={selectedCanvasserOption !== 'OTHER'}
                     onClick={handleClear}>
                     {' '}
-                    Clear
+                    Change
                   </EuiButtonEmpty>
                 </EuiFlexItem>
               </EuiFlexGroup>
