@@ -281,6 +281,7 @@ const CanvassingProvider = ({ children }) => {
           givenName: person.givenName,
           firstName: person.firstName,
           surname: person.surname,
+          dob: person.dob,
         })
       );
       setCanvasserTypeInternal(person);
@@ -377,18 +378,6 @@ const CanvassingProvider = ({ children }) => {
       return;
     }
 
-    // rediect to canvass/capture type page if campaign/type not set
-    // if (
-    //   (canvassRoute && router.route !== '/canvass/canvassing-type') ||
-    //   (captureRoute && router.route !== '/capture/capturing-type')
-    // ) {
-    //   if (!campaign || !type) {
-    //     router.push(
-    //       canvassRoute ? '/canvass/canvassing-type' : '/capture/capturing-type'
-    //     );
-    //   }
-    // }
-
     if (
       !data?.canvass ||
       !data?.canvass?.activity ||
@@ -418,6 +407,18 @@ const CanvassingProvider = ({ children }) => {
           ...canvassUpdate,
         },
       }));
+    }
+
+    // rediect to canvass/capture type page if campaign/type not set
+    if (
+      (canvassRoute && router.route !== '/canvass/canvassing-type') ||
+      (captureRoute && router.route !== '/capture/capturing-type')
+    ) {
+      if (!campaign || !canvassingType) {
+        router.push(
+          canvassRoute ? '/canvass/canvassing-type' : '/capture/capturing-type'
+        );
+      }
     }
   }, [router]);
 

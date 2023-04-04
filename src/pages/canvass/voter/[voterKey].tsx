@@ -24,6 +24,7 @@ import Affiliation from '@components/affiliation/affiliation';
 import ContactDetails from '@components/contact-details/contact-details';
 import { GeneralUpdate, PersonUpdate } from '@lib/domain/person-update';
 import { CanvassingContext } from '@lib/context/canvassing.context';
+import { CanvassingSelectionDetails } from '@components/canvassing-type/canvassing-selection-details';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
@@ -156,6 +157,8 @@ const Voter: FunctionComponent = () => {
             <VoterTags fields={person.fields} onChange={onChange} />
           </EuiFormRow>
         </EuiFormFieldset>
+        <EuiSpacer />
+        <CanvassingSelectionDetails />
         <EuiSpacer />
         {formActions}
       </EuiForm>
