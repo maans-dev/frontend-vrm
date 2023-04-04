@@ -174,6 +174,7 @@ const CaptureType: FunctionComponent = () => {
         minDate={moment().subtract(2, 'years')}
         maxDate={moment()}
         onChange={handleDOBChange}
+        autoComplete="off"
       />
 
       <EuiSpacer size="l" />
