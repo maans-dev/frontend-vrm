@@ -250,7 +250,13 @@ const CanvassingProvider = ({ children }) => {
 
   const setCampaign = (campaign: Campaign) => {
     if (campaign) {
-      sessionStorage.setItem('campaign', JSON.stringify(campaign));
+      sessionStorage.setItem(
+        'campaign',
+        JSON.stringify({
+          key: campaign.key,
+          name: campaign.name,
+        })
+      );
       setCampaignInternal(campaign);
     } else {
       sessionStorage.removeItem('campaign');
@@ -268,7 +274,15 @@ const CanvassingProvider = ({ children }) => {
   };
   const setCanvasser = (person: Partial<Person>) => {
     if (person && person.key) {
-      sessionStorage.setItem('canvasser', JSON.stringify(person));
+      sessionStorage.setItem(
+        'canvasser',
+        JSON.stringify({
+          key: person.key,
+          givenName: person.givenName,
+          firstName: person.firstName,
+          surname: person.surname,
+        })
+      );
       setCanvasserTypeInternal(person);
     } else {
       sessionStorage.removeItem('canvasser');
