@@ -159,12 +159,20 @@ const CaptureType: FunctionComponent = () => {
       </EuiText>
       <EuiSpacer size="s" />
       <EuiDatePicker
+        css={
+          canvassDate
+            ? {
+                boxShadow:
+                  '0 0 transparent, inset 0 0 0 1px #155FA2 !important',
+              }
+            : null
+        }
         name="dob"
         placeholder="Select a date"
         dateFormat={['D MMM YYYY']}
         selected={canvassDate ? moment(canvassDate, 'YYYY-MM-DD') : null}
-        maxDate={moment().add(2, 'years')}
-        yearDropdownItemNumber={120}
+        minDate={moment().subtract(2, 'years')}
+        maxDate={moment()}
         onChange={handleDOBChange}
       />
 
