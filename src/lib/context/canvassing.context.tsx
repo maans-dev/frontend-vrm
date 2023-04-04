@@ -61,7 +61,7 @@ const CanvassingProvider = ({ children }) => {
   const router = useRouter();
   const [campaign, setCampaignInternal] = useState(null);
   const [canvassingType, setCanvassingTypeInternal] = useState(null);
-  const [canvasser, setCanvasserTypeInternal] = useState(null);
+  const [canvasser, setCanvasserInternal] = useState(null);
   const [canvassDate, setCanvassDateInternal] = useState(null);
   const [doFormReset, setDoFormReset] = useState(new Date());
   const { addToast } = useContext(ToastContext);
@@ -284,10 +284,10 @@ const CanvassingProvider = ({ children }) => {
           dob: person.dob,
         })
       );
-      setCanvasserTypeInternal(person);
+      setCanvasserInternal(person);
     } else {
       sessionStorage.removeItem('canvasser');
-      setCanvasserTypeInternal(null);
+      setCanvasserInternal(null);
     }
   };
   const setCanvassDate = (date: Moment) => {
@@ -378,6 +378,12 @@ const CanvassingProvider = ({ children }) => {
       return;
     }
 
+    // TODO: this smells bad as these vars shadow the state vars.
+    const campaign = JSON.parse(sessionStorage.getItem('campaign')) || null;
+    const type = JSON.parse(sessionStorage.getItem('canvassType')) || null;
+    const canvasser = JSON.parse(sessionStorage.getItem('canvasser')) || null;
+    const canvassDate = sessionStorage.getItem('canvassDate') || null;
+
     if (
       !data?.canvass ||
       !data?.canvass?.activity ||
@@ -385,11 +391,6 @@ const CanvassingProvider = ({ children }) => {
       !data?.canvass?.date ||
       !data?.canvass?.key
     ) {
-      const campaign = JSON.parse(sessionStorage.getItem('campaign')) || null;
-      const type = JSON.parse(sessionStorage.getItem('canvassType')) || null;
-      const canvasser = JSON.parse(sessionStorage.getItem('canvasser')) || null;
-      const canvassDate = sessionStorage.getItem('canvassDate') || null;
-
       setCampaign(campaign);
       setCanvassingType(type);
       setCanvasser(canvasser);
@@ -414,7 +415,7 @@ const CanvassingProvider = ({ children }) => {
       (canvassRoute && router.route !== '/canvass/canvassing-type') ||
       (captureRoute && router.route !== '/capture/capturing-type')
     ) {
-      if (!campaign || !canvassingType) {
+      if (!campaign || !type) {
         router.push(
           canvassRoute ? '/canvass/canvassing-type' : '/capture/capturing-type'
         );
