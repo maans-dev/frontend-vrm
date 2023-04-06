@@ -76,6 +76,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address }) => {
           <EuiFormRow display="rowCompressed" label="Address on File">
             <EuiFieldText
               compressed
+              readOnly
               disabled
               value={address?.formatted || 'Unknown'}
             />
@@ -83,7 +84,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address }) => {
         </EuiFlexItem>
         {address?.latitude && (
           <EuiFormRow display="rowCompressed" label="Address Geocoded">
-            <EuiButton type="submit" iconType={FaThumbtack} fill>
+            <EuiButton type="submit" iconType={FaThumbtack} size="s">
               {address?.latitude} {address?.longitude}
             </EuiButton>
           </EuiFormRow>

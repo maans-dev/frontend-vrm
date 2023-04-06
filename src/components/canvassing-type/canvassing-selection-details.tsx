@@ -1,4 +1,10 @@
-import { EuiCallOut, EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
+import {
+  EuiCallOut,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiPanel,
+  EuiText,
+} from '@elastic/eui';
 import { CanvassingContext } from '@lib/context/canvassing.context';
 import moment from 'moment';
 import { FunctionComponent, useContext } from 'react';
@@ -8,12 +14,15 @@ export const CanvassingSelectionDetails: FunctionComponent = () => {
     useContext(CanvassingContext);
 
   return (
-    <EuiCallOut iconType="iInCircle" size="s">
+    <EuiPanel
+      hasShadow={false}
+      hasBorder={true}
+      css={{ background: '#D0DFEC' }}>
       <EuiFlexGroup
         direction="row"
         responsive={false}
         gutterSize="m"
-        justifyContent="spaceEvenly"
+        justifyContent="spaceBetween"
         css={{ marginInline: '8px' }}
         wrap={false}>
         <EuiFlexItem grow={false}>
@@ -40,6 +49,6 @@ export const CanvassingSelectionDetails: FunctionComponent = () => {
           </EuiFlexItem>
         )}
       </EuiFlexGroup>
-    </EuiCallOut>
+    </EuiPanel>
   );
 };

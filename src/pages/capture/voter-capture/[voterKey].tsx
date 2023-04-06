@@ -108,7 +108,10 @@ const Voter: FunctionComponent = () => {
   // }
 
   return (
-    <MainLayout breadcrumb={breadcrumb} showSpinner={isSubmitting}>
+    <MainLayout
+      breadcrumb={breadcrumb}
+      panelled={false}
+      showSpinner={isSubmitting}>
       {/* {isComplete && successModal} */}
       <EuiPanel>
         <VoterInfo

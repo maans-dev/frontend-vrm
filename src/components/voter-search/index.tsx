@@ -49,7 +49,7 @@ const VoterSearch: FunctionComponent<Props> = ({ breadcrumb }) => {
   return (
     <MainLayout
       breadcrumb={breadcrumb}
-      panelled={true}
+      panelled={false}
       restrictWidth={results === null || results === undefined ? true : false}
       showSpinner={isLoading || results?.length === 1}>
       {!isLoading || results?.length > 1 ? (

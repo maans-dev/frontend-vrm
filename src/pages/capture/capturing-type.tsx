@@ -100,7 +100,7 @@ const CaptureType: FunctionComponent = () => {
   }
 
   return (
-    <MainLayout breadcrumb={breadcrumb}>
+    <MainLayout breadcrumb={breadcrumb} panelled={false}>
       <Global
         styles={css`
           li.euiSelectableListItem[aria-checked='true'] {

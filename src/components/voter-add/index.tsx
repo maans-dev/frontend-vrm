@@ -244,8 +244,8 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
     <>
       <EuiEmptyPrompt
         iconType={AiOutlineUserAdd}
+        iconColor="primary"
         paddingSize="m"
-        color="transparent"
         title={
           notFound ? (
             <h2>
@@ -265,7 +265,7 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
         }
         hasShadow={true}
         actions={[
-          <EuiButton key={2} size="s" color="primary" fill onClick={showModal}>
+          <EuiButton key={2} size="s" color="primary" onClick={showModal}>
             Add a new voter
           </EuiButton>,
         ]}

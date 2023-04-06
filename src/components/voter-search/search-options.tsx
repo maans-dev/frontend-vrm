@@ -196,12 +196,12 @@ const SearchOptions: FunctionComponent<Props> = ({
     <>
       <EuiFlexGroup justifyContent="flexEnd">
         <EuiFlexItem grow={false}>
-          <EuiButton iconType="search" onClick={showModal} size="s">
+          <EuiButton iconType="search" onClick={showModal} fill size="m">
             Search again
           </EuiButton>
         </EuiFlexItem>
       </EuiFlexGroup>
-      <EuiSpacer />
+      <EuiSpacer size="s" />
       {modal}
     </>
   );

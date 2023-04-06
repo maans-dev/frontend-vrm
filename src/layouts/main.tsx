@@ -65,7 +65,6 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
         style={{
           paddingTop: showSubHeader ? '96px' : '0px',
         }}
-        // css={{ minHeight: 'calc(100vh -  96px)' }}
         panelled={panelled}
         restrictWidth={true}
         {...rest}>
