@@ -112,7 +112,7 @@ const Voter: FunctionComponent = () => {
       {/* {isComplete && successModal} */}
       <EuiPanel>
         <VoterInfo
-          darn={person.key}
+          darn={person?.key}
           salutation={person.salutation}
           givenName={person.givenName || person.firstName}
           surname={person.surname}
@@ -136,11 +136,14 @@ const Voter: FunctionComponent = () => {
         <EuiSpacer />
         <EuiFormFieldset legend={{ children: 'Contact details' }}>
           <ContactDetails
+            deceased={person.deceased}
             language={person.language}
             contacts={person.contacts}
             onLanguageChange={onChange}
             onPhoneChange={onChange}
             onEmailChange={onChange}
+            onPersonChange={onChange}
+            onDeceasedChange={onChange}
           />
         </EuiFormFieldset>
         <EuiSpacer />

@@ -1,11 +1,20 @@
 import EmailAddress from '@components/form/email-address';
 import PhoneNumbers from '@components/form/phone-numbers';
-import { EuiComboBox, EuiFormRow } from '@elastic/eui';
+import {
+  EuiComboBox,
+  EuiFieldText,
+  EuiFormFieldset,
+  EuiFormRow,
+  EuiSpacer,
+  EuiSwitch,
+} from '@elastic/eui';
 import { EmailContact } from '@lib/domain/email-address';
-import { Contact } from '@lib/domain/person';
+import { Contact, Person } from '@lib/domain/person';
 import { Language } from '@lib/domain/person-enum';
 import {
+  DeceasedUpdate,
   EmailUpdate,
+  GivenNameUpdate,
   LanguageUpdate,
   PersonUpdate,
   PhoneUpdate,
@@ -13,13 +22,17 @@ import {
 import { PhoneContact } from '@lib/domain/phone-numbers';
 import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
 import { FunctionComponent, useState } from 'react';
+import { useRef } from 'react';
 
 interface Props {
   language: string;
   contacts: Contact[];
+  deceased: boolean;
   onLanguageChange: (update: PersonUpdate<LanguageUpdate>) => void;
   onPhoneChange: (update: PersonUpdate<PhoneUpdate>) => void;
   onEmailChange: (update: PersonUpdate<EmailUpdate>) => void;
+  onPersonChange: (update: PersonUpdate<GivenNameUpdate>) => void;
+  onDeceasedChange: (update: PersonUpdate<DeceasedUpdate>) => void;
 }
 
 function getLanguageEnumValue(language: string): Language {
@@ -59,6 +72,9 @@ const ContactDetails: FunctionComponent<Props> = ({
   onLanguageChange,
   onPhoneChange,
   onEmailChange,
+  deceased,
+  onPersonChange,
+  onDeceasedChange,
 }) => {
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(
     getLanguageEnumValue(language)
@@ -67,6 +83,11 @@ const ContactDetails: FunctionComponent<Props> = ({
     label: languageOption,
     value: languageOption,
   }));
+  const [decease, setDecease] = useState<boolean>(deceased);
+  const [name, setName] = useState<string>('');
+  // Store the initial value of 'deceased' in a ref
+  const initialDeceasedValue = useRef<boolean>(deceased);
+
   // const { registerResetHandler } = useContext(CanvassingContext);
 
   const handleLanguageChange = (
@@ -167,8 +188,27 @@ const ContactDetails: FunctionComponent<Props> = ({
     onEmailChange({ field: 'contacts', data: update });
   };
 
+  const handleDeceasedChange = e => {
+    const value = e.target.checked;
+    setDecease(value);
+    const update: PersonUpdate<DeceasedUpdate> = {
+      field: 'deceased',
+      data: value === initialDeceasedValue.current ? null : value,
+    };
+    onDeceasedChange(update);
+  };
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+    const update: PersonUpdate<GivenNameUpdate> = {
+      field: 'givenName',
+      data: e.target.value,
+    };
+    onPersonChange(update);
+  };
+
   useCanvassFormReset(() => {
     setSelectedLanguage(getLanguageEnumValue(language));
+    setDecease(initialDeceasedValue.current);
     setPhoneContacts(
       contacts
         .filter(contact => contact.category !== 'EMAIL')
@@ -195,6 +235,30 @@ const ContactDetails: FunctionComponent<Props> = ({
 
   return (
     <>
+      <EuiFormRow display="rowCompressed" label="Prefferred name">
+        <EuiFieldText
+          id="preferredName"
+          name="preferredName"
+          compressed
+          autoComplete="off"
+          value={name}
+          placeholder="Enter a preferred name"
+          onChange={handleNameChange}
+        />
+      </EuiFormRow>
+
+      <EuiSpacer size="m" />
+      <EuiSwitch
+        label="Deceased?"
+        compressed
+        checked={decease}
+        name="deceased"
+        aria-label="Toggle deceased status"
+        onChange={handleDeceasedChange}
+      />
+
+      <EuiSpacer size="m" />
+
       <EuiFormRow display="rowCompressed" label="Language">
         <EuiComboBox
           compressed

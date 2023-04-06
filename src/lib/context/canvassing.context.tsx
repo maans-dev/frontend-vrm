@@ -69,8 +69,9 @@ const CanvassingProvider = ({ children }) => {
   const setPerson = (person: Person) => setPersonInternal(person);
 
   const setUpdatePayload = (update: PersonUpdate<GeneralUpdate>) => {
+    console.log(update, 'update');
     // data is not an object and must be deleted
-    if (!update.data) {
+    if (update.data === null) {
       setData(prev => {
         delete prev[update.field];
         checkIsDirty(prev);
@@ -190,7 +191,7 @@ const CanvassingProvider = ({ children }) => {
       requestBody.key = person.key;
       requestBody.username = 17888131; // TODO: Get this from logged in user
       if (!requestBody?.canvass?.date)
-        requestBody.canvass.date = moment().format('YYYY-DD-MM');
+        requestBody.canvass.date = moment().format('YYYY-MM-DD');
       if (!requestBody?.canvass?.key) requestBody.canvass.key = 17888131; // TODO: Get this from logged in user
       // remove numeric keys as these represent new items
       if ('comments' in data) {
@@ -327,7 +328,8 @@ const CanvassingProvider = ({ children }) => {
   useEffect(() => {
     if (
       !router.asPath.includes('/canvass') &&
-      !router.asPath.includes('/capture')
+      !router.asPath.includes('/capture') &&
+      !router.asPath.includes('/cleanup')
     ) {
       setIsComplete(false);
       setPerson(null);
@@ -354,11 +356,12 @@ const CanvassingProvider = ({ children }) => {
     }
     if (
       router.asPath.includes('/voter-search') ||
-      router.asPath.includes('/capturing-search')
+      router.asPath.includes('/capturing-search') ||
+      router.asPath.includes('/cleanup-search')
     ) {
       setData(prev => {
         return {
-          canvass: prev.canvass,
+          canvass: prev?.canvass,
         };
       });
       setPerson(null);
