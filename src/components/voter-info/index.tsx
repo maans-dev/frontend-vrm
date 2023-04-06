@@ -59,14 +59,14 @@ const VoterInfo: FunctionComponent<Props> = ({
         <EuiFlexItem grow={false}>
           <EuiBadge
             color={
-              colourCode.colour === 'FFFFFF'
+              colourCode?.colour === 'FFFFFF'
                 ? 'hollow'
-                : `#${colourCode.colour}`
+                : `#${colourCode?.colour || 'hollow'}`
             }
             iconType={
-              colourCode.name == 'Green' ? 'checkInCircleFilled' : null
+              colourCode?.name == 'Green' ? 'checkInCircleFilled' : null
             }>
-            {colourCode.description}
+            {colourCode?.description}
           </EuiBadge>
         </EuiFlexItem>
       </EuiFlexGroup>

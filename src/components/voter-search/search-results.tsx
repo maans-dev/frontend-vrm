@@ -2,15 +2,16 @@ import { FunctionComponent } from 'react';
 import {
   EuiBasicTableColumn,
   EuiBasicTable,
-  EuiText,
   EuiBadge,
   Criteria,
   useIsWithinBreakpoints,
+  EuiSpacer,
 } from '@elastic/eui';
 import moment from 'moment';
 import router from 'next/router';
 import { css } from '@emotion/react';
 import { Person } from '@lib/domain/person';
+import VoterAdd from '@components/voter-add';
 
 export type Props = {
   results?: Person[];
@@ -221,10 +222,14 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
         onChange={onTableChange}
         noItemsMessage={
           <>
-            <EuiText>No voter&apos;s found. Please search again.</EuiText>
+            <EuiSpacer />
+            <VoterAdd notFound />
+            <EuiSpacer />
           </>
         }
       />
+      <EuiSpacer />
+      {results?.length > 0 && <VoterAdd />}
     </>
   );
 };
