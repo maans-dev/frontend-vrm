@@ -29,13 +29,20 @@ const VoterSearch: FunctionComponent<Props> = ({ breadcrumb }) => {
   };
 
   useEffect(() => {
-    if (router.pathname === '/canvass/voter-search' && results?.length === 1) {
-      router.push(`/canvass/voter/${results[0].key}`);
-    } else if (
-      router.pathname === '/capture/capturing-search' &&
-      results?.length === 1
-    ) {
-      router.push(`/capture/voter-capture/${results[0].key}`);
+    const redirectBasePath = {
+      '/canvass/voter-search': '/canvass/voter',
+      '/capture/capturing-search': '/capture/voter-capture',
+      '/cleanup/cleanup-search': '/cleanup/voter-cleanup',
+    };
+
+    const currentPath = router.pathname;
+    const basePath = Object.keys(redirectBasePath).find(path =>
+      currentPath.includes(path)
+    );
+
+    if (basePath && results?.length === 1) {
+      const redirectUrl = `${redirectBasePath[basePath]}/${results[0].key}`;
+      router.push(redirectUrl);
     }
   }, [results, router, router.pathname]);
 

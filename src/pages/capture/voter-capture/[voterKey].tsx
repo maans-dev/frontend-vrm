@@ -136,11 +136,14 @@ const Voter: FunctionComponent = () => {
         <EuiSpacer />
         <EuiFormFieldset legend={{ children: 'Contact details' }}>
           <ContactDetails
+            deceased={person.deceased}
             language={person?.language}
             contacts={person?.contacts}
             onLanguageChange={onChange}
             onPhoneChange={onChange}
             onEmailChange={onChange}
+            onPersonChange={onChange}
+            onDeceasedChange={onChange}
           />
         </EuiFormFieldset>
         <EuiSpacer />
