@@ -233,7 +233,7 @@ const ContactDetails: FunctionComponent<Props> = ({
     );
   });
 
-  // TODO: This is a hack to force these values to update themselves after saving and reloading the same voter. 
+  // TODO: This is a hack to force these values to update themselves after saving and reloading the same voter.
   // We need to figure out why these values only update when doing a hard refresh!
   useEffect(() => {
     setSelectedLanguage(getLanguageEnumValue(language));
