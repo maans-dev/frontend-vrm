@@ -31,10 +31,6 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
   };
 
   const getRowProps = (voter: Person) => {
-    const isCapturePage = router.pathname.includes('/capture/');
-    const isCleanupPage = router.pathname.includes('/cleanup/');
-    const isCanvassPage = router.pathname.includes('/canvass');
-
     return {
       'data-test-subj': `row-${voter.key}`,
       className: 'voter-search-row',
@@ -44,13 +40,7 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
           : null,
       },
       onClick: () => {
-        if (isCapturePage) {
-          router.push(`/capture/voter-capture/${voter.key}`);
-        } else if (isCleanupPage) {
-          router.push(`/cleanup/voter-cleanup/${voter.key}`);
-        } else if (isCanvassPage) {
-          router.push(`/canvass/voter/${voter.key}`);
-        }
+        router.push(`voter/${voter.key}`);
       },
     };
   };
