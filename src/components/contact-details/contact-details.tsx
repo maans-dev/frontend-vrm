@@ -3,13 +3,12 @@ import PhoneNumbers from '@components/form/phone-numbers';
 import {
   EuiComboBox,
   EuiFieldText,
-  EuiFormFieldset,
   EuiFormRow,
   EuiSpacer,
   EuiSwitch,
 } from '@elastic/eui';
 import { EmailContact } from '@lib/domain/email-address';
-import { Contact, Person } from '@lib/domain/person';
+import { Contact } from '@lib/domain/person';
 import { Language } from '@lib/domain/person-enum';
 import {
   DeceasedUpdate,
@@ -22,12 +21,12 @@ import {
 import { PhoneContact } from '@lib/domain/phone-numbers';
 import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
 import { FunctionComponent, useState } from 'react';
-import { useRef } from 'react';
 
 interface Props {
   language: string;
   contacts: Contact[];
   deceased: boolean;
+  givenName: string;
   onLanguageChange: (update: PersonUpdate<LanguageUpdate>) => void;
   onPhoneChange: (update: PersonUpdate<PhoneUpdate>) => void;
   onEmailChange: (update: PersonUpdate<EmailUpdate>) => void;
@@ -73,6 +72,7 @@ const ContactDetails: FunctionComponent<Props> = ({
   onPhoneChange,
   onEmailChange,
   deceased,
+  givenName,
   onPersonChange,
   onDeceasedChange,
 }) => {
@@ -83,10 +83,8 @@ const ContactDetails: FunctionComponent<Props> = ({
     label: languageOption,
     value: languageOption,
   }));
-  const [decease, setDecease] = useState<boolean>(deceased);
-  const [name, setName] = useState<string>('');
-  // Store the initial value of 'deceased' in a ref
-  const initialDeceasedValue = useRef<boolean>(deceased);
+  const [deceasedInternal, setDeceasedInternal] = useState<boolean>(deceased);
+  const [givenNameInternal, setGivenNameInternal] = useState<string>(givenName);
 
   // const { registerResetHandler } = useContext(CanvassingContext);
 
@@ -190,15 +188,15 @@ const ContactDetails: FunctionComponent<Props> = ({
 
   const handleDeceasedChange = e => {
     const value = e.target.checked;
-    setDecease(value);
+    setDeceasedInternal(value);
     const update: PersonUpdate<DeceasedUpdate> = {
       field: 'deceased',
-      data: value === initialDeceasedValue.current ? null : value,
+      data: value === deceased ? null : value,
     };
     onDeceasedChange(update);
   };
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
+  const handleGivenNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setGivenNameInternal(e.target.value);
     const update: PersonUpdate<GivenNameUpdate> = {
       field: 'givenName',
       data: e.target.value,
@@ -208,7 +206,8 @@ const ContactDetails: FunctionComponent<Props> = ({
 
   useCanvassFormReset(() => {
     setSelectedLanguage(getLanguageEnumValue(language));
-    setDecease(initialDeceasedValue.current);
+    setDeceasedInternal(deceased);
+    setGivenNameInternal(givenName);
     setPhoneContacts(
       contacts
         .filter(contact => contact.category !== 'EMAIL')
@@ -235,15 +234,15 @@ const ContactDetails: FunctionComponent<Props> = ({
 
   return (
     <>
-      <EuiFormRow display="rowCompressed" label="Prefferred name">
+      <EuiFormRow display="rowCompressed" label="Preferred name">
         <EuiFieldText
           id="preferredName"
           name="preferredName"
           compressed
           autoComplete="off"
-          value={name}
+          value={givenNameInternal}
           placeholder="Enter a preferred name"
-          onChange={handleNameChange}
+          onChange={handleGivenNameChange}
         />
       </EuiFormRow>
 
@@ -251,7 +250,7 @@ const ContactDetails: FunctionComponent<Props> = ({
       <EuiSwitch
         label="Deceased?"
         compressed
-        checked={decease}
+        checked={deceasedInternal}
         name="deceased"
         aria-label="Toggle deceased status"
         onChange={handleDeceasedChange}

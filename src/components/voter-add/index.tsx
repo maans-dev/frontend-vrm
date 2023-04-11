@@ -88,7 +88,7 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
     if (reqPayload.dob === '') delete reqPayload.dob;
     if (reqPayload.idNumber === '') delete reqPayload.idNumber;
 
-    (reqPayload as any).username = 123456789;
+    (reqPayload as any).username = 123456789; // TODO: Get this from authenticated user.
     console.log('[PERSON CREATE REQUEST]', reqPayload);
 
     const response = await fetch(

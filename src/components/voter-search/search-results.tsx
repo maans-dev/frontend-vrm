@@ -6,9 +6,6 @@ import {
   Criteria,
   useIsWithinBreakpoints,
   EuiSpacer,
-  EuiPanel,
-  useEuiScrollBar,
-  useEuiOverflowScroll,
 } from '@elastic/eui';
 import moment from 'moment';
 import router from 'next/router';

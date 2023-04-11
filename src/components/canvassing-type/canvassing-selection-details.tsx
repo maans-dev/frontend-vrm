@@ -1,10 +1,4 @@
-import {
-  EuiCallOut,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiPanel,
-  EuiText,
-} from '@elastic/eui';
+import { EuiFlexGroup, EuiFlexItem, EuiPanel } from '@elastic/eui';
 import { CanvassingContext } from '@lib/context/canvassing.context';
 import moment from 'moment';
 import { FunctionComponent, useContext } from 'react';
@@ -17,6 +11,7 @@ export const CanvassingSelectionDetails: FunctionComponent = () => {
     <EuiPanel
       hasShadow={false}
       hasBorder={true}
+      paddingSize="s"
       css={{ background: '#D0DFEC' }}>
       <EuiFlexGroup
         direction="row"
