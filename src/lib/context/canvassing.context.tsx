@@ -190,6 +190,9 @@ const CanvassingProvider = ({ children }) => {
       const requestBody = cloneDeep(data);
       requestBody.key = person.key;
       requestBody.username = 17888131; // TODO: Get this from logged in user
+      if (!requestBody?.canvass) {
+        requestBody.canvass = {};
+      }
       if (!requestBody?.canvass?.date)
         requestBody.canvass.date = moment().format('YYYY-MM-DD');
       if (!requestBody?.canvass?.key) requestBody.canvass.key = 17888131; // TODO: Get this from logged in user
@@ -214,8 +217,15 @@ const CanvassingProvider = ({ children }) => {
 
       console.log('[PERSON EVENT REQUEST]', requestBody);
 
+      let endpoint = 'canvass';
+      if (router.pathname.includes('cleanup')) {
+        endpoint = 'datacleanup';
+        // Delete the canvass field as that it's required for data cleanup.
+        delete requestBody.canvass;
+      }
+
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE}/event/canvass/`,
+        `${process.env.NEXT_PUBLIC_API_BASE}/event/${endpoint}/`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -231,6 +241,8 @@ const CanvassingProvider = ({ children }) => {
           router.push('/canvass/canvassing-type');
         } else if (router.pathname.includes('/capture/')) {
           router.push('/capture/capturing-type');
+        } else if (router.pathname.includes('/cleanup/')) {
+          router.push('/cleanup/voter-search');
         }
         addToast({
           id: 'voter-submitted-success',

@@ -65,7 +65,7 @@ const Index: FunctionComponent = () => {
             layout="horizontal"
             title="Data Cleanup"
             description="Non-canvass edit of voter & membership data."
-            onClick={() => router.push('/cleanup/cleanup-search')}
+            onClick={() => router.push('/cleanup/voter-search')}
           />
         </EuiFlexItem>
       </EuiFlexGrid>

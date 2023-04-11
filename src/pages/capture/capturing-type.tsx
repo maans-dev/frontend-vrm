@@ -80,7 +80,7 @@ const CaptureType: FunctionComponent = () => {
           iconSide="right"
           size="m"
           fill
-          onClick={() => router.push('/capture/capturing-search')}>
+          onClick={() => router.push('/capture/voter-search')}>
           Continue
         </EuiButton>
       </EuiFlexItem>

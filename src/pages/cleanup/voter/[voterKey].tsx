@@ -46,17 +46,12 @@ const Voter: FunctionComponent = () => {
   const breadcrumb: EuiBreadcrumb[] = [
     {
       text: 'Data Cleanup',
-      href: '/cleanup',
-      onClick: e => {
-        router.push('/');
-        e.preventDefault();
-      },
     },
     {
       text: 'Voter search',
-      href: '/cleanup',
+      href: '/voter-search',
       onClick: e => {
-        router.push('/cleanup/cleanup-search');
+        router.push('/cleanup/voter-search');
         e.preventDefault();
       },
     },

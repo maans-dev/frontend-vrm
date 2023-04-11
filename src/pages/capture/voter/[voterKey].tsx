@@ -54,7 +54,7 @@ const Voter: FunctionComponent = () => {
       text: 'Voter search',
       href: '/capture',
       onClick: e => {
-        router.push('/capture/capturing-search');
+        router.push('/capture/voter-search');
         e.preventDefault();
       },
     },
