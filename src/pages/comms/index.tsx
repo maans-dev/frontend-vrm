@@ -11,7 +11,7 @@ const Index: FunctionComponent = () => {
   ];
 
   return (
-    <MainLayout breadcrumb={breadcrumb}>
+    <MainLayout breadcrumb={breadcrumb} panelled={false}>
       <PagePlaceholder />
     </MainLayout>
   );

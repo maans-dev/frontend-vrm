@@ -99,34 +99,41 @@ const Voter: FunctionComponent = () => {
   }, [person, setPerson]);
 
   if (isLoading) {
-    return <MainLayout breadcrumb={breadcrumb} showSpinner={isLoading} />;
+    return (
+      <MainLayout
+        breadcrumb={breadcrumb}
+        showSpinner={isLoading}
+        panelled={false}
+      />
+    );
   }
 
   const tabsStyle = css`
-    .euiTabs {
-      border-bottom: 1px solid #d3dae6;
-      margin-bottom: 20px;
-    }
     .euiTab {
       position: relative;
       display: inline-block;
-      padding: 10px 20px;
+      left: 10px;
+      padding: 0px 10px;
       margin-right: -1px;
-      font-size: 14px;
-      font-weight: 600;
-      line-height: 1.2;
       color: #333;
       text-align: center;
       white-space: nowrap;
       cursor: pointer;
       border: 1px solid transparent;
-      border-radius: 3px 3px 0 0;
+      border-radius: 5px 5px 0 0;
       &:last-child {
         margin-right: 0;
       }
       &.euiTab-isSelected {
         border-color: #d3dae6;
         background-color: #fff;
+        box-shadow: none;
+        border-bottom: none;
+        background: linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 1) 0%,
+          rgba(245, 241, 241, 1) 100%
+        ) !important;
         &:after {
           position: absolute;
           content: '';
@@ -135,17 +142,26 @@ const Voter: FunctionComponent = () => {
           height: 3px;
           bottom: -1px;
           left: 0;
-          background-color: #0079a5;
+          background-color: transparent;
+          display: none;
         }
       }
       &:hover:not(.euiTab-isSelected) {
-        background-color: #f5f7fa;
+        background: rgb(211, 218, 230, 0.5);
+        border-color: transparent;
       }
+    }
+    .euiTab.euiTab-isSelected:after {
+      background-color: transparent;
+      display: none;
     }
   `;
 
   return (
-    <MainLayout breadcrumb={breadcrumb} showSpinner={isSubmitting}>
+    <MainLayout
+      breadcrumb={breadcrumb}
+      showSpinner={isSubmitting}
+      panelled={false}>
       {/* {isComplete && successModal} */}
       <EuiPanel>
         <VoterInfo
@@ -165,7 +181,7 @@ const Voter: FunctionComponent = () => {
       <EuiForm fullWidth isInvalid={serverError !== ''} error={[serverError]}>
         <EuiFlexGroup direction="row" gutterSize="xs">
           <EuiFlexItem>
-            <EuiTabs css={tabsStyle}>
+            <EuiTabs css={tabsStyle} size="s">
               <EuiTab
                 onClick={() => setSelectedTab(0)}
                 isSelected={selectedTab === 0}>
@@ -187,8 +203,8 @@ const Voter: FunctionComponent = () => {
                 Membership
               </EuiTab>
               <EuiTab
-                onClick={() => setSelectedTab(3)}
-                isSelected={selectedTab === 3}>
+                onClick={() => setSelectedTab(4)}
+                isSelected={selectedTab === 4}>
                 History
               </EuiTab>
             </EuiTabs>
@@ -232,6 +248,7 @@ const Voter: FunctionComponent = () => {
               </EuiFormFieldset>
             )}
             {selectedTab === 3 && <PagePlaceholder />}
+            {selectedTab === 4 && <PagePlaceholder />}
           </EuiFlexItem>
         </EuiFlexGroup>
 

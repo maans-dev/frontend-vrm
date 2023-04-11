@@ -96,7 +96,13 @@ const Voter: FunctionComponent = () => {
   }, [person, setPerson]);
 
   if (isLoading) {
-    return <MainLayout breadcrumb={breadcrumb} showSpinner={isLoading} />;
+    return (
+      <MainLayout
+        breadcrumb={breadcrumb}
+        showSpinner={isLoading}
+        panelled={false}
+      />
+    );
   }
 
   // if (error) {

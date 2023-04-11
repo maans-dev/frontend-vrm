@@ -6,8 +6,9 @@ const PagePlaceholder: FunctionComponent = () => {
     <EuiPageTemplate.EmptyPrompt
       iconType="alert"
       iconColor="primary"
-      title={<span>Page placeholder</span>}
-      footer={<span>Coming soon ...</span>}></EuiPageTemplate.EmptyPrompt>
+      paddingSize="l">
+      Coming soon ...
+    </EuiPageTemplate.EmptyPrompt>
   );
 };
 
