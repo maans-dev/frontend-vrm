@@ -9,6 +9,7 @@ import { FunctionComponent, useMemo, useState } from 'react';
 import useAffiliationFetcher from '@lib/fetcher/affiliation/affiliation';
 import { AffiliateUpdate, PersonUpdate } from '@lib/domain/person-update';
 import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
+import { BsQuestionDiamond } from 'react-icons/bs';
 
 type Props = {
   affiliation: Affiliation;
@@ -75,13 +76,6 @@ const AffiliationComponent: FunctionComponent<Props> = ({
           {error.message}
         </EuiCallOut>
       )}
-      <EuiFormRow display="row">
-        <EuiCallOut
-          title="Have you confirmed this voter's affiliation?"
-          size="s"
-          iconType="search"
-        />
-      </EuiFormRow>
       <EuiFormRow display="rowCompressed">
         <EuiComboBox
           compressed
@@ -94,6 +88,14 @@ const AffiliationComponent: FunctionComponent<Props> = ({
           selectedOptions={selectedOption ? [selectedOption] : []}
           onChange={handleChange}
           onSearchChange={value => setSearchValue(value || '')}
+        />
+      </EuiFormRow>
+      <EuiFormRow display="row">
+        <EuiCallOut
+          title="Have you confirmed this voter's affiliation?"
+          size="s"
+          iconType={BsQuestionDiamond}
+          color="warning"
         />
       </EuiFormRow>
     </>

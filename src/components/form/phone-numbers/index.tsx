@@ -14,7 +14,7 @@ const PhoneNumbers: FunctionComponent<Props> = ({
   onUpdate,
 }) => {
   return (
-    <EuiPanel hasBorder={true} paddingSize="s">
+    <EuiPanel hasShadow={false} paddingSize="none">
       {phoneContacts.map(phoneContact => (
         <PhoneNumberLine
           phoneContact={phoneContact}

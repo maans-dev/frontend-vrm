@@ -14,7 +14,7 @@ const EmailAddress: FunctionComponent<Props> = ({
   onUpdate,
 }) => {
   return (
-    <EuiPanel hasBorder={true} paddingSize="s">
+    <EuiPanel hasShadow={false} paddingSize="none">
       {emailContacts.map(emailContact => (
         <EmailAddressLine
           emailContact={emailContact}

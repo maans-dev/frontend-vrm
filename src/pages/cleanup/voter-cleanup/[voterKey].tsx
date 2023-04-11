@@ -240,13 +240,17 @@ const Voter: FunctionComponent = () => {
               </EuiFormFieldset>
             )}
             {selectedTab === 2 && (
-              <EuiFormFieldset legend={{ children: 'Tags & Custom fields' }}>
-                <EuiSpacer size="xs" />
-                <CanvassingTags fields={person.fields} onChange={onChange} />
-                <EuiSpacer size="m" />
-                <VoterTags fields={person?.fields} onChange={onChange} />
-              </EuiFormFieldset>
+              <>
+                <EuiFormFieldset legend={{ children: 'Canvassing tags' }}>
+                  <CanvassingTags fields={person.fields} onChange={onChange} />
+                </EuiFormFieldset>
+                <EuiSpacer />
+                <EuiFormFieldset legend={{ children: 'Voter tags' }}>
+                  <VoterTags fields={person?.fields} onChange={onChange} />
+                </EuiFormFieldset>
+              </>
             )}
+
             {selectedTab === 3 && <PagePlaceholder />}
             {selectedTab === 4 && <PagePlaceholder />}
           </EuiFlexItem>

@@ -1,6 +1,5 @@
-import { EuiBadge, EuiFlexItem } from '@elastic/eui';
+import { EuiCheckableCard, EuiFlexItem } from '@elastic/eui';
 import { FunctionComponent } from 'react';
-import { FaTimesCircle } from 'react-icons/fa';
 
 export type Props = {
   label?: string;
@@ -11,7 +10,7 @@ export type Props = {
 const Tag: FunctionComponent<Props> = ({ label, isNew, onDelete }) => {
   return (
     <EuiFlexItem>
-      <EuiBadge
+      {/* <EuiBadge
         css={{
           '.euiBadge__text': {
             borderLeft: '1px solid #CBD2D9',
@@ -24,7 +23,20 @@ const Tag: FunctionComponent<Props> = ({ label, isNew, onDelete }) => {
         iconOnClick={() => onDelete(label)}
         iconOnClickAriaLabel={`Remove tag "${label}"`}>
         {label}
-      </EuiBadge>
+      </EuiBadge> */}
+      <EuiCheckableCard
+        css={{
+          borderColor: isNew ? '#155FA2' : '#cecece',
+          filter: isNew ? null : 'grayscale(1)',
+        }}
+        id={label}
+        label={label}
+        checkableType="checkbox"
+        checked={true}
+        onChange={() => {
+          onDelete(label);
+        }}
+      />
     </EuiFlexItem>
   );
 };
