@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 import { EuiCheckableCard, useGeneratedHtmlId } from '@elastic/eui';
 import { Field } from '@lib/domain/person';
 import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
@@ -15,6 +15,10 @@ const CanvassingTag: FunctionComponent<Props> = ({ field, onChange }) => {
   useCanvassFormReset(() => {
     setIsSelected(field.value as boolean);
   });
+
+  useEffect(() => {
+    setIsSelected(field.value as boolean);
+  }, [field]);
 
   return (
     <EuiCheckableCard

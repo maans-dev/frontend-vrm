@@ -223,6 +223,7 @@ export interface Comment {
   person: number;
   type?: string;
   value: string;
+  archived: boolean;
   createdBy: CreatedBy;
   modifiedBy: ModifiedBy;
   created: any;
@@ -268,6 +269,7 @@ export interface Field {
   person: number;
   field?: Partial<FieldMetaData>;
   value?: boolean;
+  deleted?: boolean;
   created: Date;
   modified: Date;
   createdBy: number;

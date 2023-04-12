@@ -20,7 +20,7 @@ import {
 } from '@lib/domain/person-update';
 import { PhoneContact } from '@lib/domain/phone-numbers';
 import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 
 interface Props {
   language: string;
@@ -85,6 +85,7 @@ const ContactDetails: FunctionComponent<Props> = ({
   }));
   const [deceasedInternal, setDeceasedInternal] = useState<boolean>(deceased);
   const [givenNameInternal, setGivenNameInternal] = useState<string>(givenName);
+  console.log('given name', givenName, givenNameInternal);
 
   // const { registerResetHandler } = useContext(CanvassingContext);
 
@@ -231,6 +232,36 @@ const ContactDetails: FunctionComponent<Props> = ({
         }))
     );
   });
+
+  // TODO: This is a hack to force these values to update themselves after saving and reloading the same voter. 
+  // We need to figure out why these values only update when doing a hard refresh!
+  useEffect(() => {
+    setSelectedLanguage(getLanguageEnumValue(language));
+    setDeceasedInternal(deceased);
+    setGivenNameInternal(givenName);
+    setPhoneContacts(
+      contacts
+        .filter(contact => contact.category !== 'EMAIL')
+        .map(contact => ({
+          key: contact.key,
+          value: contact?.value,
+          type: contact.type,
+          category: contact.category,
+          canContact: contact.canContact,
+        }))
+    );
+    setEmailContacts(
+      contacts
+        .filter(contact => contact.category === 'EMAIL')
+        .map(contact => ({
+          key: contact.key,
+          value: contact?.value || contact.value,
+          type: contact.type,
+          category: contact.category,
+          canContact: contact.canContact,
+        }))
+    );
+  }, [contacts, deceased, givenName, language]);
 
   return (
     <>

@@ -7,7 +7,7 @@ export default function usePersonFetcher(key: string) {
     `/person?key=${key}&template=["Address","Contact","Field","Comment","Canvass"]`,
     fetcherAPI,
     {
-      revalidateOnFocus: false,
+      // revalidateOnFocus: false,
     }
   );
 

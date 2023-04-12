@@ -28,13 +28,13 @@ const Comments: FunctionComponent<Props> = ({ comments, onCommentChange }) => {
   const { nextId } = useContext(CanvassingContext);
 
   useEffect(() => {
-    setComment(comments);
+    setComment(comments.filter(c => !c.archived));
   }, [comments]);
 
   const { euiTheme } = useEuiTheme();
 
   useCanvassFormReset(() => {
-    setComment(comments);
+    setComment(comments.filter(c => !c.archived));
   });
 
   if (!comments) return <></>;

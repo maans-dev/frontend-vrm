@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { EuiComboBox, EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
 import Tag from './tag';
 import { Field } from '@lib/domain/person';
@@ -24,7 +24,8 @@ const VoterTags: React.FC<Props> = ({
   searchFields,
   handleSearchChange,
 }: Props) => {
-  const [originalFields] = useState(fields);
+  const [originalFields, setOriginalFields] = useState(fields);
+  console.log('render', fields);
 
   //Set Rendered Badges
   const renderedBadges = [...fields]
@@ -39,6 +40,10 @@ const VoterTags: React.FC<Props> = ({
         />
       </EuiFlexItem>
     ));
+
+  useEffect(() => {
+    setOriginalFields(fields);
+  }, [fields]);
 
   return (
     <>

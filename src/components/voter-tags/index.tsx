@@ -1,5 +1,5 @@
 import { FunctionComponent, useContext, useEffect, useState } from 'react';
-import VoterTags from './canvassing-tags';
+import VoterTags from './voter-tags';
 import { Field, FieldMetaData } from '@lib/domain/person';
 import useTagFetcher from '@lib/fetcher/tags/tags';
 import { FieldsUpdate, PersonUpdate } from '@lib/domain/person-update';
@@ -61,12 +61,20 @@ const Tags: FunctionComponent<Props> = ({ fields, onChange }) => {
       // remove from update payload
       updatedField = { key: updatedField.key } as Partial<Field>;
     } else {
-      // new field has been added
-      updatedField = {
-        key: updatedField.key,
-        value: updatedField.value,
-        field: { key: updatedField.field.key },
-      } as Partial<Field>;
+      if (updatedField.value === false) {
+        // field has been removed
+        updatedField = {
+          key: updatedField.key,
+          deleted: true,
+        } as Partial<Field>;
+      } else {
+        // new field has been added
+        updatedField = {
+          key: updatedField.key,
+          value: updatedField.value,
+          field: { key: updatedField.field.key },
+        } as Partial<Field>;
+      }
     }
 
     onChange({
@@ -82,6 +90,12 @@ const Tags: FunctionComponent<Props> = ({ fields, onChange }) => {
       fields.filter(f => !CanvassingTagCodes.includes(f.field.code))
     );
   });
+
+  useEffect(() => {
+    setSelectedFields(
+      fields.filter(f => !CanvassingTagCodes.includes(f.field.code))
+    );
+  }, [fields]);
 
   // useEffect(() => {
   //   const filteredVoterFields = fields.filter(

@@ -14,7 +14,7 @@ export type Props = {
 
 const CanvassingTags: FunctionComponent<Props> = ({ fields, onChange }) => {
   const isMobile = useIsWithinBreakpoints(['xs', 's']);
-  const [internalFields] = useState<Field[]>(
+  const [internalFields, setInternalFields] = useState<Field[]>(
     fields.filter(f => CanvassingTagCodes.includes(f.field.code))
   );
 
@@ -60,6 +60,12 @@ const CanvassingTags: FunctionComponent<Props> = ({ fields, onChange }) => {
     }));
     setPresetFields(f);
   }, [data]);
+
+  useEffect(() => {
+    setInternalFields(
+      fields.filter(f => CanvassingTagCodes.includes(f.field.code))
+    );
+  }, [data, fields]);
 
   return (
     <EuiFlexGrid
