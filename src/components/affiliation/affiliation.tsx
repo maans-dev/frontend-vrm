@@ -10,6 +10,7 @@ import useAffiliationFetcher from '@lib/fetcher/affiliation/affiliation';
 import { AffiliateUpdate, PersonUpdate } from '@lib/domain/person-update';
 import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
 import { BsQuestionDiamond } from 'react-icons/bs';
+import { debounce } from 'lodash';
 
 type Props = {
   affiliation: Affiliation;
@@ -23,7 +24,7 @@ const AffiliationComponent: FunctionComponent<Props> = ({
   onChange,
 }) => {
   const [searchValue, setSearchValue] = useState<string>('');
-  const { affiliations, isLoading, error } = useAffiliationFetcher(true);
+  const { affiliations, isLoading, error } = useAffiliationFetcher(searchValue);
   const [selectedOption, setSelectedOption] = useState<AffliationOption>(
     affiliation
       ? {
@@ -34,7 +35,10 @@ const AffiliationComponent: FunctionComponent<Props> = ({
   );
 
   const options = useMemo(() => {
-    return affiliations?.map(a => ({ label: a.description, value: a }));
+    return affiliations?.map(a => ({
+      label: `${a.description} (${a.name})`,
+      value: a,
+    }));
   }, [affiliations]);
 
   const handleChange = (selectedOptions: AffliationOption[]) => {
@@ -64,6 +68,10 @@ const AffiliationComponent: FunctionComponent<Props> = ({
     });
   });
 
+  const debouncedSearch = debounce(value => {
+    setSearchValue(value || '');
+  }, 300);
+
   return (
     <>
       {error && (
@@ -87,7 +95,7 @@ const AffiliationComponent: FunctionComponent<Props> = ({
           options={searchValue ? options : []}
           selectedOptions={selectedOption ? [selectedOption] : []}
           onChange={handleChange}
-          onSearchChange={value => setSearchValue(value || '')}
+          onSearchChange={debouncedSearch}
         />
       </EuiFormRow>
       <EuiFormRow display="row">

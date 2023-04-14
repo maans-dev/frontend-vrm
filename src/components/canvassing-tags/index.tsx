@@ -17,11 +17,9 @@ const CanvassingTags: FunctionComponent<Props> = ({ fields, onChange }) => {
   const [internalFields, setInternalFields] = useState<Field[]>(
     fields.filter(f => CanvassingTagCodes.includes(f.field.code))
   );
-
   const { data } = useCanvassingTagFetcher();
   const [presetFields, setPresetFields] = useState<Partial<Field>[]>(null);
   const { nextId } = useContext(CanvassingContext);
-
   const getField = (field: Partial<Field>) => {
     const found = internalFields.find(f => {
       return f.field.code === field.field.code;
@@ -32,21 +30,33 @@ const CanvassingTags: FunctionComponent<Props> = ({ fields, onChange }) => {
     return found || field;
   };
 
-  const handleOnChange = (updatedField: Partial<Field>) => {
+  const handleChange = (updatedField: Partial<Field>) => {
     const originalField = presetFields
       ?.map(f => getField(f))
       ?.find(f => f.key === updatedField.key);
 
-    if (originalField?.value === updatedField.value) {
+    if (
+      (originalField && originalField.value === updatedField.value) || // is an existing field and it's value matched the updated value
+      (!originalField && !updatedField.value) // is a new field that has been removed
+    ) {
+      // remove from update payload
       updatedField = { key: updatedField.key } as Partial<Field>;
     } else {
-      updatedField = {
-        key: updatedField.key,
-        value: updatedField.value,
-        field: { key: updatedField.field.key },
-      } as Partial<Field>;
+      if (updatedField.value === false) {
+        // field has been removed
+        updatedField = {
+          key: updatedField.key,
+          deleted: true,
+        } as Partial<Field>;
+      } else {
+        // new field has been added
+        updatedField = {
+          key: updatedField.key,
+          value: updatedField.value,
+          field: { key: updatedField.field.key },
+        } as Partial<Field>;
+      }
     }
-
     onChange({
       field: 'fields',
       data: { ...updatedField },
@@ -76,7 +86,7 @@ const CanvassingTags: FunctionComponent<Props> = ({ fields, onChange }) => {
       {presetFields?.map((f, i) => {
         return (
           <EuiFlexItem key={i} grow={false} style={{ minWidth: 100 }}>
-            <CanvassingTag field={getField(f)} onChange={handleOnChange} />
+            <CanvassingTag field={getField(f)} onChange={handleChange} />
           </EuiFlexItem>
         );
       })}

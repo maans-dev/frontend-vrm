@@ -69,7 +69,6 @@ const CanvassingProvider = ({ children }) => {
   const setPerson = (person: Person) => setPersonInternal(person);
 
   const setUpdatePayload = (update: PersonUpdate<GeneralUpdate>) => {
-    console.log(update, 'update');
     // data is not an object and must be deleted
     if (update.data === null) {
       setData(prev => {

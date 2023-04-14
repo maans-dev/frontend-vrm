@@ -6,7 +6,6 @@ export default function useTagFetcher(searchTerm: string) {
   const query = new URLSearchParams();
   if (searchTerm) {
     query.set('names', `*${searchTerm}*`);
-    // query.set('code', `*${searchTerm}*`);
   }
   const endpoint = `/field/tag?${query.toString()}`;
   const { data, error } = useSWR<FieldMetaData[]>(

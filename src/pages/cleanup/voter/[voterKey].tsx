@@ -90,7 +90,6 @@ const Voter: FunctionComponent = () => {
 
   useEffect(() => {
     if (person) setPerson(person);
-    console.log(person, 'person');
   }, [person, setPerson]);
 
   if (isLoading) {

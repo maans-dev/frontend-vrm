@@ -105,14 +105,6 @@ const Voter: FunctionComponent = () => {
     );
   }
 
-  // if (error) {
-  //   return (
-  //     <EuiCallOut title="Error" color="danger" iconType="alert">
-  //       {error}
-  //     </EuiCallOut>
-  //   );
-  // }
-
   return (
     <MainLayout
       breadcrumb={breadcrumb}
