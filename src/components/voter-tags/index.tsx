@@ -1,11 +1,10 @@
-import { FunctionComponent, useContext, useEffect, useState } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 import VoterTags from './voter-tags';
 import { Field, FieldMetaData } from '@lib/domain/person';
 import useTagFetcher from '@lib/fetcher/tags/tags';
 import { FieldsUpdate, PersonUpdate } from '@lib/domain/person-update';
 import { CanvassingTagCodes } from '@lib/domain/tags';
-import { CanvassingContext } from '@lib/context/canvassing.context';
-import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
+import { debounce } from 'lodash';
 
 export type Props = {
   fields: Field[];
@@ -13,14 +12,10 @@ export type Props = {
 };
 
 const Tags: FunctionComponent<Props> = ({ fields, onChange }) => {
-  const [selectedFields, setSelectedFields] = useState<Partial<Field>[]>(
-    fields.filter(f => !CanvassingTagCodes.includes(f.field.code))
-  );
   const [searchValue, setSearchValue] = useState('');
-
+  // TODO: Add error handling for useTagFetcher
   const { data } = useTagFetcher(searchValue);
   const [searchFields, setSearchFields] = useState<Partial<Field>[]>(null);
-  const { nextId } = useContext(CanvassingContext);
 
   useEffect(() => {
     const f = data
@@ -32,27 +27,17 @@ const Tags: FunctionComponent<Props> = ({ fields, onChange }) => {
     setSearchFields(f);
   }, [data]);
 
-  const handleSearchChange = (value: string) => {
+  const debouncedHandleSearchChange = debounce((value: string) => {
     setSearchValue(value);
+  }, 300);
+  const handleSearchChange = (value: string) => {
+    debouncedHandleSearchChange(value);
   };
 
   const handleChange = (updatedField: Partial<Field>) => {
     const originalField = fields.find(
       f => f.field.key === updatedField.field.key
     );
-
-    if (!('key' in updatedField))
-      updatedField.key = originalField ? originalField.key : nextId();
-
-    if (updatedField.value === false) {
-      // remove
-      setSelectedFields(selectedFields.filter(f => f.key !== updatedField.key));
-    } else {
-      // add
-      setSelectedFields(prev => [...prev, updatedField]);
-    }
-
-    console.log('ORIGINAL', originalField, updatedField);
 
     if (
       (originalField && originalField.value === updatedField.value) || // is an existing field and it's value matched the updated value
@@ -83,32 +68,13 @@ const Tags: FunctionComponent<Props> = ({ fields, onChange }) => {
     });
   };
 
-  // const [voterFields, setVoterFields] = useState<Field[]>([]);
-
-  useCanvassFormReset(() => {
-    setSelectedFields(
-      fields.filter(f => !CanvassingTagCodes.includes(f.field.code))
-    );
-  });
-
-  useEffect(() => {
-    setSelectedFields(
-      fields.filter(f => !CanvassingTagCodes.includes(f.field.code))
-    );
-  }, [fields]);
-
-  // useEffect(() => {
-  //   const filteredVoterFields = fields.filter(
-  //     f => !shortCodes.includes(f.field.code)
-  //   );
-  //   setVoterFields(filteredVoterFields);
-
   return (
     <VoterTags
-      fields={selectedFields}
+      fields={fields}
       onChange={handleChange}
       searchFields={searchFields}
       handleSearchChange={handleSearchChange}
+      searchValue={searchValue}
     />
   );
 };

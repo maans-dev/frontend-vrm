@@ -41,8 +41,6 @@ const CanvassingType: FunctionComponent = () => {
     },
   ];
 
-  // const onChange = (update: )
-
   const formActions = (
     <EuiFlexGroup direction="row" responsive={false} justifyContent="flexEnd">
       <EuiFlexItem grow={false}>
@@ -105,7 +103,6 @@ const CanvassingType: FunctionComponent = () => {
               activity: update.key,
             },
           });
-          // console.log(update, 'canvass update');
           setCampaign(update);
         }}
       />
@@ -128,7 +125,6 @@ const CanvassingType: FunctionComponent = () => {
               type: update.id,
             },
           });
-          // console.log(update, 'canvass update');
           setCanvassingType(update);
         }}
       />

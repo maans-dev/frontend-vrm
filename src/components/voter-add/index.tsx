@@ -22,6 +22,7 @@ import {
 import { AiOutlineUserAdd } from 'react-icons/ai';
 import moment, { Moment } from 'moment';
 import { useRouter } from 'next/router';
+import { isValidRSAIDnumber } from '@lib/validation/idValidation';
 
 export type Props = {
   notFound?: boolean;
@@ -67,9 +68,14 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
       errors.idNumber = 'Either ID or date of birth is required';
       errors.dob = 'Either ID or date of birth is required';
     }
-    if (data?.idNumber && !data.dob && (data.idNumber as string).length !== 13)
-      errors.idNumber = 'Enter a valid South African ID';
-
+    if (data?.idNumber) {
+      const isValidId = isValidRSAIDnumber(data.idNumber);
+      if (typeof isValidId === 'object') {
+        errors.idNumber = isValidId.reason;
+      } else if (!isValidId) {
+        errors.idNumber = 'Enter a valid South African ID';
+      }
+    }
     if (Object.values(errors).length > 0) setValidationErrors(errors);
 
     return Object.values(errors).length === 0;
@@ -113,7 +119,6 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
     } else {
       setServerError(respPayload?.message || 'Something went wrong');
     }
-
     setIsSubmitting(false);
     console.log('[PERSON CREATE RESPONSE]', respPayload);
   };
