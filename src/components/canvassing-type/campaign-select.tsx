@@ -1,10 +1,10 @@
 import { FunctionComponent, useEffect, useState } from 'react';
 import {
+  EuiAccordion,
   EuiCheckableCard,
-  EuiFlexGrid,
+  EuiFlexGroup,
   EuiFlexItem,
   EuiText,
-  htmlIdGenerator,
 } from '@elastic/eui';
 import { css, Global } from '@emotion/react';
 import { Campaign } from '@lib/domain/person';
@@ -20,19 +20,54 @@ const CampaignSelect: FunctionComponent<Props> = ({
   selectedKey,
   onChange,
 }) => {
-  // const isMobile = useIsWithinBreakpoints(['xs', 's']);
-  const generateId = htmlIdGenerator('campaign');
   const [selected, setSelected] = useState('');
+  const [openAccordionId, setOpenAccordionId] = useState<string | null>(null);
 
   const handleChange = (campaign: Campaign) => {
-    // console.log('CAMPAIGN', campaign);
     setSelected(campaign.key);
     onChange(campaign);
   };
 
   useEffect(() => {
+    const c = JSON.parse(sessionStorage.getItem('campaign')) || null;
+    if (c && c?.type?.name) {
+      setOpenAccordionId(c.type.name);
+    }
+  }, []);
+
+  useEffect(() => {
     if (selectedKey) setSelected(selectedKey);
   }, [campaigns, selectedKey]);
+
+  if (!campaigns || campaigns.length === 0) {
+    return null;
+  }
+
+  type GroupedCampaigns = Record<string, Campaign[]>;
+
+  const groupedCampaigns: GroupedCampaigns = campaigns?.reduce(
+    (acc, campaign) => {
+      if (!acc[campaign.type.name]) {
+        acc[campaign.type.name] = [];
+      }
+      acc[campaign.type.name].push(campaign);
+      return acc;
+    },
+    {}
+  );
+
+  if (groupedCampaigns.hasOwnProperty('current')) {
+    const currentCampaignIndex = groupedCampaigns['current'].findIndex(
+      campaign => campaign.key === 'current'
+    );
+    if (currentCampaignIndex !== -1) {
+      const [currentCampaign] = groupedCampaigns['current'].splice(
+        currentCampaignIndex,
+        1
+      );
+      groupedCampaigns['current'].unshift(currentCampaign);
+    }
+  }
 
   return (
     <>
@@ -48,32 +83,45 @@ const CampaignSelect: FunctionComponent<Props> = ({
           }
         `}
       />
-      <EuiFlexGrid
-        className="campaign-selector"
-        // columns={isMobile ? 1 : 2}
-        direction="row"
-        gutterSize="s"
-        responsive={true}>
-        {campaigns?.map((item: Campaign) => {
-          return (
-            <EuiFlexItem key={item.key} grow={false} style={{ minWidth: 100 }}>
-              <EuiCheckableCard
-                id={generateId()}
-                label={item.name}
-                value={item.key}
-                checked={selected === item.key}
-                onChange={() => handleChange(item)}>
-                <EuiText
-                  size="xs"
-                  onClick={() => handleChange(item)}
-                  css={{ cursor: 'pointer' }}>
-                  {item.type.description}
-                </EuiText>
-              </EuiCheckableCard>
-            </EuiFlexItem>
-          );
-        })}
-      </EuiFlexGrid>
+      {Object.keys(groupedCampaigns).map((campaignType, index) => {
+        return (
+          <EuiAccordion
+            key={campaignType}
+            id={campaignType}
+            forceState={
+              openAccordionId === campaignType ||
+              (!openAccordionId && index === 0)
+                ? 'open'
+                : 'closed'
+            }
+            onToggle={() =>
+              setOpenAccordionId(
+                openAccordionId === campaignType ? null : campaignType
+              )
+            }
+            buttonContent={
+              <EuiText size="s">
+                <strong>
+                  {groupedCampaigns[campaignType][0].type.description}
+                </strong>
+              </EuiText>
+            }
+            paddingSize="s">
+            <EuiFlexGroup gutterSize="s" responsive={false} direction="column">
+              {groupedCampaigns[campaignType].map(campaign => (
+                <EuiFlexItem key={campaign.key} grow={true}>
+                  <EuiCheckableCard
+                    id={campaign.key}
+                    label={campaign.name}
+                    checked={selected === campaign.key}
+                    onChange={() => handleChange(campaign)}
+                  />
+                </EuiFlexItem>
+              ))}
+            </EuiFlexGroup>
+          </EuiAccordion>
+        );
+      })}
     </>
   );
 };
