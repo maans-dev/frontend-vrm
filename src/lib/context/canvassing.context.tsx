@@ -267,6 +267,7 @@ const CanvassingProvider = ({ children }) => {
         JSON.stringify({
           key: campaign.key,
           name: campaign.name,
+          type: { name: campaign.type?.name },
         })
       );
       setCampaignInternal(campaign);
