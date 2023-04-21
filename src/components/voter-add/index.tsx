@@ -23,6 +23,7 @@ import { AiOutlineUserAdd } from 'react-icons/ai';
 import moment, { Moment } from 'moment';
 import { useRouter } from 'next/router';
 import { isValidRSAIDnumber } from '@lib/validation/idValidation';
+import { useSession } from 'next-auth/react';
 
 export type Props = {
   notFound?: boolean;
@@ -36,6 +37,7 @@ export interface IValidationErrors {
 }
 
 const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
+  const { data: session } = useSession();
   const [dob, setDob] = useState<Moment>();
   const [id, setId] = useState<string>('');
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -94,14 +96,17 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
     if (reqPayload.dob === '') delete reqPayload.dob;
     if (reqPayload.idNumber === '') delete reqPayload.idNumber;
 
-    (reqPayload as any).username = 123456789; // TODO: Get this from authenticated user.
+    (reqPayload as any).username = session.user.darn;
     console.log('[PERSON CREATE REQUEST]', reqPayload);
 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE}/event/personcreate/`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.accessToken}`,
+        },
         body: JSON.stringify(reqPayload),
       }
     );

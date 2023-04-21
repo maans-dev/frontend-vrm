@@ -29,10 +29,11 @@
       "@components/*": ["components/*"],
       "@layouts/*": ["layouts/*"],
       "@lib/*": ["lib/*"],
-    }
+    },
   },
   "include": [
-    "./src/**/*"
+    "./src/**/*",
+    "./types/**/*"
   ],
   "exclude": [
     "node_modules"

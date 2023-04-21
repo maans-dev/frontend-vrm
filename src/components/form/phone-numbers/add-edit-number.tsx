@@ -77,7 +77,7 @@ const AddEditNumber: FunctionComponent<Props> = ({
   const [phoneType, setSelectedPhoneType] = useState(
     phoneContact?.type || phoneTypeOptions[0].value
   );
-  const [phoneNumber, setPhoneNumber] = useState(phoneContact?.value || null);
+  const [phoneNumber, setPhoneNumber] = useState(phoneContact?.value || '');
   const [isInvalid, setIsInvalid] = useState(false);
   const [error, setError] = useState('');
   const { nextId } = useContext(CanvassingContext);

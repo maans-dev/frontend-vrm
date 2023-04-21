@@ -17,6 +17,7 @@ import { useRouter } from 'next/router';
 import { HeaderPrimary } from '@components/header/header-primary';
 import { HeaderSecondary } from '@components/header/header-secondary';
 import Spinner from '@components/spinner/spinner';
+import { Roles } from '@lib/domain/auth';
 
 export type Props = {
   breadcrumb?: EuiBreadcrumb[];
@@ -25,6 +26,7 @@ export type Props = {
   restrictWidth?: string | number | boolean;
   pageTitle?: string;
   showSpinner?: boolean;
+  role?: Roles;
 };
 
 const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
@@ -44,7 +46,7 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
   // const [showCanvassHeader, setShowCanvassHeader] = useState(false);
 
   useEffect(() => {
-    setShowSubHeader(router.route !== '/');
+    setShowSubHeader(router.route !== '/' && router.route !== '/403');
     // eslint-disable-next-line prettier/prettier
     // setShowCanvassHeader(router.route === '/canvass/voter-search' || router.route === '/canvass/voter/[voterKey]' || router.route === '/capture/voter-capture/[voterKey]' || router.route === '/capture/capturing-search' );
   }, [router, router.route]);
