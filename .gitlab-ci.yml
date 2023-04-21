@@ -8,5 +8,5 @@ build:
     - docker:20.10.16-dind
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN source.da-io.net:4567
-    - docker build -t source.da-io.net:4567/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_COMMIT_REF_SLUG .
+    - docker build --build-arg CI_COMMIT_SHORT_SHA -t source.da-io.net:4567/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_COMMIT_REF_SLUG .
     - docker push source.da-io.net:4567/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_COMMIT_REF_SLUG

@@ -14,6 +14,10 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED 1
 
+# Commit sha insert into code
+ARG CI_COMMIT_SHORT_SHA
+ENV NEXT_PUBLIC_VERSION ${CI_COMMIT_SHORT_SHA}
+
 RUN yarn build
 
 # Production image, copy all the files and run next
