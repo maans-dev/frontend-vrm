@@ -41,8 +41,6 @@ export default function usePersonSearchFetcher(
     }
   );
 
-  console.log(data, error);
-
   return {
     results: data,
     isLoading,
