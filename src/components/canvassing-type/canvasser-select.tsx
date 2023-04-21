@@ -13,6 +13,7 @@ import {
 import { css } from '@emotion/react';
 import { Person } from '@lib/domain/person';
 import moment from 'moment';
+import { useSession } from 'next-auth/react';
 import { ChangeEvent, FunctionComponent, useEffect, useState } from 'react';
 
 export type Props = {
@@ -23,13 +24,14 @@ export type Props = {
 type CanvasserOption = 'ME' | 'OTHER';
 
 const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
+  const { data: session } = useSession();
   const [selectedCanvasserOption, setSelectedCanvasserOption] =
     useState<CanvasserOption>(
-      canvasser ? (canvasser.key === 123456789 ? 'ME' : 'OTHER') : null
+      canvasser ? (canvasser.key === session.user.darn ? 'ME' : 'OTHER') : null
     );
 
   const [foundCanvasser, setFoundCanvasser] = useState<Partial<Person>>(
-    canvasser?.key === 123456789 ? null : canvasser
+    canvasser?.key === session.user.darn ? null : canvasser
   );
 
   const [canvasserSearchText, setCanvasserSearchText] = useState('');
@@ -45,7 +47,10 @@ const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
   const doCanvasserSearch = async () => {
     setCanvasserSearchError('');
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE}/person?identity=${canvasserSearchText}`
+      `${process.env.NEXT_PUBLIC_API_BASE}/person?identity=${canvasserSearchText}`,
+      {
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+      }
     );
 
     if (!response.ok) {
@@ -79,10 +84,10 @@ const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
         setFoundCanvasser(null);
         setCanvasserSearchError('');
         onChange({
-          key: 123456789,
-          givenName: 'JOHN',
-          surname: 'SMITH',
-          dob: 19740830,
+          key: session.user.darn,
+          givenName: session.user.givenName,
+          surname: session.user.surname,
+          dob: session.user.dob,
         });
         break;
       case 'OTHER':
@@ -130,8 +135,7 @@ const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
               size="xs"
               css={{ cursor: 'pointer' }}
               onClick={() => handleChange('ME')}>
-              {/* TODO: Get this from currently logged in user, once Auth is done */}
-              JOHN SMITH (53){' '}
+              {session?.user?.name}
             </EuiText>
           </EuiCheckableCard>
         </EuiFlexItem>

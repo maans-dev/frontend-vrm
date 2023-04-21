@@ -15,7 +15,7 @@ export type Props = {
 };
 
 const AddEditEmail: FunctionComponent<Props> = ({ emailContact, onUpdate }) => {
-  const [email, setEmail] = useState(emailContact?.value || null);
+  const [email, setEmail] = useState(emailContact?.value || '');
   const { nextId } = useContext(CanvassingContext);
   const [isInvalid, setIsInvalid] = useState(false);
 

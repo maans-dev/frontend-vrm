@@ -19,6 +19,7 @@ import {
 import { ToastContext } from './toast.context';
 import { Moment } from 'moment';
 import moment from 'moment';
+import { useSession } from 'next-auth/react';
 
 export type CanvassingContextType = {
   data: Partial<PersonUpdateRequest> & Partial<{ canvass: CanvassUpdate }>;
@@ -52,6 +53,7 @@ const CanvassingProvider = ({ children }) => {
   const [data, setData] = useState<
     Partial<PersonUpdateRequest> & Partial<{ canvass: CanvassUpdate }>
   >({});
+  const { data: session } = useSession();
   const [person, setPersonInternal] = useState<Person | null>(null);
   const [sequence, setSequence] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -188,13 +190,14 @@ const CanvassingProvider = ({ children }) => {
     try {
       const requestBody = cloneDeep(data);
       requestBody.key = person.key;
-      requestBody.username = 17888131; // TODO: Get this from logged in user
+      requestBody.username = session.user.darn;
       if (!requestBody?.canvass) {
         requestBody.canvass = {};
       }
       if (!requestBody?.canvass?.date)
         requestBody.canvass.date = moment().format('YYYY-MM-DD');
-      if (!requestBody?.canvass?.key) requestBody.canvass.key = 17888131; // TODO: Get this from logged in user
+      if (!requestBody?.canvass?.key)
+        requestBody.canvass.key = session.user.darn;
       // remove numeric keys as these represent new items
       if ('comments' in data) {
         requestBody.comments.forEach(item => {
@@ -227,7 +230,10 @@ const CanvassingProvider = ({ children }) => {
         `${process.env.NEXT_PUBLIC_API_BASE}/event/${endpoint}/`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.accessToken}`,
+          },
           body: JSON.stringify(requestBody),
         }
       );
