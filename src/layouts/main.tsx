@@ -4,20 +4,21 @@ import { FunctionComponent, useEffect, useState } from 'react';
 
 import {
   EuiBreadcrumb,
-  EuiButtonEmpty,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiHorizontalRule,
   EuiPageTemplate,
   EuiPageTemplateProps,
   EuiText,
-  EuiThemeProvider,
 } from '@elastic/eui';
 import { useRouter } from 'next/router';
 import { HeaderPrimary } from '@components/header/header-primary';
 import { HeaderSecondary } from '@components/header/header-secondary';
 import Spinner from '@components/spinner/spinner';
 import { Roles } from '@lib/domain/auth';
+import dynamic from 'next/dynamic';
+
+const Footer = dynamic(() => import('@components/footer/footer'), {
+  ssr: false,
+});
 
 export type Props = {
   breadcrumb?: EuiBreadcrumb[];
@@ -83,25 +84,7 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
           {pageTitle ? renderPageTitle : null}
           {children}
         </EuiPageTemplate.Section>
-        <EuiPageTemplate.BottomBar paddingSize="s">
-          <EuiThemeProvider colorMode="light">
-            <EuiFlexGroup
-              responsive={false}
-              justifyContent="center"
-              gutterSize="m">
-              <EuiFlexItem grow={false}>
-                <EuiButtonEmpty color="primary" size="xs">
-                  Help
-                </EuiButtonEmpty>
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
-                <EuiButtonEmpty color="success" size="xs">
-                  Support
-                </EuiButtonEmpty>
-              </EuiFlexItem>
-            </EuiFlexGroup>
-          </EuiThemeProvider>
-        </EuiPageTemplate.BottomBar>
+        <Footer />
       </EuiPageTemplate>
     </div>
   );
