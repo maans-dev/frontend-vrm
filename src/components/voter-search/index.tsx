@@ -5,7 +5,7 @@ import { PersonSearchParams } from '@lib/domain/person-search';
 import usePersonSearchFetcher from '@lib/fetcher/person/person-search.fetcher';
 import { useRouter } from 'next/router';
 import MainLayout from '@layouts/main';
-import { EuiBreadcrumb } from '@elastic/eui';
+import { EuiBreadcrumb, EuiCallOut, EuiSpacer } from '@elastic/eui';
 
 export type Props = {
   breadcrumb: EuiBreadcrumb[];
@@ -16,7 +16,8 @@ const VoterSearch: FunctionComponent<Props> = ({ breadcrumb }) => {
   const [searchParams, setSearchParams] =
     useState<Partial<PersonSearchParams>>(null);
 
-  const { results, isLoading, mutate } = usePersonSearchFetcher(searchParams);
+  const { results, isLoading, mutate, error } =
+    usePersonSearchFetcher(searchParams);
 
   const doSearch = (params: Partial<PersonSearchParams>) => {
     if (!params) return;
@@ -41,6 +42,14 @@ const VoterSearch: FunctionComponent<Props> = ({ breadcrumb }) => {
       panelled={false}
       restrictWidth={results === null || results === undefined ? true : false}
       showSpinner={isLoading || results?.length === 1}>
+      {error && (
+        <>
+          <EuiCallOut color="danger" title="Something went wrong">
+            <p>{error.message}</p>
+          </EuiCallOut>
+          <EuiSpacer />
+        </>
+      )}
       {!isLoading || results?.length > 1 ? (
         <SearchOptions
           onSubmit={doSearch}

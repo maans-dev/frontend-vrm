@@ -36,8 +36,12 @@ export default function usePersonSearchFetcher(
     fetcherAPI,
     {
       revalidateOnFocus: false,
+      refreshInterval: 0,
+      shouldRetryOnError: false,
     }
   );
+
+  console.log(data, error);
 
   return {
     results: data,

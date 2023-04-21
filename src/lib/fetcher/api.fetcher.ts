@@ -3,9 +3,18 @@ import { getSession } from 'next-auth/react';
 
 export const fetcherAPI = async (route: string) => {
   const session = await getSession();
-  return fetch(`${process.env.NEXT_PUBLIC_API_BASE}${route}`, {
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}${route}`, {
     headers: { Authorization: `Bearer ${session.accessToken}` },
-  }).then(r => {
-    return r.json();
   });
+
+  if (!res.ok) {
+    const errorText = await res.json();
+    const error = new Error(
+      `An error occurred while fetching the data. (${errorText.status} - ${errorText.message})`
+    );
+    throw error;
+  }
+
+  return await res.json();
 };
