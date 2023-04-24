@@ -12,6 +12,7 @@ import CanvassingProvider from '@lib/context/canvassing.context';
 import ToastProvider from '@lib/context/toast.context';
 import { SessionProvider, signIn } from 'next-auth/react';
 import { Session } from 'next-auth';
+import AuthHandler from '@components/auth/auth-handler';
 
 /**
  * Next.js uses the App component to initialize pages. You can override it
@@ -24,12 +25,6 @@ const EuiApp: FunctionComponent<AppProps<{ session: Session }>> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
-  useEffect(() => {
-    if (session?.error === 'RefreshAccessTokenError') {
-      signIn(); // Force sign in to hopefully resolve error
-    }
-  }, [session]);
-
   return (
     <>
       <Head>
@@ -46,6 +41,7 @@ const EuiApp: FunctionComponent<AppProps<{ session: Session }>> = ({
             <ToastProvider>
               <CanvassingProvider>
                 <EuiErrorBoundary>
+                  <AuthHandler />
                   <Component {...pageProps} />
                 </EuiErrorBoundary>
               </CanvassingProvider>

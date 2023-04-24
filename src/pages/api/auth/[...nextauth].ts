@@ -10,7 +10,7 @@ import { OAuthConfig } from 'next-auth/providers';
  * returns the old token and an error property
  */
 async function refreshAccessToken(token) {
-  console.log('[REFRESH ACCESS TOKEN]');
+  console.log('[REFRESHING ACCESS TOKEN]');
   try {
     const url = (DaAuthProvider as OAuthConfig<any>).token as string;
     const body = new URLSearchParams({
@@ -33,8 +33,9 @@ async function refreshAccessToken(token) {
     }
 
     const tokens: TokenSet = await response.json();
-    console.log('[TOKENS]', tokens);
+    // console.log('[TOKENS]', tokens);
 
+    console.log('[REFRESHED ACCESS TOKEN]');
     return {
       ...token,
       accessToken: tokens.access_token,
@@ -44,7 +45,7 @@ async function refreshAccessToken(token) {
       refreshToken: tokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
     };
   } catch (error) {
-    console.log(error);
+    console.log('[RefreshAccessTokenError]', error);
 
     return {
       ...token,
@@ -78,6 +79,7 @@ export const authOptions: NextAuthOptions = {
 
       // Return previous token if the access token has not expired yet
       if (Date.now() < (token.accessTokenExpires as number) * 1000) {
+        // token.error = 'RefreshAccessTokenError';
         return token;
       }
 
