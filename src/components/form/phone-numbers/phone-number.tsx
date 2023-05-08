@@ -201,6 +201,7 @@ const PhoneNumberLine: FunctionComponent<Props> = ({
             panelPaddingSize="s"
             button={
               <EuiButtonIcon
+                aria-label="Actions"
                 display="empty"
                 iconType="boxesHorizontal"
                 size="xs"

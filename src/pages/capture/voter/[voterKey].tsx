@@ -95,7 +95,7 @@ const Voter: FunctionComponent = () => {
     if (person) setPerson(person);
   }, [person, setPerson]);
 
-  if (isLoading) {
+  if (isLoading || !voterKey) {
     return (
       <MainLayout
         breadcrumb={breadcrumb}
@@ -158,7 +158,7 @@ const Voter: FunctionComponent = () => {
         </EuiFormFieldset>
         <EuiSpacer />
         <EuiFormFieldset legend={{ children: 'Living Address' }}>
-          <Address address={person?.address} />
+          <Address address={person?.address} onChange={onChange} />
         </EuiFormFieldset>
         <EuiSpacer />
         <EuiFormFieldset legend={{ children: 'Comments' }}>

@@ -1,4 +1,3 @@
-import fetch from 'isomorphic-unfetch';
 import { getSession } from 'next-auth/react';
 
 export const fetcherAPI = async (route: string) => {

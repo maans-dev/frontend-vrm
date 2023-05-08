@@ -3,11 +3,17 @@ import useSWR from 'swr';
 import { fetcherAPI } from '../api.fetcher';
 
 export default function usePersonFetcher(key: string) {
-  const { data, error, isLoading } = useSWR<Person[]>(
-    `/person?key=${key}&template=["Address","Contact","Field","Comment","Canvass"]`,
+  const shouldFetch = key ? true : false;
+
+  const { data, error, isLoading, mutate } = useSWR<Person[]>(
+    shouldFetch
+      ? `/person?key=${key}&template=["Address","Contact","Field","Comment","Canvass"]`
+      : null,
     fetcherAPI,
     {
-      // revalidateOnFocus: false,
+      revalidateIfStale: true,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
     }
   );
 
@@ -15,5 +21,6 @@ export default function usePersonFetcher(key: string) {
     person: data?.[0],
     isLoading,
     error: error,
+    mutate,
   };
 }

@@ -10,7 +10,7 @@ import { OAuthConfig } from 'next-auth/providers';
  * returns the old token and an error property
  */
 async function refreshAccessToken(token) {
-  console.log('[REFRESHING ACCESS TOKEN]');
+  console.log('[REFRESHING ACCESS TOKEN]', new Date());
   try {
     const url = (DaAuthProvider as OAuthConfig<any>).token as string;
     const body = new URLSearchParams({
@@ -62,6 +62,7 @@ export const authOptions: NextAuthOptions = {
   // debug: true,
   callbacks: {
     async jwt({ token, user, account, profile }) {
+      if (token?.error) delete token.error;
       if (account && user && profile) {
         token.accessToken = account.access_token;
         token.accessTokenExpires = account.expires_at;

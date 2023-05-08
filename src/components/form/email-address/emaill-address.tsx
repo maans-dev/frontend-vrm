@@ -116,6 +116,7 @@ const EmailAddressLine: FunctionComponent<Props> = ({
             button={
               <EuiButtonIcon
                 display="empty"
+                aria-label="Actions"
                 iconType="boxesHorizontal"
                 size="xs"
                 onClick={onActionsClick}

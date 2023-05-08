@@ -29,7 +29,7 @@ export default function usePersonSearchFetcher(
 
   const { data, error, isLoading, mutate } = useSWR<Person[]>(
     shouldFetch
-      ? `/person?template=["Address","IEC","Contact"]&limit=10&${new URLSearchParams(
+      ? `/person?template=["Address","IEC","Contact"]&${new URLSearchParams(
         params as never
       ).toString()}`
       : null,

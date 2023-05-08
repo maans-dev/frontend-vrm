@@ -28,7 +28,7 @@ import { CanvassingSelectionDetails } from '@components/canvassing-type/canvassi
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
-  const voterKey = router.query.voterKey as string;
+  const voterKey = router.query['voterKey'] as string;
   const { person, isLoading } = usePersonFetcher(voterKey);
 
   const {
@@ -95,7 +95,7 @@ const Voter: FunctionComponent = () => {
     if (person) setPerson(person);
   }, [person, setPerson]);
 
-  if (isLoading) {
+  if (isLoading || !voterKey) {
     return (
       <MainLayout
         breadcrumb={breadcrumb}
@@ -113,31 +113,31 @@ const Voter: FunctionComponent = () => {
       {/* {isComplete && successModal} */}
       <EuiPanel>
         <VoterInfo
-          darn={person?.key}
-          salutation={person.salutation}
-          givenName={person.givenName || person.firstName}
-          surname={person.surname}
-          dob={moment(person.dob, 'YYYYMMDD').toDate()}
-          colourCode={person.colourCode}
-          canvassedBy={person.canvassedBy}
-          modified={person.modified}
-          livingStructure={person.livingStructure}
-          registeredStructure={person.registeredStructure}
+          darn={person.key}
+          salutation={person?.salutation}
+          givenName={person?.givenName || person?.firstName}
+          surname={person?.surname}
+          dob={moment(person?.dob, 'YYYYMMDD').toDate()}
+          colourCode={person?.colourCode}
+          canvassedBy={person?.canvassedBy}
+          modified={person?.modified}
+          livingStructure={person?.livingStructure}
+          registeredStructure={person?.registeredStructure}
         />
       </EuiPanel>
       <EuiSpacer />
       <EuiForm fullWidth isInvalid={serverError !== ''} error={[serverError]}>
         <EuiFormFieldset legend={{ children: 'Canvassing tags' }}>
-          <CanvassingTags fields={person.fields} onChange={onChange} />
+          <CanvassingTags fields={person?.fields} onChange={onChange} />
         </EuiFormFieldset>
         <EuiSpacer />
         <EuiFormFieldset legend={{ children: 'Affiliation' }}>
-          <Affiliation affiliation={person.affiliation} onChange={onChange} />
+          <Affiliation affiliation={person?.affiliation} onChange={onChange} />
         </EuiFormFieldset>
         <EuiSpacer />
         <EuiFormFieldset legend={{ children: 'Contact details' }}>
           <ContactDetails
-            deceased={person.deceased}
+            deceased={person?.deceased}
             givenName={person?.givenName}
             language={person?.language}
             contacts={person?.contacts}
@@ -150,16 +150,16 @@ const Voter: FunctionComponent = () => {
         </EuiFormFieldset>
         <EuiSpacer />
         <EuiFormFieldset legend={{ children: 'Living Address' }}>
-          <Address address={person.address} />
+          <Address address={person?.address} onChange={onChange} />
         </EuiFormFieldset>
         <EuiSpacer />
         <EuiFormFieldset legend={{ children: 'Comments' }}>
-          <Comments comments={person.comments} onCommentChange={onChange} />
+          <Comments comments={person?.comments} onCommentChange={onChange} />
         </EuiFormFieldset>
         <EuiSpacer />
         <EuiFormFieldset legend={{ children: 'Tags' }}>
           <EuiFormRow display="rowCompressed">
-            <VoterTags fields={person.fields} onChange={onChange} />
+            <VoterTags fields={person?.fields} onChange={onChange} />
           </EuiFormRow>
         </EuiFormFieldset>
         <EuiSpacer />

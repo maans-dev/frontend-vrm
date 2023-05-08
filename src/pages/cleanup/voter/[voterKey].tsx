@@ -92,7 +92,7 @@ const Voter: FunctionComponent = () => {
     if (person) setPerson(person);
   }, [person, setPerson]);
 
-  if (isLoading) {
+  if (isLoading || !voterKey) {
     return (
       <MainLayout
         breadcrumb={breadcrumb}
@@ -230,7 +230,7 @@ const Voter: FunctionComponent = () => {
             {selectedTab === 1 && (
               <EuiFormFieldset
                 legend={{ children: 'Living Address & Location' }}>
-                <Address address={person?.address} />
+                <Address address={person?.address} onChange={onChange} />
               </EuiFormFieldset>
             )}
             {selectedTab === 2 && (
