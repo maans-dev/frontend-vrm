@@ -20,6 +20,7 @@ const Commenter: FunctionComponent<Props> = ({ comment, onArchive }) => {
   const isMemberComment = comment.type === 'membership';
 
   const { euiTheme } = useEuiTheme();
+
   function formatTimestamp(timestamp) {
     return moment(timestamp).format('D MMM YYYY');
   }

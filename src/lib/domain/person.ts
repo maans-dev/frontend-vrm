@@ -173,6 +173,7 @@ export interface Structure {
   votingDistrict_id: number;
   votingDistrict: string;
   active: boolean;
+  deleted?: boolean;
 }
 
 export interface Address {
@@ -182,16 +183,26 @@ export interface Address {
   province: string;
   city: string;
   suburb: string;
+  buildingNo: string;
+  buildingName: string;
   streetName: string;
   streetNo: string;
   postalCode: string;
   latitude: number;
   longitude: number;
-  structure: Structure;
+  structure: Partial<Structure>;
   createdBy: number;
   modifiedBy: number;
   created: Date;
   modified: Date;
+  deleted: boolean;
+  // TODO: the fields below are actually from the geocoding API. This should probably be split off into it's own type
+  votingDistrict_id?: number | string;
+  votingDistrict?: string;
+  service?: {
+    type: string;
+    emoji: string;
+  };
 }
 
 export interface ColourCode {

@@ -1,5 +1,5 @@
 import { FunctionComponent } from 'react';
-import { EuiButton, EuiEmptyPrompt } from '@elastic/eui';
+import { EuiEmptyPrompt } from '@elastic/eui';
 
 export type Props = {
   show: boolean;

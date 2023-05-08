@@ -1,6 +1,6 @@
 import { CommentsType } from './comments';
 import { EmailContact } from './email-address';
-import { Affiliation, Field, Person } from './person';
+import { Address, Affiliation, Field, Person } from './person';
 import { Language } from './person-enum';
 import { PhoneContact } from './phone-numbers';
 
@@ -23,7 +23,8 @@ export type GeneralUpdate =
   | DeceasedUpdate
   | GivenNameUpdate
   | CommentsUpdate
-  | FieldsUpdate;
+  | FieldsUpdate
+  | AddressUpdate;
 
 export type KeyedUpdate =
   | CanvassUpdate
@@ -56,6 +57,7 @@ export type CanvassUpdate = {
   activity?: string;
   type?: string | 'FACE' | 'TELE';
 };
+export type AddressUpdate = Partial<Address>;
 
 type AssertHasFields = (
   fields: ReadonlyArray<string>,

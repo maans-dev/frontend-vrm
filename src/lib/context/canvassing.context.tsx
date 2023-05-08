@@ -20,6 +20,7 @@ import { ToastContext } from './toast.context';
 import { Moment } from 'moment';
 import moment from 'moment';
 import { useSession } from 'next-auth/react';
+import { useSWRConfig } from 'swr';
 
 export type CanvassingContextType = {
   data: Partial<PersonUpdateRequest> & Partial<{ canvass: CanvassUpdate }>;
@@ -67,6 +68,7 @@ const CanvassingProvider = ({ children }) => {
   const [canvassDate, setCanvassDateInternal] = useState(null);
   const [doFormReset, setDoFormReset] = useState(new Date());
   const { addToast } = useContext(ToastContext);
+  const { mutate } = useSWRConfig();
 
   const setPerson = (person: Person) => setPersonInternal(person);
 
@@ -242,6 +244,9 @@ const CanvassingProvider = ({ children }) => {
 
       if (response.ok) {
         setIsComplete(true);
+        mutate(
+          `/person?key=${person.key}&template=["Address","Contact","Field","Comment","Canvass"]`
+        );
         if (router.pathname.includes('/canvass/')) {
           router.push('/canvass/canvassing-type');
         } else if (router.pathname.includes('/capture/')) {

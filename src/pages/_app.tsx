@@ -1,6 +1,6 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import { FunctionComponent, useEffect } from 'react';
+import { FunctionComponent } from 'react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { EuiErrorBoundary } from '@elastic/eui';
@@ -10,7 +10,7 @@ import { Theme } from '../components/theme';
 import { globalStyes } from '../styles/global.styles';
 import CanvassingProvider from '@lib/context/canvassing.context';
 import ToastProvider from '@lib/context/toast.context';
-import { SessionProvider, signIn } from 'next-auth/react';
+import { SessionProvider } from 'next-auth/react';
 import { Session } from 'next-auth';
 import AuthHandler from '@components/auth/auth-handler';
 

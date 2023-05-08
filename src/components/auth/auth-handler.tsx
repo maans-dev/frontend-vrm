@@ -6,7 +6,7 @@ const AuthHandler: FunctionComponent = () => {
 
   useEffect(() => {
     if (session?.error === 'RefreshAccessTokenError') {
-      signIn(); // Force sign in to hopefully resolve error
+      signIn('da', { redirect: false }); // Force sign in to hopefully resolve error
     }
   }, [session]);
 
