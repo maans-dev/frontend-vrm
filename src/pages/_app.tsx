@@ -3,7 +3,6 @@ import 'regenerator-runtime/runtime';
 import { FunctionComponent } from 'react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import { EuiErrorBoundary } from '@elastic/eui';
 import { Global } from '@emotion/react';
 import Chrome from '../components/chrome';
 import { Theme } from '../components/theme';
@@ -13,6 +12,10 @@ import ToastProvider from '@lib/context/toast.context';
 import { SessionProvider } from 'next-auth/react';
 import { Session } from 'next-auth';
 import AuthHandler from '@components/auth/auth-handler';
+import { ErrorBoundary } from '@appsignal/react';
+import Appsignal from '@appsignal/javascript';
+import { plugin as appSignalBreadcrumbsNetwork } from '@appsignal/plugin-breadcrumbs-network';
+import { plugin } from '@appsignal/plugin-window-events';
 
 /**
  * Next.js uses the App component to initialize pages. You can override it
@@ -25,6 +28,15 @@ const EuiApp: FunctionComponent<AppProps<{ session: Session }>> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
+  const appsignal = new Appsignal({
+    key: process.env.NEXT_PUBLIC_APPSIGNAL_DEV,
+    revision: process.env.NEXT_PUBLIC_VERSION,
+  });
+  useEffect(() => {
+    appsignal.use(appSignalBreadcrumbsNetwork());
+    console.log('appsignal breadcrumbs', appsignal);
+    appsignal.use(plugin());
+  }, []);
   return (
     <>
       <Head>
@@ -40,10 +52,10 @@ const EuiApp: FunctionComponent<AppProps<{ session: Session }>> = ({
             refetchOnWindowFocus={true}>
             <ToastProvider>
               <CanvassingProvider>
-                <EuiErrorBoundary>
+                <ErrorBoundary instance={appsignal}>
                   <AuthHandler />
                   <Component {...pageProps} />
-                </EuiErrorBoundary>
+                </ErrorBoundary>
               </CanvassingProvider>
             </ToastProvider>
           </SessionProvider>
