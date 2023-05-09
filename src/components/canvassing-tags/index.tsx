@@ -1,11 +1,10 @@
-import { FunctionComponent, useContext, useEffect, useState } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 import { EuiFlexGrid, EuiFlexItem, useIsWithinBreakpoints } from '@elastic/eui';
 import CanvassingTag from './canvassing-tag';
 import { Field, FieldMetaData } from '@lib/domain/person';
 import { FieldsUpdate, PersonUpdate } from '@lib/domain/person-update';
 import useCanvassingTagFetcher from '@lib/fetcher/tags/canvassing-tags';
 import { CanvassingTagCodes } from '@lib/domain/tags';
-import { CanvassingContext } from '@lib/context/canvassing.context';
 
 export type Props = {
   fields: Field[];
@@ -19,7 +18,12 @@ const CanvassingTags: FunctionComponent<Props> = ({ fields, onChange }) => {
   );
   const { data } = useCanvassingTagFetcher();
   const [presetFields, setPresetFields] = useState<Partial<Field>[]>(null);
-  const { nextId } = useContext(CanvassingContext);
+
+  const nextId = (() => {
+    let id = 0;
+    return () => ++id;
+  })();
+
   const getField = (field: Partial<Field>) => {
     const found = internalFields.find(f => {
       return f.field.code === field.field.code;

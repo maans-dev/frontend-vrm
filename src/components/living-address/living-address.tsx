@@ -193,9 +193,6 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
       [field]: value,
     };
 
-    // TODO: This handles seting the structure key/votingDistrict based on if the district has changed or not.
-    // Currently this uses a workaround because the event and person address interfaced differ. This will need
-    // to be updated once the API has been fixed.
     if (
       'votingDistrict_id' in updatedAddress.structure &&
       address.structure.votingDistrict_id !==
