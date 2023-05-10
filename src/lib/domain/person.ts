@@ -1,3 +1,5 @@
+import { GeocodedAddressSource, Province } from './person-enum';
+
 export interface Person {
   key: number;
   idNumber: string;
@@ -159,6 +161,7 @@ export interface RegisteredStructure {
 
 export interface Structure {
   key: string;
+  formatted: string;
   province: string;
   municipality: string;
   municipalityCatB: string;
@@ -180,7 +183,9 @@ export interface Address {
   key: string;
   type: string;
   formatted: string;
-  province: string;
+  geocodeSource?: GeocodedAddressSource;
+  province?: string;
+  province_enum?: Province;
   city: string;
   suburb: string;
   buildingNo: string;

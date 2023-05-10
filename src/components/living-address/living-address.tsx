@@ -6,6 +6,7 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiFormRow,
+  EuiIcon,
   EuiPanel,
   EuiText,
   EuiToolTip,
@@ -23,6 +24,8 @@ import omit from 'lodash/omit';
 import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
 import { AiOutlineWarning } from 'react-icons/ai';
 import SearchAddress from '@components/address-search';
+import { GeocodedAddressSource } from '@lib/domain/person-enum';
+import { MdHowToVote } from 'react-icons/md';
 
 export type Props = {
   address: Address;
@@ -74,15 +77,25 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
 
     const respPayload = await response.json();
 
-    const result = respPayload?.data?.results?.values.filter(
-      v => v?.service?.type !== 'VOTING_DISTRICT'
-    );
-
-    setSearchResults(result || []);
+    setSearchResults(respPayload?.data?.results?.values || []);
   };
 
   const getFormattedAddress = () => {
     if (!updatedAddress) return 'Unknown';
+
+    if (updatedAddress.geocodeSource === GeocodedAddressSource.GEOCODED_VD) {
+      return (
+        <EuiFlexGroup responsive={false} gutterSize="xs">
+          <EuiFlexItem grow={false}>
+            <EuiIcon type={MdHowToVote} />
+          </EuiFlexItem>
+          <EuiFlexItem>
+            {updatedAddress?.structure?.formatted ?? updatedAddress.formatted}
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      );
+    }
+
     if (
       'formatted' in updatedAddress &&
       updatedAddress.formatted !== '' &&
@@ -116,11 +129,10 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
     )
       formatted = `${formatted} ${updatedAddress.city},`;
     if (
-      'province' in updatedAddress &&
-      updatedAddress.province !== '' &&
-      updatedAddress.province !== null
+      'province_enum' in updatedAddress &&
+      updatedAddress.province_enum !== null
     )
-      formatted = `${formatted} ${updatedAddress.province},`;
+      formatted = `${formatted} ${updatedAddress.province_enum},`;
     if (
       'postalCode' in updatedAddress &&
       updatedAddress.postalCode !== '' &&
@@ -135,7 +147,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
     setSearchResults([selectedAddress]);
   };
 
-  const onSelectAddress = (selectedAddress: Partial<Address>) => {
+  const onSelectAddress = async (selectedAddress: Partial<Address>) => {
     setSearchResults([]);
     if (!selectedAddress) return;
     // TODO: shouldn't use any here. Need to define proper update type that matches the reqiored payload.
@@ -144,7 +156,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
       ...omit(selectedAddress, [
         'key',
         'type',
-        'formatted',
+        // 'formatted',
         'service',
         'emoji',
         'created',
@@ -178,7 +190,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
       ...omit(updatedAddress, [
         'key',
         'type',
-        'formatted',
+        // 'formatted',
         'service',
         'emoji',
         'created',
@@ -198,7 +210,6 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
       address.structure.votingDistrict_id !==
         +updatedAddress.structure.votingDistrict_id
     ) {
-      console.log(updatedAddress.structure, address.structure);
       update.structure = {
         votingDistrict_id: +updatedAddress.structure.votingDistrict_id,
       };
