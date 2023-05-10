@@ -10,11 +10,13 @@ import {
   EuiModalHeader,
   EuiModalHeaderTitle,
   EuiSpacer,
+  EuiSuperSelect,
 } from '@elastic/eui';
 import { FaPen } from 'react-icons/fa';
 import { FunctionComponent, useEffect, useState } from 'react';
 import { Address } from '@lib/domain/person';
 import omit from 'lodash/omit';
+import { GeocodedAddressSource, Province } from '@lib/domain/person-enum';
 
 export type Props = {
   address: Partial<Address>;
@@ -26,12 +28,39 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
   onSubmit,
 }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [updatedAddress, setUpdatedAddress] = useState(address);
+  const [updatedAddress, setUpdatedAddress] = useState(() => {
+    const update: any = {
+      ...omit(address, [
+        'key',
+        'type',
+        'formatted',
+        'service',
+        'emoji',
+        'created',
+        'createdBy',
+        'key_hash',
+        'key_text',
+        'modified',
+        'modifiedBy',
+        'person',
+        'structure',
+      ]),
+    };
+
+    update.structure = {
+      deleted: true,
+    };
+
+    return update;
+  });
   const closeModal = () => setIsModalVisible(false);
   const showModal = () => setIsModalVisible(true);
   const submit = () => {
     closeModal();
-    onSubmit(updatedAddress);
+    onSubmit({
+      ...updatedAddress,
+      geocodeSource: GeocodedAddressSource.UNGEOCODED,
+    });
   };
 
   const onUpdateAddress = (field: string, value: string) => {
@@ -63,7 +92,29 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
   };
 
   useEffect(() => {
-    setUpdatedAddress(address);
+    const update: any = {
+      ...omit(address, [
+        'key',
+        'type',
+        'formatted',
+        'service',
+        'emoji',
+        'created',
+        'createdBy',
+        'key_hash',
+        'key_text',
+        'modified',
+        'modifiedBy',
+        'person',
+        'structure',
+      ]),
+    };
+
+    update.structure = {
+      deleted: true,
+    };
+
+    setUpdatedAddress(update);
   }, [address]);
 
   return (
@@ -137,11 +188,16 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
                 />
               </EuiFormRow>
               <EuiFormRow label="Province" display="rowCompressed">
-                <EuiFieldText
-                  name="Province"
+                <EuiSuperSelect
                   compressed
-                  value={updatedAddress?.province}
-                  onChange={e => onUpdateAddress('province', e.target.value)}
+                  options={Object.entries(Province).map(([value, label]) => {
+                    return {
+                      value: value,
+                      inputDisplay: label,
+                    };
+                  })}
+                  valueOfSelected={updatedAddress?.province_enum}
+                  onChange={value => onUpdateAddress('province_enum', value)}
                 />
               </EuiFormRow>
               <EuiSpacer />

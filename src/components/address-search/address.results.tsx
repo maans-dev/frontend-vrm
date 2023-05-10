@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiIcon,
+  EuiCallOut,
   EuiSelectable,
   EuiSelectableOption,
   EuiSpacer,
   EuiText,
 } from '@elastic/eui';
-import { MdHowToVote } from 'react-icons/md';
-import { Address } from '@lib/domain/person';
+import { Address, Structure } from '@lib/domain/person';
+import { useSession } from 'next-auth/react';
+import { GeocodedAddressSource } from '@lib/domain/person-enum';
 
 interface Props {
   address: Partial<Address>[];
+  isLoading: boolean;
   onSelect: (selected) => void;
 }
 
@@ -26,7 +26,8 @@ export interface OptionData {
   emoji?: string;
 }
 
-const AddressResults = ({ address, onSelect }: Props) => {
+const AddressResults = ({ address, onSelect, isLoading }: Props) => {
+  const { data: session } = useSession();
   const [options, setOptions] = useState<
     Array<EuiSelectableOption<OptionData>>
   >(
@@ -49,6 +50,8 @@ const AddressResults = ({ address, onSelect }: Props) => {
       : []
   );
 
+  const [error, setError] = useState<string>(null);
+
   const getOptionData = (option: EuiSelectableOption<OptionData>) => {
     return {
       description: option.data?.description,
@@ -65,49 +68,78 @@ const AddressResults = ({ address, onSelect }: Props) => {
       getOptionData(option);
       return (
         <>
-          <EuiFlexItem grow={true}>
-            {option.label ? (
-              <EuiText size="xs">
-                <strong>
-                  {option.emoji} {option.label}
-                </strong>
-              </EuiText>
-            ) : null}
-            <EuiSpacer size="xs" />
-            {option.label ? (
-              <EuiText size="xs">
-                {option.latitude}, {option.longitude}
-              </EuiText>
-            ) : null}
-            <EuiSpacer size="xs" />
-            {option.votingDistrict && option.votingDistrict_id && (
-              <EuiText size="xs" className="eui-displayBlock">
-                <EuiFlexGroup responsive={false} gutterSize="s">
-                  <EuiFlexItem grow={false}>
-                    <EuiIcon type={MdHowToVote} />
-                  </EuiFlexItem>
-                  <EuiFlexItem>
-                    {option.votingDistrict} ({option.votingDistrict_id})
-                  </EuiFlexItem>
-                </EuiFlexGroup>
-              </EuiText>
-            )}
-          </EuiFlexItem>
+          {option.label ? (
+            <>
+              <EuiSpacer size="xs" />
+              <EuiText size="xs">{option.label}</EuiText>
+              <EuiSpacer size="xs" />
+            </>
+          ) : null}
         </>
       );
     },
     []
   );
 
-  const handleSelect = options => {
+  const handleSelect = async options => {
     setOptions(options);
+    setError(null);
+    const selectedAddress = options.find(option => option.checked === 'on');
 
-    const selectedStructure = options.find(option => option.checked === 'on');
-    onSelect(selectedStructure);
+    // add structure info
+    if (!('votingDistrict_id' in selectedAddress.value)) {
+      // fetch the structure info
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE}/structures/votingdistricts?latitude=${selectedAddress.data.latitude}&longitude=${selectedAddress.data.longitude}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.accessToken}`,
+          },
+          method: 'GET',
+        }
+      );
+
+      if (!response.ok) {
+        // throw 'Unable to load Voting District for this address';
+        const errJson = JSON.parse(await response.text());
+        setError(
+          `Unable to load Voting District for this address: ${errJson.message}`
+        );
+        return;
+      }
+
+      const structureInfo: Partial<Structure>[] = await response.json();
+
+      if (structureInfo.length === 0) {
+        setError(
+          `Unable to load Voting District for this address: No VD found at ${selectedAddress.data.latitude}, ${selectedAddress.data.longitude}`
+        );
+        return;
+      }
+
+      selectedAddress.value.votingDistrict_id =
+        +structureInfo[0].votingDistrict_id;
+    }
+
+    // add geocoded source
+    if (selectedAddress?.value?.latitude && selectedAddress?.value?.longitude) {
+      selectedAddress.value.geocodeSource =
+        GeocodedAddressSource.GEOCODED_ADDRESS;
+    } else {
+      selectedAddress.value.geocodeSource = GeocodedAddressSource.UNGEOCODED;
+    }
+
+    if (selectedAddress?.value?.service?.type === 'VOTING_DISTRICT') {
+      selectedAddress.value.geocodeSource = GeocodedAddressSource.GEOCODED_VD;
+    }
+
+    onSelect(selectedAddress);
   };
 
   useEffect(() => {
     if (address && Array.isArray(address)) {
+      setError(null);
       setOptions(
         address.map(
           (addres): EuiSelectableOption<OptionData> => ({
@@ -121,7 +153,7 @@ const AddressResults = ({ address, onSelect }: Props) => {
             },
             isGroupLabel: false,
             value: addres,
-            prepend: <></>,
+            prepend: addres?.service?.emoji,
           })
         )
       );
@@ -132,16 +164,30 @@ const AddressResults = ({ address, onSelect }: Props) => {
     <>
       <EuiSelectable
         options={options}
-        singleSelection="always"
+        isLoading={isLoading}
+        singleSelection={true}
         allowExclusions={false}
+        errorMessage={
+          error && (
+            <EuiCallOut
+              size="s"
+              title={error}
+              color="danger"
+              iconType="error"
+            />
+          )
+        }
         onChange={handleSelect}
         renderOption={renderOption}
+        height="full"
+        className="eui-scrollBar"
+        css={{ maxHeight: '500px', overflowY: 'auto' }}
         listProps={{
-          rowHeight: 75,
+          isVirtualized: false,
+          textWrap: 'wrap',
           showIcons: false,
-        }}
-        // height={80}
-      >
+          onFocusBadge: false,
+        }}>
         {(list, search) => (
           <>
             {search}

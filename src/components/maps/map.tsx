@@ -167,7 +167,7 @@ const Map: FunctionComponent<Props> = ({ address, onAddressChange }) => {
                         <EuiSpacer size="s" />
                         <EuiText size="xs" textAlign="center">
                           <strong>
-                            Latitude: {location.lat.toFixed(4)}, Longitude:{' '}
+                            Coordinates: {location.lat.toFixed(4)},{' '}
                             {location.lng.toFixed(4)}
                           </strong>
                         </EuiText>

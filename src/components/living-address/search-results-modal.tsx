@@ -19,6 +19,7 @@ import {
 } from '@elastic/eui';
 import { css } from '@emotion/react';
 import { Address } from '@lib/domain/person';
+import { GeocodedAddressSource } from '@lib/domain/person-enum';
 import { FunctionComponent, useEffect, useState } from 'react';
 import { MdHowToVote } from 'react-icons/md';
 
@@ -48,6 +49,16 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
   };
 
   const setSelectedAddress = (option: Partial<Address>) => {
+    if (option.latitude && option.longitude) {
+      option.geocodeSource = GeocodedAddressSource.GEOCODED_ADDRESS;
+    } else {
+      option.geocodeSource = GeocodedAddressSource.UNGEOCODED;
+    }
+
+    if (option?.service?.type === 'VOTING_DISTRICT') {
+      option.geocodeSource = GeocodedAddressSource.GEOCODED_VD;
+    }
+
     setAddress({ ...option, buildingName: '', buildingNo: '' });
     setAddressInternal({ ...option, buildingName: '', buildingNo: '' });
   };
@@ -62,11 +73,6 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
     <EuiFlexItem key={i} grow={true}>
       <EuiCheckableCard
         css={css`
-          .euiCheckableCard__label {
-            font-weight: bold;
-            padding-bottom: 7px;
-            font-size: 12px;
-          }
           .euiSplitPanel__inner {
             padding: 7px;
           }
@@ -75,31 +81,20 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
         label={
           <EuiText size="xs">
             {result?.service?.emoji}{' '}
-            <strong>
-              {result.formatted ? (
-                result.formatted
-              ) : result.service.type === 'VOTING_DISTRICT' ? (
-                <>
-                  {result?.votingDistrict} ({result?.votingDistrict_id})
-                </>
-              ) : (
-                <>{result.formatted}</>
-              )}
-            </strong>
+            {result.formatted ? (
+              result.formatted
+            ) : result.service.type === 'VOTING_DISTRICT' ? (
+              <>
+                {result?.votingDistrict} ({result?.votingDistrict_id})
+              </>
+            ) : (
+              <>{result.formatted}</>
+            )}
           </EuiText>
         }
         // checked={selected === result.key}
         onChange={() => setSelectedAddress(result)}>
-        {result.latitude && result.longitude && (
-          <EuiText
-            size="xs"
-            onClick={() => setSelectedAddress(result)}
-            css={{ cursor: 'pointer' }}>
-            {result.latitude}, {result.longitude}
-          </EuiText>
-        )}
-        <EuiSpacer size="xs" />
-        {result.service.type !== 'VOTING_DISTRICT' && (
+        {/* {result.service.type !== 'VOTING_DISTRICT' && (
           <EuiText
             size="xs"
             onClick={() => setSelectedAddress(result)}
@@ -113,53 +108,13 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
               </EuiFlexItem>
             </EuiFlexGroup>
           </EuiText>
-        )}
+        )} */}
       </EuiCheckableCard>
     </EuiFlexItem>
   ));
 
   const renderAddressFields = () => (
     <>
-      <EuiFlexItem grow={true}>
-        <EuiPanel paddingSize="m" hasShadow={false} hasBorder={true}>
-          <EuiText size="xs">
-            {address?.service?.emoji}{' '}
-            <strong>
-              {address.formatted ? (
-                address.formatted
-              ) : address.service.type === 'VOTING_DISTRICT' ? (
-                <>
-                  {address?.votingDistrict} ({address?.votingDistrict_id})
-                </>
-              ) : (
-                <>{address.formatted}</>
-              )}
-            </strong>
-          </EuiText>
-          <EuiSpacer size="xs" />
-          {address.latitude && address.longitude && (
-            <EuiText size="xs">
-              {address.latitude}, {address.longitude}
-            </EuiText>
-          )}
-          <EuiSpacer size="xs" />
-          {address.service.type !== 'VOTING_DISTRICT' && (
-            <EuiText size="xs">
-              <EuiFlexGroup responsive={false} gutterSize="s">
-                <EuiFlexItem grow={false}>
-                  <EuiIcon type={MdHowToVote} />
-                </EuiFlexItem>
-                <EuiFlexItem>
-                  {address?.votingDistrict} ({address?.votingDistrict_id})
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            </EuiText>
-          )}
-        </EuiPanel>
-      </EuiFlexItem>
-
-      <EuiSpacer />
-
       <EuiForm fullWidth>
         <EuiFormRow label="Unit Number" display="rowCompressed">
           <EuiFieldText
@@ -247,12 +202,51 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
   };
 
   const renderHeaderTitle = () =>
-    address ? 'Complete address details' : 'Select a location';
+    address ? (
+      <>
+        <p>Complete address details</p>
+        <EuiSpacer />
+        <EuiPanel paddingSize="m" hasShadow={false} hasBorder={true}>
+          <EuiText size="xs">
+            {address?.service?.emoji}{' '}
+            {address.formatted ? (
+              address.formatted
+            ) : address.service.type === 'VOTING_DISTRICT' ? (
+              <>
+                {address?.votingDistrict} ({address?.votingDistrict_id})
+              </>
+            ) : (
+              <>{address.formatted}</>
+            )}
+          </EuiText>
+          {/* {address.service.type !== 'VOTING_DISTRICT' && (
+            <EuiText size="xs">
+              <EuiFlexGroup responsive={false} gutterSize="s">
+                <EuiFlexItem grow={false}>
+                  <EuiIcon type={MdHowToVote} />
+                </EuiFlexItem>
+                <EuiFlexItem>
+                  {address?.votingDistrict} ({address?.votingDistrict_id})
+                </EuiFlexItem>
+              </EuiFlexGroup>
+            </EuiText>
+          )} */}
+        </EuiPanel>
+      </>
+    ) : (
+      'Select a location'
+    );
 
   return (
     <>
       {results.length > 0 && (
-        <EuiModal onClose={() => doClose(null)}>
+        <EuiModal
+          css={css`
+            .euiModalHeader {
+              padding-inline: 24px;
+            }
+          `}
+          onClose={() => doClose(null)}>
           <EuiModalHeader>
             <EuiModalHeaderTitle size="s">
               {renderHeaderTitle()}
