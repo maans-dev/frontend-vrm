@@ -8,6 +8,7 @@ import {
   EuiFormRow,
   EuiIcon,
   EuiPanel,
+  EuiSpacer,
   EuiText,
   EuiToolTip,
   useIsWithinBreakpoints,
@@ -96,12 +97,12 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
       );
     }
 
-    if (
-      'formatted' in updatedAddress &&
-      updatedAddress.formatted !== '' &&
-      updatedAddress.formatted !== null
-    )
-      return updatedAddress?.formatted;
+    // if (
+    //   'formatted' in updatedAddress &&
+    //   updatedAddress.formatted !== '' &&
+    //   updatedAddress.formatted !== null
+    // )
+    //   return updatedAddress?.formatted;
 
     let formatted = '';
     if (
@@ -327,22 +328,31 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
           </EuiFlexItem>
         </EuiFlexGrid>
         <EuiFlexItem>
-          <EuiFormRow display="rowCompressed" label="Unit Number">
-            <EuiFieldText
-              name="Unit Number"
-              compressed
-              value={updatedAddress?.buildingNo || ''}
-              onChange={e => onUpdateAddress('buildingNo', e.target.value)}
-            />
-          </EuiFormRow>
-          <EuiFormRow display="rowCompressed" label="Unit Name">
-            <EuiFieldText
-              name="Unit Name"
-              compressed
-              value={updatedAddress?.buildingName || ''}
-              onChange={e => onUpdateAddress('buildingName', e.target.value)}
-            />
-          </EuiFormRow>
+          <EuiFlexGroup responsive={false} gutterSize="m">
+            <EuiFlexItem grow={3}>
+              <EuiFormRow display="rowCompressed" label="Unit Number">
+                <EuiFieldText
+                  name="Unit Number"
+                  compressed
+                  value={updatedAddress?.buildingNo || ''}
+                  onChange={e => onUpdateAddress('buildingNo', e.target.value)}
+                />
+              </EuiFormRow>
+            </EuiFlexItem>
+            <EuiFlexItem grow={9}>
+              <EuiFormRow display="rowCompressed" label="Unit Name">
+                <EuiFieldText
+                  name="Unit Name"
+                  compressed
+                  value={updatedAddress?.buildingName || ''}
+                  onChange={e =>
+                    onUpdateAddress('buildingName', e.target.value)
+                  }
+                />
+              </EuiFormRow>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+          <EuiSpacer size="m" />
           <EuiFormRow display="rowCompressed" label="Address on File">
             <EuiPanel hasShadow={false} hasBorder={true} paddingSize="s">
               <EuiText size="xs">{getFormattedAddress()}</EuiText>

@@ -162,7 +162,7 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
 
               <EuiFlexGroup responsive={false} gutterSize="s">
                 <EuiFlexItem grow={3}>
-                  <EuiFormRow label="Street Number" display="rowCompressed">
+                  <EuiFormRow label="Street No" display="rowCompressed">
                     <EuiFieldText
                       name="Street Number"
                       compressed

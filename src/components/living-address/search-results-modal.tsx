@@ -7,7 +7,6 @@ import {
   EuiFlexItem,
   EuiForm,
   EuiFormRow,
-  EuiIcon,
   EuiModal,
   EuiModalBody,
   EuiModalFooter,
@@ -15,13 +14,13 @@ import {
   EuiModalHeaderTitle,
   EuiPanel,
   EuiSpacer,
+  EuiSuperSelect,
   EuiText,
 } from '@elastic/eui';
 import { css } from '@emotion/react';
 import { Address } from '@lib/domain/person';
-import { GeocodedAddressSource } from '@lib/domain/person-enum';
+import { GeocodedAddressSource, Province } from '@lib/domain/person-enum';
 import { FunctionComponent, useEffect, useState } from 'react';
-import { MdHowToVote } from 'react-icons/md';
 
 export type Props = {
   results?: Partial<Address>[];
@@ -126,7 +125,7 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
 
         <EuiFlexGroup responsive={false} gutterSize="s">
           <EuiFlexItem grow={3}>
-            <EuiFormRow label="Street Number" display="rowCompressed">
+            <EuiFormRow label="Street No" display="rowCompressed">
               <EuiFieldText
                 name="Street Number"
                 compressed
@@ -189,12 +188,17 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
         <EuiSpacer size="m" />
 
         <EuiFormRow label="Province" display="rowCompressed">
-          <EuiFieldText
-            name="Province"
+          <EuiSuperSelect
             compressed
-            value={address?.province}
-            disabled={!!addressInternal?.province}
-            onChange={e => onUpdateAddress('province', e.target.value)}
+            disabled={!!addressInternal?.province_enum}
+            options={Object.entries(Province).map(([value, label]) => {
+              return {
+                value: value,
+                inputDisplay: label,
+              };
+            })}
+            valueOfSelected={address?.province_enum}
+            onChange={value => onUpdateAddress('province_enum', value)}
           />
         </EuiFormRow>
         <EuiSpacer />
