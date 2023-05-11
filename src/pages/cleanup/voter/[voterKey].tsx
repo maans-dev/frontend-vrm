@@ -155,6 +155,7 @@ const Voter: FunctionComponent = () => {
     <MainLayout
       breadcrumb={breadcrumb}
       showSpinner={isSubmitting}
+      restrictWidth="1400px"
       panelled={false}>
       {/* {isComplete && successModal} */}
       <EuiPanel>

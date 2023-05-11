@@ -87,6 +87,12 @@ const SearchOptions: FunctionComponent<Props> = ({
     setDob(null);
   };
 
+  const handleKeyDown = event => {
+    if (event.key === 'Enter') {
+      handleSubmit();
+    }
+  };
+
   const formActions = (
     <EuiFlexGroup direction="row" responsive={false} justifyContent="flexEnd">
       <EuiFlexItem grow={false}>
@@ -116,6 +122,7 @@ const SearchOptions: FunctionComponent<Props> = ({
         <EuiFieldText
           name="identity"
           compressed
+          onKeyDown={handleKeyDown}
           placeholder="ID Number, DARN or Membership number"
           // value={searchParams?.identity || ''}
           defaultValue={searchParams?.identity || ''}
