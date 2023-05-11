@@ -92,62 +92,63 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
             )}
           </EuiText>
         }
-        // checked={selected === result.key}
-        onChange={() => setSelectedAddress(result)}>
-        {/* {result.service.type !== 'VOTING_DISTRICT' && (
-          <EuiText
-            size="xs"
-            onClick={() => setSelectedAddress(result)}
-            css={{ cursor: 'pointer' }}>
-            <EuiFlexGroup responsive={false} gutterSize="s">
-              <EuiFlexItem grow={false}>
-                <EuiIcon type={MdHowToVote} />
-              </EuiFlexItem>
-              <EuiFlexItem>
-                {result?.votingDistrict} ({result?.votingDistrict_id})
-              </EuiFlexItem>
-            </EuiFlexGroup>
-          </EuiText>
-        )} */}
-      </EuiCheckableCard>
+        onChange={() => setSelectedAddress(result)}></EuiCheckableCard>
     </EuiFlexItem>
   ));
 
   const renderAddressFields = () => (
     <>
       <EuiForm fullWidth>
-        <EuiFormRow label="Unit Number" display="rowCompressed">
-          <EuiFieldText
-            name="Unit Number"
-            compressed
-            value={address?.buildingNo}
-            onChange={e => onUpdateAddress('buildingNo', e.target.value)}
-          />
-        </EuiFormRow>
-        <EuiFormRow label="Unit Name" display="rowCompressed">
-          <EuiFieldText
-            name="Unit Name"
-            compressed
-            value={address?.buildingName}
-            onChange={e => onUpdateAddress('buildingName', e.target.value)}
-          />
-        </EuiFormRow>
-        <EuiFormRow label="Street Number" display="rowCompressed">
-          <EuiFieldText
-            name="Street Number"
-            compressed
-            value={address?.streetNo}
-            onChange={e => onUpdateAddress('streetNo', e.target.value)}
-          />
-        </EuiFormRow>
-        <EuiFormRow label="Street Name" display="rowCompressed">
-          <EuiFieldText
-            name="Street Name"
-            compressed
-            value={address?.streetName}
-            onChange={e => onUpdateAddress('streetName', e.target.value)}
-          />
-        </EuiFormRow>
+        <EuiFlexGroup responsive={false} gutterSize="s">
+          <EuiFlexItem grow={3}>
+            <EuiFormRow label="Unit Number" display="rowCompressed">
+              <EuiFieldText
+                name="Unit Number"
+                compressed
+                value={address?.buildingNo}
+                onChange={e => onUpdateAddress('buildingNo', e.target.value)}
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+          <EuiFlexItem grow={9}>
+            <EuiFormRow label="Unit Name" display="rowCompressed">
+              <EuiFieldText
+                name="Unit Name"
+                compressed
+                value={address?.buildingName}
+                onChange={e => onUpdateAddress('buildingName', e.target.value)}
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+
+        <EuiSpacer size="m" />
+
+        <EuiFlexGroup responsive={false} gutterSize="s">
+          <EuiFlexItem grow={3}>
+            <EuiFormRow label="Street Number" display="rowCompressed">
+              <EuiFieldText
+                name="Street Number"
+                compressed
+                value={address?.streetNo}
+                onChange={e => onUpdateAddress('streetNo', e.target.value)}
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+          <EuiFlexItem grow={9}>
+            <EuiFormRow label="Street Name" display="rowCompressed">
+              <EuiFieldText
+                name="Street Name"
+                compressed
+                value={address?.streetName}
+                onChange={e => onUpdateAddress('streetName', e.target.value)}
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+
+        <EuiSpacer size="m" />
+
         <EuiFormRow label="Suburb" display="rowCompressed">
           <EuiFieldText
             name="Suburb"
@@ -157,24 +158,36 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
             onChange={e => onUpdateAddress('suburb', e.target.value)}
           />
         </EuiFormRow>
-        <EuiFormRow label="City" display="rowCompressed">
-          <EuiFieldText
-            name="City"
-            compressed
-            value={address?.city}
-            disabled={!!addressInternal?.city}
-            onChange={e => onUpdateAddress('city', e.target.value)}
-          />
-        </EuiFormRow>
-        <EuiFormRow label="Postal code" display="rowCompressed">
-          <EuiFieldText
-            name="Postal code"
-            compressed
-            disabled={!!addressInternal?.postalCode}
-            value={address?.postalCode}
-            onChange={e => onUpdateAddress('postalCode', e.target.value)}
-          />
-        </EuiFormRow>
+
+        <EuiSpacer size="m" />
+
+        <EuiFlexGroup responsive={false} gutterSize="s">
+          <EuiFlexItem grow={8}>
+            <EuiFormRow label="City" display="rowCompressed">
+              <EuiFieldText
+                name="City"
+                compressed
+                value={address?.city}
+                disabled={!!addressInternal?.city}
+                onChange={e => onUpdateAddress('city', e.target.value)}
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+          <EuiFlexItem grow={4}>
+            <EuiFormRow label="Postal code" display="rowCompressed">
+              <EuiFieldText
+                name="Postal code"
+                compressed
+                disabled={!!addressInternal?.postalCode}
+                value={address?.postalCode}
+                onChange={e => onUpdateAddress('postalCode', e.target.value)}
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+
+        <EuiSpacer size="m" />
+
         <EuiFormRow label="Province" display="rowCompressed">
           <EuiFieldText
             name="Province"

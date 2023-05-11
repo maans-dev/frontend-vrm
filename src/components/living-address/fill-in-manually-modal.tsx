@@ -2,6 +2,8 @@ import {
   EuiButton,
   EuiButtonEmpty,
   EuiFieldText,
+  EuiFlexGroup,
+  EuiFlexItem,
   EuiForm,
   EuiFormRow,
   EuiModal,
@@ -129,40 +131,64 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
           </EuiModalHeader>
           <EuiModalBody>
             <EuiForm fullWidth>
-              <EuiFormRow label="Unit Number" display="rowCompressed">
-                <EuiFieldText
-                  name="Unit Number"
-                  compressed
-                  value={updatedAddress?.buildingNo}
-                  onChange={e => onUpdateAddress('buildingNo', e.target.value)}
-                />
-              </EuiFormRow>
-              <EuiFormRow label="Unit Name" display="rowCompressed">
-                <EuiFieldText
-                  name="Unit Name"
-                  compressed
-                  value={updatedAddress?.buildingName}
-                  onChange={e =>
-                    onUpdateAddress('buildingName', e.target.value)
-                  }
-                />
-              </EuiFormRow>
-              <EuiFormRow label="Street Number" display="rowCompressed">
-                <EuiFieldText
-                  name="Street Number"
-                  compressed
-                  value={updatedAddress?.streetNo}
-                  onChange={e => onUpdateAddress('streetNo', e.target.value)}
-                />
-              </EuiFormRow>
-              <EuiFormRow label="Street Name" display="rowCompressed">
-                <EuiFieldText
-                  name="Street Name"
-                  compressed
-                  value={updatedAddress?.streetName}
-                  onChange={e => onUpdateAddress('streetName', e.target.value)}
-                />
-              </EuiFormRow>
+              <EuiFlexGroup responsive={false} gutterSize="s">
+                <EuiFlexItem grow={3}>
+                  <EuiFormRow label="Unit Number" display="rowCompressed">
+                    <EuiFieldText
+                      name="Unit Number"
+                      compressed
+                      value={updatedAddress?.buildingNo}
+                      onChange={e =>
+                        onUpdateAddress('buildingNo', e.target.value)
+                      }
+                    />
+                  </EuiFormRow>
+                </EuiFlexItem>
+                <EuiFlexItem grow={9}>
+                  <EuiFormRow label="Unit Name" display="rowCompressed">
+                    <EuiFieldText
+                      name="Unit Name"
+                      compressed
+                      value={updatedAddress?.buildingName}
+                      onChange={e =>
+                        onUpdateAddress('buildingName', e.target.value)
+                      }
+                    />
+                  </EuiFormRow>
+                </EuiFlexItem>
+              </EuiFlexGroup>
+
+              <EuiSpacer size="m" />
+
+              <EuiFlexGroup responsive={false} gutterSize="s">
+                <EuiFlexItem grow={3}>
+                  <EuiFormRow label="Street Number" display="rowCompressed">
+                    <EuiFieldText
+                      name="Street Number"
+                      compressed
+                      value={updatedAddress?.streetNo}
+                      onChange={e =>
+                        onUpdateAddress('streetNo', e.target.value)
+                      }
+                    />
+                  </EuiFormRow>
+                </EuiFlexItem>
+                <EuiFlexItem grow={9}>
+                  <EuiFormRow label="Street Name" display="rowCompressed">
+                    <EuiFieldText
+                      name="Street Name"
+                      compressed
+                      value={updatedAddress?.streetName}
+                      onChange={e =>
+                        onUpdateAddress('streetName', e.target.value)
+                      }
+                    />
+                  </EuiFormRow>
+                </EuiFlexItem>
+              </EuiFlexGroup>
+
+              <EuiSpacer size="m" />
+
               <EuiFormRow label="Suburb" display="rowCompressed">
                 <EuiFieldText
                   name="Suburb"
@@ -171,22 +197,36 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
                   onChange={e => onUpdateAddress('suburb', e.target.value)}
                 />
               </EuiFormRow>
-              <EuiFormRow label="City" display="rowCompressed">
-                <EuiFieldText
-                  name="City"
-                  compressed
-                  value={updatedAddress?.city}
-                  onChange={e => onUpdateAddress('city', e.target.value)}
-                />
-              </EuiFormRow>
-              <EuiFormRow label="Postal code" display="rowCompressed">
-                <EuiFieldText
-                  name="Postal code"
-                  compressed
-                  value={updatedAddress?.postalCode}
-                  onChange={e => onUpdateAddress('postalCode', e.target.value)}
-                />
-              </EuiFormRow>
+
+              <EuiSpacer size="m" />
+
+              <EuiFlexGroup responsive={false} gutterSize="s">
+                <EuiFlexItem grow={8}>
+                  <EuiFormRow label="City" display="rowCompressed">
+                    <EuiFieldText
+                      name="City"
+                      compressed
+                      value={updatedAddress?.city}
+                      onChange={e => onUpdateAddress('city', e.target.value)}
+                    />
+                  </EuiFormRow>
+                </EuiFlexItem>
+                <EuiFlexItem grow={4}>
+                  <EuiFormRow label="Postal code" display="rowCompressed">
+                    <EuiFieldText
+                      name="Postal code"
+                      compressed
+                      value={updatedAddress?.postalCode}
+                      onChange={e =>
+                        onUpdateAddress('postalCode', e.target.value)
+                      }
+                    />
+                  </EuiFormRow>
+                </EuiFlexItem>
+              </EuiFlexGroup>
+
+              <EuiSpacer size="m" />
+
               <EuiFormRow label="Province" display="rowCompressed">
                 <EuiSuperSelect
                   compressed
