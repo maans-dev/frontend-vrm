@@ -27,21 +27,21 @@ const Commenter: FunctionComponent<Props> = ({ comment, onArchive }) => {
 
   return (
     <EuiComment
-      username={`${comment.createdBy.firstName}  ${comment.createdBy.surname}`}
+      username={`${comment?.createdBy?.firstName}  ${comment?.createdBy?.surname}`}
       event={isSystemComment ? <>{comment.value}</> : 'added a comment'}
       timestamp={formatTimestamp(comment.created)}
-      timelineAvatarAriaLabel={comment.createdBy.firstName}
+      timelineAvatarAriaLabel={comment.createdBy?.firstName}
       timelineAvatar={
         isSystemComment ? (
           <EuiAvatar
-            name={comment.createdBy.firstName}
+            name={comment.createdBy?.firstName}
             iconType="bell"
             size="m"
             color={euiTheme.colors.warning}
           />
         ) : (
           <EuiAvatar
-            name={comment.createdBy.firstName}
+            name={comment.createdBy?.firstName}
             iconType={isMemberComment ? CiUser : 'editorComment'}
             size="m"
             color={euiTheme.colors.lightShade}
@@ -64,7 +64,7 @@ const Commenter: FunctionComponent<Props> = ({ comment, onArchive }) => {
       }>
       {!isSystemComment ? (
         <EuiText size="xs">
-          <p>{comment.value}</p>
+          <p>{comment?.value}</p>
         </EuiText>
       ) : null}
     </EuiComment>
