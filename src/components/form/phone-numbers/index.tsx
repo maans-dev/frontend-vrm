@@ -15,7 +15,7 @@ const PhoneNumbers: FunctionComponent<Props> = ({
 }) => {
   return (
     <EuiPanel hasShadow={false} paddingSize="none">
-      {phoneContacts.map(phoneContact => (
+      {phoneContacts?.map(phoneContact => (
         <PhoneNumberLine
           phoneContact={phoneContact}
           key={phoneContact.key}

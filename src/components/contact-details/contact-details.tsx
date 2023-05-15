@@ -109,7 +109,7 @@ const ContactDetails: FunctionComponent<Props> = ({
   };
   const [phoneContacts, setPhoneContacts] = useState<PhoneContact[]>(
     contacts
-      .filter(contact => contact.category !== 'EMAIL')
+      ?.filter(contact => contact.category !== 'EMAIL')
       .map(contact => ({
         key: contact.key,
         value: contact?.value,
@@ -119,7 +119,7 @@ const ContactDetails: FunctionComponent<Props> = ({
       }))
   );
   const handlePhoneNumberChange = (data: PhoneContact) => {
-    if (phoneContacts.find(contact => contact?.key === data.key)) {
+    if (phoneContacts?.find(contact => contact?.key === data.key)) {
       if (data?.deleted) {
         // Remove
         setPhoneContacts([...phoneContacts.filter(c => c.key !== data.key)]);
@@ -148,7 +148,7 @@ const ContactDetails: FunctionComponent<Props> = ({
   };
   const [emailContacts, setEmailContacts] = useState<EmailContact[]>(
     contacts
-      .filter(contact => contact.category === 'EMAIL')
+      ?.filter(contact => contact.category === 'EMAIL')
       .map(contact => ({
         key: contact.key,
         value: contact?.value || contact.value,
@@ -158,7 +158,7 @@ const ContactDetails: FunctionComponent<Props> = ({
       }))
   );
   const handleEmailChange = (data: EmailContact) => {
-    if (emailContacts.find(contact => contact?.key === data.key)) {
+    if (emailContacts?.find(contact => contact?.key === data.key)) {
       if (data?.deleted) {
         // Remove
         setEmailContacts([...emailContacts.filter(c => c.key !== data.key)]);
@@ -210,7 +210,7 @@ const ContactDetails: FunctionComponent<Props> = ({
     setGivenNameInternal(givenName);
     setPhoneContacts(
       contacts
-        .filter(contact => contact.category !== 'EMAIL')
+        ?.filter(contact => contact.category !== 'EMAIL')
         .map(contact => ({
           key: contact.key,
           value: contact?.value,
@@ -221,7 +221,7 @@ const ContactDetails: FunctionComponent<Props> = ({
     );
     setEmailContacts(
       contacts
-        .filter(contact => contact.category === 'EMAIL')
+        ?.filter(contact => contact.category === 'EMAIL')
         .map(contact => ({
           key: contact.key,
           value: contact?.value || contact.value,
@@ -238,7 +238,7 @@ const ContactDetails: FunctionComponent<Props> = ({
     setGivenNameInternal(givenName);
     setPhoneContacts(
       contacts
-        .filter(contact => contact.category !== 'EMAIL')
+        ?.filter(contact => contact.category !== 'EMAIL')
         .map(contact => ({
           key: contact.key,
           value: contact?.value,
@@ -249,7 +249,7 @@ const ContactDetails: FunctionComponent<Props> = ({
     );
     setEmailContacts(
       contacts
-        .filter(contact => contact.category === 'EMAIL')
+        ?.filter(contact => contact.category === 'EMAIL')
         .map(contact => ({
           key: contact.key,
           value: contact?.value || contact.value,
