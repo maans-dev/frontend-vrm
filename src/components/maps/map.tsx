@@ -31,7 +31,17 @@ const Map: FunctionComponent<Props> = ({ address, onAddressChange }) => {
   });
   const [isDragging, setIsDragging] = useState(false);
   const isMobile = useIsWithinBreakpoints(['xs', 's']);
-  const screenWidth = window.innerWidth;
+  const [screenWidth, setScreenWidth] = useState(0);
+
+  useEffect(() => {
+    const handleResize = () => setScreenWidth(window.innerWidth);
+
+    if (typeof window !== 'undefined') {
+      setScreenWidth(window.innerWidth);
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
+  }, []);
   const isTablet = screenWidth >= 767 && screenWidth <= 1073;
 
   useJsApiLoader({

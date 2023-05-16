@@ -1,20 +1,18 @@
 import { FunctionComponent } from 'react';
 import { EuiBreadcrumb } from '@elastic/eui';
-import MainLayout from '@layouts/main';
-import PagePlaceholder from '@components/page-placeholder';
+import VoterSearch from '@components/voter-search';
 
 const Index: FunctionComponent = () => {
   const breadcrumb: EuiBreadcrumb[] = [
     {
       text: 'Membership',
     },
+    {
+      text: 'Voter search',
+    },
   ];
 
-  return (
-    <MainLayout breadcrumb={breadcrumb} panelled={false}>
-      <PagePlaceholder />
-    </MainLayout>
-  );
+  return <VoterSearch breadcrumb={breadcrumb} />;
 };
 
 export default Index;

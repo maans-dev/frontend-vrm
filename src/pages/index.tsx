@@ -43,14 +43,14 @@ const Index: FunctionComponent = () => {
           </EuiFlexItem>
         )}
 
-        {hasRole(Roles.Membership) && (
+        {(hasRole(Roles.Membership) || hasRole(Roles.MembershipAdmin)) && (
           <EuiFlexItem>
             <EuiCard
               icon={<EuiIcon size="xxl" type="users" />}
               layout="horizontal"
               title="Membership"
               description="Membership edit."
-              onClick={() => router.push('/membership')}
+              onClick={() => router.push('/membership/voter-search')}
             />
           </EuiFlexItem>
         )}

@@ -1,6 +1,6 @@
 import { CommentsType } from './comments';
 import { EmailContact } from './email-address';
-import { Address, Affiliation, Field, Person } from './person';
+import { Address, Affiliation, Field, Membership, Person } from './person';
 import { Language } from './person-enum';
 import { PhoneContact } from './phone-numbers';
 
@@ -24,7 +24,8 @@ export type GeneralUpdate =
   | GivenNameUpdate
   | CommentsUpdate
   | FieldsUpdate
-  | AddressUpdate;
+  | AddressUpdate
+  | MembershipUpdate;
 
 export type KeyedUpdate =
   | CanvassUpdate
@@ -69,3 +70,4 @@ export const assertHasFields: AssertHasFields = (fields, value) => {
     if (field in value === false) throw new Error(`Missing field [${field}]`);
   }
 };
+export type MembershipUpdate = Partial<Membership>;
