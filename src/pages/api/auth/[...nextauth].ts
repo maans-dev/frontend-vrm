@@ -63,7 +63,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user, account, profile }) {
       if (token?.error) delete token.error;
-      if (account && user && profile) {
+      if (account && user && profile && user?.user?.darn_number) {
         token.accessToken = account.access_token;
         token.accessTokenExpires = account.expires_at;
         token.refreshToken = account.refresh_token;

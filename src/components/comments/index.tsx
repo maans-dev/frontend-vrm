@@ -15,26 +15,40 @@ import { Comment } from '@lib/domain/person';
 import { CommentsUpdate, PersonUpdate } from '@lib/domain/person-update';
 import { CanvassingContext } from '@lib/context/canvassing.context';
 import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
+import router from 'next/router';
 // import { CommentsType } from '@lib/domain/comments';
 
 export type Props = {
   comments: Comment[];
-  onCommentChange: (update: PersonUpdate<CommentsUpdate>) => void;
+  onCommentChange?: (update: PersonUpdate<CommentsUpdate>) => void;
+  onMembershipCommentChange?: (update: PersonUpdate<CommentsUpdate>) => void;
 };
 
-const Comments: FunctionComponent<Props> = ({ comments, onCommentChange }) => {
+const Comments: FunctionComponent<Props> = ({
+  comments,
+  onCommentChange,
+  onMembershipCommentChange,
+}) => {
   const [newComment, setNewComment] = useState('');
   const [comment, setComment] = useState<Partial<Comment>[]>([]);
   const { nextId } = useContext(CanvassingContext);
 
   useEffect(() => {
-    setComment(comments.filter(c => !c.archived));
+    if (router.pathname.includes('/membership')) {
+      setComment(comments?.filter(c => !c.archived && c.type === 'membership'));
+    } else {
+      setComment(comments?.filter(c => !c.archived && c.type === 'person'));
+    }
   }, [comments]);
 
   const { euiTheme } = useEuiTheme();
 
   useCanvassFormReset(() => {
-    setComment(comments.filter(c => !c.archived));
+    if (router.pathname.includes('/membership')) {
+      setComment(comments?.filter(c => !c.archived && c.type === 'membership'));
+    } else {
+      setComment(comments?.filter(c => !c.archived && c.type === 'person'));
+    }
   });
 
   if (!comments) return <></>;
@@ -54,30 +68,53 @@ const Comments: FunctionComponent<Props> = ({ comments, onCommentChange }) => {
     setComment(prevComments => {
       return [...prevComments, newCommentObj];
     });
-
-    onCommentChange({
-      field: 'comments',
-      data: {
-        type: newCommentObj.type,
-        value: newCommentObj.value,
-        key: newCommentObj.key,
-      },
-    });
-
+    if (onCommentChange) {
+      onCommentChange({
+        field: 'comments',
+        data: {
+          type: newCommentObj.type,
+          value: newCommentObj.value,
+          key: newCommentObj.key,
+        },
+      });
+    }
+    if (onMembershipCommentChange) {
+      onMembershipCommentChange({
+        field: 'comments',
+        data: {
+          type: 'membership',
+          value: newComment,
+          key: newCommentObj.key,
+        },
+      });
+    }
     setNewComment('');
   };
 
   const handleArchive = (comment: Comment) => {
     setComment(prev => prev.filter(c => c.key !== comment.key));
-    onCommentChange({
-      field: 'comments',
-      data: {
-        key: comment.key,
-        type: null,
-        value: null,
-        archived: typeof comment.key === 'number' ? null : true,
-      },
-    });
+    if (onCommentChange) {
+      onCommentChange({
+        field: 'comments',
+        data: {
+          key: comment.key,
+          type: null,
+          value: null,
+          archived: typeof comment.key === 'number' ? null : true,
+        },
+      });
+    }
+    if (onMembershipCommentChange) {
+      onMembershipCommentChange({
+        field: 'comments',
+        data: {
+          type: 'membership',
+          value: newComment,
+          archived: typeof comment.key === 'number' ? null : true,
+          key: comment.key,
+        },
+      });
+    }
   };
 
   return (

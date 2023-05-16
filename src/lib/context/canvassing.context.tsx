@@ -40,10 +40,12 @@ export type CanvassingContextType = {
   setCanvassingType: (type: ICanvassType) => void;
   setCanvasser: (canvasser: Partial<Person>) => void;
   setCanvassDate: (data: Moment) => void;
-  setUpdatePayload: (update: PersonUpdate<GeneralUpdate>) => void;
+  setUpdatePayload: (update) => void;
   nextId: () => number;
   submitUpdatePayload: () => void;
   resetForm: () => void;
+  handleTabChange: (tabNumber: number) => void;
+  selectedTab: number;
 };
 
 export const CanvassingContext = createContext<Partial<CanvassingContextType>>(
@@ -69,6 +71,7 @@ const CanvassingProvider = ({ children }) => {
   const [doFormReset, setDoFormReset] = useState(new Date());
   const { addToast } = useContext(ToastContext);
   const { mutate } = useSWRConfig();
+  const [selectedTab, setSelectedTab] = useState(1);
 
   const setPerson = (person: Person) => setPersonInternal(person);
 
@@ -107,7 +110,6 @@ const CanvassingProvider = ({ children }) => {
 
     setData(prev => {
       let next = update.data as any;
-
       // if update is for a multivalue field/array
       if (person && Array.isArray(person[update.field])) {
         // 1st update for this multivalue field so add as array
@@ -186,6 +188,10 @@ const CanvassingProvider = ({ children }) => {
     return next;
   }, [sequence]);
 
+  function handleTabChange(tabNumber) {
+    setSelectedTab(tabNumber);
+  }
+
   const submitUpdatePayload = async () => {
     setIsSubmitting(true);
     setServerError('');
@@ -193,13 +199,20 @@ const CanvassingProvider = ({ children }) => {
       const requestBody = cloneDeep(data);
       requestBody.key = person.key;
       requestBody.username = session.user.darn;
-      if (!requestBody?.canvass) {
-        requestBody.canvass = {};
+      if (
+        router.pathname.includes('cleanup') ||
+        router.pathname.includes('canvass') ||
+        router.pathname.includes('capture')
+      ) {
+        if (!requestBody?.canvass) {
+          requestBody.canvass = {};
+        }
+        if (!requestBody?.canvass?.date)
+          requestBody.canvass.date = moment().format('YYYY-MM-DD');
+        if (!requestBody?.canvass?.key)
+          requestBody.canvass.key = session.user.darn;
       }
-      if (!requestBody?.canvass?.date)
-        requestBody.canvass.date = moment().format('YYYY-MM-DD');
-      if (!requestBody?.canvass?.key)
-        requestBody.canvass.key = session.user.darn;
+
       // remove numeric keys as these represent new items
       if ('comments' in data) {
         requestBody.comments.forEach(item => {
@@ -227,6 +240,9 @@ const CanvassingProvider = ({ children }) => {
         // Delete the canvass field as that it's required for data cleanup.
         delete requestBody.canvass;
       }
+      if (router.pathname.includes('membership')) {
+        endpoint = 'membership';
+      }
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE}/event/${endpoint}/`,
@@ -245,7 +261,7 @@ const CanvassingProvider = ({ children }) => {
       if (response.ok) {
         setIsComplete(true);
         mutate(
-          `/person?key=${person.key}&template=["Address","Contact","Field","Comment","Canvass"]`
+          `/person?key=${person.key}&template=["Address","Contact","Field","Comment","Canvass", "Membership"]`
         );
         if (router.pathname.includes('/canvass/')) {
           router.push('/canvass/canvassing-type');
@@ -253,6 +269,8 @@ const CanvassingProvider = ({ children }) => {
           router.push('/capture/capturing-type');
         } else if (router.pathname.includes('/cleanup/')) {
           router.push('/cleanup/voter-search');
+        } else if (router.pathname.includes('/membership')) {
+          router.push('/membership/voter-search');
         }
         addToast({
           id: 'voter-submitted-success',
@@ -324,10 +342,28 @@ const CanvassingProvider = ({ children }) => {
     }
   };
 
-  const checkIsDirty = updatedData =>
-    updatedData && Object.keys(updatedData).length > 1
-      ? setIsDirty(true)
-      : setIsDirty(false);
+  const checkIsDirty = updatedData => {
+    const isDirty = data => {
+      if (typeof data !== 'object' || data === null) {
+        return false;
+      }
+      for (const key in data) {
+        if (data.hasOwnProperty(key)) {
+          const value = data[key];
+          if (value && typeof value === 'object') {
+            if (isDirty(value)) {
+              return true;
+            }
+          } else if (key !== 'membership') {
+            return true;
+          }
+        }
+      }
+      return false;
+    };
+
+    setIsDirty(isDirty(updatedData));
+  };
 
   const resetForm = () => {
     console.log('RESET FORM');
@@ -335,14 +371,16 @@ const CanvassingProvider = ({ children }) => {
 
     setIsComplete(false);
     setPerson(null);
-    setData(prev => ({
-      canvass: {
-        activity: prev?.canvass?.activity,
-        type: prev?.canvass?.type,
-        date: prev?.canvass?.date,
-        key: prev?.canvass?.key,
-      },
-    }));
+    if (router.pathname.includes('/canvass')) {
+      setData(prev => ({
+        canvass: {
+          activity: prev?.canvass?.activity,
+          type: prev?.canvass?.type,
+          date: prev?.canvass?.date,
+          key: prev?.canvass?.key,
+        },
+      }));
+    }
     setServerError('');
     setIsDirty(false);
   };
@@ -352,7 +390,8 @@ const CanvassingProvider = ({ children }) => {
     if (
       !router.asPath.includes('/canvass') &&
       !router.asPath.includes('/capture') &&
-      !router.asPath.includes('/cleanup')
+      !router.asPath.includes('/cleanup') &&
+      !router.asPath.includes('/membership')
     ) {
       setIsComplete(false);
       setPerson(null);
@@ -451,7 +490,7 @@ const CanvassingProvider = ({ children }) => {
 
   // TODO: Remove this when stable as it's just for debugging
   useEffect(() => {
-    console.log('[CANVASSING CONTEXT]', { data, person });
+    console.log('[CONTEXT]', { data, person });
   }, [data, person]);
 
   return (
@@ -478,6 +517,8 @@ const CanvassingProvider = ({ children }) => {
         nextId,
         submitUpdatePayload,
         resetForm,
+        handleTabChange,
+        selectedTab,
       }}>
       {children}
     </CanvassingContext.Provider>

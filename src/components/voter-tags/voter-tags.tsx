@@ -35,10 +35,10 @@ const VoterTags: FunctionComponent<Props> = ({
   searchValue,
 }: Props) => {
   const [originalFields, setOriginalFields] = useState(
-    fields.filter(f => !CanvassingTagCodes.includes(f.field.code))
+    fields?.filter(f => !CanvassingTagCodes.includes(f.field.code))
   );
   const [fieldsInternal, setFieldsInternal] = useState(
-    fields.filter(f => !CanvassingTagCodes.includes(f.field.code))
+    fields?.filter(f => !CanvassingTagCodes.includes(f.field.code))
   );
   const { nextId } = useContext(CanvassingContext);
 
@@ -46,31 +46,33 @@ const VoterTags: FunctionComponent<Props> = ({
   // TODO: Review if there is a better solution to handle the state update in useEffect after the fields have been set.
   useEffect(() => {
     setFieldsInternal(
-      fields.filter(f => !CanvassingTagCodes.includes(f.field.code))
+      fields?.filter(f => !CanvassingTagCodes.includes(f.field.code))
     );
     setOriginalFields(
-      fields.filter(f => !CanvassingTagCodes.includes(f.field.code))
+      fields?.filter(f => !CanvassingTagCodes.includes(f.field.code))
     );
   }, [fields]);
 
   useCanvassFormReset(() => {
     setFieldsInternal(
-      fields.filter(f => !CanvassingTagCodes.includes(f.field.code))
+      fields?.filter(f => !CanvassingTagCodes.includes(f.field.code))
     );
   });
 
-  const renderedBadges = [...fieldsInternal]
-    .reverse()
-    .filter(field => field.value === true)
-    .map((field, i) => (
-      <EuiFlexItem key={field.key}>
-        <Tag
-          label={field.field.description}
-          onDelete={() => handleChange({ ...field, value: false })}
-          isNew={!originalFields.some(f => f.field.key === field.field.key)}
-        />
-      </EuiFlexItem>
-    ));
+  const renderedBadges = fieldsInternal
+    ? [...fieldsInternal]
+        .reverse()
+        .filter(field => field.value === true)
+        .map(field => (
+          <EuiFlexItem key={field.key}>
+            <Tag
+              label={field.field.description}
+              onDelete={() => handleChange({ ...field, value: false })}
+              isNew={!originalFields.some(f => f.field.key === field.field.key)}
+            />
+          </EuiFlexItem>
+        ))
+    : null;
 
   const filteredOptions = searchFields
     ?.filter(

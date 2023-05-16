@@ -13,7 +13,7 @@ export default withAuth(
     let authorized = false;
 
     if (req.nextUrl.pathname === '/') {
-      authorized = (token.roles as string[]).length > 0;
+      authorized = (token.roles as string[])?.length > 0;
     }
 
     if (

@@ -45,6 +45,13 @@ const VoterInfo: FunctionComponent<Props> = ({
   livingStructure,
   registeredStructure,
 }) => {
+  const getBadgeColour = () => {
+    if (colourCode?.colour && colourCode?.colour !== 'FFFFFF')
+      return `#${colourCode.colour}`;
+
+    return 'hollow';
+  };
+
   return (
     <>
       <EuiFlexGroup justifyContent="spaceBetween" gutterSize="xs">
@@ -58,11 +65,7 @@ const VoterInfo: FunctionComponent<Props> = ({
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiBadge
-            color={
-              colourCode?.colour === 'FFFFFF'
-                ? 'hollow'
-                : `#${colourCode?.colour || 'hollow'}`
-            }
+            color={getBadgeColour()}
             iconType={
               colourCode?.name == 'Green' ? 'checkInCircleFilled' : null
             }>
@@ -97,7 +100,7 @@ const VoterInfo: FunctionComponent<Props> = ({
                 by{' '}
                 <strong>
                   {canvassedBy?.key
-                    ? `${canvassedBy?.key?.firstName} ${canvassedBy?.key?.surname}`
+                    ? `${canvassedBy?.firstName} ${canvassedBy?.surname}`
                     : 'Unknown'}
                 </strong>
               </EuiText>

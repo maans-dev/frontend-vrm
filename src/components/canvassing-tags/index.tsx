@@ -14,7 +14,7 @@ export type Props = {
 const CanvassingTags: FunctionComponent<Props> = ({ fields, onChange }) => {
   const isMobile = useIsWithinBreakpoints(['xs', 's']);
   const [internalFields, setInternalFields] = useState<Field[]>(
-    fields.filter(f => CanvassingTagCodes.includes(f.field.code))
+    fields?.filter(f => CanvassingTagCodes.includes(f.field.code))
   );
   const { data } = useCanvassingTagFetcher();
   const [presetFields, setPresetFields] = useState<Partial<Field>[]>(null);
@@ -25,7 +25,7 @@ const CanvassingTags: FunctionComponent<Props> = ({ fields, onChange }) => {
   })();
 
   const getField = (field: Partial<Field>) => {
-    const found = internalFields.find(f => {
+    const found = internalFields?.find(f => {
       return f.field.code === field.field.code;
     });
 
@@ -77,7 +77,7 @@ const CanvassingTags: FunctionComponent<Props> = ({ fields, onChange }) => {
 
   useEffect(() => {
     setInternalFields(
-      fields.filter(f => CanvassingTagCodes.includes(f.field.code))
+      fields?.filter(f => CanvassingTagCodes.includes(f.field.code))
     );
   }, [data, fields]);
 

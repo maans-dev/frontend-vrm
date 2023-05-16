@@ -1,8 +1,12 @@
 import { Roles } from '@lib/domain/auth';
 
-export const hasRole = (role: Roles | string, roles: string[]): boolean => {
+export const hasRole = (
+  role: Roles | string,
+  roles: string[],
+  explicit?: boolean
+): boolean => {
   if (!roles) return false;
-  if (roles.includes(Roles.SuperUser)) return true;
+  if (!explicit && roles.includes(Roles.SuperUser)) return true;
   return roles.includes(role);
 };
 

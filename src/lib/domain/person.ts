@@ -1,3 +1,4 @@
+import { Moment } from 'moment';
 import { GeocodedAddressSource, Province } from './person-enum';
 
 export interface Person {
@@ -18,7 +19,7 @@ export interface Person {
   address_date: Date;
   language: string;
   race: string;
-  dob: number;
+  dob: string;
   citizenship: string;
   deceased: boolean;
   colourCode: ColourCode;
@@ -27,12 +28,64 @@ export interface Person {
   created: Date;
   modifiedBy: string;
   modified: Date;
+  membership: Membership;
   canvassedBy: CanvassedBy;
   canvassed: Date;
   event: string;
   comments: Comment[];
   contacts: Contact[];
   fields: Field[];
+}
+
+export interface Membership {
+  daAbroad: boolean;
+  daYouth: boolean;
+  dawnOptOut: boolean;
+  expired: string;
+  initialJoin: string;
+  newRenewal: string;
+  key?: string;
+  payment: {
+    amount: number;
+    date: string;
+    key: string;
+    membershipNumber: string;
+    receiptNumber: string;
+    recruitedBy: number;
+    referenceNumber: string;
+    type: string;
+    years: number;
+  };
+  branchOverride: boolean;
+  person: number;
+  status: string;
+  status_json: null | any;
+  structure: {
+    country_code: string;
+    active: null | boolean;
+    constituency: null | string;
+    constituencyHead: null | string;
+    constituency_code: null | string;
+    formatted: null | string;
+    key: null | string;
+    key_hash: null | string;
+    key_text: null | string;
+    latitude: null | number;
+    longitude: null | number;
+    municipality: null | string;
+    municipalityCatB: null | string;
+    prCouncillor: null | string;
+    province_enum: null | string;
+    region: null | string;
+    region_code: null | string;
+    search_hash: null | string;
+    search_text: null | string;
+    type: null | any;
+    votingDistrict: null | string;
+    votingDistrict_id: null | number;
+    ward: null | string;
+    wardCouncillor: null | string;
+  };
 }
 
 export interface PartyTags {
@@ -84,7 +137,11 @@ export interface Activity {
 }
 
 export interface CanvassedBy {
-  key: Key;
+  key: number;
+  surname: null | string;
+  firstName: null | string;
+  givenName: null | string;
+  date?: Date | Moment;
   activity: Activity;
 }
 
@@ -171,7 +228,7 @@ export interface Structure {
   constituency: string;
   constituencyHead: string;
   ward: number;
-  wardCouncillor: string;
+  wardCouncillor?: string;
   prCouncillor: string;
   votingDistrict_id: number;
   votingDistrict: string;

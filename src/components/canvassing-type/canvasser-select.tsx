@@ -87,7 +87,7 @@ const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
           key: session.user.darn,
           givenName: session.user.givenName,
           surname: session.user.surname,
-          dob: session.user.dob,
+          dob: session.user.dob.toString(),
         });
         break;
       case 'OTHER':
