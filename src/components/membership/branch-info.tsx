@@ -78,8 +78,8 @@ const BranchInfo: FunctionComponent<Props> = ({
   const hasUserDeselectedDaAbroad =
     originalPerson?.membership?.daAbroad === true && daAbroad === false;
   const hasUserSelectedBranchOverride =
-    (!('branchOverride' in originalPerson?.membership) ||
-      originalPerson.membership?.branchOverride) &&
+    (!originalPerson?.membership?.branchOverride ||
+      originalPerson.membership.branchOverride) &&
     branchOverride === true;
 
   const renderBranch = () => {
