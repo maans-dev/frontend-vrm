@@ -44,7 +44,8 @@ const MembershipEvents: FunctionComponent<Props> = ({ personKey }) => {
   }, [history, rowSize]);
 
   const events = history?.values;
-  if (!events && !isLoading) return <>No Membership Events</>;
+  if ((!events && !isLoading) || (events && events.length === 0 && !isLoading))
+    return <>No Membership Events</>;
 
   const eventsInternal = events?.map(event => {
     return {
