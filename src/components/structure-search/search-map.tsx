@@ -6,7 +6,7 @@ import {
   EuiInputPopover,
   EuiSpacer,
 } from '@elastic/eui';
-import { Structure } from '@lib/domain/stuctures';
+import { Structure } from '@lib/domain/person';
 import StructureResults from './search-results';
 
 export interface Props {

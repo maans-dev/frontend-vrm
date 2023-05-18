@@ -1,6 +1,6 @@
 import useSWR from 'swr';
 import { fetcherAPI } from '../api.fetcher';
-import { Structure } from '@lib/domain/stuctures';
+import { Structure } from '@lib/domain/person';
 
 export default function useStructureFetcher(searchTerm: string) {
   const query = new URLSearchParams();

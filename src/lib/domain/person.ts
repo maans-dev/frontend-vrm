@@ -61,32 +61,7 @@ export interface Membership {
   person: number;
   status: string;
   status_json: null | any;
-  structure: {
-    country_code: string;
-    active: null | boolean;
-    constituency: null | string;
-    constituencyHead: null | string;
-    constituency_code: null | string;
-    formatted: null | string;
-    key: null | string;
-    key_hash: null | string;
-    key_text: null | string;
-    latitude: null | number;
-    longitude: null | number;
-    municipality: null | string;
-    municipalityCatB: null | string;
-    prCouncillor: null | string;
-    province_enum: null | string;
-    region: null | string;
-    region_code: null | string;
-    search_hash: null | string;
-    search_text: null | string;
-    type: null | any;
-    votingDistrict: null | string;
-    votingDistrict_id: null | number;
-    ward: null | string;
-    wardCouncillor: null | string;
-  };
+  structure: Structure;
 }
 
 export interface PartyTags {
@@ -217,24 +192,50 @@ export interface RegisteredStructure {
   active: boolean;
 }
 
+export enum ProvinceEnum {
+  EC = 'Eastern Cape',
+  FS = 'Free State',
+  GT = 'Gauteng',
+  KZN = 'Kwazulu-Natal',
+  LP = 'Limpopo',
+  MP = 'Mapumalanga',
+  NW = 'North West',
+  NC = 'Northern Cape',
+  WC = 'Western Cape',
+  FC = 'Foreign Country',
+}
+
 export interface Structure {
   key: string;
   formatted: string;
-  province: string;
+  province?: string;
+  province_enum?: ProvinceEnum;
   municipality: string;
   municipalityCatB: string;
   region_code: string;
   region: string;
+  type: string;
   constituency_code: string;
   constituency: string;
   constituencyHead: string;
-  ward: number;
+  ward: string | number;
   wardCouncillor?: string;
   prCouncillor: string;
-  votingDistrict_id: number;
+  votingDistrict_id: number | string;
   votingDistrict: string;
   active: boolean;
   deleted?: boolean;
+  country_code: string;
+  key_hash?: null | string;
+  key_text?: null | string;
+  latitude?: null | number;
+  longitude?: null | number;
+  search_hash?: null | string;
+  search_text?: null | string;
+  municipalityShortName?: string;
+  municipalityType?: string;
+  municipalityWardCount?: number;
+  ward_num?: number;
 }
 
 export interface Address {

@@ -2,16 +2,12 @@ import { FunctionComponent, useEffect, useState } from 'react';
 import useStructureFetcher from '@lib/fetcher/structures/structures';
 import SearchMap from './search-map';
 import { debounce } from 'lodash';
-import { Structure } from '@lib/domain/stuctures';
+import { Structure } from '@lib/domain/person';
 
 export type Props = {
   onSelect?: (
     label: string,
-    data: {
-      description: string;
-      ward: string;
-      votingDistrict_id: string;
-    },
+    data: Partial<Structure>,
     value: Structure
   ) => void;
 };
