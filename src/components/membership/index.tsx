@@ -194,13 +194,13 @@ const Membership: FunctionComponent<Props> = ({
   };
 
   const handleBranchChange = (ward, votingDistrict_id, type) => {
-    console.log('handleBranchChange', {
-      ward,
-      votingDistrict_id,
-      type,
-      override,
-      branchOverride,
-    });
+    // console.log('handleBranchChange', {
+    //   ward,
+    //   votingDistrict_id,
+    //   type,
+    //   override,
+    //   branchOverride,
+    // });
     onMembershipChange({
       field: 'membership',
       data: {
@@ -219,7 +219,7 @@ const Membership: FunctionComponent<Props> = ({
 
   const handleBranchReset = () => {
     // do reset
-    console.log('handleBranchReset');
+    // console.log('handleBranchReset');
     onMembershipChange({
       field: 'membership',
       data: null,

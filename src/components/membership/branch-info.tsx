@@ -65,20 +65,20 @@ const BranchInfo: FunctionComponent<Props> = ({
     setUserHasSelectedOverridePermission,
   ] = useState(false);
 
-  console.log('BranchInfo debug', {
-    country,
-    abroadCountry,
-    membershipStructure,
-    personAddressStructure,
-    personHasNoStructures,
-    isDaAbroadSelected,
-    noMembershipStructure,
-    userHasSelectedDaAbroad,
-    userHasDeselectedDaAbroad,
-    overriddenBranchStructure,
-    userHasSelectedOverridePermission,
-    userHasDeselectedOverridePermission,
-  });
+  // console.log('BranchInfo debug', {
+  //   country,
+  //   abroadCountry,
+  //   membershipStructure,
+  //   personAddressStructure,
+  //   personHasNoStructures,
+  //   isDaAbroadSelected,
+  //   noMembershipStructure,
+  //   userHasSelectedDaAbroad,
+  //   userHasDeselectedDaAbroad,
+  //   overriddenBranchStructure,
+  //   userHasSelectedOverridePermission,
+  //   userHasDeselectedOverridePermission,
+  // });
 
   useEffect(() => {
     // reset state & remove update payload
@@ -125,7 +125,7 @@ const BranchInfo: FunctionComponent<Props> = ({
       );
 
       setBranchDescription(getStructureDescription(membershipStructure));
-      console.log('DISPLAY membership structure');
+      // console.log('DISPLAY membership structure');
       return;
     }
 
@@ -137,7 +137,7 @@ const BranchInfo: FunctionComponent<Props> = ({
       // is DA Abroad is selected and country is set
       setBranchLable(abroadCountry);
       setBranchDescription(null);
-      console.log('DISPLAY abroadCountry');
+      // console.log('DISPLAY abroadCountry');
       return;
     }
 
@@ -161,7 +161,7 @@ const BranchInfo: FunctionComponent<Props> = ({
         personAddressStructure.votingDistrict_id.toString(), // TODO: point out this typeissue to DA
         personAddressStructure.type
       );
-      console.log('DISPLAY personAddressStructure');
+      // console.log('DISPLAY personAddressStructure');
       return;
     }
 
@@ -180,20 +180,20 @@ const BranchInfo: FunctionComponent<Props> = ({
         overriddenBranchStructure.votingDistrict_id.toString(), // TODO: point out this typeissue to DA
         overriddenBranchStructure.type
       );
-      console.log('DISPLAY overriddenBranchStructure');
+      // console.log('DISPLAY overriddenBranchStructure');
       return;
     }
 
     if (isDaAbroadSelected && country) {
       setBranchLable(country);
       setBranchDescription(null);
-      console.log('DISPLAY country');
+      // console.log('DISPLAY country');
       return;
     }
 
     // neither sttructure is present
     setPersonHasNoStructures(true);
-    console.log('DISPLAY no structures');
+    // console.log('DISPLAY no structures');
   }, [
     membershipStructure?.key,
     personAddressStructure?.key,
@@ -223,13 +223,13 @@ const BranchInfo: FunctionComponent<Props> = ({
     votingDistrict_id: string,
     type: string
   ) => {
-    console.log('handleSelectStructure', { ward, votingDistrict_id, type });
+    // console.log('handleSelectStructure', { ward, votingDistrict_id, type });
 
     handleBranchChange(ward, votingDistrict_id, type);
   };
 
   const handleSelectDaAbroadCountry = (label: string, country_code: string) => {
-    console.log('handleSelectDaAbroadCountry', label, country_code);
+    // console.log('handleSelectDaAbroadCountry', label, country_code);
     setCountry(label);
     onCountrySelect(country_code);
   };
