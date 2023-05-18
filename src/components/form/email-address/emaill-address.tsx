@@ -151,6 +151,17 @@ const EmailAddressLine: FunctionComponent<Props> = ({
                   },
                 },
                 {
+                  label: emailContact?.canContact ? 'Set DNC' : 'Unset DNC',
+                  href: '#',
+                  iconType: GoCircleSlash,
+                  iconProps: { size: 's' },
+                  onClick: e => {
+                    hideActions();
+                    toggleDNC();
+                    e.preventDefault();
+                  },
+                },
+                {
                   label: 'Remove',
                   href: '#',
                   iconType: 'trash',
@@ -158,17 +169,6 @@ const EmailAddressLine: FunctionComponent<Props> = ({
                   onClick: e => {
                     hideActions();
                     handleRemove();
-                    e.preventDefault();
-                  },
-                },
-                {
-                  label: emailContact?.canContact ? 'Unset DNC' : 'Set DNC',
-                  href: '#',
-                  iconType: GoCircleSlash,
-                  iconProps: { size: 's' },
-                  onClick: e => {
-                    hideActions();
-                    toggleDNC();
                     e.preventDefault();
                   },
                 },

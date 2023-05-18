@@ -123,6 +123,7 @@ const Voter: FunctionComponent = () => {
           modified={person?.modified}
           livingStructure={person?.livingStructure}
           registeredStructure={person?.registeredStructure}
+          membership={person?.membership}
         />
       </EuiPanel>
       <EuiSpacer />
