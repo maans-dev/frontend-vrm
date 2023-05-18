@@ -163,7 +163,7 @@ const Voter: FunctionComponent = () => {
         <VoterInfo
           darn={person?.key}
           salutation={person?.salutation}
-          givenName={person?.givenName}
+          givenName={person?.givenName || person?.firstName}
           surname={person?.surname}
           dob={moment(person?.dob, 'YYYYMMDD').toDate()}
           colourCode={person?.colourCode}
@@ -171,6 +171,7 @@ const Voter: FunctionComponent = () => {
           modified={person?.modified}
           livingStructure={person?.livingStructure}
           registeredStructure={person?.registeredStructure}
+          membership={person?.membership}
         />
       </EuiPanel>
       <EuiSpacer />

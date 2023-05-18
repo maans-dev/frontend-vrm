@@ -1,6 +1,7 @@
 import { FunctionComponent } from 'react';
 import {
   EuiBadge,
+  EuiBetaBadge,
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,
@@ -15,6 +16,7 @@ import {
   CanvassedBy,
   ColourCode,
   LivingStructure,
+  Membership,
   RegisteredStructure,
 } from '@lib/domain/person';
 import { GiHouse } from 'react-icons/gi';
@@ -31,6 +33,7 @@ export type Props = {
   canvassedBy: CanvassedBy;
   livingStructure: LivingStructure;
   registeredStructure: RegisteredStructure;
+  membership: Membership;
 };
 
 const VoterInfo: FunctionComponent<Props> = ({
@@ -44,6 +47,7 @@ const VoterInfo: FunctionComponent<Props> = ({
   canvassedBy,
   livingStructure,
   registeredStructure,
+  membership,
 }) => {
   const getBadgeColour = () => {
     if (colourCode?.colour && colourCode?.colour !== 'FFFFFF')
@@ -54,15 +58,34 @@ const VoterInfo: FunctionComponent<Props> = ({
 
   return (
     <>
-      <EuiFlexGroup justifyContent="spaceBetween" gutterSize="xs">
-        <EuiFlexItem grow={false}>
-          <EuiTitle size="xs">
-            <EuiTextColor>
-              {salutation} {givenName} {surname} (
-              {moment().diff(dob, 'years', false)})
-            </EuiTextColor>
-          </EuiTitle>
-        </EuiFlexItem>
+      <EuiFlexGroup
+        justifyContent="spaceBetween"
+        alignItems="center"
+        gutterSize="xs">
+        <EuiFlexGroup alignItems="center" gutterSize="s">
+          <EuiFlexItem grow={false}>
+            <EuiTitle size="xs">
+              <EuiTextColor>
+                {salutation} {givenName} {surname} (
+                {moment().diff(dob, 'years', false)})
+              </EuiTextColor>
+            </EuiTitle>
+          </EuiFlexItem>
+          {['Active', 'Expired'].includes(membership?.status) && (
+            <EuiFlexItem
+              grow={false}
+              style={{ inlineSize: 'auto', flexBasis: 'auto' }}>
+              <EuiBadge
+                css={{ borderRadius: '10px' }}
+                color={
+                  membership?.status === 'Expired' ? '#cccccc' : 'primary'
+                }>
+                Membership <strong>{membership?.status}</strong> (
+                {membership?.expiry})
+              </EuiBadge>
+            </EuiFlexItem>
+          )}
+        </EuiFlexGroup>
         <EuiFlexItem grow={false}>
           <EuiBadge
             color={getBadgeColour()}

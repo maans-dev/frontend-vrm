@@ -42,6 +42,7 @@ export interface Membership {
   daYouth: boolean;
   dawnOptOut: boolean;
   expired: string;
+  expiry: string;
   initialJoin: string;
   newRenewal: string;
   key?: string;
