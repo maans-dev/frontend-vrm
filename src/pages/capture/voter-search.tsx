@@ -7,6 +7,14 @@ const Index: FunctionComponent = () => {
   const router = useRouter();
   const breadcrumb: EuiBreadcrumb[] = [
     {
+      text: 'Home',
+      href: '/',
+      onClick: e => {
+        router.push('/');
+        e.preventDefault();
+      },
+    },
+    {
       text: 'Capturing',
       href: '/capturing-type',
       onClick: e => {
