@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { EuiSelectable, EuiSelectableOption, EuiText } from '@elastic/eui';
-import { Structure, StructureType } from '@lib/domain/stuctures';
-
+import { StructureType } from '@lib/domain/stuctures';
+import { Structure } from '@lib/domain/person';
+import { getStructureDescription } from '@lib/structure/utils';
 interface Props {
   structures: Structure[];
   onSelect: (selected: Structure[]) => void;
@@ -37,31 +38,6 @@ const StructureResults = ({ structures, onSelect }: Props) => {
         break;
     }
     return label;
-  };
-
-  const getStructureDescription = (structure: Structure) => {
-    let description: string = StructureType.Unkown;
-    switch (structure.type as StructureType) {
-      case StructureType.Constituency:
-        description = `Constiteuncy, ${structure.province}`;
-        break;
-      case StructureType.Province:
-        description = `Province, ${structure.province}`;
-        break;
-      case StructureType.Municipality:
-        description = `Municipality, ${structure.province}`;
-        break;
-      case StructureType.Region:
-        description = `Region, ${structure.province}`;
-        break;
-      case StructureType.VotingDistrict:
-        description = `Voting district, ${structure.province}`;
-        break;
-      case StructureType.Ward:
-        description = `Ward, ${structure.province}`;
-        break;
-    }
-    return description;
   };
 
   const [options, setOptions] = useState<

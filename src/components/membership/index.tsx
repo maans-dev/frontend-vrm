@@ -8,14 +8,13 @@ import {
   EuiSpacer,
 } from '@elastic/eui';
 import BranchInfo from './branch-info';
-import useWardFetcher from '@lib/fetcher/structures/single-structure';
 import MemberManagementButtons from './membership-buttons';
 import Comments from '@components/comments';
-import { Comment } from '@lib/domain/person';
+import { Comment, Structure } from '@lib/domain/person';
 import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
+
 export interface Props {
   status: string;
-  ward: string;
   id_number: string;
   darn: number;
   selectAddress: (tabIndex: number) => void;
@@ -32,10 +31,10 @@ export interface Props {
   dob: string;
   abroadCountry: string | null;
   branchOverride: boolean;
+  membershipStructure: Partial<Structure>;
 }
 
 const Membership: FunctionComponent<Props> = ({
-  ward,
   id_number,
   darn,
   status,
@@ -53,9 +52,8 @@ const Membership: FunctionComponent<Props> = ({
   dob,
   abroadCountry,
   branchOverride,
+  membershipStructure,
 }) => {
-  const wardString = String(ward);
-  const { wards } = useWardFetcher(wardString);
   const [daAbroadInternal, setDaAbroadInternal] = useState(Boolean(daAbroad));
   const [selectedCountry, setSelectedCountry] = useState<string>(null);
   const [dawnOptOutInternal, setDawnOptOutInternal] = useState(dawnOptOut);
@@ -196,22 +194,36 @@ const Membership: FunctionComponent<Props> = ({
   };
 
   const handleBranchChange = (ward, votingDistrict_id, type) => {
-    if (override !== branchOverride) {
-      onMembershipChange({
-        field: 'membership',
-        data: {
-          type: 'membership-capture',
-          daAbroad: false,
-          branchOverride: override,
-          structure: {
-            ...(type === 'votingdistrict'
-              ? { votingDistrict_id: Number(votingDistrict_id) }
-              : {}),
-            ...(type === 'ward' ? { ward: Number(ward) } : {}),
-          },
+    console.log('handleBranchChange', {
+      ward,
+      votingDistrict_id,
+      type,
+      override,
+      branchOverride,
+    });
+    onMembershipChange({
+      field: 'membership',
+      data: {
+        type: 'membership-capture',
+        daAbroad: false,
+        branchOverride: override,
+        structure: {
+          ...(type.toLowerCase() === 'votingdistrict'
+            ? { votingDistrict_id: Number(votingDistrict_id) }
+            : {}),
+          ...(type.toLowerCase() === 'ward' ? { ward: Number(ward) } : {}),
         },
-      });
-    }
+      },
+    });
+  };
+
+  const handleBranchReset = () => {
+    // do reset
+    console.log('handleBranchReset');
+    onMembershipChange({
+      field: 'membership',
+      data: null,
+    });
   };
 
   const handleSelectCountry = (country_code: string) => {
@@ -226,6 +238,7 @@ const Membership: FunctionComponent<Props> = ({
     setDaAbroadInternal(daAbroad);
     setDawnOptOutInternal(dawnOptOut);
     setYouth(daYouth);
+    setOverride(branchOverride ? branchOverride : false);
   });
 
   return (
@@ -254,14 +267,15 @@ const Membership: FunctionComponent<Props> = ({
 
           <EuiFormFieldset legend={{ children: 'Branch Info' }}>
             <BranchInfo
-              ward={wards?.length ? wards : undefined}
+              membershipStructure={membershipStructure}
               selectAddress={selectAddress}
-              daAbroad={daAbroadInternal}
+              isDaAbroadSelected={daAbroadInternal}
               onCountrySelect={handleSelectCountry}
               handleBranchChange={handleBranchChange}
               abroadCountry={abroadCountry}
               branchOverride={override}
               onBranchOverride={setOverride}
+              onBranchReset={handleBranchReset}
             />
           </EuiFormFieldset>
 

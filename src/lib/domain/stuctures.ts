@@ -11,9 +11,9 @@ export interface Structure {
   municipalityShortName?: string;
   municipalityType?: string;
   municipalityWardCount?: number;
-  ward?: string;
+  ward?: string | number;
   ward_num?: number;
-  votingDistrict_id?: string;
+  votingDistrict_id?: string | number;
   votingDistrict?: string;
 }
 

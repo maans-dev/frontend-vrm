@@ -7,10 +7,12 @@ import {
   EuiFlexItem,
   EuiForm,
   EuiFormFieldset,
+  EuiIcon,
   EuiPanel,
   EuiSpacer,
   EuiTab,
   EuiTabs,
+  EuiText,
 } from '@elastic/eui';
 import MainLayout from '@layouts/main';
 import { useRouter } from 'next/router';
@@ -34,6 +36,7 @@ const Voter: FunctionComponent = () => {
   const { person, isLoading } = usePersonFetcher(voterKey);
   const [searchValue, setSearchValue] = useState('');
   const { countries } = useCountryFetcher(searchValue);
+  const [selectedTab, setSelectedTab] = useState(0);
 
   const {
     setPerson,
@@ -43,9 +46,13 @@ const Voter: FunctionComponent = () => {
     isDirty,
     serverError,
     resetForm,
-    handleTabChange,
-    selectedTab,
+    // handleTabChange,
+    // selectedTab,
   } = useContext(CanvassingContext);
+
+  const handleTabChange = (tab: number) => {
+    setSelectedTab(tab);
+  };
 
   const breadcrumb: EuiBreadcrumb[] = [
     {
@@ -205,7 +212,14 @@ const Voter: FunctionComponent = () => {
               <EuiTab
                 onClick={() => handleTabChange(3)}
                 isSelected={selectedTab === 3}>
-                Membership
+                {person?.membership?.structure?.key === null ? (
+                  <EuiText size="xs" color="warning">
+                    <EuiIcon type="alert" color="warning" />{' '}
+                    <strong>Membership</strong>
+                  </EuiText>
+                ) : (
+                  'Membership'
+                )}
               </EuiTab>
               <EuiTab
                 onClick={() => handleTabChange(4)}
@@ -252,7 +266,7 @@ const Voter: FunctionComponent = () => {
             {selectedTab === 3 && (
               <Membership
                 abroadCountry={countries ? countries[0].country : null}
-                ward={person?.membership?.structure?.ward}
+                membershipStructure={person?.membership?.structure}
                 id_number={person?.idNumber}
                 darn={person?.key}
                 status={person?.membership?.status}
