@@ -46,6 +46,14 @@ const Voter: FunctionComponent = () => {
 
   const breadcrumb: EuiBreadcrumb[] = [
     {
+      text: 'Home',
+      href: '/',
+      onClick: e => {
+        router.push('/');
+        e.preventDefault();
+      },
+    },
+    {
       text: 'Data Cleanup',
     },
     {
