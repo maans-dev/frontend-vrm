@@ -114,8 +114,6 @@ const AffiliationComponent: FunctionComponent<Props> = ({
     });
   };
 
-  console.log(affiliationDate, 'aff');
-
   return (
     <>
       {error && (
