@@ -134,6 +134,7 @@ const SearchOptions: FunctionComponent<Props> = ({
       <EuiFormRow display="rowCompressed" label="Date of birth">
         <EuiDatePicker
           name="dob"
+          onKeyDown={handleKeyDown}
           dateFormat={['D MMM YYYY']}
           selected={dob}
           maxDate={moment().subtract(17, 'year')}
@@ -145,6 +146,7 @@ const SearchOptions: FunctionComponent<Props> = ({
       <EuiFormRow display="rowCompressed" label="Surname">
         <EuiFieldText
           name="surname"
+          onKeyDown={handleKeyDown}
           compressed
           append={<AdvancedSearchTooltip />}
           // value={searchParams?.surname || ''}
@@ -155,6 +157,7 @@ const SearchOptions: FunctionComponent<Props> = ({
       <EuiFormRow display="rowCompressed" label="First names">
         <EuiFieldText
           name="firstName"
+          onKeyDown={handleKeyDown}
           compressed
           append={<AdvancedSearchTooltip />}
           // value={searchParams?.firstName || ''}
@@ -167,6 +170,7 @@ const SearchOptions: FunctionComponent<Props> = ({
       <EuiFormRow display="rowCompressed" label="Email">
         <EuiFieldText
           name="email"
+          onKeyDown={handleKeyDown}
           compressed
           append={<AdvancedSearchTooltip />}
           // value={searchParams?.email || ''}
@@ -177,6 +181,7 @@ const SearchOptions: FunctionComponent<Props> = ({
       <EuiFormRow display="rowCompressed" label="Phone">
         <EuiFieldText
           name="phone"
+          onKeyDown={handleKeyDown}
           compressed
           append={<AdvancedSearchTooltip />}
           // value={searchParams?.phone || ''}
