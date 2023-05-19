@@ -114,6 +114,8 @@ const AffiliationComponent: FunctionComponent<Props> = ({
     });
   };
 
+  console.log(affiliationDate, 'aff');
+
   return (
     <>
       {error && (
@@ -145,12 +147,14 @@ const AffiliationComponent: FunctionComponent<Props> = ({
           </EuiFormRow>
         </EuiFlexItem>
         <EuiFlexItem>
-          <EuiText size="xs">
-            Last confirmed on{' '}
-            <strong>
-              {formattedDate} ({daysAgo})
-            </strong>
-          </EuiText>
+          {affiliationDate ? (
+            <EuiText size="xs">
+              Last confirmed on{' '}
+              <strong>
+                {formattedDate} ({daysAgo})
+              </strong>
+            </EuiText>
+          ) : null}
         </EuiFlexItem>
       </EuiFlexGroup>
 
