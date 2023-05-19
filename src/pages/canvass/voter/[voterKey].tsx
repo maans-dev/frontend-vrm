@@ -141,7 +141,11 @@ const Voter: FunctionComponent = () => {
         </EuiFormFieldset>
         <EuiSpacer />
         <EuiFormFieldset legend={{ children: 'Affiliation' }}>
-          <Affiliation affiliation={person?.affiliation} onChange={onChange} />
+          <Affiliation
+            affiliation={person?.affiliation}
+            affiliationDate={person?.affiliation_date}
+            onChange={onChange}
+          />
         </EuiFormFieldset>
         <EuiSpacer />
         <EuiFormFieldset legend={{ children: 'Contact details' }}>

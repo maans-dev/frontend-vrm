@@ -35,7 +35,7 @@ export type KeyedUpdate =
   | CommentsUpdate
   | FieldsUpdate;
 
-export type AffiliateUpdate = Pick<Affiliation, 'key' | 'name'>;
+export type AffiliateUpdate = Pick<Affiliation, 'key' | 'name' | 'confirmed'>;
 export type LanguageUpdate = Language;
 export type PhoneUpdate = Pick<
   Partial<PhoneContact>,

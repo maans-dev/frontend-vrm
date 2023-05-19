@@ -229,6 +229,7 @@ const Voter: FunctionComponent = () => {
                   <Affiliation
                     affiliation={person?.affiliation}
                     onChange={onChange}
+                    affiliationDate={person?.affiliation_date}
                   />
                 </EuiFormFieldset>
               </>
