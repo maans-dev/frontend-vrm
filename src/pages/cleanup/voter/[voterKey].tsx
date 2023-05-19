@@ -203,63 +203,61 @@ const Voter: FunctionComponent = () => {
                 Tags & Custom fields
               </EuiTab>
               <EuiTab
-                onClick={() => setSelectedTab(4)}
-                isSelected={selectedTab === 4}>
+                onClick={() => setSelectedTab(3)}
+                isSelected={selectedTab === 3}>
                 History
               </EuiTab>
             </EuiTabs>
             <EuiSpacer />
-            {selectedTab === 0 && (
-              <>
-                <EuiFormFieldset legend={{ children: 'Contact Details' }}>
-                  <ContactDetails
-                    deceased={person.deceased}
-                    givenName={person?.givenName}
-                    language={person?.language}
-                    contacts={person?.contacts}
-                    onLanguageChange={onChange}
-                    onPhoneChange={onChange}
-                    onEmailChange={onChange}
-                    onPersonChange={onChange}
-                    onDeceasedChange={onChange}
-                  />
-                </EuiFormFieldset>
-                <EuiSpacer />
-                <EuiFormFieldset legend={{ children: 'Affiliation' }}>
-                  <Affiliation
-                    affiliation={person?.affiliation}
-                    onChange={onChange}
-                    affiliationDate={person?.affiliation_date}
-                  />
-                </EuiFormFieldset>
-              </>
-            )}
-            {selectedTab === 1 && (
+
+            <div style={{ display: selectedTab === 0 ? 'block' : 'none' }}>
+              <EuiFormFieldset legend={{ children: 'Contact Details' }}>
+                <ContactDetails
+                  deceased={person.deceased}
+                  givenName={person?.givenName}
+                  language={person?.language}
+                  contacts={person?.contacts}
+                  onLanguageChange={onChange}
+                  onPhoneChange={onChange}
+                  onEmailChange={onChange}
+                  onPersonChange={onChange}
+                  onDeceasedChange={onChange}
+                />
+              </EuiFormFieldset>
+              <EuiSpacer />
+              <EuiFormFieldset legend={{ children: 'Affiliation' }}>
+                <Affiliation
+                  affiliation={person?.affiliation}
+                  onChange={onChange}
+                  affiliationDate={person?.affiliation_date}
+                />
+              </EuiFormFieldset>
+            </div>
+
+            <div style={{ display: selectedTab === 1 ? 'block' : 'none' }}>
               <EuiFormFieldset
                 legend={{ children: 'Living Address & Location' }}>
                 <Address address={person?.address} onChange={onChange} />
               </EuiFormFieldset>
-            )}
-            {selectedTab === 2 && (
-              <>
-                <EuiFormFieldset legend={{ children: 'Canvassing tags' }}>
-                  <CanvassingTags fields={person.fields} onChange={onChange} />
-                </EuiFormFieldset>
-                <EuiSpacer />
-                <EuiFormFieldset legend={{ children: 'Voter tags' }}>
-                  <VoterTags fields={person?.fields} onChange={onChange} />
-                </EuiFormFieldset>
-              </>
-            )}
+            </div>
 
-            {selectedTab === 3 && <PagePlaceholder />}
-            {selectedTab === 4 && (
+            <div style={{ display: selectedTab === 2 ? 'block' : 'none' }}>
+              <EuiFormFieldset legend={{ children: 'Canvassing tags' }}>
+                <CanvassingTags fields={person.fields} onChange={onChange} />
+              </EuiFormFieldset>
+              <EuiSpacer />
+              <EuiFormFieldset legend={{ children: 'Voter tags' }}>
+                <VoterTags fields={person?.fields} onChange={onChange} />
+              </EuiFormFieldset>
+            </div>
+
+            <div style={{ display: selectedTab === 3 ? 'block' : 'none' }}>
               <EuiFormFieldset
                 css={{ position: 'relative', minHeight: '300px' }}
                 legend={{ children: 'History' }}>
                 <PersonHistory personKey={person.key} />
               </EuiFormFieldset>
-            )}
+            </div>
           </EuiFlexItem>
         </EuiFlexGroup>
 

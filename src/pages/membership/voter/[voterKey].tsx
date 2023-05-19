@@ -176,6 +176,16 @@ const Voter: FunctionComponent = () => {
     handleTabChange(1);
   }
 
+  if (isLoading || !voterKey) {
+    return (
+      <MainLayout
+        breadcrumb={breadcrumb}
+        showSpinner={isLoading}
+        panelled={false}
+      />
+    );
+  }
+
   return (
     <MainLayout
       breadcrumb={breadcrumb}
@@ -236,42 +246,42 @@ const Voter: FunctionComponent = () => {
               </EuiTab>
             </EuiTabs>
             <EuiSpacer />
-            {selectedTab === 0 && (
-              <>
-                <EuiFormFieldset legend={{ children: 'Contact Details' }}>
-                  <ContactDetails
-                    deceased={person?.deceased}
-                    givenName={person?.givenName}
-                    language={person?.language}
-                    contacts={person?.contacts}
-                    onLanguageChange={onChange}
-                    onPhoneChange={onChange}
-                    onEmailChange={onChange}
-                    onPersonChange={onChange}
-                    onDeceasedChange={onChange}
-                  />
-                </EuiFormFieldset>
-                <EuiSpacer />
-              </>
-            )}
-            {selectedTab === 1 && (
+
+            <div style={{ display: selectedTab === 0 ? 'block' : 'none' }}>
+              <EuiFormFieldset legend={{ children: 'Contact Details' }}>
+                <ContactDetails
+                  deceased={person?.deceased}
+                  givenName={person?.givenName}
+                  language={person?.language}
+                  contacts={person?.contacts}
+                  onLanguageChange={onChange}
+                  onPhoneChange={onChange}
+                  onEmailChange={onChange}
+                  onPersonChange={onChange}
+                  onDeceasedChange={onChange}
+                />
+              </EuiFormFieldset>
+              <EuiSpacer />
+            </div>
+
+            <div style={{ display: selectedTab === 1 ? 'block' : 'none' }}>
               <EuiFormFieldset
                 legend={{ children: 'Living Address & Location' }}>
                 <Address address={person?.address} onChange={onChange} />
               </EuiFormFieldset>
-            )}
-            {selectedTab === 2 && (
-              <>
-                <EuiFormFieldset legend={{ children: 'Canvassing tags' }}>
-                  <CanvassingTags fields={person?.fields} onChange={onChange} />
-                </EuiFormFieldset>
-                <EuiSpacer />
-                <EuiFormFieldset legend={{ children: 'Voter tags' }}>
-                  <VoterTags fields={person?.fields} onChange={onChange} />
-                </EuiFormFieldset>
-              </>
-            )}
-            {selectedTab === 3 && (
+            </div>
+
+            <div style={{ display: selectedTab === 2 ? 'block' : 'none' }}>
+              <EuiFormFieldset legend={{ children: 'Canvassing tags' }}>
+                <CanvassingTags fields={person?.fields} onChange={onChange} />
+              </EuiFormFieldset>
+              <EuiSpacer />
+              <EuiFormFieldset legend={{ children: 'Voter tags' }}>
+                <VoterTags fields={person?.fields} onChange={onChange} />
+              </EuiFormFieldset>
+            </div>
+
+            <div style={{ display: selectedTab === 3 ? 'block' : 'none' }}>
               <Membership
                 abroadCountry={countries ? countries[0].country : null}
                 membershipStructure={person?.membership?.structure}
@@ -300,8 +310,9 @@ const Voter: FunctionComponent = () => {
                     : false
                 }
               />
-            )}
-            {selectedTab === 4 && (
+            </div>
+
+            <div style={{ display: selectedTab === 4 ? 'block' : 'none' }}>
               <EuiFormFieldset
                 css={{
                   position: 'relative',
@@ -310,7 +321,7 @@ const Voter: FunctionComponent = () => {
                 legend={{ children: 'History' }}>
                 <PersonHistory personKey={person.key} />
               </EuiFormFieldset>
-            )}
+            </div>
           </EuiFlexItem>
         </EuiFlexGroup>
 
