@@ -29,7 +29,7 @@ const EuiApp: FunctionComponent<AppProps<{ session: Session }>> = ({
   pageProps: { session, ...pageProps },
 }) => {
   const appsignal = new Appsignal({
-    key: process.env.NEXT_PUBLIC_APPSIGNAL_DEV,
+    key: process.env.NEXT_PUBLIC_APPSIGNAL,
     revision: process.env.NEXT_PUBLIC_VERSION,
   });
   useEffect(() => {
