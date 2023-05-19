@@ -5,6 +5,7 @@ import {
   EuiButton,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiIcon,
   EuiModal,
   EuiModalBody,
   EuiOverlayMask,
@@ -108,6 +109,7 @@ const Map: FunctionComponent<Props> = ({ address, onAddressChange }) => {
         onClick={handleMapButtonClick}>
         {address && address?.longitude && address?.latitude ? (
           <>
+            <EuiIcon type="globe" />
             <EuiText size="s">Show map</EuiText>({address.latitude.toFixed(4)},{' '}
             {address.longitude.toFixed(4)})
           </>
