@@ -10,7 +10,7 @@ export interface Person {
   surname: string;
   gender: string;
   affiliation: Affiliation;
-  affiliation_date: Date;
+  affiliation_date: string;
   livingStructure: LivingStructure;
   livingStructure_date: Date;
   registeredStructure: RegisteredStructure;
@@ -149,6 +149,7 @@ export interface Affiliation {
   key: string;
   name: string;
   description: string;
+  confirmed: boolean;
   active: boolean;
   createdBy: number;
   modifiedBy: number;

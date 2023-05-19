@@ -3,17 +3,24 @@ import {
   EuiCallOut,
   EuiComboBox,
   EuiComboBoxOptionOption,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiText,
+  EuiCheckbox,
+  htmlIdGenerator,
+  EuiSpacer,
 } from '@elastic/eui';
 import { Affiliation } from '@lib/domain/person';
 import { FunctionComponent, useMemo, useState } from 'react';
 import useAffiliationFetcher from '@lib/fetcher/affiliation/affiliation';
 import { AffiliateUpdate, PersonUpdate } from '@lib/domain/person-update';
 import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
-import { BsQuestionDiamond } from 'react-icons/bs';
 import { debounce } from 'lodash';
+import moment from 'moment';
 
 type Props = {
   affiliation: Affiliation;
+  affiliationDate: string;
   onChange: (update: PersonUpdate<AffiliateUpdate>) => void;
 };
 
@@ -21,10 +28,11 @@ type AffliationOption = EuiComboBoxOptionOption<Affiliation>;
 
 const AffiliationComponent: FunctionComponent<Props> = ({
   affiliation,
+  affiliationDate,
   onChange,
 }) => {
   const [searchValue, setSearchValue] = useState<string>('');
-  const { affiliations, isLoading, error } = useAffiliationFetcher(searchValue);
+  const { affiliations, isLoading, error } = useAffiliationFetcher();
   const [selectedOption, setSelectedOption] = useState<AffliationOption>(
     affiliation &&
       (affiliation?.description !== null || affiliation?.name !== null)
@@ -34,6 +42,8 @@ const AffiliationComponent: FunctionComponent<Props> = ({
         }
       : null
   );
+  const [checkBox, setCheckBox] = useState(false);
+  const [disabled, setDisabled] = useState<boolean>();
 
   const options = useMemo(() => {
     return affiliations?.map(a => ({
@@ -46,15 +56,22 @@ const AffiliationComponent: FunctionComponent<Props> = ({
     if (!selectedOptions?.[0]?.value) return;
 
     setSelectedOption(selectedOptions[0]);
-
     let updateData: AffiliateUpdate;
     if (affiliation?.key !== selectedOptions[0]?.value?.key) {
+      setCheckBox(true);
+      setDisabled(true);
       updateData = {
         key: selectedOptions[0]?.value?.key,
         name: selectedOptions[0]?.value?.name,
+        confirmed: true,
       };
     } else {
-      updateData = null;
+      setDisabled(false);
+      updateData = {
+        confirmed: true,
+        key: selectedOptions[0]?.value?.key,
+        name: selectedOptions[0]?.value?.name,
+      };
     }
     onChange({
       field: 'affiliation',
@@ -73,6 +90,30 @@ const AffiliationComponent: FunctionComponent<Props> = ({
     setSearchValue(value || '');
   }, 300);
 
+  const formattedDate = moment(affiliationDate).format('DD MMM YYYY');
+  const daysAgo = moment(affiliationDate).fromNow();
+
+  const handleCheckableCardChange = () => {
+    let updateData: AffiliateUpdate;
+    if (affiliation?.key === selectedOption.value.key) {
+      if (checkBox) {
+        setCheckBox(false);
+        updateData = null;
+      } else {
+        setCheckBox(true);
+        updateData = {
+          confirmed: true,
+          key: affiliation.key,
+          name: affiliation.name,
+        };
+      }
+    }
+    onChange({
+      field: 'affiliation',
+      data: updateData,
+    });
+  };
+
   return (
     <>
       {error && (
@@ -85,28 +126,56 @@ const AffiliationComponent: FunctionComponent<Props> = ({
           {error.message}
         </EuiCallOut>
       )}
-      <EuiFormRow display="rowCompressed">
-        <EuiComboBox
-          compressed
-          isClearable={false}
-          isLoading={isLoading}
-          aria-label="Select an affiliation"
-          placeholder="Select an affiliation"
-          singleSelection={{ asPlainText: true }}
-          options={searchValue ? options : []}
-          selectedOptions={selectedOption ? [selectedOption] : []}
-          onChange={handleChange}
-          onSearchChange={debouncedSearch}
+
+      <EuiFlexGroup direction="row" alignItems="center">
+        <EuiFlexItem>
+          <EuiFormRow display="rowCompressed">
+            <EuiComboBox
+              compressed
+              isClearable={false}
+              isLoading={isLoading}
+              aria-label="Select an affiliation"
+              placeholder="Select an affiliation"
+              singleSelection={{ asPlainText: true }}
+              options={options}
+              selectedOptions={selectedOption ? [selectedOption] : []}
+              onChange={handleChange}
+              onSearchChange={debouncedSearch}
+            />
+          </EuiFormRow>
+        </EuiFlexItem>
+        <EuiFlexItem>
+          <EuiText size="xs">
+            Last confirmed on{' '}
+            <strong>
+              {formattedDate} ({daysAgo})
+            </strong>
+          </EuiText>
+        </EuiFlexItem>
+      </EuiFlexGroup>
+
+      <EuiSpacer size="m" />
+
+      <EuiFlexItem>
+        <EuiCheckbox
+          id={htmlIdGenerator()()}
+          label={
+            !disabled ? (
+              <EuiText size="s">
+                Confirm the affiliation <strong>{selectedOption?.label}</strong>
+              </EuiText>
+            ) : (
+              <EuiText size="s">
+                Save to confirm the affiliation{' '}
+                <strong>{selectedOption?.label}</strong>
+              </EuiText>
+            )
+          }
+          disabled={disabled}
+          checked={checkBox}
+          onChange={handleCheckableCardChange}
         />
-      </EuiFormRow>
-      <EuiFormRow display="row">
-        <EuiCallOut
-          title="Have you confirmed this voter's affiliation?"
-          size="s"
-          iconType={BsQuestionDiamond}
-          color="warning"
-        />
-      </EuiFormRow>
+      </EuiFlexItem>
     </>
   );
 };
