@@ -53,7 +53,7 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
       mobileOptions: {
         show: false,
       },
-      css: { minWidth: '80px' },
+      css: { minWidth: '100px' },
     },
     {
       name: 'Full Name',
