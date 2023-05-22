@@ -44,9 +44,9 @@ const BranchInfo: FunctionComponent<Props> = ({
 }) => {
   const [country, setCountry] = useState('');
   const { person: originalPerson } = useContext(CanvassingContext);
-  const [personAddressStructure] = useState<Partial<Structure>>(
-    originalPerson?.address?.structure || null
-  );
+  const [personAddressStructure, setPersonAddressStructure] = useState<
+    Partial<Structure>
+  >(originalPerson?.address?.structure || null);
   const [overriddenBranchStructure, setOverriddenBranchStructure] =
     useState<Partial<Structure>>(null);
   const [branchLable, setBranchLable] = useState<string>(null);
@@ -65,20 +65,20 @@ const BranchInfo: FunctionComponent<Props> = ({
     setUserHasSelectedOverridePermission,
   ] = useState(false);
 
-  // console.log('BranchInfo debug', {
-  //   country,
-  //   abroadCountry,
-  //   membershipStructure,
-  //   personAddressStructure,
-  //   personHasNoStructures,
-  //   isDaAbroadSelected,
-  //   noMembershipStructure,
-  //   userHasSelectedDaAbroad,
-  //   userHasDeselectedDaAbroad,
-  //   overriddenBranchStructure,
-  //   userHasSelectedOverridePermission,
-  //   userHasDeselectedOverridePermission,
-  // });
+  console.log('BranchInfo debug', {
+    country,
+    abroadCountry,
+    membershipStructure,
+    personAddressStructure,
+    personHasNoStructures,
+    isDaAbroadSelected,
+    noMembershipStructure,
+    userHasSelectedDaAbroad,
+    userHasDeselectedDaAbroad,
+    overriddenBranchStructure,
+    userHasSelectedOverridePermission,
+    userHasDeselectedOverridePermission,
+  });
 
   useEffect(() => {
     // reset state & remove update payload
@@ -207,6 +207,10 @@ const BranchInfo: FunctionComponent<Props> = ({
     userHasDeselectedOverridePermission,
     country,
   ]);
+
+  useEffect(() => {
+    setPersonAddressStructure(originalPerson?.address?.structure || null);
+  }, [originalPerson?.address?.structure]);
 
   // Reset country when user selects Da Abroad
   useEffect(() => {
