@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useState } from 'react';
 import {
   EuiBasicTableColumn,
   EuiBasicTable,
@@ -6,6 +6,9 @@ import {
   Criteria,
   useIsWithinBreakpoints,
   EuiSpacer,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiTablePagination,
 } from '@elastic/eui';
 import moment from 'moment';
 import router from 'next/router';
@@ -15,9 +18,21 @@ import VoterAdd from '@components/voter-add';
 
 export type Props = {
   results?: Person[];
+  pageCount: number;
+  itemsPerPage: number;
+  onChangeItemsPerPage: (pageSize: number) => void;
+  activePage: number;
+  onChangePage: (pageNumber: number) => void;
 };
 
-const SearchResults: FunctionComponent<Props> = ({ results }) => {
+const SearchResults: FunctionComponent<Props> = ({
+  results,
+  pageCount,
+  itemsPerPage,
+  onChangeItemsPerPage,
+  activePage,
+  onChangePage,
+}) => {
   // const [sortField, setSortField] = useState<keyof Person>('name');
   // const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const isMobile = useIsWithinBreakpoints(['xs', 's']);
@@ -55,23 +70,41 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
       },
       css: { minWidth: '100px' },
     },
+    // {
+    //   name: 'Full Name',
+    //   valign: 'top',
+    //   render: (item: Person) => (
+    //     <div>
+    //       {item.salutation} {item.firstName} {item.surname}
+    //     </div>
+    //   ),
+    //   mobileOptions: {
+    //     header: false,
+    //     width: '100%',
+    //     render: (item: Person) => (
+    //       <strong>
+    //         {item.salutation} {item.firstName} {item.surname}
+    //       </strong>
+    //     ),
+    //   },
+    // },
     {
-      name: 'Full Name',
+      field: 'surname',
+      name: 'Surname',
       valign: 'top',
-      render: (item: Person) => (
-        <div>
-          {item.salutation} {item.firstName} {item.surname}
-        </div>
-      ),
-      mobileOptions: {
-        header: false,
-        width: '100%',
-        render: (item: Person) => (
-          <strong>
-            {item.salutation} {item.firstName} {item.surname}
-          </strong>
-        ),
-      },
+      css: { minWidth: '120px' },
+    },
+    {
+      field: 'firstName',
+      name: 'First Name',
+      valign: 'top',
+      css: { minWidth: '120px' },
+    },
+    {
+      field: 'givenName',
+      name: 'Given Name',
+      valign: 'top',
+      css: { minWidth: '120px' },
     },
     {
       field: 'dob',
@@ -226,6 +259,20 @@ const SearchResults: FunctionComponent<Props> = ({ results }) => {
           </>
         }
       />
+      <EuiSpacer size="m" />
+      <EuiFlexGroup justifyContent="spaceAround">
+        <EuiFlexItem grow={true}>
+          <EuiTablePagination
+            aria-label="Pager"
+            pageCount={pageCount}
+            itemsPerPageOptions={[10, 20, 50, 100]}
+            itemsPerPage={itemsPerPage}
+            onChangeItemsPerPage={onChangeItemsPerPage}
+            activePage={activePage}
+            onChangePage={onChangePage}
+          />
+        </EuiFlexItem>
+      </EuiFlexGroup>
       <EuiSpacer />
       {results?.length > 0 && <VoterAdd />}
     </>
