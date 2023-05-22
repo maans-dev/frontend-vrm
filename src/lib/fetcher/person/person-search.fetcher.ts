@@ -4,8 +4,15 @@ import { PersonSearchParams } from '@lib/domain/person-search';
 import useSWR from 'swr';
 import { fetcherAPI } from '../api.fetcher';
 
+interface PersonSearchResponse {
+  count: number,
+  values: Person[],
+}
+
 export default function usePersonSearchFetcher(
-  params: Partial<PersonSearchParams>
+  params: Partial<PersonSearchParams>,
+  limit = 10,
+  offset = 0,
 ) {
   const shouldFetch = params ? true : false;
 
@@ -27,9 +34,9 @@ export default function usePersonSearchFetcher(
     }
   }
 
-  const { data, error, isLoading, mutate } = useSWR<Person[]>(
+  const { data, error, isLoading, mutate } = useSWR<PersonSearchResponse>(
     shouldFetch
-      ? `/person?template=["Address","IEC","Contact"]&${new URLSearchParams(
+      ? `/person?count=true&limit=${limit}&offset=${offset}&template=["Address","IEC","Contact"]&orderBy={"ignoreDefault":true,"values":[{"key":"surname","metaData":{"direction":"ASC"}},{"key":"firstName"}]}&${new URLSearchParams(
         params as never
       ).toString()}`
       : null,
@@ -42,7 +49,8 @@ export default function usePersonSearchFetcher(
   );
 
   return {
-    results: data,
+    results: data?.values,
+    count: data?.count,
     isLoading,
     error: error,
     mutate

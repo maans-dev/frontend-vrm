@@ -16,8 +16,30 @@ const VoterSearch: FunctionComponent<Props> = ({ breadcrumb }) => {
   const [searchParams, setSearchParams] =
     useState<Partial<PersonSearchParams>>(null);
 
-  const { results, isLoading, mutate, error } =
-    usePersonSearchFetcher(searchParams);
+  const [activePage, setActivePage] = useState(0);
+  const [rowSize, setRowSize] = useState(10);
+  const [pageCount, setPageCount] = useState(0);
+
+  const { results, count, isLoading, mutate, error } = usePersonSearchFetcher(
+    searchParams,
+    rowSize,
+    rowSize * activePage
+  );
+
+  const onChangeItemsPerPage = (pageSize: number) => {
+    setPageCount(Math.ceil(count / pageSize));
+    setRowSize(pageSize);
+    setActivePage(0);
+    console.log(count, pageSize);
+  };
+
+  const onChangePage = (page: number) => {
+    setActivePage(page);
+  };
+
+  useEffect(() => {
+    if (count) setPageCount(Math.ceil(count / rowSize));
+  }, [rowSize, count]);
 
   const doSearch = (params: Partial<PersonSearchParams>) => {
     if (!params) return;
@@ -58,7 +80,14 @@ const VoterSearch: FunctionComponent<Props> = ({ breadcrumb }) => {
         />
       ) : null}
       {!isLoading && (results?.length > 1 || results?.length === 0) ? (
-        <SearchResults results={results} />
+        <SearchResults
+          results={results}
+          pageCount={pageCount}
+          activePage={activePage}
+          itemsPerPage={rowSize}
+          onChangeItemsPerPage={onChangeItemsPerPage}
+          onChangePage={onChangePage}
+        />
       ) : null}
     </MainLayout>
   );
