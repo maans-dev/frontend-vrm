@@ -15,11 +15,11 @@ export default function usePersonSearchFetcher(
     if (params.phone || params.email) {
       contactibility = {}
       if (params.phone) {
-        contactibility['PHONE'] = { canContact: true, value: params.phone }
+        contactibility['PHONE'] = { value: params.phone }
         delete params.phone;
       }
       if (params.email) {
-        contactibility['EMAIL'] = { canContact: true, value: params.email }
+        contactibility['EMAIL'] = { value: params.email }
         delete params.email;
       }
 
