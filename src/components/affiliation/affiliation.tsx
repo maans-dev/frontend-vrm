@@ -11,7 +11,7 @@ import {
   EuiSpacer,
 } from '@elastic/eui';
 import { Affiliation } from '@lib/domain/person';
-import { FunctionComponent, useMemo, useState } from 'react';
+import { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import useAffiliationFetcher from '@lib/fetcher/affiliation/affiliation';
 import { AffiliateUpdate, PersonUpdate } from '@lib/domain/person-update';
 import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
@@ -113,6 +113,20 @@ const AffiliationComponent: FunctionComponent<Props> = ({
       data: updateData,
     });
   };
+
+  useEffect(() => {
+    if (
+      affiliation &&
+      (affiliation.description !== null || affiliation.name !== null)
+    ) {
+      setSelectedOption({
+        label: affiliation.description || affiliation.name,
+        value: affiliation,
+      });
+    } else {
+      setSelectedOption(null);
+    }
+  }, [affiliation]);
 
   return (
     <>
