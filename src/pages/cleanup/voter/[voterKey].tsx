@@ -27,6 +27,7 @@ import { CanvassingContext } from '@lib/context/canvassing.context';
 import PagePlaceholder from '@components/page-placeholder';
 import { css } from '@emotion/react';
 import PersonHistory from '@components/person-history';
+import { useLeavePageConfirmation } from '@lib/hooks/useLeavePageConfirmation';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
@@ -43,6 +44,7 @@ const Voter: FunctionComponent = () => {
     serverError,
     resetForm,
   } = useContext(CanvassingContext);
+  useLeavePageConfirmation(isDirty);
 
   const breadcrumb: EuiBreadcrumb[] = [
     {

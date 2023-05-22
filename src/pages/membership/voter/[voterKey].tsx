@@ -29,6 +29,7 @@ import { css } from '@emotion/react';
 import Membership from '@components/membership';
 import PersonHistory from '@components/person-history';
 import useCountryFetcher from '@lib/fetcher/countries/countries';
+import { useLeavePageConfirmation } from '@lib/hooks/useLeavePageConfirmation';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
@@ -46,9 +47,8 @@ const Voter: FunctionComponent = () => {
     isDirty,
     serverError,
     resetForm,
-    // handleTabChange,
-    // selectedTab,
   } = useContext(CanvassingContext);
+  useLeavePageConfirmation(isDirty);
 
   const handleTabChange = (tab: number) => {
     setSelectedTab(tab);
