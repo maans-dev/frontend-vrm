@@ -17,6 +17,7 @@ import { AffiliateUpdate, PersonUpdate } from '@lib/domain/person-update';
 import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
 import { debounce } from 'lodash';
 import moment from 'moment';
+import { useRouter } from 'next/router';
 
 type Props = {
   affiliation: Affiliation;
@@ -44,6 +45,8 @@ const AffiliationComponent: FunctionComponent<Props> = ({
   );
   const [checkBox, setCheckBox] = useState(false);
   const [disabled, setDisabled] = useState<boolean>();
+  const router = useRouter();
+  const isDataCleanupPage = router.pathname.includes('/cleanup');
 
   const options = useMemo(() => {
     return affiliations?.map(a => ({
@@ -98,7 +101,11 @@ const AffiliationComponent: FunctionComponent<Props> = ({
     if (affiliation?.key === selectedOption.value.key) {
       if (checkBox) {
         setCheckBox(false);
-        updateData = null;
+        updateData = {
+          confirmed: false,
+          key: affiliation.key,
+          name: affiliation.name,
+        };
       } else {
         setCheckBox(true);
         updateData = {
@@ -140,8 +147,28 @@ const AffiliationComponent: FunctionComponent<Props> = ({
           {error.message}
         </EuiCallOut>
       )}
+      {!isDataCleanupPage && (
+        <>
+          <EuiCallOut
+            title="Affiliation Confirmation Required"
+            color="warning"
+            iconType="alert"
+            size="s"></EuiCallOut>
+          <EuiSpacer size="m" />
+        </>
+      )}
 
-      <EuiFlexGroup direction="row" alignItems="center">
+      <EuiFlexGroup direction="row" alignItems="center" gutterSize="xs">
+        <EuiFlexItem>
+          {affiliationDate ? (
+            <EuiText size="xs">
+              Last confirmed on{' '}
+              <strong>
+                {formattedDate} ({daysAgo})
+              </strong>
+            </EuiText>
+          ) : null}
+        </EuiFlexItem>
         <EuiFlexItem>
           <EuiFormRow display="rowCompressed">
             <EuiComboBox
@@ -157,16 +184,6 @@ const AffiliationComponent: FunctionComponent<Props> = ({
               onSearchChange={debouncedSearch}
             />
           </EuiFormRow>
-        </EuiFlexItem>
-        <EuiFlexItem>
-          {affiliationDate ? (
-            <EuiText size="xs">
-              Last confirmed on{' '}
-              <strong>
-                {formattedDate} ({daysAgo})
-              </strong>
-            </EuiText>
-          ) : null}
         </EuiFlexItem>
       </EuiFlexGroup>
 
