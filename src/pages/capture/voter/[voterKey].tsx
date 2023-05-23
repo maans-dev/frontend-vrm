@@ -1,8 +1,9 @@
-import { FunctionComponent, useContext, useEffect } from 'react';
+import { FunctionComponent, useContext, useEffect, useState } from 'react';
 import {
   EuiBreadcrumb,
   EuiButton,
   EuiButtonEmpty,
+  EuiCallOut,
   EuiFlexGroup,
   EuiFlexItem,
   EuiForm,
@@ -31,6 +32,7 @@ const Voter: FunctionComponent = () => {
   const router = useRouter();
   const voterKey = router.query.voterKey as string;
   const { person, isLoading } = usePersonFetcher(voterKey);
+  const [confirmed, setConfirmed] = useState(false);
 
   const {
     setPerson,
@@ -40,8 +42,17 @@ const Voter: FunctionComponent = () => {
     isDirty,
     serverError,
     resetForm,
+    data,
   } = useContext(CanvassingContext);
   useLeavePageConfirmation(isDirty);
+
+  useEffect(() => {
+    if (data?.affiliation?.confirmed === true) {
+      setConfirmed(true);
+    } else {
+      setConfirmed(false);
+    }
+  }, [data?.affiliation?.confirmed, data]);
 
   const breadcrumb: EuiBreadcrumb[] = [
     {
@@ -188,6 +199,16 @@ const Voter: FunctionComponent = () => {
         <EuiSpacer />
         <CanvassingSelectionDetails />
         <EuiSpacer />
+        {!confirmed && (
+          <EuiCallOut
+            title="Affiliation Not Confirmed"
+            color="warning"
+            iconType="alert"
+            size="s"></EuiCallOut>
+        )}
+
+        <EuiSpacer />
+
         {formActions}
       </EuiForm>
     </MainLayout>
