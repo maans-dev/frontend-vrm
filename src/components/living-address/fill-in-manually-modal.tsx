@@ -241,6 +241,16 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
                 />
               </EuiFormRow>
               <EuiSpacer />
+
+              <EuiFormRow label="Comment" display="rowCompressed">
+                <EuiFieldText
+                  name="Comment"
+                  autoComplete="no"
+                  compressed
+                  value={updatedAddress?.comment}
+                  onChange={e => onUpdateAddress('comment', e.target.value)}
+                />
+              </EuiFormRow>
             </EuiForm>
           </EuiModalBody>
           <EuiModalFooter>

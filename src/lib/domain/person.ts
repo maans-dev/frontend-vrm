@@ -247,6 +247,7 @@ export interface Address {
   province?: string;
   province_enum?: Province;
   city: string;
+  comment: string;
   suburb: string;
   buildingNo: string;
   buildingName: string;

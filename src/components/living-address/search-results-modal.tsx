@@ -38,13 +38,16 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
   useEffect(() => {
     if (results.length === 1) setAddress(results[0]);
     if (results.length === 1) setAddressInternal(results[0]);
-  }, [address, addressInternal, results]);
+  }, [results]);
 
   const onUpdateAddress = (field: string, value: string) => {
-    setAddress(a => ({
-      ...a,
-      [field]: value,
-    }));
+    setAddress(a => {
+      const updatedAddress = {
+        ...a,
+        [field]: value,
+      };
+      return updatedAddress;
+    });
   };
 
   const setSelectedAddress = (option: Partial<Address>) => {
@@ -58,8 +61,13 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
       option.geocodeSource = GeocodedAddressSource.GEOCODED_VD;
     }
 
-    setAddress({ ...option, buildingName: '', buildingNo: '' });
-    setAddressInternal({ ...option, buildingName: '', buildingNo: '' });
+    setAddress({ ...option, buildingName: '', buildingNo: '', comment: '' });
+    setAddressInternal({
+      ...option,
+      buildingName: '',
+      buildingNo: '',
+      comment: '',
+    });
   };
 
   const doClose = (address: Partial<Address>) => {
@@ -199,6 +207,16 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
             })}
             valueOfSelected={address?.province_enum}
             onChange={value => onUpdateAddress('province_enum', value)}
+          />
+        </EuiFormRow>
+        <EuiSpacer />
+        <EuiFormRow label="Comment" display="rowCompressed">
+          <EuiFieldText
+            name="Comment"
+            autoComplete="no"
+            compressed
+            value={address?.comment}
+            onChange={e => onUpdateAddress('comment', e.target.value)}
           />
         </EuiFormRow>
         <EuiSpacer />

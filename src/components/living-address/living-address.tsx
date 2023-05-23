@@ -353,6 +353,18 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
             </EuiFlexItem>
           </EuiFlexGroup>
           <EuiSpacer size="m" />
+          <EuiFlexItem grow={9}>
+            <EuiFormRow display="rowCompressed" label="Comment">
+              <EuiFieldText
+                name="Comment"
+                autoComplete="no"
+                compressed
+                value={updatedAddress?.comment || ''}
+                onChange={e => onUpdateAddress('comment', e.target.value)}
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+          <EuiSpacer size="m" />
           <EuiFormRow display="rowCompressed" label="Address on File">
             <EuiPanel hasShadow={false} hasBorder={true} paddingSize="s">
               <EuiText size="xs">{getFormattedAddress()}</EuiText>
