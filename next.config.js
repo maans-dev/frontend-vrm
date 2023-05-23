@@ -28,7 +28,7 @@ const nextConfig = {
   /** Disable the `X-Powered-By: Next.js` response header. */
   poweredByHeader: false,
   output: 'standalone',
-
+  productionBrowserSourceMaps: true,
   /**
    * When set to something other than '', this field instructs Next to
    * expect all paths to have a specific directory prefix. This fact is
