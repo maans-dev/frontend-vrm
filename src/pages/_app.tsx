@@ -34,7 +34,6 @@ const EuiApp: FunctionComponent<AppProps<{ session: Session }>> = ({
   });
   useEffect(() => {
     appsignal.use(appSignalBreadcrumbsNetwork());
-    console.log('appsignal breadcrumbs', appsignal);
     appsignal.use(plugin());
   }, []);
   return (

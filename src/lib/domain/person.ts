@@ -339,6 +339,7 @@ export interface FieldMetaData {
   modifiedBy: number;
   created: Date;
   modified: Date;
+  readOnly: boolean;
 }
 
 export interface Field {
