@@ -134,8 +134,9 @@ const SearchOptions: FunctionComponent<Props> = ({
       <EuiFormRow display="rowCompressed" label="Date of birth">
         <EuiDatePicker
           name="dob"
+          autoComplete="off"
           onKeyDown={handleKeyDown}
-          dateFormat={['D MMM YYYY']}
+          dateFormat={['D MMM YYYY', 'YYYY-MM-DD', 'YYYYMMDD']}
           selected={dob}
           maxDate={moment().subtract(17, 'year')}
           yearDropdownItemNumber={120}
