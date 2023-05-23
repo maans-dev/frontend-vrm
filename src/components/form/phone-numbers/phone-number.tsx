@@ -1,5 +1,6 @@
 import {
   EuiAvatar,
+  EuiButtonEmpty,
   EuiButtonIcon,
   EuiFlexGroup,
   EuiFlexItem,
@@ -8,6 +9,7 @@ import {
   EuiPopover,
   EuiTextColor,
   useEuiTheme,
+  useIsWithinBreakpoints,
 } from '@elastic/eui';
 import { FunctionComponent, ReactElement, useEffect, useState } from 'react';
 import {
@@ -35,6 +37,7 @@ const PhoneNumberLine: FunctionComponent<Props> = ({
   const [typeIcon, setTypeIcon] = useState<ReactElement>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const { euiTheme } = useEuiTheme();
+  const isMobile = useIsWithinBreakpoints(['xs', 's']);
 
   useEffect(() => {
     switch (phoneContact.type) {
@@ -190,79 +193,136 @@ const PhoneNumberLine: FunctionComponent<Props> = ({
           </EuiFlexGroup>
         </EuiFlexGroup>
       </EuiFlexItem>
-      <EuiFlexGroup
-        responsive={false}
-        justifyContent="flexEnd"
-        alignItems="flexEnd"
-        css={{ maxWidth: '30px' }}
-        gutterSize="xs">
-        <EuiFlexItem grow={false}>
-          <EuiPopover
-            panelPaddingSize="s"
-            button={
-              <EuiButtonIcon
-                aria-label="Actions"
-                display="empty"
-                iconType="boxesHorizontal"
+      {isMobile ? (
+        <EuiFlexGroup
+          responsive={false}
+          justifyContent="flexEnd"
+          alignItems="flexEnd"
+          css={{ maxWidth: '30px' }}
+          gutterSize="xs">
+          <EuiFlexItem grow={false}>
+            <EuiPopover
+              panelPaddingSize="s"
+              button={
+                <EuiButtonIcon
+                  aria-label="Actions"
+                  display="empty"
+                  iconType="boxesHorizontal"
+                  size="xs"
+                  onClick={onActionsClick}
+                />
+              }
+              isOpen={showActions}
+              closePopover={hideActions}>
+              <EuiListGroup
                 size="xs"
-                onClick={onActionsClick}
+                flush={true}
+                listItems={[
+                  {
+                    label: 'Edit',
+                    href: '#',
+                    iconType: 'pencil',
+                    iconProps: { size: 's' },
+                    onClick: e => {
+                      hideActions();
+                      setIsEditing(true);
+                      e.preventDefault();
+                    },
+                  },
+                  {
+                    label: phoneContact?.confirmed ? 'Unconfirm' : 'Confirm',
+                    href: '#',
+                    iconType: 'check',
+                    iconProps: { size: 's' },
+                    onClick: e => {
+                      hideActions();
+                      toggleConfirm();
+                      e.preventDefault();
+                    },
+                  },
+                  {
+                    label: phoneContact?.canContact ? 'Set DNC' : 'Unset DNC',
+                    href: '#',
+                    iconType: GoCircleSlash,
+                    iconProps: { size: 's' },
+                    onClick: e => {
+                      hideActions();
+                      toggleDNC();
+                      e.preventDefault();
+                    },
+                  },
+                  {
+                    label: 'Remove',
+                    href: '#',
+                    iconType: 'trash',
+                    iconProps: { size: 's' },
+                    onClick: e => {
+                      hideActions();
+                      handleRemove();
+                      e.preventDefault();
+                    },
+                  },
+                ]}
               />
-            }
-            isOpen={showActions}
-            closePopover={hideActions}>
-            <EuiListGroup
+            </EuiPopover>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      ) : (
+        <EuiFlexGroup
+          gutterSize="s"
+          alignItems="center"
+          justifyContent="flexEnd"
+          responsive={false}>
+          <EuiFlexItem grow={false}>
+            <EuiButtonEmpty
               size="xs"
-              flush={true}
-              listItems={[
-                {
-                  label: 'Edit',
-                  href: '#',
-                  iconType: 'pencil',
-                  iconProps: { size: 's' },
-                  onClick: e => {
-                    hideActions();
-                    setIsEditing(true);
-                    e.preventDefault();
-                  },
-                },
-                {
-                  label: phoneContact?.confirmed ? 'Unconfirm' : 'Confirm',
-                  href: '#',
-                  iconType: 'check',
-                  iconProps: { size: 's' },
-                  onClick: e => {
-                    hideActions();
-                    toggleConfirm();
-                    e.preventDefault();
-                  },
-                },
-                {
-                  label: phoneContact?.canContact ? 'Set DNC' : 'Unset DNC',
-                  href: '#',
-                  iconType: GoCircleSlash,
-                  iconProps: { size: 's' },
-                  onClick: e => {
-                    hideActions();
-                    toggleDNC();
-                    e.preventDefault();
-                  },
-                },
-                {
-                  label: 'Remove',
-                  href: '#',
-                  iconType: 'trash',
-                  iconProps: { size: 's' },
-                  onClick: e => {
-                    hideActions();
-                    handleRemove();
-                    e.preventDefault();
-                  },
-                },
-              ]}
-            />
-          </EuiPopover>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+              iconType="pencil"
+              onClick={() => {
+                hideActions();
+                setIsEditing(true);
+              }}>
+              Edit
+            </EuiButtonEmpty>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiButtonEmpty
+              size="xs"
+              style={{ width: '95px' }}
+              color={phoneContact?.confirmed ? 'success' : 'primary'}
+              iconType="check"
+              onClick={() => {
+                hideActions();
+                toggleConfirm();
+              }}>
+              {phoneContact?.confirmed ? 'Unconfirm' : 'Confirm'}
+            </EuiButtonEmpty>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiButtonEmpty
+              size="xs"
+              style={{ width: '105px' }}
+              color={phoneContact?.canContact ? 'primary' : 'warning'}
+              iconType={GoCircleSlash}
+              onClick={() => {
+                hideActions();
+                toggleDNC();
+              }}>
+              {phoneContact?.canContact ? 'Set DNC' : 'Unset DNC'}
+            </EuiButtonEmpty>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiButtonEmpty
+              size="xs"
+              iconType="trash"
+              onClick={() => {
+                hideActions();
+                handleRemove();
+              }}>
+              Remove
+            </EuiButtonEmpty>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      )}
     </EuiFlexGroup>
   );
 
