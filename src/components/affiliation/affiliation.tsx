@@ -92,7 +92,6 @@ const AffiliationComponent: FunctionComponent<Props> = ({
   const debouncedSearch = debounce(value => {
     setSearchValue(value || '');
   }, 300);
-
   const formattedDate = moment(affiliationDate).format('DD MMM YYYY');
   const daysAgo = moment(affiliationDate).fromNow(true);
 
