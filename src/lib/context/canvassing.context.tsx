@@ -21,6 +21,7 @@ import { Moment } from 'moment';
 import moment from 'moment';
 import { useSession } from 'next-auth/react';
 import { useSWRConfig } from 'swr';
+import { appsignal } from '@lib/appsignal';
 
 export type CanvassingContextType = {
   data: Partial<PersonUpdateRequest> & Partial<{ canvass: CanvassUpdate }>;
@@ -195,8 +196,9 @@ const CanvassingProvider = ({ children }) => {
   const submitUpdatePayload = async () => {
     setIsSubmitting(true);
     setServerError('');
+    const requestBody = cloneDeep(data);
+    let url = '';
     try {
-      const requestBody = cloneDeep(data);
       requestBody.key = person.key;
       requestBody.username = session.user.darn;
       if (
@@ -244,17 +246,15 @@ const CanvassingProvider = ({ children }) => {
         endpoint = 'membership';
       }
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE}/event/${endpoint}/`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${session.accessToken}`,
-          },
-          body: JSON.stringify(requestBody),
-        }
-      );
+      url = `${process.env.NEXT_PUBLIC_API_BASE}/event/${endpoint}/`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+        body: JSON.stringify(requestBody),
+      });
 
       const respPayload = await response.json();
 
@@ -279,12 +279,35 @@ const CanvassingProvider = ({ children }) => {
         });
       } else {
         setServerError(respPayload?.message || 'Something went wrong');
+        const errJson = JSON.parse(await response.text());
+        appsignal.sendError(
+          new Error(`Unable to update person: ${errJson.message}`),
+          span => {
+            span.setAction('api-call');
+            span.setParams({
+              route: url,
+              body: JSON.stringify(requestBody),
+            });
+            span.setTags({ user_darn: session.user.darn.toString() });
+          }
+        );
       }
 
       console.log('[PERSON EVENT RESPONSE]', respPayload);
     } catch (error) {
       // TODO: Need to display these error in a Toast.
       console.error('Something went wrong. Please try again later', error);
+      appsignal.sendError(
+        new Error(`Unable to update person: ${error.message}`),
+        span => {
+          span.setAction('api-call');
+          span.setParams({
+            route: url,
+            body: JSON.stringify(requestBody),
+          });
+          span.setTags({ user_darn: session.user.darn.toString() });
+        }
+      );
     }
     setIsSubmitting(false);
   };

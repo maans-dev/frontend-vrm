@@ -7,7 +7,7 @@ export default function usePersonFetcher(key: string) {
 
   const { data, error, isLoading, mutate } = useSWR<Person[]>(
     shouldFetch
-      ? `/person?key=${key}&template=["Address","Contact","Field","Comment","Canvass","Membership"]`
+      ? `/person?key=${key}&template=["Address","Contact","Fields","Comment","Canvass","Membership"]`
       : null,
     fetcherAPI,
     {

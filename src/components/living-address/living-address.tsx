@@ -27,6 +27,7 @@ import { AiOutlineWarning } from 'react-icons/ai';
 import SearchAddress from '@components/address-search';
 import { GeocodedAddressSource } from '@lib/domain/person-enum';
 import { MdHowToVote } from 'react-icons/md';
+import { appsignal } from '@lib/appsignal';
 
 export type Props = {
   address: Address;
@@ -52,27 +53,39 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
     setIsLoading(true);
     setSearchResults([]);
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE}/address/geocode/reverse/`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${session.accessToken}`,
-        },
-        method: 'POST',
-        body: JSON.stringify({
-          latitude,
-          longitude,
-          username: session.user.darn,
-          metaData: { votingDistrict: true },
-        }),
-      }
-    );
+    const url = `${process.env.NEXT_PUBLIC_API_BASE}/address/geocode/reverse/`;
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.accessToken}`,
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        latitude,
+        longitude,
+        username: session.user.darn,
+        metaData: { votingDistrict: true },
+      }),
+    });
 
     setIsLoading(false);
 
     if (!response.ok) {
-      console.log('something went wrong');
+      const errJson = JSON.parse(await response.text());
+      appsignal.sendError(
+        new Error(`Unable to reverse geocode coordinates: ${errJson.message}`),
+        span => {
+          span.setAction('api-call');
+          span.setParams({
+            route: url,
+            latitude,
+            longitude,
+            username: session.user.darn,
+            metaData: 'votingDistrict: true',
+          });
+          span.setTags({ user_darn: session.user.darn.toString() });
+        }
+      );
       return;
     }
 

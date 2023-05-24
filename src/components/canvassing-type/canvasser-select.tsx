@@ -11,6 +11,7 @@ import {
   htmlIdGenerator,
 } from '@elastic/eui';
 import { css } from '@emotion/react';
+import { appsignal } from '@lib/appsignal';
 import { Person } from '@lib/domain/person';
 import moment from 'moment';
 import { useSession } from 'next-auth/react';
@@ -46,15 +47,25 @@ const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
 
   const doCanvasserSearch = async () => {
     setCanvasserSearchError('');
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE}/person?identity=${canvasserSearchText}`,
-      {
-        headers: { Authorization: `Bearer ${session.accessToken}` },
-      }
-    );
+    const url = `${process.env.NEXT_PUBLIC_API_BASE}/person?identity=${canvasserSearchText}`;
+    const response = await fetch(url, {
+      headers: { Authorization: `Bearer ${session.accessToken}` },
+    });
 
     if (!response.ok) {
-      console.log('something went wrong');
+      const errJson = JSON.parse(await response.text());
+      setCanvasserSearchError(`Canvasser not found: ${errJson.message}`);
+      appsignal.sendError(
+        new Error(`Unable to find canvasser: ${errJson.message}`),
+        span => {
+          span.setAction('api-call');
+          span.setParams({
+            route: url,
+            identity: canvasserSearchText,
+          });
+          span.setTags({ user_darn: session.user.darn.toString() });
+        }
+      );
       return;
     }
 
@@ -65,11 +76,21 @@ const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
       onChange(respPayload[0]);
     } else {
       setCanvasserSearchError('Canvasser not found');
+      appsignal.sendError(
+        new Error(`Unable to find canvasser: ${canvasserSearchText}`),
+        span => {
+          span.setAction('capture:canvassedBySearch');
+          span.setParams({
+            route: url,
+            identity: canvasserSearchText,
+            response: JSON.stringify(respPayload),
+          });
+          span.setTags({ user_darn: session.user.darn.toString() });
+        }
+      );
       setFoundCanvasser(null);
       onChange(null);
     }
-
-    console.log('[CANVASSER]', respPayload);
   };
 
   const handleChange = (option: CanvasserOption) => {
