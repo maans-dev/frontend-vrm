@@ -65,9 +65,13 @@ type AssertHasFields = (
   value: unknown
 ) => asserts value is Record<string, unknown>;
 export const assertHasFields: AssertHasFields = (fields, value) => {
-  if (typeof value !== 'object') throw new Error('Not an object');
+  if (typeof value !== 'object') {
+    throw new Error('Not an object');
+  }
   for (const field of fields) {
-    if (field in value === false) throw new Error(`Missing field [${field}]`);
+    if (field in value === false) {
+      throw new Error(`Missing field [${field}]`);
+    }
   }
 };
 export type MembershipUpdate = Partial<Membership>;

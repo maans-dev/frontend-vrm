@@ -3,6 +3,7 @@ import NextAuth, { TokenSet } from 'next-auth';
 import type { NextAuthOptions } from 'next-auth';
 import { fetchAndExtractRoles } from '@lib/auth/utils';
 import { OAuthConfig } from 'next-auth/providers';
+import { appsignal } from '@lib/appsignal';
 
 /**
  * Takes a token, and returns a new token with updated
@@ -11,15 +12,15 @@ import { OAuthConfig } from 'next-auth/providers';
  */
 async function refreshAccessToken(token) {
   console.log('[REFRESHING ACCESS TOKEN]', new Date());
-  try {
-    const url = (DaAuthProvider as OAuthConfig<any>).token as string;
-    const body = new URLSearchParams({
-      grant_type: 'refresh_token',
-      client_id: process.env.DA_ID,
-      client_secret: process.env.DA_SECRET,
-      refresh_token: token.refreshToken,
-    });
+  const url = (DaAuthProvider as OAuthConfig<any>).token as string;
+  const body = new URLSearchParams({
+    grant_type: 'refresh_token',
+    client_id: process.env.DA_ID,
+    client_secret: process.env.DA_SECRET,
+    refresh_token: token.refreshToken,
+  });
 
+  try {
     const response = await fetch(url, {
       body,
       headers: {
@@ -46,6 +47,17 @@ async function refreshAccessToken(token) {
     };
   } catch (error) {
     console.log('[RefreshAccessTokenError]', error);
+
+    appsignal.sendError(
+      new Error(`Unable to refresh access token: ${error.message}`),
+      span => {
+        span.setAction('auth:refresh_token');
+        span.setParams({
+          route: url,
+        });
+        // span.setTags({ user_darn: session.user.darn.toString() }); // TODO: we probaly need the user darn here
+      }
+    );
 
     return {
       ...token,
@@ -100,7 +112,10 @@ export const authOptions: NextAuthOptions = {
         session.error = token.error as string;
         delete session.user.image;
         // console.log('session', { session, token, user });
-        session.user.roles = await fetchAndExtractRoles(session.accessToken);
+        session.user.roles = await fetchAndExtractRoles(
+          session.accessToken,
+          session.user.darn
+        );
       }
 
       return session;

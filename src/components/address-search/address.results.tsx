@@ -9,6 +9,7 @@ import {
 import { Address, Structure } from '@lib/domain/person';
 import { useSession } from 'next-auth/react';
 import { GeocodedAddressSource } from '@lib/domain/person-enum';
+import { appsignal } from '@lib/appsignal';
 
 interface Props {
   address: Partial<Address>[];
@@ -89,22 +90,35 @@ const AddressResults = ({ address, onSelect, isLoading }: Props) => {
     // add structure info
     if (!('votingDistrict_id' in selectedAddress.value)) {
       // fetch the structure info
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE}/structures/votingdistricts?latitude=${selectedAddress.data.latitude}&longitude=${selectedAddress.data.longitude}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${session.accessToken}`,
-          },
-          method: 'GET',
-        }
-      );
+      const url = `${process.env.NEXT_PUBLIC_API_BASE}/structures/votingdistricts?latitude=${selectedAddress.data.latitude}&longitude=${selectedAddress.data.longitude}`;
+      const response = await fetch(url, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+        method: 'GET',
+      });
 
       if (!response.ok) {
         // throw 'Unable to load Voting District for this address';
         const errJson = JSON.parse(await response.text());
         setError(
           `Unable to load Voting District for this address: ${errJson.message}`
+        );
+
+        appsignal.sendError(
+          new Error(
+            `Unable to load Voting District for this address: ${errJson.message}`
+          ),
+          span => {
+            span.setAction('api-call');
+            span.setParams({
+              route: url,
+              address: selectedAddress,
+              user: session.user.darn,
+            });
+            span.setTags({ user_darn: session.user.darn.toString() });
+          }
         );
         return;
       }
@@ -114,6 +128,20 @@ const AddressResults = ({ address, onSelect, isLoading }: Props) => {
       if (structureInfo.length === 0) {
         setError(
           `Unable to load Voting District for this address: No VD found at ${selectedAddress.data.latitude}, ${selectedAddress.data.longitude}`
+        );
+        appsignal.sendError(
+          new Error(
+            `Unable to load Voting District for this address: No VD found at ${selectedAddress.data.latitude}, ${selectedAddress.data.longitude}`
+          ),
+          span => {
+            span.setAction('api-call');
+            span.setParams({
+              route: url,
+              address: selectedAddress,
+              user: session.user.darn,
+            });
+            span.setTags({ user_darn: session.user.darn.toString() });
+          }
         );
         return;
       }

@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react';
 import { Address } from '@lib/domain/person';
 import { EuiFieldSearch, EuiInputPopover } from '@elastic/eui';
 import AddressResults from './address.results';
+import { appsignal } from '@lib/appsignal';
 
 export type Props = {
   onAddressChange: (selectedAddress: Partial<Address>) => void;
@@ -27,27 +28,36 @@ const SearchAddress: FunctionComponent<Props> = ({ onAddressChange }) => {
     }
 
     setIsLoading(true);
-
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE}/address/geocode/forward/`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${session.accessToken}`,
-        },
-        method: 'POST',
-        body: JSON.stringify({
-          address: value,
-          username: session.user.darn,
-        }),
-      }
-    );
+    const url = `${process.env.NEXT_PUBLIC_API_BASE}/address/geocode/forward/`;
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.accessToken}`,
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        address: value,
+        username: session.user.darn,
+      }),
+    });
 
     setIsLoading(false);
 
     if (!response.ok) {
-      console.log('something went wrong');
       setSearchResults([]);
+      const errJson = JSON.parse(await response.text());
+      appsignal.sendError(
+        new Error(`Unable to forward geocode this address: ${errJson.message}`),
+        span => {
+          span.setAction('api-call');
+          span.setParams({
+            route: url,
+            address: value,
+            username: session.user.darn,
+          });
+          span.setTags({ user_darn: session.user.darn.toString() });
+        }
+      );
       return;
     }
 

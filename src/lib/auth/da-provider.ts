@@ -25,7 +25,10 @@ export const DaAuthProvider: Provider = {
 
       // console.log('[USER_INFO]', userInfo);
 
-      userInfo.roles = await fetchAndExtractRoles(tokens.access_token);
+      userInfo.roles = await fetchAndExtractRoles(
+        tokens.access_token,
+        userInfo.darn_number
+      );
       return userInfo;
     },
   },

@@ -8,6 +8,7 @@ import {
   EuiText,
   EuiButtonEmpty,
 } from '@elastic/eui';
+import { appsignal } from '@lib/appsignal';
 import { Person } from '@lib/domain/person';
 import moment from 'moment';
 import { useSession } from 'next-auth/react';
@@ -31,15 +32,23 @@ const PersonSearch: FunctionComponent<Props> = ({
 
   const doCanvasserSearch = async () => {
     setPersonSearchError('');
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE}/person?identity=${canvasserSearchText}`,
-      {
-        headers: { Authorization: `Bearer ${session.accessToken}` },
-      }
-    );
+    const url = `${process.env.NEXT_PUBLIC_API_BASE}/person?identity=${canvasserSearchText}`;
+    const response = await fetch(url, {
+      headers: { Authorization: `Bearer ${session.accessToken}` },
+    });
 
     if (!response.ok) {
-      console.log('something went wrong');
+      const errJson = JSON.parse(await response.text());
+      appsignal.sendError(
+        new Error(`Unable to find person by identity: ${errJson.message}`),
+        span => {
+          span.setAction('api-call');
+          span.setParams({
+            route: url,
+          });
+          span.setTags({ user_darn: session.user.darn.toString() });
+        }
+      );
       return;
     }
 
@@ -51,6 +60,17 @@ const PersonSearch: FunctionComponent<Props> = ({
       handleRecruitedByChange(key);
     } else {
       setPersonSearchError('Person not found');
+      appsignal.sendError(
+        new Error(`Unable to find person by identity: ${canvasserSearchText}`),
+        span => {
+          span.setAction('api-call');
+          span.setParams({
+            route: url,
+            response: JSON.stringify(respPayload),
+          });
+          span.setTags({ user_darn: session.user.darn.toString() });
+        }
+      );
       setFoundPerson(null);
       // onChange(null);
     }

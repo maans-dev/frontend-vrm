@@ -30,7 +30,6 @@ const VoterSearch: FunctionComponent<Props> = ({ breadcrumb }) => {
     setPageCount(Math.ceil(count / pageSize));
     setRowSize(pageSize);
     setActivePage(0);
-    console.log(count, pageSize);
   };
 
   const onChangePage = (page: number) => {

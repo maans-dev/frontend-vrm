@@ -1,3 +1,4 @@
+import { appsignal } from '@lib/appsignal';
 import { Roles } from '@lib/domain/auth';
 
 export const hasRole = (
@@ -10,7 +11,10 @@ export const hasRole = (
   return roles.includes(role);
 };
 
-export const fetchAndExtractRoles = async accessToken => {
+export const fetchAndExtractRoles = async (
+  accessToken,
+  darn_number: number
+) => {
   // default to empty list of roles
   const roles: string[] = [];
 
@@ -20,16 +24,24 @@ export const fetchAndExtractRoles = async accessToken => {
     rolesQry += `${i === 0 ? '' : '&'}roles=${role}`;
   });
 
-  const structureResponse = await fetch(
-    `${process.env.NEXT_PUBLIC_GEO_API_BASE}/accessible-geographies/multiple-roles?${rolesQry}`,
-    {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    }
-  );
+  const url = `${process.env.NEXT_PUBLIC_GEO_API_BASE}/accessible-geographies/multiple-roles?${rolesQry}`;
+  const structureResponse = await fetch(url, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
 
   if (!structureResponse.ok) {
     const msg = await structureResponse.text();
-    // console.log(`[STRUCTURES ERROR]`, msg);
+    const errJson = JSON.parse(await structureResponse.text());
+    appsignal.sendError(
+      new Error(`Unable to create person: ${errJson.message}`),
+      span => {
+        span.setAction('api-call');
+        span.setParams({
+          route: url,
+        });
+        span.setTags({ user_darn: darn_number.toString() });
+      }
+    );
     throw msg;
   }
 

@@ -13,9 +13,7 @@ import { SessionProvider } from 'next-auth/react';
 import { Session } from 'next-auth';
 import AuthHandler from '@components/auth/auth-handler';
 import { ErrorBoundary } from '@appsignal/react';
-import Appsignal from '@appsignal/javascript';
-import { plugin as appSignalBreadcrumbsNetwork } from '@appsignal/plugin-breadcrumbs-network';
-import { plugin } from '@appsignal/plugin-window-events';
+import { appsignal, initAppsignal } from '@lib/appsignal';
 
 /**
  * Next.js uses the App component to initialize pages. You can override it
@@ -28,14 +26,11 @@ const EuiApp: FunctionComponent<AppProps<{ session: Session }>> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
-  const appsignal = new Appsignal({
-    key: process.env.NEXT_PUBLIC_APPSIGNAL,
-    revision: process.env.NEXT_PUBLIC_VERSION,
-  });
+  // Initialize appsignal plugins. TODO: Could this be handled better?
   useEffect(() => {
-    appsignal.use(appSignalBreadcrumbsNetwork());
-    appsignal.use(plugin());
+    initAppsignal();
   }, []);
+
   return (
     <>
       <Head>
@@ -45,19 +40,19 @@ const EuiApp: FunctionComponent<AppProps<{ session: Session }>> = ({
       <Global styles={globalStyes} />
       <Theme>
         <Chrome>
-          <SessionProvider
-            session={session}
-            refetchInterval={60} // refresh session every 60 seconds
-            refetchOnWindowFocus={true}>
-            <ToastProvider>
-              <CanvassingProvider>
-                <ErrorBoundary instance={appsignal}>
+          <ErrorBoundary instance={appsignal}>
+            <SessionProvider
+              session={session}
+              refetchInterval={60} // refresh session every 60 seconds
+              refetchOnWindowFocus={true}>
+              <ToastProvider>
+                <CanvassingProvider>
                   <AuthHandler />
                   <Component {...pageProps} />
-                </ErrorBoundary>
-              </CanvassingProvider>
-            </ToastProvider>
-          </SessionProvider>
+                </CanvassingProvider>
+              </ToastProvider>
+            </SessionProvider>
+          </ErrorBoundary>
         </Chrome>
       </Theme>
     </>

@@ -24,6 +24,7 @@ import moment, { Moment } from 'moment';
 import { useRouter } from 'next/router';
 import { isValidRSAIDnumber } from '@lib/validation/idValidation';
 import { useSession } from 'next-auth/react';
+import { appsignal } from '@lib/appsignal';
 
 export type Props = {
   notFound?: boolean;
@@ -99,17 +100,15 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
     (reqPayload as any).username = session.user.darn;
     console.log('[PERSON CREATE REQUEST]', reqPayload);
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE}/event/personcreate/`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${session.accessToken}`,
-        },
-        body: JSON.stringify(reqPayload),
-      }
-    );
+    const url = `${process.env.NEXT_PUBLIC_API_BASE}/event/personcreate/`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.accessToken}`,
+      },
+      body: JSON.stringify(reqPayload),
+    });
 
     const respPayload = await response.json();
 
@@ -123,6 +122,18 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
       closeModal();
     } else {
       setServerError(respPayload?.message || 'Something went wrong');
+      const errJson = JSON.parse(await response.text());
+      appsignal.sendError(
+        new Error(`Unable to create person: ${errJson.message}`),
+        span => {
+          span.setAction('api-call');
+          span.setParams({
+            route: url,
+            body: JSON.stringify(reqPayload),
+          });
+          span.setTags({ user_darn: session.user.darn.toString() });
+        }
+      );
     }
     setIsSubmitting(false);
     console.log('[PERSON CREATE RESPONSE]', respPayload);
