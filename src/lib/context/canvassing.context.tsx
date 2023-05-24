@@ -235,6 +235,13 @@ const CanvassingProvider = ({ children }) => {
       }
 
       console.log('[PERSON EVENT REQUEST]', requestBody);
+      appsignal.addBreadcrumb({
+        category: 'Log',
+        action: 'PERSON EVENT REQUEST',
+        metadata: {
+          request: JSON.stringify(requestBody),
+        },
+      });
 
       let endpoint = 'canvass';
       if (router.pathname.includes('cleanup')) {
@@ -294,6 +301,14 @@ const CanvassingProvider = ({ children }) => {
       }
 
       console.log('[PERSON EVENT RESPONSE]', respPayload);
+      appsignal.addBreadcrumb({
+        category: 'Log',
+        action: 'PERSON EVENT RESPONSE',
+        metadata: {
+          response: JSON.stringify(requestBody),
+        },
+      });
+      throw new Error('Spoofed error for testing');
     } catch (error) {
       // TODO: Need to display these error in a Toast.
       console.error('Something went wrong. Please try again later', error);
@@ -389,7 +404,6 @@ const CanvassingProvider = ({ children }) => {
   };
 
   const resetForm = () => {
-    console.log('RESET FORM');
     setDoFormReset(new Date());
 
     setIsComplete(false);
@@ -514,6 +528,14 @@ const CanvassingProvider = ({ children }) => {
   // TODO: Remove this when stable as it's just for debugging
   useEffect(() => {
     console.log('[CONTEXT]', { data, person });
+    appsignal.addBreadcrumb({
+      category: 'Log',
+      action: 'CONTEXT',
+      metadata: {
+        data: JSON.stringify(data),
+        person: JSON.stringify(person),
+      },
+    });
   }, [data, person]);
 
   return (

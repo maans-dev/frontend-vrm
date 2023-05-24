@@ -12,6 +12,10 @@ import { appsignal } from '@lib/appsignal';
  */
 async function refreshAccessToken(token) {
   console.log('[REFRESHING ACCESS TOKEN]', new Date());
+  appsignal.addBreadcrumb({
+    category: 'Log',
+    action: 'REFRESHING ACCESS TOKEN',
+  });
   const url = (DaAuthProvider as OAuthConfig<any>).token as string;
   const body = new URLSearchParams({
     grant_type: 'refresh_token',
@@ -37,6 +41,10 @@ async function refreshAccessToken(token) {
     // console.log('[TOKENS]', tokens);
 
     console.log('[REFRESHED ACCESS TOKEN]');
+    appsignal.addBreadcrumb({
+      category: 'Log',
+      action: 'REFRESHED ACCESS TOKEN',
+    });
     return {
       ...token,
       accessToken: tokens.access_token,

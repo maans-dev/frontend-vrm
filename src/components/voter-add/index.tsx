@@ -99,6 +99,13 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
 
     (reqPayload as any).username = session.user.darn;
     console.log('[PERSON CREATE REQUEST]', reqPayload);
+    appsignal.addBreadcrumb({
+      category: 'Log',
+      action: 'PERSON CREATE REQUEST',
+      metadata: {
+        request: JSON.stringify(reqPayload),
+      },
+    });
 
     const url = `${process.env.NEXT_PUBLIC_API_BASE}/event/personcreate/`;
     const response = await fetch(url, {
@@ -137,6 +144,13 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
     }
     setIsSubmitting(false);
     console.log('[PERSON CREATE RESPONSE]', respPayload);
+    appsignal.addBreadcrumb({
+      category: 'Log',
+      action: 'PERSON CREATE RESPONSE',
+      metadata: {
+        response: JSON.stringify(respPayload),
+      },
+    });
   };
 
   const handleDOBChange = (date: Moment) => {

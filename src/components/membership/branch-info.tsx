@@ -65,20 +65,20 @@ const BranchInfo: FunctionComponent<Props> = ({
     setUserHasSelectedOverridePermission,
   ] = useState(false);
 
-  console.log('BranchInfo debug', {
-    country,
-    abroadCountry,
-    membershipStructure,
-    personAddressStructure,
-    personHasNoStructures,
-    isDaAbroadSelected,
-    noMembershipStructure,
-    userHasSelectedDaAbroad,
-    userHasDeselectedDaAbroad,
-    overriddenBranchStructure,
-    userHasSelectedOverridePermission,
-    userHasDeselectedOverridePermission,
-  });
+  // console.log('BranchInfo debug', {
+  //   country,
+  //   abroadCountry,
+  //   membershipStructure,
+  //   personAddressStructure,
+  //   personHasNoStructures,
+  //   isDaAbroadSelected,
+  //   noMembershipStructure,
+  //   userHasSelectedDaAbroad,
+  //   userHasDeselectedDaAbroad,
+  //   overriddenBranchStructure,
+  //   userHasSelectedOverridePermission,
+  //   userHasDeselectedOverridePermission,
+  // });
 
   useEffect(() => {
     // reset state & remove update payload

@@ -47,7 +47,6 @@ const PersonHistory: FunctionComponent<Props> = ({ personKey }) => {
     setPageCount(Math.ceil(history.count / pageSize));
     setRowSize(pageSize);
     setActivePage(0);
-    console.log(history.count, pageSize);
   };
 
   const eventsInternal = history?.values?.map(event => {

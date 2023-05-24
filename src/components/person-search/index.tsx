@@ -74,8 +74,6 @@ const PersonSearch: FunctionComponent<Props> = ({
       setFoundPerson(null);
       // onChange(null);
     }
-
-    console.log('[CANVASSER]', respPayload);
   };
 
   const handleClear = () => {
