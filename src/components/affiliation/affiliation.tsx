@@ -94,7 +94,7 @@ const AffiliationComponent: FunctionComponent<Props> = ({
   }, 300);
 
   const formattedDate = moment(affiliationDate).format('DD MMM YYYY');
-  const daysAgo = moment(affiliationDate).fromNow();
+  const daysAgo = moment(affiliationDate).fromNow(true);
 
   const handleCheckableCardChange = () => {
     let updateData: AffiliateUpdate;
@@ -164,7 +164,7 @@ const AffiliationComponent: FunctionComponent<Props> = ({
             <EuiText size="xs">
               Last confirmed on{' '}
               <strong>
-                {formattedDate} ({daysAgo})
+                {formattedDate} ({daysAgo} ago)
               </strong>
             </EuiText>
           ) : null}
