@@ -1,11 +1,13 @@
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { CanvassingContext } from '@lib/context/canvassing.context';
 
 export const useLeavePageConfirmation = (
   shouldPreventLeaving: boolean,
   message = 'You have unsaved changes - are you sure you wish to leave this page?'
 ) => {
   const router = useRouter();
+  const { isSubmitting, isComplete } = useContext(CanvassingContext);
 
   useEffect(() => {
     const handleWindowClose = e => {
@@ -19,11 +21,15 @@ export const useLeavePageConfirmation = (
       router.events.emit('routeChangeError');
       throw 'routeChange aborted.';
     };
+
     window.addEventListener('beforeunload', handleWindowClose);
-    router.events.on('routeChangeStart', handleBrowseAway);
+    if (isSubmitting !== true && isComplete !== true) {
+      router.events.on('routeChangeStart', handleBrowseAway);
+    }
+
     return () => {
       window.removeEventListener('beforeunload', handleWindowClose);
       router.events.off('routeChangeStart', handleBrowseAway);
     };
-  }, [shouldPreventLeaving]);
+  }, [shouldPreventLeaving, isSubmitting, isComplete]);
 };
