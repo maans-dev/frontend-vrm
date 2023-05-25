@@ -113,7 +113,11 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
                 name="Unit Number"
                 compressed
                 value={address?.buildingNo}
-                onChange={e => onUpdateAddress('buildingNo', e.target.value)}
+                onChange={e => {
+                  const inputValue = e.target.value;
+                  const numericValue = inputValue.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+                  onUpdateAddress('buildingNo', numericValue);
+                }}
               />
             </EuiFormRow>
           </EuiFlexItem>
@@ -123,7 +127,10 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
                 name="Unit Name"
                 compressed
                 value={address?.buildingName}
-                onChange={e => onUpdateAddress('buildingName', e.target.value)}
+                onChange={e => {
+                  const uppercaseValue = e.target.value.toUpperCase();
+                  onUpdateAddress('buildingName', uppercaseValue);
+                }}
               />
             </EuiFormRow>
           </EuiFlexItem>
@@ -138,7 +145,11 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
                 name="Street Number"
                 compressed
                 value={address?.streetNo}
-                onChange={e => onUpdateAddress('streetNo', e.target.value)}
+                onChange={e => {
+                  const inputValue = e.target.value;
+                  const numericValue = inputValue.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+                  onUpdateAddress('streetNo', numericValue);
+                }}
               />
             </EuiFormRow>
           </EuiFlexItem>
@@ -148,7 +159,10 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
                 name="Street Name"
                 compressed
                 value={address?.streetName}
-                onChange={e => onUpdateAddress('streetName', e.target.value)}
+                onChange={e => {
+                  const uppercaseValue = e.target.value.toUpperCase();
+                  onUpdateAddress('streetName', uppercaseValue);
+                }}
               />
             </EuiFormRow>
           </EuiFlexItem>
@@ -162,7 +176,10 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
             compressed
             value={address?.suburb}
             disabled={!!addressInternal?.suburb}
-            onChange={e => onUpdateAddress('suburb', e.target.value)}
+            onChange={e => {
+              const uppercaseValue = e.target.value.toUpperCase();
+              onUpdateAddress('suburb', uppercaseValue);
+            }}
           />
         </EuiFormRow>
 
@@ -176,7 +193,10 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
                 compressed
                 value={address?.city}
                 disabled={!!addressInternal?.city}
-                onChange={e => onUpdateAddress('city', e.target.value)}
+                onChange={e => {
+                  const uppercaseValue = e.target.value.toUpperCase();
+                  onUpdateAddress('city', uppercaseValue);
+                }}
               />
             </EuiFormRow>
           </EuiFlexItem>
@@ -187,7 +207,11 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
                 compressed
                 disabled={!!addressInternal?.postalCode}
                 value={address?.postalCode}
-                onChange={e => onUpdateAddress('postalCode', e.target.value)}
+                onChange={e => {
+                  const inputValue = e.target.value;
+                  const numericValue = inputValue.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+                  onUpdateAddress('postalCode', numericValue);
+                }}
               />
             </EuiFormRow>
           </EuiFlexItem>
