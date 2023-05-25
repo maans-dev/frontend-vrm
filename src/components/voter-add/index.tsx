@@ -204,14 +204,30 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
             label="First name(s)"
             isInvalid={'firstName' in validationErrors}
             error={validationErrors?.firstName}>
-            <EuiFieldText id="firstName" name="firstName" autoComplete="off" />
+            <EuiFieldText
+              id="firstName"
+              name="firstName"
+              autoComplete="off"
+              onChange={e => {
+                const uppercaseValue = e.target.value.toUpperCase();
+                e.target.value = uppercaseValue;
+              }}
+            />
           </EuiFormRow>
 
           <EuiFormRow
             label="Surname"
             isInvalid={'surname' in validationErrors}
             error={validationErrors?.surname}>
-            <EuiFieldText id="surname" name="surname" autoComplete="off" />
+            <EuiFieldText
+              id="surname"
+              name="surname"
+              autoComplete="off"
+              onChange={e => {
+                const uppercaseValue = e.target.value.toUpperCase();
+                e.target.value = uppercaseValue;
+              }}
+            />
           </EuiFormRow>
         </EuiFormFieldset>
 
