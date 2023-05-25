@@ -114,7 +114,10 @@ const Map: FunctionComponent<Props> = ({ address, onAddressChange }) => {
             {address.longitude.toFixed(4)})
           </>
         ) : (
-          <EuiText size="s">Use map to set location</EuiText>
+          <>
+            <EuiIcon type="globe" />
+            <EuiText size="s">Use map to set location</EuiText>
+          </>
         )}
       </EuiButton>
       {isModalVisible && (
