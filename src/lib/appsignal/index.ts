@@ -27,6 +27,6 @@ export const redactObject = (person: unknown) => {
     'payment',
     'value',
   ]);
-  console.log('REDACTED', redacted);
+  // console.log('REDACTED', redacted);
   return JSON.stringify(redacted);
 };
