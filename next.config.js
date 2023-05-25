@@ -24,6 +24,7 @@ const themeConfig = buildThemeConfig();
 const nextConfig = {
   compiler: {
     emotion: true,
+    removeConsole: process.env.NODE_ENV === 'production',
   },
   /** Disable the `X-Powered-By: Next.js` response header. */
   poweredByHeader: false,
