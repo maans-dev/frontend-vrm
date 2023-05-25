@@ -33,7 +33,7 @@ export const fetchAndExtractRoles = async (
     const msg = await structureResponse.text();
     const errJson = JSON.parse(await structureResponse.text());
     appsignal.sendError(
-      new Error(`Unable to create person: ${errJson.message}`),
+      new Error(`Unable to fetch roles: ${errJson.message}`),
       span => {
         span.setAction('api-call');
         span.setParams({

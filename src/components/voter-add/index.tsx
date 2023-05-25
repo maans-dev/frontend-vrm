@@ -24,7 +24,7 @@ import moment, { Moment } from 'moment';
 import { useRouter } from 'next/router';
 import { isValidRSAIDnumber } from '@lib/validation/idValidation';
 import { useSession } from 'next-auth/react';
-import { appsignal } from '@lib/appsignal';
+import { appsignal, redactObject } from '@lib/appsignal';
 
 export type Props = {
   notFound?: boolean;
@@ -103,7 +103,7 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
       category: 'Log',
       action: 'PERSON CREATE REQUEST',
       metadata: {
-        request: JSON.stringify(reqPayload),
+        request: redactObject(reqPayload),
       },
     });
 
@@ -136,7 +136,7 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
           span.setAction('api-call');
           span.setParams({
             route: url,
-            body: JSON.stringify(reqPayload),
+            body: redactObject(reqPayload),
           });
           span.setTags({ user_darn: session.user.darn.toString() });
         }
@@ -148,7 +148,7 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
       category: 'Log',
       action: 'PERSON CREATE RESPONSE',
       metadata: {
-        response: JSON.stringify(respPayload),
+        response: redactObject(respPayload),
       },
     });
   };

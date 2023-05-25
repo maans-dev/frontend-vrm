@@ -3179,6 +3179,11 @@ lodash.curry@^4.1.1:
   resolved "https://registry.yarnpkg.com/lodash.curry/-/lodash.curry-4.1.1.tgz#248e36072ede906501d75966200a86dab8b23170"
   integrity sha512-/u14pXGviLaweY5JI0IUzgzF2J6Ne8INyzAZjImcryjgkZ+ebruBxy2/JaOOkTqScddcYtakjhSaeemV8lR0tA==
 
+lodash.isplainobject@^4.0.6:
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/lodash.isplainobject/-/lodash.isplainobject-4.0.6.tgz#7c526a52d89b45c45cc690b88163be0497f550cb"
+  integrity sha512-oSXzaWypCMHkPC3NvBEaPHf0KsA5mvPrOPgQWDsbg8n7orZ290M0BmC/jgRZ4vcJ6DTAhjrsSYgdsW/F+MFOBA==
+
 lodash.merge@^4.6.2:
   version "4.6.2"
   resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.2.tgz#558aa53b43b661e1925a0afdfa36a9a1085fe57a"
@@ -4093,6 +4098,13 @@ readdirp@~3.6.0:
   integrity sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==
   dependencies:
     picomatch "^2.2.1"
+
+redact-object@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/redact-object/-/redact-object-3.0.1.tgz#325232841dda6da24df8020156fb9c0e2ceb828b"
+  integrity sha512-0SzTKMvQyrSjIwXq4RW+jo7nC/CaemsyYZahUj++ikzzxxfsRsr3+jQ6hHDkK5WHmmhCTqLtqcjqmxsmDITIpg==
+  dependencies:
+    lodash.isplainobject "^4.0.6"
 
 redux@^4.0.0, redux@^4.0.4:
   version "4.1.2"

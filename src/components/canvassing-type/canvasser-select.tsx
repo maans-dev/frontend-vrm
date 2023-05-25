@@ -11,7 +11,7 @@ import {
   htmlIdGenerator,
 } from '@elastic/eui';
 import { css } from '@emotion/react';
-import { appsignal } from '@lib/appsignal';
+import { appsignal, redactObject } from '@lib/appsignal';
 import { Person } from '@lib/domain/person';
 import moment from 'moment';
 import { useSession } from 'next-auth/react';
@@ -83,7 +83,7 @@ const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
           span.setParams({
             route: url,
             identity: canvasserSearchText,
-            response: JSON.stringify(respPayload),
+            response: redactObject(respPayload),
           });
           span.setTags({ user_darn: session.user.darn.toString() });
         }

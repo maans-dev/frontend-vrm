@@ -21,7 +21,7 @@ import { Moment } from 'moment';
 import moment from 'moment';
 import { useSession } from 'next-auth/react';
 import { useSWRConfig } from 'swr';
-import { appsignal } from '@lib/appsignal';
+import { appsignal, redactObject } from '@lib/appsignal';
 
 export type CanvassingContextType = {
   data: Partial<PersonUpdateRequest> & Partial<{ canvass: CanvassUpdate }>;
@@ -239,7 +239,7 @@ const CanvassingProvider = ({ children }) => {
         category: 'Log',
         action: 'PERSON EVENT REQUEST',
         metadata: {
-          request: JSON.stringify(requestBody),
+          request: redactObject(requestBody),
         },
       });
 
@@ -293,7 +293,7 @@ const CanvassingProvider = ({ children }) => {
             span.setAction('api-call');
             span.setParams({
               route: url,
-              body: JSON.stringify(requestBody),
+              body: redactObject(requestBody),
             });
             span.setTags({ user_darn: session.user.darn.toString() });
           }
@@ -305,9 +305,10 @@ const CanvassingProvider = ({ children }) => {
         category: 'Log',
         action: 'PERSON EVENT RESPONSE',
         metadata: {
-          response: JSON.stringify(requestBody),
+          response: redactObject(requestBody),
         },
       });
+      // throw new Error('Forced error for testing');
     } catch (error) {
       // TODO: Need to display these error in a Toast.
       console.error('Something went wrong. Please try again later', error);
@@ -317,7 +318,7 @@ const CanvassingProvider = ({ children }) => {
           span.setAction('api-call');
           span.setParams({
             route: url,
-            body: JSON.stringify(requestBody),
+            body: redactObject(requestBody),
           });
           span.setTags({ user_darn: session.user.darn.toString() });
         }
@@ -531,8 +532,8 @@ const CanvassingProvider = ({ children }) => {
       category: 'Log',
       action: 'CONTEXT',
       metadata: {
-        data: JSON.stringify(data),
-        person: JSON.stringify(person),
+        data: redactObject(data),
+        person: redactObject(person),
       },
     });
   }, [data, person]);

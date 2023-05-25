@@ -52,6 +52,7 @@
     "react-geolocated": "^4.0.3",
     "react-icons": "^4.7.1",
     "react-json-tree": "^0.18.0",
+    "redact-object": "^3.0.1",
     "regenerator-runtime": "^0.13.9",
     "swr": "^2.1.0",
     "unfetch": "^5.0.0"
