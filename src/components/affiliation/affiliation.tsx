@@ -3,12 +3,12 @@ import {
   EuiCallOut,
   EuiComboBox,
   EuiComboBoxOptionOption,
-  EuiFlexGroup,
   EuiFlexItem,
   EuiText,
   EuiCheckbox,
   htmlIdGenerator,
   EuiSpacer,
+  EuiFlexGrid,
 } from '@elastic/eui';
 import { Affiliation } from '@lib/domain/person';
 import { FunctionComponent, useEffect, useMemo, useState } from 'react';
@@ -158,7 +158,50 @@ const AffiliationComponent: FunctionComponent<Props> = ({
         </>
       )}
 
-      <EuiFlexGroup direction="row" alignItems="center" gutterSize="xs">
+      <EuiFlexGrid direction="row" alignItems="center" columns={2}>
+        <EuiFormRow display="rowCompressed">
+          <EuiComboBox
+            compressed
+            style={{ width: '350px' }}
+            isClearable={false}
+            isLoading={isLoading}
+            aria-label="Select an affiliation"
+            placeholder="Select an affiliation"
+            singleSelection={{ asPlainText: true }}
+            options={options}
+            selectedOptions={selectedOption ? [selectedOption] : []}
+            onChange={handleChange}
+            onSearchChange={debouncedSearch}
+          />
+        </EuiFormRow>
+        <EuiFlexItem>
+          {selectedOption && (
+            <EuiCheckbox
+              id={htmlIdGenerator()()}
+              label={
+                !disabled ? (
+                  <EuiText size="s">
+                    Confirm the affiliation{' '}
+                    <strong>{selectedOption?.label}</strong>
+                  </EuiText>
+                ) : (
+                  <EuiText size="s">
+                    Save to confirm the affiliation{' '}
+                    <strong>{selectedOption?.label}</strong>
+                  </EuiText>
+                )
+              }
+              disabled={disabled}
+              checked={checkBox}
+              onChange={handleCheckableCardChange}
+            />
+          )}
+        </EuiFlexItem>
+      </EuiFlexGrid>
+
+      <EuiSpacer size="m" />
+
+      <EuiFlexItem>
         <EuiFlexItem>
           {affiliationDate ? (
             <EuiText size="xs">
@@ -169,45 +212,6 @@ const AffiliationComponent: FunctionComponent<Props> = ({
             </EuiText>
           ) : null}
         </EuiFlexItem>
-        <EuiFlexItem>
-          <EuiFormRow display="rowCompressed">
-            <EuiComboBox
-              compressed
-              isClearable={false}
-              isLoading={isLoading}
-              aria-label="Select an affiliation"
-              placeholder="Select an affiliation"
-              singleSelection={{ asPlainText: true }}
-              options={options}
-              selectedOptions={selectedOption ? [selectedOption] : []}
-              onChange={handleChange}
-              onSearchChange={debouncedSearch}
-            />
-          </EuiFormRow>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-
-      <EuiSpacer size="m" />
-
-      <EuiFlexItem>
-        <EuiCheckbox
-          id={htmlIdGenerator()()}
-          label={
-            !disabled ? (
-              <EuiText size="s">
-                Confirm the affiliation <strong>{selectedOption?.label}</strong>
-              </EuiText>
-            ) : (
-              <EuiText size="s">
-                Save to confirm the affiliation{' '}
-                <strong>{selectedOption?.label}</strong>
-              </EuiText>
-            )
-          }
-          disabled={disabled}
-          checked={checkBox}
-          onChange={handleCheckableCardChange}
-        />
       </EuiFlexItem>
     </>
   );
