@@ -308,7 +308,6 @@ const CanvassingProvider = ({ children }) => {
           response: JSON.stringify(requestBody),
         },
       });
-      throw new Error('Spoofed error for testing');
     } catch (error) {
       // TODO: Need to display these error in a Toast.
       console.error('Something went wrong. Please try again later', error);
