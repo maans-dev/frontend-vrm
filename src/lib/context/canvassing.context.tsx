@@ -263,7 +263,7 @@ const CanvassingProvider = ({ children }) => {
         body: JSON.stringify(requestBody),
       });
 
-      const respPayload = await response.json();
+      const respPayload = await response.clone().json();
 
       if (response.ok) {
         setIsComplete(true);
@@ -286,7 +286,7 @@ const CanvassingProvider = ({ children }) => {
         });
       } else {
         setServerError(respPayload?.message || 'Something went wrong');
-        const errJson = JSON.parse(await response.text());
+        const errJson = JSON.parse(await response.clone().text());
         appsignal.sendError(
           new Error(`Unable to update person: ${errJson.message}`),
           span => {
@@ -305,7 +305,7 @@ const CanvassingProvider = ({ children }) => {
         category: 'Log',
         action: 'PERSON EVENT RESPONSE',
         metadata: {
-          response: redactObject(requestBody),
+          response: redactObject(respPayload),
         },
       });
       // throw new Error('Forced error for testing');
