@@ -37,7 +37,7 @@
     "@appsignal/plugin-path-decorator": "^1.0.15",
     "@appsignal/plugin-window-events": "^1.0.19",
     "@appsignal/react": "^1.0.22",
-    "@elastic/eui": "^77.2.0",
+    "@elastic/eui": "^81.0.0",
     "@emotion/cache": "^11.10.3",
     "@emotion/css": "^11.10.6",
     "@emotion/react": "^11.10.6",
