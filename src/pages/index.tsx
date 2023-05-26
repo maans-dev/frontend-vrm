@@ -43,6 +43,18 @@ const Index: FunctionComponent = () => {
           </EuiFlexItem>
         )}
 
+        {hasRole(Roles.VoterEdit) && (
+          <EuiFlexItem>
+            <EuiCard
+              icon={<EuiIcon size="xxl" type="tableDensityExpanded" />}
+              layout="horizontal"
+              title="Data Cleanup"
+              description="Non-canvass edit of voter & membership data."
+              onClick={() => router.push('/cleanup/voter-search')}
+            />
+          </EuiFlexItem>
+        )}
+
         {(hasRole(Roles.Membership) || hasRole(Roles.MembershipAdmin)) && (
           <EuiFlexItem>
             <EuiCard
@@ -67,7 +79,7 @@ const Index: FunctionComponent = () => {
           </EuiFlexItem>
         )}
 
-        {hasRole(Roles.BulkComms) && (
+        {/* {hasRole(Roles.BulkComms) && (
           <EuiFlexItem>
             <EuiCard
               icon={<EuiIcon size="xxl" type="timeline" />}
@@ -77,19 +89,7 @@ const Index: FunctionComponent = () => {
               onClick={() => router.push('/comms')}
             />
           </EuiFlexItem>
-        )}
-
-        {hasRole(Roles.VoterEdit) && (
-          <EuiFlexItem>
-            <EuiCard
-              icon={<EuiIcon size="xxl" type="tableDensityExpanded" />}
-              layout="horizontal"
-              title="Data Cleanup"
-              description="Non-canvass edit of voter & membership data."
-              onClick={() => router.push('/cleanup/voter-search')}
-            />
-          </EuiFlexItem>
-        )}
+        )} */}
       </EuiFlexGrid>
     </MainLayout>
   );
