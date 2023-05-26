@@ -262,15 +262,17 @@ const SearchResults: FunctionComponent<Props> = ({
       <EuiSpacer size="m" />
       <EuiFlexGroup justifyContent="spaceAround">
         <EuiFlexItem grow={true}>
-          <EuiTablePagination
-            aria-label="Pager"
-            pageCount={pageCount}
-            itemsPerPageOptions={[10, 20, 50, 100]}
-            itemsPerPage={itemsPerPage}
-            onChangeItemsPerPage={onChangeItemsPerPage}
-            activePage={activePage}
-            onChangePage={onChangePage}
-          />
+          {results.length > 0 && (
+            <EuiTablePagination
+              aria-label="Pager"
+              pageCount={pageCount}
+              itemsPerPageOptions={[10, 20, 50, 100]}
+              itemsPerPage={itemsPerPage}
+              onChangeItemsPerPage={onChangeItemsPerPage}
+              activePage={activePage}
+              onChangePage={onChangePage}
+            />
+          )}
         </EuiFlexItem>
       </EuiFlexGroup>
       <EuiSpacer />
