@@ -28,7 +28,11 @@ const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
   const { data: session } = useSession();
   const [selectedCanvasserOption, setSelectedCanvasserOption] =
     useState<CanvasserOption>(
-      canvasser ? (canvasser.key === session.user.darn ? 'ME' : 'OTHER') : null
+      canvasser
+        ? canvasser.key === session?.user?.darn
+          ? 'ME'
+          : 'OTHER'
+        : null
     );
 
   const [foundCanvasser, setFoundCanvasser] = useState<Partial<Person>>(
