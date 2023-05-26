@@ -36,7 +36,7 @@ const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
     );
 
   const [foundCanvasser, setFoundCanvasser] = useState<Partial<Person>>(
-    canvasser?.key === session.user.darn ? null : canvasser
+    canvasser?.key === session?.user?.darn ? null : canvasser
   );
 
   const [canvasserSearchText, setCanvasserSearchText] = useState('');
@@ -67,7 +67,7 @@ const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
             route: url,
             identity: canvasserSearchText,
           });
-          span.setTags({ user_darn: session.user.darn.toString() });
+          span.setTags({ user_darn: session?.user?.darn.toString() });
         }
       );
       return;
@@ -89,7 +89,7 @@ const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
             identity: canvasserSearchText,
             response: redactObject(respPayload),
           });
-          span.setTags({ user_darn: session.user.darn.toString() });
+          span.setTags({ user_darn: session?.user?.darn.toString() });
         }
       );
       setFoundCanvasser(null);
@@ -109,10 +109,10 @@ const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
         setFoundCanvasser(null);
         setCanvasserSearchError('');
         onChange({
-          key: session.user.darn,
-          givenName: session.user.givenName,
-          surname: session.user.surname,
-          dob: session.user.dob.toString(),
+          key: session?.user?.darn,
+          givenName: session?.user?.givenName,
+          surname: session?.user?.surname,
+          dob: session?.user?.dob.toString(),
         });
         break;
       case 'OTHER':
