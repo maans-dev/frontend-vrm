@@ -7,6 +7,7 @@ import {
   EuiSpacer,
   EuiText,
 } from '@elastic/eui';
+import moment from 'moment';
 
 export interface Props {
   status: string;
@@ -85,7 +86,9 @@ const MembershipInfo: FunctionComponent<Props> = ({
         <EuiFlexGroup>
           <EuiFlexItem grow={false}>
             <EuiText size="s">
-              <strong style={{ whiteSpace: 'nowrap' }}>{newRenewal}</strong>
+              <strong style={{ whiteSpace: 'nowrap' }}>
+                {moment(newRenewal).format('YYYY-MM-DD')}
+              </strong>
             </EuiText>
           </EuiFlexItem>
         </EuiFlexGroup>

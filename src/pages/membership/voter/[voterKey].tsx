@@ -296,9 +296,9 @@ const Voter: FunctionComponent = () => {
                     ? person?.membership?.dawnOptOut
                     : false
                 }
-                expired={person?.membership?.expired}
+                expired={person?.membership?.expiry}
                 initialJoin={person?.membership?.initialJoin}
-                newRenewal={person?.membership?.initialJoin}
+                newRenewal={person?.membership?.payment?.date}
                 membershipNumber={person?.membership?.payment?.membershipNumber}
                 comments={person?.comments}
                 onMembershipChange={onChange}
