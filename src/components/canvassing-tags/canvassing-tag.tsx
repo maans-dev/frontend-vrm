@@ -27,6 +27,7 @@ const CanvassingTag: FunctionComponent<Props> = ({ field, onChange }) => {
 
   return (
     <EuiCheckableCard
+      css={{ height: '100%' }}
       id={checkboxCardId}
       label={field?.field?.name}
       checkableType="checkbox"
