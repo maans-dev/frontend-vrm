@@ -125,7 +125,7 @@ const SearchOptions: FunctionComponent<Props> = ({
           onKeyDown={handleKeyDown}
           placeholder="ID Number, DARN or Membership number"
           value={searchParams?.identity || ''}
-          defaultValue={searchParams?.identity || ''}
+          append={<AdvancedSearchTooltip />}
           onChange={() => null}
         />
       </EuiFormRow>
@@ -152,7 +152,6 @@ const SearchOptions: FunctionComponent<Props> = ({
           compressed
           append={<AdvancedSearchTooltip />}
           value={searchParams?.surname || ''}
-          defaultValue={searchParams?.surname || ''}
           onChange={() => null}
         />
       </EuiFormRow>
@@ -164,7 +163,6 @@ const SearchOptions: FunctionComponent<Props> = ({
           compressed
           append={<AdvancedSearchTooltip />}
           value={searchParams?.firstName || ''}
-          defaultValue={searchParams?.firstName || ''}
           onChange={() => null}
         />
       </EuiFormRow>
@@ -178,7 +176,6 @@ const SearchOptions: FunctionComponent<Props> = ({
           compressed
           append={<AdvancedSearchTooltip />}
           value={searchParams?.email || ''}
-          defaultValue={searchParams?.email || ''}
           onChange={() => null}
         />
       </EuiFormRow>
@@ -190,7 +187,6 @@ const SearchOptions: FunctionComponent<Props> = ({
           compressed
           append={<AdvancedSearchTooltip />}
           value={searchParams?.phone || ''}
-          defaultValue={searchParams?.phone || ''}
           onChange={() => null}
         />
       </EuiFormRow>

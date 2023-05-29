@@ -10,10 +10,10 @@ export const AdvancedSearchTooltip: FunctionComponent = () => {
         <EuiText size="s">
           <ul>
             <li>
-              Start with: <strong>*xyz</strong>
+              Ends with: <strong>*xyz</strong>
             </li>
             <li>
-              End with: <strong>xyz*</strong>
+              Starts with: <strong>xyz*</strong>
             </li>
             <li>
               Equals: <strong>&quot;xyz&quot;</strong>
