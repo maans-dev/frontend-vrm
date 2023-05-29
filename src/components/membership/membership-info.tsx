@@ -87,7 +87,9 @@ const MembershipInfo: FunctionComponent<Props> = ({
           <EuiFlexItem grow={false}>
             <EuiText size="s">
               <strong style={{ whiteSpace: 'nowrap' }}>
-                {moment(newRenewal).format('YYYY-MM-DD')}
+                {newRenewal
+                  ? moment(newRenewal).format('YYYY-MM-DD')
+                  : 'Unknown'}
               </strong>
             </EuiText>
           </EuiFlexItem>
@@ -103,7 +105,7 @@ const MembershipInfo: FunctionComponent<Props> = ({
         <EuiFlexGroup>
           <EuiFlexItem grow={false}>
             <EuiText size="s">
-              <strong>{initialJoin}</strong>
+              <strong>{initialJoin || 'Unknown'}</strong>
             </EuiText>
           </EuiFlexItem>
         </EuiFlexGroup>
@@ -118,7 +120,9 @@ const MembershipInfo: FunctionComponent<Props> = ({
         <EuiFlexGroup>
           <EuiFlexItem grow={false}>
             <EuiText size="s">
-              <strong style={{ whiteSpace: 'nowrap' }}>{expired}</strong>
+              <strong style={{ whiteSpace: 'nowrap' }}>
+                {expired || 'Unknown'}
+              </strong>
             </EuiText>
           </EuiFlexItem>
         </EuiFlexGroup>

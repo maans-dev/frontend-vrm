@@ -267,6 +267,7 @@ const Membership: FunctionComponent<Props> = ({
 
           <EuiFormFieldset legend={{ children: 'Branch Info' }}>
             <BranchInfo
+              status={status}
               membershipStructure={membershipStructure}
               selectAddress={selectAddress}
               isDaAbroadSelected={daAbroadInternal}

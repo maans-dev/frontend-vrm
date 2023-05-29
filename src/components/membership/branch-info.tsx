@@ -16,6 +16,7 @@ import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
 import { getStructureDescription } from '@lib/structure/utils';
 import { FunctionComponent, useContext, useEffect, useState } from 'react';
 export interface Props {
+  status: string;
   membershipStructure: Partial<Structure>;
   selectAddress: (tabIndex: number) => void;
   isDaAbroadSelected: boolean;
@@ -32,6 +33,7 @@ export interface Props {
 }
 
 const BranchInfo: FunctionComponent<Props> = ({
+  status,
   selectAddress,
   isDaAbroadSelected,
   onCountrySelect,
@@ -111,6 +113,25 @@ const BranchInfo: FunctionComponent<Props> = ({
     );
 
     if (
+      status === 'NotAMember' &&
+      !userHasSelectedDaAbroad &&
+      !overriddenBranchStructure &&
+      !userHasSelectedOverridePermission &&
+      !userHasDeselectedOverridePermission &&
+      !isDaAbroadSelected &&
+      personAddressStructure?.votingDistrict_id
+    ) {
+      // has membership structure
+      setBranchLable(
+        `${personAddressStructure?.votingDistrict} (${personAddressStructure?.votingDistrict_id})`
+      );
+
+      setBranchDescription(getStructureDescription(personAddressStructure));
+      // console.log('DISPLAY membership structure');
+      return;
+    }
+
+    if (
       membershipStructure?.key &&
       !userHasSelectedDaAbroad &&
       !overriddenBranchStructure &&
@@ -145,7 +166,8 @@ const BranchInfo: FunctionComponent<Props> = ({
       personAddressStructure?.key &&
       !overriddenBranchStructure &&
       !userHasSelectedOverridePermission &&
-      !isDaAbroadSelected
+      !isDaAbroadSelected &&
+      status !== 'NotAMember'
     ) {
       // no membership structure but has an address structure
       setNoMembershipStructure(true);

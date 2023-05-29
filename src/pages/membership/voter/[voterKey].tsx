@@ -23,7 +23,11 @@ import usePersonFetcher from '@lib/fetcher/person/person.fetcher';
 import VoterInfo from '@components/voter-info';
 import CanvassingTags from '@components/canvassing-tags';
 import ContactDetails from '@components/contact-details/contact-details';
-import { GeneralUpdate, PersonUpdate } from '@lib/domain/person-update';
+import {
+  GeneralUpdate,
+  MembershipUpdate,
+  PersonUpdate,
+} from '@lib/domain/person-update';
 import { CanvassingContext } from '@lib/context/canvassing.context';
 import { css } from '@emotion/react';
 import Membership from '@components/membership';
@@ -40,6 +44,7 @@ const Voter: FunctionComponent = () => {
   const [selectedTab, setSelectedTab] = useState(0);
 
   const {
+    data,
     setPerson,
     setUpdatePayload,
     submitUpdatePayload,
@@ -104,6 +109,23 @@ const Voter: FunctionComponent = () => {
   );
 
   const onChange = (update: PersonUpdate<GeneralUpdate>) => {
+    // Inject person.address.structure as membership branch if it exists
+    // and no other branch has already been added.
+    if (
+      update?.field === 'membership' &&
+      (update.data as MembershipUpdate)?.type === 'membership-new'
+    ) {
+      if (!data?.membership?.structure?.votingDistrict_id) {
+        if (
+          !person?.membership?.structure?.votingDistrict_id &&
+          person?.address?.structure?.votingDistrict_id
+        ) {
+          update.data['structure'] = {
+            votingDistrict_id: person?.address?.structure?.votingDistrict_id,
+          };
+        }
+      }
+    }
     setUpdatePayload(update);
   };
 
@@ -230,7 +252,8 @@ const Voter: FunctionComponent = () => {
               <EuiTab
                 onClick={() => handleTabChange(3)}
                 isSelected={selectedTab === 3}>
-                {person?.membership?.structure?.key === null ? (
+                {person?.membership?.structure?.key === null &&
+                person?.membership?.status !== 'NotAMember' ? (
                   <EuiText size="xs" color="warning">
                     <EuiIcon type="alert" color="warning" />{' '}
                     <strong>Membership</strong>

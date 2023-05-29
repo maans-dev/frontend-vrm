@@ -28,7 +28,8 @@ const Structres: FunctionComponent<Props> = ({ onSelect }) => {
   useEffect(() => {
     const filteredStructures = structures?.filter(
       structure =>
-        structure.type === 'votingdistrict' || structure.type === 'ward'
+        structure?.type?.toLowerCase() === 'votingdistrict' ||
+        structure.type?.toLowerCase() === 'ward'
     );
     setStructuresInternal(filteredStructures);
   }, [structures]);
