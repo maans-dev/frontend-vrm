@@ -17,7 +17,7 @@ export interface OptionData {
 const StructureResults = ({ structures, onSelect }: Props) => {
   const getStructureLabel = (structure: Structure) => {
     let label: string = StructureType.Unkown;
-    switch (structure.type as StructureType) {
+    switch (structure.type.toLowerCase() as StructureType) {
       case StructureType.Constituency:
         label = structure.constituency;
         break;

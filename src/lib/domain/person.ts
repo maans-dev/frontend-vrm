@@ -46,6 +46,7 @@ export interface Membership {
   initialJoin: string;
   newRenewal: string;
   key?: string;
+  type?: string;
   payment: {
     amount: number;
     date: string;

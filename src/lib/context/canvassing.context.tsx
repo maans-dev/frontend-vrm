@@ -381,26 +381,10 @@ const CanvassingProvider = ({ children }) => {
   };
 
   const checkIsDirty = updatedData => {
-    const isDirty = data => {
-      if (typeof data !== 'object' || data === null) {
-        return false;
-      }
-      for (const key in data) {
-        if (data.hasOwnProperty(key)) {
-          const value = data[key];
-          if (value && typeof value === 'object') {
-            if (isDirty(value)) {
-              return true;
-            }
-          } else if (key !== 'membership') {
-            return true;
-          }
-        }
-      }
-      return false;
-    };
-
-    setIsDirty(isDirty(updatedData));
+    updatedData &&
+    Object.keys(updatedData).filter(k => k !== 'canvass').length > 0
+      ? setIsDirty(true)
+      : setIsDirty(false);
   };
 
   const resetForm = () => {
@@ -453,11 +437,7 @@ const CanvassingProvider = ({ children }) => {
       setServerError('');
       setIsDirty(false);
     }
-    if (
-      router.asPath.includes('/voter-search') ||
-      router.asPath.includes('/capturing-search') ||
-      router.asPath.includes('/cleanup-search')
-    ) {
+    if (router.asPath.includes('/voter-search')) {
       setData(prev => {
         return {
           canvass: prev?.canvass,
