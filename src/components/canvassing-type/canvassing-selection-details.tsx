@@ -1,5 +1,6 @@
 import { EuiFlexGroup, EuiFlexItem, EuiPanel } from '@elastic/eui';
 import { CanvassingContext } from '@lib/context/canvassing.context';
+import { renderName } from '@lib/person/utils';
 import moment from 'moment';
 import { FunctionComponent, useContext } from 'react';
 
@@ -32,7 +33,7 @@ export const CanvassingSelectionDetails: FunctionComponent = () => {
           <EuiFlexItem grow={false}>
             Canvasser
             <strong>
-              {canvasser.givenName} {canvasser?.surname} (
+              {renderName(canvasser)} (
               {moment().diff(canvasser.dob, 'years', false)})
             </strong>
           </EuiFlexItem>

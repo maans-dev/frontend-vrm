@@ -21,6 +21,7 @@ import {
 } from '@lib/domain/person';
 import { GiHouse } from 'react-icons/gi';
 import { MdHowToVote } from 'react-icons/md';
+import { renderName } from '@lib/person/utils';
 
 export type Props = {
   darn: number;
@@ -66,7 +67,7 @@ const VoterInfo: FunctionComponent<Props> = ({
           <EuiFlexItem grow={false}>
             <EuiTitle size="xs">
               <EuiTextColor>
-                {salutation} {givenName} {surname} (
+                {renderName({ salutation, givenName, surname })} (
                 {moment().diff(dob, 'years', false)})
               </EuiTextColor>
             </EuiTitle>
@@ -120,12 +121,7 @@ const VoterInfo: FunctionComponent<Props> = ({
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiText size="xs">
-                by{' '}
-                <strong>
-                  {canvassedBy?.key
-                    ? `${canvassedBy?.firstName} ${canvassedBy?.surname}`
-                    : 'Unknown'}
-                </strong>
+                by <strong>{renderName(canvassedBy)}</strong>
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGroup>

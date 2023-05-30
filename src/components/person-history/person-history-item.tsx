@@ -17,6 +17,7 @@ import { JSONTree } from 'react-json-tree';
 import { useSession } from 'next-auth/react';
 import { hasRole as hasRoleUtil } from '@lib/auth/utils';
 import { Roles } from '@lib/domain/auth';
+import { renderName } from '@lib/person/utils';
 
 export type Props = {
   event: PersonEvent;
@@ -24,12 +25,6 @@ export type Props = {
 };
 
 const EventTitle: FunctionComponent<Props> = ({ event, onClick }) => {
-  const renderName = object => {
-    if (object?.givenName) return `${object.givenName} ${object.surname}`;
-    if (!object.surname) return 'Uknknown';
-    return `${object.firstName} ${object.surname}`;
-  };
-
   if (event.category.name === 'canvass') {
     const dateDiff = (event.canvassedBy.date as Moment).diff(
       event.createdBy.date,
@@ -48,7 +43,7 @@ const EventTitle: FunctionComponent<Props> = ({ event, onClick }) => {
           Canvassed ({event.type.description}) by{' '}
           {renderName(event.canvassedBy)} on{' '}
           {(event.canvassedBy.date as Moment).format('D MMM YYYY')} - Captured
-          by {event.createdBy.firstName} {event.createdBy.surname} on{' '}
+          by {renderName(event.createdBy)} on{' '}
           <EuiToolTip
             content={(event.createdBy.date as Moment).format('HH:mm:ss')}>
             <EuiLink>

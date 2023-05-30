@@ -17,6 +17,7 @@ import { useSession } from 'next-auth/react';
 import { hasRole as hasRoleUtil } from '@lib/auth/utils';
 import { Roles } from '@lib/domain/auth';
 import { JSONTree } from 'react-json-tree';
+import { renderName } from '@lib/person/utils';
 
 export type Props = {
   event: PersonEvent;
@@ -94,14 +95,7 @@ const Membership: FunctionComponent<Props> = ({ event }) => {
         <>
           <EuiFlexItem>Referred by</EuiFlexItem>
           <EuiFlexItem>
-            {paymentData.recruitedBy?.firstName ? (
-              <strong>
-                {paymentData.recruitedBy?.firstName}{' '}
-                {paymentData.recruitedBy?.surname}
-              </strong>
-            ) : (
-              <strong>{paymentData.recruitedBy}</strong>
-            )}
+            <strong>{renderName(event.recruitedBy)}</strong>
           </EuiFlexItem>
         </>
       )}
@@ -167,17 +161,11 @@ const Membership: FunctionComponent<Props> = ({ event }) => {
           text-transform: capitalize;
         }
       `}
-      username={
-        isSystemEntry
-          ? ''
-          : event?.createdBy?.givenName
-          ? `${event?.createdBy?.givenName?.toLowerCase()} ${event?.createdBy?.surname?.toLowerCase()}`
-          : `${event?.createdBy?.firstName?.toLowerCase()}  ${event?.createdBy?.surname?.toLowerCase()}`
-      }
+      username={isSystemEntry ? '' : renderName(event?.createdBy)}
       event={<>{eventText} on</>}
       timestamp={formatTimestamp(event.createdBy.date as Moment)}
       timelineAvatarAriaLabel={
-        isSystemEntry ? 'system' : event.createdBy.firstName
+        isSystemEntry ? 'system' : renderName(event?.createdBy)
       }
       timelineAvatar={
         isSystemEntry ? (
@@ -189,7 +177,7 @@ const Membership: FunctionComponent<Props> = ({ event }) => {
           />
         ) : (
           <EuiAvatar
-            name={event?.createdBy?.firstName}
+            name={renderName(event?.createdBy)}
             iconType={isMemberEntry ? CiUser : 'editorComment'}
             size="m"
             color={euiTheme.colors.lightShade}

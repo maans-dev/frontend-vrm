@@ -286,12 +286,14 @@ export interface ColourCode {
 
 export interface CreatedBy {
   key?: number;
+  givenName?: string;
   firstName: string;
   surname: string;
 }
 
 export interface ModifiedBy {
   key: number;
+  givenName?: string;
   firstName: string;
   surname: string;
 }

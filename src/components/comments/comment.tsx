@@ -9,6 +9,7 @@ import moment from 'moment';
 import { FunctionComponent } from 'react';
 import { CiUser } from 'react-icons/ci';
 import { Comment } from '@lib/domain/person';
+import { renderName } from '@lib/person/utils';
 
 export type Props = {
   comment: Comment;
@@ -27,21 +28,21 @@ const Commenter: FunctionComponent<Props> = ({ comment, onArchive }) => {
 
   return (
     <EuiComment
-      username={`${comment?.createdBy?.firstName}  ${comment?.createdBy?.surname}`}
+      username={renderName(comment.createdBy)}
       event={isSystemComment ? <>{comment.value}</> : 'added a comment'}
       timestamp={formatTimestamp(comment.created)}
-      timelineAvatarAriaLabel={comment.createdBy?.firstName}
+      timelineAvatarAriaLabel={renderName(comment.createdBy)}
       timelineAvatar={
         isSystemComment ? (
           <EuiAvatar
-            name={comment.createdBy?.firstName}
+            name={renderName(comment.createdBy)}
             iconType="bell"
             size="m"
             color={euiTheme.colors.warning}
           />
         ) : (
           <EuiAvatar
-            name={comment.createdBy?.firstName}
+            name={renderName(comment.createdBy)}
             iconType={isMemberComment ? CiUser : 'editorComment'}
             size="m"
             color={euiTheme.colors.lightShade}

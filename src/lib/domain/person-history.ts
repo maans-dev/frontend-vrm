@@ -1,4 +1,5 @@
 import { Moment } from 'moment';
+import { ModifiedBy } from './person';
 
 export interface PersonHistoryResponse {
   count: number;
@@ -20,7 +21,8 @@ export interface PersonEvent {
   source: null;
   canvassedBy: CanvassedBy;
   createdBy: CreatedBy;
-  modifiedBy: CreatedBy;
+  modifiedBy: ModifiedBy;
+  recruitedBy: RecruitedBy;
 }
 
 export interface Activity {
@@ -97,6 +99,14 @@ export enum TypeEnum {
 }
 
 export interface CanvassedBy {
+  key: number;
+  surname: Surname;
+  firstName: FirstName;
+  givenName: null | string;
+  date?: Date | Moment;
+}
+
+export interface RecruitedBy {
   key: number;
   surname: Surname;
   firstName: FirstName;

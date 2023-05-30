@@ -163,7 +163,7 @@ const Voter: FunctionComponent = () => {
         <EuiFormFieldset legend={{ children: 'Contact details' }}>
           <ContactDetails
             deceased={person?.deceased}
-            givenName={person?.givenName}
+            givenName={person?.givenName || person?.firstName}
             language={person?.language}
             contacts={person?.contacts}
             onLanguageChange={onChange}
