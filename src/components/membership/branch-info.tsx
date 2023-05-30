@@ -306,7 +306,7 @@ const BranchInfo: FunctionComponent<Props> = ({
         {noMembershipStructure && (
           <EuiCallOut
             size="s"
-            title="Please save member record to confirm branch"
+            title="Please confirm branch by saving this record."
             color="warning"
             iconType="alert"
           />
