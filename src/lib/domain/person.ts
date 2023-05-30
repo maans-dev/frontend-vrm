@@ -289,6 +289,7 @@ export interface CreatedBy {
   givenName?: string;
   firstName: string;
   surname: string;
+  date?: Date | Moment;
 }
 
 export interface ModifiedBy {
@@ -296,6 +297,7 @@ export interface ModifiedBy {
   givenName?: string;
   firstName: string;
   surname: string;
+  date?: Date | Moment;
 }
 
 export interface Comment {
