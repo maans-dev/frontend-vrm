@@ -14,6 +14,7 @@ import ActivityReportTable from '@components/activity-report';
 import useActivityReportFetcher from '@lib/fetcher/activity/activity-report';
 import useActivityFetcher from '@lib/fetcher/activity/my-activity';
 import Spinner from '@components/spinner/spinner';
+import router from 'next/router';
 
 export const renderErrorCallout = error => {
   return (
@@ -25,6 +26,14 @@ export const renderErrorCallout = error => {
 
 const Index: FunctionComponent = () => {
   const breadcrumb: EuiBreadcrumb[] = [
+    {
+      text: 'Home',
+      href: '/',
+      onClick: e => {
+        router.push('/');
+        e.preventDefault();
+      },
+    },
     {
       text: 'My Activity',
     },
@@ -41,10 +50,16 @@ const Index: FunctionComponent = () => {
     isLoading: activityLoading,
   } = useActivityFetcher(session?.user?.darn);
 
+  if (isLoading || activityLoading) {
+    return (
+      <MainLayout breadcrumb={breadcrumb} showSpinner={true} panelled={false} />
+    );
+  }
+
   return (
     <MainLayout breadcrumb={breadcrumb} panelled={false}>
       {isLoading && activityLoading ? (
-        <Spinner show={isLoading} />
+        <Spinner show={isLoading || activityLoading} />
       ) : (
         <>
           {activityReport && reportError && renderErrorCallout(reportError)}
