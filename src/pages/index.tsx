@@ -91,17 +91,6 @@ const Index: FunctionComponent = () => {
           </EuiFlexItem>
         )} */}
 
-        {hasRole(Roles.VoterEdit) && (
-          <EuiFlexItem>
-            <EuiCard
-              icon={<EuiIcon size="xxl" type="tableDensityExpanded" />}
-              layout="horizontal"
-              title="Data Cleanup"
-              description="Non-canvass edit of voter & membership data."
-              onClick={() => router.push('/cleanup/voter-search')}
-            />
-          </EuiFlexItem>
-        )}
         {session && (
           <EuiFlexItem>
             <EuiCard
@@ -119,7 +108,7 @@ const Index: FunctionComponent = () => {
               icon={<EuiIcon size="xxl" type="reporter" />}
               layout="horizontal"
               title="Activity Reports"
-              description="My VRM history of canvassing, capturing & voter edits"
+              description="VRM history of canvassing, capturing & voter edits"
               onClick={() => router.push('/activity-reports/voter-search')}
             />
           </EuiFlexItem>
