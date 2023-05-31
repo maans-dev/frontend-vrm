@@ -15,7 +15,7 @@ export default function usePersonHistoryOrActivityFetcher(
   const endpoint =
     mode === 'history'
       ? `/person/${key}/event/history?count=true&limit=${limit}&offset=${offset}&timePeriod={"from":"${startDate}","to":"${endDate}"}`
-      : `/person/${key}/event/activity?count=true&limit=${limit}&offset=${offset}`;
+      : `/person/${key}/event/activity?count=true&limit=${limit}&offset=${offset}&timePeriod={"from":"${startDate}","to":"${endDate}"}`;
 
   const { data, error, isLoading, mutate } = useSWR<PersonHistoryResponse>(
     shouldFetch ? endpoint : null,

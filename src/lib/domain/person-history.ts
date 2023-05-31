@@ -34,7 +34,7 @@ export interface MyActivityPerson {
 }
 
 export interface MyActivityReport {
-  person: number;
+  person?: number;
   name: string;
   prev7days: string;
   prev30days: string;
