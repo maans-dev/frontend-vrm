@@ -4,6 +4,7 @@ import type { NextAuthOptions } from 'next-auth';
 import { fetchAndExtractRoles } from '@lib/auth/utils';
 import { OAuthConfig } from 'next-auth/providers';
 import { appsignal } from '@lib/appsignal';
+import moment from 'moment';
 
 /**
  * Takes a token, and returns a new token with updated
@@ -99,8 +100,9 @@ export const authOptions: NextAuthOptions = {
       }
 
       // Return previous token if the access token has not expired yet
-      if (Date.now() < (token.accessTokenExpires as number) * 1000) {
-        // token.error = 'RefreshAccessTokenError';
+      const expiresAt = moment.unix(token.accessTokenExpires as number);
+      if (expiresAt.diff(moment(), 'm') >= 5) {
+        // we expire the token 5 min earlier than actual
         return token;
       }
 
