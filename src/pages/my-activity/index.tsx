@@ -12,7 +12,6 @@ import PersonHistory from '@components/person-history';
 import { useSession } from 'next-auth/react';
 import ActivityReportTable from '@components/activity-report';
 import useActivityReportFetcher from '@lib/fetcher/activity/activity-report';
-import useActivityFetcher from '@lib/fetcher/activity/my-activity';
 import Spinner from '@components/spinner/spinner';
 import router from 'next/router';
 
@@ -44,13 +43,8 @@ const Index: FunctionComponent = () => {
     error: reportError,
     isLoading,
   } = useActivityReportFetcher(session?.user?.darn);
-  const {
-    activityData,
-    error: activityError,
-    isLoading: activityLoading,
-  } = useActivityFetcher(session?.user?.darn);
 
-  if (isLoading || activityLoading) {
+  if (isLoading) {
     return (
       <MainLayout breadcrumb={breadcrumb} showSpinner={true} panelled={false} />
     );
@@ -58,12 +52,11 @@ const Index: FunctionComponent = () => {
 
   return (
     <MainLayout breadcrumb={breadcrumb} panelled={false}>
-      {isLoading && activityLoading ? (
-        <Spinner show={isLoading || activityLoading} />
+      {isLoading ? (
+        <Spinner show={isLoading} />
       ) : (
         <>
           {activityReport && reportError && renderErrorCallout(reportError)}
-          {activityData && activityError && renderErrorCallout(activityError)}
           <EuiFlexGroup direction="column">
             <EuiFlexItem>
               <EuiCallOut
@@ -82,10 +75,7 @@ const Index: FunctionComponent = () => {
               <ActivityReportTable report={activityReport} />
             </EuiFormFieldset>
             <EuiFormFieldset legend={{ children: 'My Activity' }}>
-              <PersonHistory
-                personKey={session?.user?.darn}
-                myActivity={activityData}
-              />
+              <PersonHistory personKey={session?.user?.darn} mode="activity" />
             </EuiFormFieldset>
           </EuiFlexGroup>
         </>

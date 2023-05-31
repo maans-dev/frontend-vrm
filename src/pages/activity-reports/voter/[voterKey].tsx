@@ -8,7 +8,6 @@ import ActivityReportTable from '@components/activity-report';
 import useActivityReportFetcher from '@lib/fetcher/activity/activity-report';
 import Spinner from '@components/spinner/spinner';
 import { renderErrorCallout } from 'pages/my-activity';
-import useActivityFetcher from '@lib/fetcher/activity/my-activity';
 import { renderName } from '@lib/person/utils';
 
 const Index: FunctionComponent = () => {
@@ -41,11 +40,6 @@ const Index: FunctionComponent = () => {
     error: reportError,
     isLoading,
   } = useActivityReportFetcher(Number(voterKey));
-  const {
-    activityData,
-    error: activityError,
-    isLoading: activityLoading,
-  } = useActivityFetcher(Number(voterKey));
 
   if (isLoading || !voterKey) {
     return (
@@ -59,12 +53,11 @@ const Index: FunctionComponent = () => {
 
   return (
     <MainLayout breadcrumb={breadcrumb} panelled={false}>
-      {activityLoading && isLoading && personLoading ? (
+      {isLoading && personLoading ? (
         <Spinner show={isLoading} />
       ) : (
         <>
           {activityReport && reportError && renderErrorCallout(reportError)}
-          {activityData && activityError && renderErrorCallout(activityError)}
           <EuiFlexGroup direction="column">
             <EuiFormFieldset
               legend={{
@@ -76,10 +69,7 @@ const Index: FunctionComponent = () => {
               legend={{
                 children: `History for ${person && renderName(person)}`,
               }}>
-              <PersonHistory
-                personKey={Number(voterKey)}
-                myActivity={activityData}
-              />
+              <PersonHistory personKey={Number(voterKey)} mode="activity" />
             </EuiFormFieldset>
           </EuiFlexGroup>
         </>

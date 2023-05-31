@@ -21,10 +21,15 @@ import { renderName } from '@lib/person/utils';
 
 export type Props = {
   event: PersonEvent;
+  mode: 'history' | 'activity';
   onClick?: (event: PersonEvent) => void;
 };
 
-const EventTitle: FunctionComponent<Props> = ({ event, onClick }) => {
+const EventTitle: FunctionComponent<Props> = ({
+  event,
+  mode = 'history',
+  onClick,
+}) => {
   if (event.category.name === 'canvass') {
     const dateDiff = (event.canvassedBy.date as Moment).diff(
       event.createdBy.date,
@@ -40,7 +45,7 @@ const EventTitle: FunctionComponent<Props> = ({ event, onClick }) => {
           css={{ cursor: 'default' }}
           size="xs"
           onClick={() => onClick(event)}>
-          {event?.person?.key ? (
+          {mode === 'activity' && event?.person?.key ? (
             <span>
               <strong>{renderName(event?.person)}</strong>
             </span>
@@ -64,7 +69,7 @@ const EventTitle: FunctionComponent<Props> = ({ event, onClick }) => {
         css={{ cursor: 'default' }}
         size="xs"
         onClick={() => onClick(event)}>
-        {event?.person?.key ? (
+        {mode === 'activity' && event?.person?.key ? (
           <span>
             <strong>{renderName(event?.person)}</strong>
           </span>
@@ -81,7 +86,7 @@ const EventTitle: FunctionComponent<Props> = ({ event, onClick }) => {
         css={{ cursor: 'default' }}
         size="xs"
         onClick={() => onClick(event)}>
-        {event?.person?.key ? (
+        {mode === 'activity' && event?.person?.key ? (
           <span>
             <strong>{renderName(event?.person)}</strong>
           </span>
@@ -103,7 +108,7 @@ const EventTitle: FunctionComponent<Props> = ({ event, onClick }) => {
         css={{ cursor: 'default' }}
         size="xs"
         onClick={() => onClick(event)}>
-        {event?.person?.key ? (
+        {mode === 'activity' && event?.person?.key ? (
           <span>
             <strong>{renderName(event?.person)} </strong>
           </span>
@@ -124,7 +129,7 @@ const EventTitle: FunctionComponent<Props> = ({ event, onClick }) => {
       css={{ cursor: 'default' }}
       size="xs"
       onClick={() => onClick(event)}>
-      {event?.person?.key ? (
+      {mode === 'activity' && event?.person?.key ? (
         <span>
           <strong>
             {event.person?.givenName} {event.person?.surname}{' '}
@@ -141,7 +146,10 @@ const EventTitle: FunctionComponent<Props> = ({ event, onClick }) => {
   );
 };
 
-const PersonHistoryItem: FunctionComponent<Props> = ({ event }) => {
+const PersonHistoryItem: FunctionComponent<Props> = ({
+  event,
+  mode = 'history',
+}) => {
   const { data: session, status } = useSession();
   const hasRole = (role: string) => hasRoleUtil(role, session?.user?.roles);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -231,6 +239,7 @@ const PersonHistoryItem: FunctionComponent<Props> = ({ event }) => {
       username={null}
       event={
         <EventTitle
+          mode={mode}
           event={event}
           onClick={event => {
             console.log(event);
