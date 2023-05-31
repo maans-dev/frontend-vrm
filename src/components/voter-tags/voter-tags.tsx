@@ -77,7 +77,9 @@ const VoterTags: FunctionComponent<Props> = ({
   const filteredOptions = searchFields
     ?.filter(
       field =>
-        !fieldsInternal.some(refField => refField.field.key === field.field.key)
+        !fieldsInternal?.some(
+          refField => refField.field.key === field.field.key
+        )
     )
     ?.map(f => ({
       label: `${f.field.description} (${f.field.code})`,
@@ -85,7 +87,7 @@ const VoterTags: FunctionComponent<Props> = ({
     }));
 
   const handleChange = (updatedField: Partial<Field>) => {
-    const originalField = fields.find(
+    const originalField = fields?.find(
       f => f.field.key === updatedField.field.key
     );
 

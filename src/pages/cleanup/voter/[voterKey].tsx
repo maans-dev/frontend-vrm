@@ -24,7 +24,6 @@ import Affiliation from '@components/affiliation/affiliation';
 import ContactDetails from '@components/contact-details/contact-details';
 import { GeneralUpdate, PersonUpdate } from '@lib/domain/person-update';
 import { CanvassingContext } from '@lib/context/canvassing.context';
-import PagePlaceholder from '@components/page-placeholder';
 import { css } from '@emotion/react';
 import PersonHistory from '@components/person-history';
 import { useLeavePageConfirmation } from '@lib/hooks/useLeavePageConfirmation';

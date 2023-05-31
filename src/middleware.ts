@@ -39,6 +39,14 @@ export default withAuth(
       authorized = hasRole(Roles.VoterEdit, token?.roles as string[]);
     }
 
+    if (req.nextUrl.pathname.includes('/my-activity')) {
+      authorized = true;
+    }
+
+    if (req.nextUrl.pathname.includes('/activity-reports')) {
+      authorized = true;
+    }
+
     if (!req.nextUrl.pathname.includes('403') && !authorized) {
       return NextResponse.rewrite(new URL('/403', req.url));
     }
