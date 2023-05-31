@@ -16,12 +16,14 @@ import { PersonEvent } from '@lib/domain/person-history';
 import PersonHistoryItem from './person-history-item';
 import usePersonHistoryFetcher from '@lib/fetcher/person/person.history';
 import dateMath from '@elastic/datemath';
+import { PersonHistoryResponse } from '@lib/domain/person-history';
 
 export type Props = {
   personKey: number;
+  myActivity?: PersonHistoryResponse;
 };
 
-const PersonHistory: FunctionComponent<Props> = ({ personKey }) => {
+const PersonHistory: FunctionComponent<Props> = ({ personKey, myActivity }) => {
   const [start, setStart] = useState('now/y');
   const [end, setEnd] = useState('now/y');
 
@@ -43,29 +45,41 @@ const PersonHistory: FunctionComponent<Props> = ({ personKey }) => {
 
   const [pageCount, setPageCount] = useState(0);
 
+  function setPagingContent(myActivity, history) {
+    if (myActivity?.values[0]?.person) {
+      return myActivity;
+    } else {
+      return history;
+    }
+  }
+
   const changeItemsPerPage = (pageSize: number) => {
-    setPageCount(Math.ceil(history.count / pageSize));
+    setPageCount(
+      Math.ceil(setPagingContent(myActivity, history).count / pageSize)
+    );
     setRowSize(pageSize);
     setActivePage(0);
   };
 
-  const eventsInternal = history?.values?.map(event => {
-    return {
-      ...event,
-      canvassedBy: {
-        ...event.canvassedBy,
-        date: moment(event?.canvassedBy?.date),
-      },
-      createdBy: {
-        ...event.createdBy,
-        date: moment(event.createdBy.date),
-      },
-      modifiedBy: {
-        ...event.modifiedBy,
-        date: moment(event.modifiedBy.date),
-      },
-    };
-  });
+  const eventsInternal = setPagingContent(myActivity, history)?.values?.map(
+    event => {
+      return {
+        ...event,
+        canvassedBy: {
+          ...event.canvassedBy,
+          date: moment(event?.canvassedBy?.date),
+        },
+        createdBy: {
+          ...event.createdBy,
+          date: moment(event.createdBy.date),
+        },
+        modifiedBy: {
+          ...event.modifiedBy,
+          date: moment(event.modifiedBy.date),
+        },
+      };
+    }
+  );
 
   const onTimeChange = ({ start, end }: OnTimeChangeProps) => {
     setStart(start);
@@ -73,8 +87,9 @@ const PersonHistory: FunctionComponent<Props> = ({ personKey }) => {
   };
 
   useEffect(() => {
+    if (myActivity) setPageCount(Math.ceil(myActivity.count / rowSize));
     if (history) setPageCount(Math.ceil(history.count / rowSize));
-  }, [history, rowSize]);
+  }, [history, myActivity, rowSize]);
 
   useEffect(() => {
     setStartMoment(dateMath.parse(start));
@@ -112,7 +127,7 @@ const PersonHistory: FunctionComponent<Props> = ({ personKey }) => {
           }
         `}>
         <>
-          {history?.values?.length
+          {setPagingContent(myActivity, history)?.values?.length
             ? orderBy(eventsInternal, ['createdBy.date'], ['desc'])?.map(
                 (entry: PersonEvent) => {
                   return <PersonHistoryItem event={entry} key={entry.key} />;

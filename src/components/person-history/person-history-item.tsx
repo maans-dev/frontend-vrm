@@ -40,6 +40,11 @@ const EventTitle: FunctionComponent<Props> = ({ event, onClick }) => {
           css={{ cursor: 'default' }}
           size="xs"
           onClick={() => onClick(event)}>
+          {event?.person?.key ? (
+            <span>
+              <strong>{renderName(event?.person)}</strong>
+            </span>
+          ) : null}{' '}
           Canvassed ({event.type.description}) by{' '}
           {renderName(event.canvassedBy)} on{' '}
           {(event.canvassedBy.date as Moment).format('D MMM YYYY')} - Captured
@@ -59,6 +64,11 @@ const EventTitle: FunctionComponent<Props> = ({ event, onClick }) => {
         css={{ cursor: 'default' }}
         size="xs"
         onClick={() => onClick(event)}>
+        {event?.person?.key ? (
+          <span>
+            <strong>{renderName(event?.person)}</strong>
+          </span>
+        ) : null}{' '}
         Canvassed ({event.type.description}) by {renderName(event.createdBy)} on{' '}
         {(event.createdBy.date as Moment).format('D MMM YYYY')}
       </EuiText>
@@ -71,6 +81,11 @@ const EventTitle: FunctionComponent<Props> = ({ event, onClick }) => {
         css={{ cursor: 'default' }}
         size="xs"
         onClick={() => onClick(event)}>
+        {event?.person?.key ? (
+          <span>
+            <strong>{renderName(event?.person)}</strong>
+          </span>
+        ) : null}{' '}
         Person added by {renderName(event.createdBy)} on{' '}
         <EuiToolTip
           content={(event.createdBy.date as Moment).format('HH:mm:ss')}>
@@ -88,6 +103,11 @@ const EventTitle: FunctionComponent<Props> = ({ event, onClick }) => {
         css={{ cursor: 'default' }}
         size="xs"
         onClick={() => onClick(event)}>
+        {event?.person?.key ? (
+          <span>
+            <strong>{renderName(event?.person)} </strong>
+          </span>
+        ) : null}{' '}
         Edited by {renderName(event.createdBy)} on{' '}
         <EuiToolTip
           content={(event.createdBy.date as Moment).format('HH:mm:ss')}>
@@ -104,6 +124,13 @@ const EventTitle: FunctionComponent<Props> = ({ event, onClick }) => {
       css={{ cursor: 'default' }}
       size="xs"
       onClick={() => onClick(event)}>
+      {event?.person?.key ? (
+        <span>
+          <strong>
+            {event.person?.givenName} {event.person?.surname}{' '}
+          </strong>
+        </span>
+      ) : null}{' '}
       Edited by {renderName(event.createdBy)} on{' '}
       <EuiToolTip content={(event.createdBy.date as Moment).format('HH:mm:ss')}>
         <EuiLink>

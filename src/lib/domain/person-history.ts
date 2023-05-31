@@ -9,7 +9,7 @@ export interface PersonHistoryResponse {
 export interface PersonEvent {
   key: string;
   activity: Activity;
-  person: number;
+  person: MyActivityPerson;
   category: Category;
   type: CategoryClass;
   metaData: ValueMetaData;
@@ -23,6 +23,22 @@ export interface PersonEvent {
   createdBy: CreatedBy;
   modifiedBy: ModifiedBy;
   recruitedBy: RecruitedBy;
+}
+
+export interface MyActivityPerson {
+  date: string;
+  firstName: string;
+  givenName: string;
+  key: number;
+  surname: string;
+}
+
+export interface MyActivityReport {
+  person: number;
+  name: string;
+  prev7days: string;
+  prev30days: string;
+  ytd: string;
 }
 
 export interface Activity {
