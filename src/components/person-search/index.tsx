@@ -12,7 +12,7 @@ import { appsignal, redactObject } from '@lib/appsignal';
 import { Person } from '@lib/domain/person';
 import moment from 'moment';
 import { useSession } from 'next-auth/react';
-import { FunctionComponent, useState, ChangeEvent } from 'react';
+import { FunctionComponent, useState, ChangeEvent, useEffect } from 'react';
 
 export interface Props {
   handleRecruitedByChange: (key: number) => void;
@@ -27,7 +27,7 @@ const PersonSearch: FunctionComponent<Props> = ({
   const [canvasserSearchText, setCanvasserSearchText] = useState('');
 
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setCanvasserSearchText(event.target.value);
+    setCanvasserSearchText(event.target.value.replaceAll('*', ''));
   };
 
   const doCanvasserSearch = async () => {
@@ -81,6 +81,10 @@ const PersonSearch: FunctionComponent<Props> = ({
     //   onChange(null);
     setCanvasserSearchText('');
   };
+
+  useEffect(() => {
+    if (canvasserSearchText.length === 13) doCanvasserSearch();
+  }, [canvasserSearchText]);
 
   const value = `${foundPerson?.salutation ? foundPerson?.salutation : ''} ${
     foundPerson?.givenName
