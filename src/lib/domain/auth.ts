@@ -6,4 +6,5 @@ export enum Roles {
   BulkComms = 'vrmBulkComms',
   VoterEdit = 'vrmVoterEdit',
   SuperUser = 'vrmSuperUser',
+  ActivityReport = 'vrmActivityReport',
 }

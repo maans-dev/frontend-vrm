@@ -35,10 +35,10 @@ async function refreshAccessToken(token) {
     });
 
     if (!response.ok) {
-      throw await response.text();
+      throw await response.clone().text();
     }
 
-    const tokens: TokenSet = await response.json();
+    const tokens: TokenSet = await response.clone().json();
     // console.log('[TOKENS]', tokens);
 
     console.log('[REFRESHED ACCESS TOKEN]');

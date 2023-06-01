@@ -103,7 +103,7 @@ const Index: FunctionComponent = () => {
             />
           </EuiFlexItem>
         )}
-        {session && (
+        {hasRole(Roles.ActivityReport) && (
           <EuiFlexItem>
             <EuiCard
               icon={<TbReportSearch size="42px" />}

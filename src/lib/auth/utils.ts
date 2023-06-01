@@ -25,27 +25,24 @@ export const fetchAndExtractRoles = async (
   });
 
   const url = `${process.env.NEXT_PUBLIC_GEO_API_BASE}/accessible-geographies/multiple-roles?${rolesQry}`;
+  // console.log('ROLES QRY', url);
   const structureResponse = await fetch(url, {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
 
   if (!structureResponse.ok) {
-    const msg = await structureResponse.text();
-    const errJson = JSON.parse(await structureResponse.text());
-    appsignal.sendError(
-      new Error(`Unable to fetch roles: ${errJson.message}`),
-      span => {
-        span.setAction('api-call');
-        span.setParams({
-          route: url,
-        });
-        span.setTags({ user_darn: darn_number.toString() });
-      }
-    );
+    const msg = await structureResponse.clone().text();
+    appsignal.sendError(new Error(`Unable to fetch roles: ${msg}`), span => {
+      span.setAction('api-call');
+      span.setParams({
+        route: url,
+      });
+      span.setTags({ user_darn: darn_number?.toString() });
+    });
     throw msg;
   }
 
-  const struct = await structureResponse.json();
+  const struct = await structureResponse.clone().json();
   // console.log('[STRUCTURES]', struct);
 
   for (const role of Object.values(Roles)) {

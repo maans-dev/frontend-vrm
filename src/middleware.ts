@@ -44,7 +44,7 @@ export default withAuth(
     }
 
     if (req.nextUrl.pathname.includes('/activity-reports')) {
-      authorized = true;
+      authorized = hasRole(Roles.ActivityReport, token?.roles as string[]);
     }
 
     if (!req.nextUrl.pathname.includes('403') && !authorized) {
