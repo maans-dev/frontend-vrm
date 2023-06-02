@@ -46,6 +46,7 @@ const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
   const generateId = htmlIdGenerator('canvasser');
 
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setCanvasserSearchError('');
     setCanvasserSearchText(event.target.value.replaceAll('*', ''));
   };
 
@@ -98,6 +99,7 @@ const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
   };
 
   const handleChange = (option: CanvasserOption) => {
+    setCanvasserSearchError('');
     setSelectedCanvasserOption(option);
     onChange({
       key: undefined,
