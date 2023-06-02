@@ -83,10 +83,15 @@ const AffiliationComponent: FunctionComponent<Props> = ({
   };
 
   useCanvassFormReset(() => {
-    setSelectedOption({
-      label: affiliation?.description || affiliation?.name,
-      value: affiliation,
-    });
+    setSelectedOption(
+      affiliation &&
+        (affiliation?.description !== null || affiliation?.name !== null)
+        ? {
+            label: affiliation?.description || affiliation?.name,
+            value: affiliation,
+          }
+        : null
+    );
   });
 
   const debouncedSearch = debounce(value => {
