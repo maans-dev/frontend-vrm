@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import { EuiBreadcrumb, EuiHeader } from '@elastic/eui';
+import { EuiBreadcrumb, EuiHeader, EuiText } from '@elastic/eui';
 import { useRouter } from 'next/router';
 import { FunctionComponent, useEffect, useState } from 'react';
 
@@ -26,15 +26,17 @@ export const HeaderSecondary: FunctionComponent<Props> = ({ breadcrumb }) => {
   }, [breadcrumb, router]);
 
   return (
-    <EuiHeader
-      position="fixed"
-      sections={[
-        {
-          breadcrumbs: crumbs,
-          breadcrumbProps: { responsive: false },
-          borders: 'right',
-        },
-      ]}
-    />
+    <>
+      <EuiHeader
+        position="fixed"
+        sections={[
+          {
+            breadcrumbs: crumbs,
+            breadcrumbProps: { responsive: false },
+            borders: 'right',
+          },
+        ]}
+      />
+    </>
   );
 };

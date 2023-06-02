@@ -7,6 +7,7 @@ import {
   EuiHorizontalRule,
   EuiPageTemplate,
   EuiPageTemplateProps,
+  EuiSpacer,
   EuiText,
 } from '@elastic/eui';
 import { useRouter } from 'next/router';
@@ -74,6 +75,25 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
         <HeaderPrimary />
 
         {showSubHeader ? <HeaderSecondary breadcrumb={breadcrumb} /> : null}
+
+        <EuiText
+          size="s"
+          color="white"
+          textAlign="center"
+          css={{
+            background: 'red',
+            position: 'fixed',
+            zIndex: '99',
+            width: '100%',
+          }}>
+          <strong>
+            This is a Beta test site. All data entered here will be deleted at
+            the end of the beta testing period. Nothing recorded here will count
+            towards canvassing or capturing.
+          </strong>
+        </EuiText>
+
+        <EuiSpacer />
 
         <EuiPageTemplate.Section
           grow={true}
