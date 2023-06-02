@@ -47,22 +47,24 @@ const VoterSearch: FunctionComponent<Props> = ({ breadcrumb }) => {
     for (const key in params) {
       if (!params[key] || params[key] === '') delete params[key];
     }
+    setActivePage(0);
+    setPageCount(0);
     setSearchParams(params);
   };
 
   useEffect(() => {
-    if (results?.length === 1) {
+    if (count === 1) {
       const redirectUrl = `voter/${results[0].key}`;
       router.push(redirectUrl);
     }
-  }, [results, router, router.pathname]);
+  }, [count, results, router, router.pathname]);
 
   return (
     <MainLayout
       breadcrumb={breadcrumb}
       panelled={false}
       restrictWidth={results === null || results === undefined ? true : false}
-      showSpinner={isLoading || results?.length === 1}>
+      showSpinner={isLoading || count === 1}>
       {error && (
         <>
           <EuiCallOut color="danger" title="Something went wrong">
@@ -71,14 +73,14 @@ const VoterSearch: FunctionComponent<Props> = ({ breadcrumb }) => {
           <EuiSpacer />
         </>
       )}
-      {!isLoading || results?.length > 1 ? (
+      {!isLoading || count > 1 ? (
         <SearchOptions
           onSubmit={doSearch}
           as={results === null || results === undefined ? 'form' : 'modal'}
           isLoading={isLoading}
         />
       ) : null}
-      {!isLoading && (results?.length > 1 || results?.length === 0) ? (
+      {!isLoading && (count > 1 || count === 0) ? (
         <SearchResults
           results={results}
           pageCount={pageCount}
