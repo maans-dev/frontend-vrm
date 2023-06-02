@@ -22,6 +22,7 @@ export type IPartyTags = {
 export interface Props {
   fields: Partial<Field>[];
   onChange?: (f: Partial<Field>) => void;
+  isLoading?: boolean;
   searchFields: Partial<Field>[];
   handleSearchChange: (searchTerm: string) => void;
   searchValue: string;
@@ -29,6 +30,7 @@ export interface Props {
 
 const VoterTags: FunctionComponent<Props> = ({
   onChange,
+  isLoading,
   fields,
   searchFields,
   handleSearchChange,
@@ -107,9 +109,12 @@ const VoterTags: FunctionComponent<Props> = ({
   return (
     <>
       <EuiComboBox
-        compressed
-        aria-label="Search for a tag"
-        placeholder="Search for a tag"
+        // compressed
+        async
+        isLoading={searchValue && isLoading}
+        noSuggestions={!searchValue}
+        aria-label="Start typing to search for a tag"
+        placeholder="Start typing to search for a tag"
         singleSelection={{ asPlainText: true }}
         options={searchValue ? filteredOptions : []}
         onChange={options => {
