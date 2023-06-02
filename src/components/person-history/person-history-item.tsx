@@ -54,12 +54,7 @@ const EventTitle: FunctionComponent<Props> = ({
           {renderName(event.canvassedBy)} on{' '}
           {(event.canvassedBy.date as Moment).format('D MMM YYYY')} - Captured
           by {renderName(event.createdBy)} on{' '}
-          <EuiToolTip
-            content={(event.createdBy.date as Moment).format('HH:mm:ss')}>
-            <EuiLink>
-              {(event.createdBy.date as Moment).format('D MMM YYYY')}
-            </EuiLink>
-          </EuiToolTip>
+          {(event.createdBy.date as Moment).format('D MMM YYYY HH:mm:ss')}
         </EuiText>
       );
     }
@@ -75,7 +70,7 @@ const EventTitle: FunctionComponent<Props> = ({
           </span>
         ) : null}{' '}
         Canvassed ({event.type.description}) by {renderName(event.createdBy)} on{' '}
-        {(event.createdBy.date as Moment).format('D MMM YYYY')}
+        {(event.createdBy.date as Moment).format('D MMM YYYY HH:mm:ss')}
       </EuiText>
     );
   }
@@ -92,12 +87,7 @@ const EventTitle: FunctionComponent<Props> = ({
           </span>
         ) : null}{' '}
         Person added by {renderName(event.createdBy)} on{' '}
-        <EuiToolTip
-          content={(event.createdBy.date as Moment).format('HH:mm:ss')}>
-          <EuiLink>
-            {(event.createdBy.date as Moment).format('D MMM YYYY')}
-          </EuiLink>
-        </EuiToolTip>
+        {(event.createdBy.date as Moment).format('D MMM YYYY HH:mm:ss')}
       </EuiText>
     );
   }
@@ -114,12 +104,7 @@ const EventTitle: FunctionComponent<Props> = ({
           </span>
         ) : null}{' '}
         Edited by {renderName(event.createdBy)} on{' '}
-        <EuiToolTip
-          content={(event.createdBy.date as Moment).format('HH:mm:ss')}>
-          <EuiLink>
-            {(event.createdBy.date as Moment).format('D MMM YYYY')}
-          </EuiLink>
-        </EuiToolTip>
+        {(event.createdBy.date as Moment).format('D MMM YYYY HH:mm:ss')}
       </EuiText>
     );
   }
@@ -137,11 +122,7 @@ const EventTitle: FunctionComponent<Props> = ({
         </span>
       ) : null}{' '}
       Edited by {renderName(event.createdBy)} on{' '}
-      <EuiToolTip content={(event.createdBy.date as Moment).format('HH:mm:ss')}>
-        <EuiLink>
-          {(event.createdBy.date as Moment).format('D MMM YYYY')}
-        </EuiLink>
-      </EuiToolTip>
+      {(event.createdBy.date as Moment).format('D MMM YYYY HH:mm:ss')}
     </EuiText>
   );
 };

@@ -63,7 +63,7 @@ const Membership: FunctionComponent<Props> = ({ event }) => {
   });
 
   function formatTimestamp(timestamp: Moment) {
-    return timestamp?.format('D MMM YYYY');
+    return timestamp?.format('D MMM YYYY HH:mm:ss');
   }
 
   const paymentMeta = paymentData && (
