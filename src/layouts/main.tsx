@@ -86,7 +86,7 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
           style={{
             display: 'block',
             position: 'sticky',
-            top: '96px',
+            top: showSubHeader ? '96px' : '48px',
             zIndex: 99,
           }}>
           <EuiText
