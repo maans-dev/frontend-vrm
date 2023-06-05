@@ -181,7 +181,6 @@ const Membership: FunctionComponent<Props> = ({ event }) => {
             iconType={isMemberEntry ? CiUser : 'editorComment'}
             size="m"
             color={euiTheme.colors.lightShade}
-            onClick={() => console.log(event)}
           />
         )
       }

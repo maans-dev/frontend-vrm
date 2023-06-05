@@ -47,24 +47,26 @@ export interface Membership {
   newRenewal: string;
   key?: string;
   type?: string;
-  payment: {
-    amount: number;
-    date: string;
-    key: string;
-    membershipNumber: string;
-    receiptNumber: string;
-    recruitedBy: number;
-    referenceNumber: string;
-    type: string;
-    years: number;
-  };
+  payment: MembershipPayment;
   branchOverride: boolean;
   person: number;
   status: string;
-  status_json: null | any;
-  structure: Structure;
+  status_json?: null | any;
+  structure: Partial<Structure>;
+  statusComments: string;
 }
 
+export interface MembershipPayment {
+  amount?: number;
+  date?: string;
+  key?: string;
+  membershipNumber?: string;
+  receiptNumber?: string;
+  recruitedBy?: number | Partial<Person>;
+  referenceNumber?: string;
+  type?: string;
+  years?: number;
+}
 export interface PartyTags {
   key: string;
   category: string;

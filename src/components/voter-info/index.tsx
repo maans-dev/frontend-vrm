@@ -1,7 +1,6 @@
 import { FunctionComponent } from 'react';
 import {
   EuiBadge,
-  EuiBetaBadge,
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,

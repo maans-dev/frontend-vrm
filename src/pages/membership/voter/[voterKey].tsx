@@ -23,24 +23,18 @@ import usePersonFetcher from '@lib/fetcher/person/person.fetcher';
 import VoterInfo from '@components/voter-info';
 import CanvassingTags from '@components/canvassing-tags';
 import ContactDetails from '@components/contact-details/contact-details';
-import {
-  GeneralUpdate,
-  MembershipUpdate,
-  PersonUpdate,
-} from '@lib/domain/person-update';
+import { GeneralUpdate, PersonUpdate } from '@lib/domain/person-update';
 import { CanvassingContext } from '@lib/context/canvassing.context';
 import { css } from '@emotion/react';
 import Membership from '@components/membership';
 import PersonHistory from '@components/person-history';
-import useCountryFetcher from '@lib/fetcher/countries/countries';
 import { useLeavePageConfirmation } from '@lib/hooks/useLeavePageConfirmation';
+import MembershipProvider from '@components/membership/membership.context';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
   const voterKey = router.query.voterKey as string;
   const { person, isLoading } = usePersonFetcher(voterKey);
-  const [searchValue, setSearchValue] = useState('');
-  const { countries } = useCountryFetcher(searchValue);
   const [selectedTab, setSelectedTab] = useState(0);
 
   const {
@@ -109,30 +103,11 @@ const Voter: FunctionComponent = () => {
   );
 
   const onChange = (update: PersonUpdate<GeneralUpdate>) => {
-    // Inject person.address.structure as membership branch if it exists
-    // and no other branch has already been added.
-    if (
-      update?.field === 'membership' &&
-      (update.data as MembershipUpdate)?.type === 'membership-new'
-    ) {
-      if (!data?.membership?.structure?.votingDistrict_id) {
-        if (
-          !person?.membership?.structure?.votingDistrict_id &&
-          person?.address?.structure?.votingDistrict_id
-        ) {
-          update.data['structure'] = {
-            votingDistrict_id: person?.address?.structure?.votingDistrict_id,
-          };
-        }
-      }
-    }
     setUpdatePayload(update);
   };
 
   useEffect(() => {
     if (person) setPerson(person);
-    if (person?.membership?.structure?.country_code)
-      setSearchValue(person.membership.structure.country_code);
   }, [person, setPerson]);
 
   if (isLoading) {
@@ -267,6 +242,19 @@ const Voter: FunctionComponent = () => {
                 isSelected={selectedTab === 4}>
                 History
               </EuiTab>
+              {/* <EuiTab
+                onClick={() => handleTabChange(5)}
+                isSelected={selectedTab === 5}>
+                {person?.membership?.structure?.key === null &&
+                person?.membership?.status !== 'NotAMember' ? (
+                  <EuiText size="xs" color="warning">
+                    <EuiIcon type="alert" color="warning" />{' '}
+                    <strong>Membership</strong>
+                  </EuiText>
+                ) : (
+                  'Membership Old'
+                )}
+              </EuiTab> */}
             </EuiTabs>
             <EuiSpacer />
 
@@ -305,34 +293,9 @@ const Voter: FunctionComponent = () => {
             </div>
 
             <div style={{ display: selectedTab === 3 ? 'block' : 'none' }}>
-              <Membership
-                abroadCountry={countries ? countries[0].country : null}
-                membershipStructure={person?.membership?.structure}
-                id_number={person?.idNumber}
-                darn={person?.key}
-                status={person?.membership?.status}
-                selectAddress={handleGoToAddress}
-                daAbroad={person?.membership?.daAbroad}
-                daYouth={person?.membership?.daYouth}
-                dawnOptOut={
-                  person?.membership?.dawnOptOut !== null
-                    ? person?.membership?.dawnOptOut
-                    : false
-                }
-                expired={person?.membership?.expiry}
-                initialJoin={person?.membership?.initialJoin}
-                newRenewal={person?.membership?.payment?.date}
-                membershipNumber={person?.membership?.payment?.membershipNumber}
-                comments={person?.comments}
-                onMembershipChange={onChange}
-                gender={person?.gender}
-                dob={person?.dob}
-                branchOverride={
-                  person?.membership?.branchOverride
-                    ? person?.membership?.branchOverride
-                    : false
-                }
-              />
+              <MembershipProvider person={person}>
+                <Membership />
+              </MembershipProvider>
             </div>
 
             <div style={{ display: selectedTab === 4 ? 'block' : 'none' }}>
@@ -345,6 +308,15 @@ const Voter: FunctionComponent = () => {
                 <PersonHistory personKey={person.key} />
               </EuiFormFieldset>
             </div>
+
+            {/* <div style={{ display: selectedTab === 5 ? 'block' : 'none' }}>
+              <MembershipOld
+                person={person}
+                personMembership={person?.membership}
+                selectAddress={handleGoToAddress}
+                onMembershipChange={onChange}
+              />
+            </div> */}
           </EuiFlexItem>
         </EuiFlexGroup>
 

@@ -10,7 +10,7 @@ import {
   useEuiTheme,
 } from '@elastic/eui';
 import Commenter from './comment';
-import { css, Global } from '@emotion/react';
+import { css } from '@emotion/react';
 import { Comment } from '@lib/domain/person';
 import { CommentsUpdate, PersonUpdate } from '@lib/domain/person-update';
 import { CanvassingContext } from '@lib/context/canvassing.context';
@@ -119,15 +119,22 @@ const Comments: FunctionComponent<Props> = ({
 
   return (
     <>
-      <Global
+      {/* <Global
         styles={css`
           .euiCommentEvent__header {
             font-size: 10px;
             padding: 0 8px !important;
           }
         `}
-      />
-      <EuiCommentList aria-label="Comments" gutterSize="m">
+      /> */}
+      <EuiCommentList
+        aria-label="Comments"
+        gutterSize="m"
+        css={css`
+          .euiCommentEvent__header {
+            font-size: 12px;
+          }
+        `}>
         {comment?.map((comment: Comment) => {
           return (
             <Commenter

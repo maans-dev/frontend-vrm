@@ -2,10 +2,8 @@ import {
   EuiAvatar,
   EuiButtonIcon,
   EuiComment,
-  EuiLink,
   EuiSpacer,
   EuiText,
-  EuiToolTip,
   useEuiTheme,
 } from '@elastic/eui';
 import { css } from '@emotion/react';

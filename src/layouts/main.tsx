@@ -1,6 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import { FunctionComponent, useEffect, useState } from 'react';
+import {
+  FunctionComponent,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import {
   EuiBreadcrumb,
@@ -67,7 +73,7 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
       <Spinner show={showSpinner} />
       <EuiPageTemplate
         style={{
-          paddingTop: showSubHeader ? '96px' : '0px',
+          paddingTop: showSubHeader ? `${96}px` : '0px',
         }}
         panelled={panelled}
         restrictWidth={true}
@@ -76,24 +82,34 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
 
         {showSubHeader ? <HeaderSecondary breadcrumb={breadcrumb} /> : null}
 
-        <EuiText
-          size="s"
-          color="white"
-          textAlign="center"
-          css={{
-            background: 'red',
-            position: 'fixed',
-            zIndex: '99',
-            width: '100%',
+        <div
+          style={{
+            display: 'block',
+            position: 'sticky',
+            top: '96px',
+            zIndex: 99,
           }}>
-          <strong>
-            This is a Beta test site. All data entered here will be deleted at
-            the end of the beta testing period. Nothing recorded here will count
-            towards canvassing or capturing.
-          </strong>
-        </EuiText>
+          <EuiText
+            size="s"
+            color="white"
+            textAlign="center"
+            css={{
+              background: 'red',
+              padding: '10px',
+              // position: 'sticky',
+              // top: '0px',
+              // zIndex: '999999',
+              width: '100%',
+            }}>
+            <strong>
+              This is a Beta test site. All data entered here will be deleted at
+              the end of the beta testing period. Nothing recorded here will
+              count towards canvassing or capturing.
+            </strong>
+          </EuiText>
+        </div>
 
-        <EuiSpacer />
+        <EuiSpacer size="s" />
 
         <EuiPageTemplate.Section
           grow={true}

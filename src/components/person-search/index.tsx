@@ -15,10 +15,14 @@ import { useSession } from 'next-auth/react';
 import { FunctionComponent, useState, ChangeEvent, useEffect } from 'react';
 
 export interface Props {
-  handleRecruitedByChange: (key: number) => void;
+  handleRecruitedByChange: (person: Partial<Person>) => void;
+  setRecruitedBy?: (person: number) => void;
+  recruitedBy?: number;
 }
 const PersonSearch: FunctionComponent<Props> = ({
   handleRecruitedByChange,
+  setRecruitedBy,
+  recruitedBy,
 }) => {
   const { data: session } = useSession();
   const [foundPerson, setFoundPerson] = useState<Partial<Person>>();
@@ -56,8 +60,7 @@ const PersonSearch: FunctionComponent<Props> = ({
 
     if (respPayload && respPayload.length === 1) {
       setFoundPerson(respPayload[0]);
-      const key = respPayload[0].key;
-      handleRecruitedByChange(key);
+      handleRecruitedByChange(respPayload[0]);
     } else {
       setPersonSearchError('Person not found');
       appsignal.sendError(
@@ -78,8 +81,8 @@ const PersonSearch: FunctionComponent<Props> = ({
 
   const handleClear = () => {
     setFoundPerson(null);
-    //   onChange(null);
-    setCanvasserSearchText('');
+    setRecruitedBy(null);
+    setCanvasserSearchText(null);
   };
 
   useEffect(() => {
@@ -93,6 +96,13 @@ const PersonSearch: FunctionComponent<Props> = ({
     'years',
     false
   )})`;
+
+  useEffect(() => {
+    if (recruitedBy === null) {
+      setFoundPerson(null);
+      setCanvasserSearchText(null);
+    }
+  }, [recruitedBy]);
 
   return (
     <>

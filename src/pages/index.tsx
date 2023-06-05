@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { hasRole as hasRoleUtil } from '@lib/auth/utils';
 import { Roles } from '@lib/domain/auth';
-import { TbActivityHeartbeat, TbReport, TbReportSearch } from 'react-icons/tb';
+import { TbReport, TbReportSearch } from 'react-icons/tb';
 
 const Index: FunctionComponent = () => {
   const router = useRouter();
