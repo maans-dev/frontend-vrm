@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import { EuiBreadcrumb, EuiHeader, EuiText } from '@elastic/eui';
+import { EuiBreadcrumb, EuiHeader } from '@elastic/eui';
 import { useRouter } from 'next/router';
 import { FunctionComponent, useEffect, useState } from 'react';
 
