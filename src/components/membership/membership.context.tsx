@@ -15,6 +15,7 @@ import { StructureType } from '@lib/domain/stuctures';
 import useCountryFetcher from '@lib/fetcher/countries/countries';
 import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
 import moment from 'moment';
+import { useSession } from 'next-auth/react';
 import {
   createContext,
   FunctionComponent,
@@ -22,6 +23,8 @@ import {
   useEffect,
   useState,
 } from 'react';
+import { hasRole as hasRoleUtil } from '@lib/auth/utils';
+import { Roles } from '@lib/domain/auth';
 
 export interface Branch {
   label: string | React.ReactNode;
@@ -85,6 +88,7 @@ export type MembershipContextType = {
   cancellationInfo: CancellationInfo;
   setCancellationInfo: (info: CancellationInfo) => void;
   onChange: (update: PersonUpdate<GeneralUpdate>) => void;
+  hasRole: (role: Roles) => boolean;
 };
 
 export const MembershipContext = createContext<Partial<MembershipContextType>>(
@@ -95,6 +99,9 @@ const MembershipProvider: FunctionComponent<
   Pick<MembershipContextType, 'person' | 'onSelectAddressTab'>
 > = ({ children, person, onSelectAddressTab }) => {
   const { setUpdatePayload, data: contextData } = useContext(CanvassingContext);
+  const { data: session } = useSession();
+  const hasRole = (role: string) =>
+    hasRoleUtil(role, session?.user?.roles, false);
 
   const onChange = (update: PersonUpdate<MembershipUpdate>) => {
     update.data.type = updateType;
@@ -124,7 +131,7 @@ const MembershipProvider: FunctionComponent<
   const [updatedBranch, setUpdatedBranch] = useState<Branch>(null);
 
   const [hasBranchOverride, setHasBranchOverride] = useState(
-    membership?.branchOverride !== null
+    hasRole(Roles.MembershipAdmin)
   );
 
   const [isBranchOverrideSelected, setIsBranchOverrideSelected] = useState(
@@ -255,11 +262,11 @@ const MembershipProvider: FunctionComponent<
     setIsDaYouthSelected(membership?.daYouth);
     // setBranch(null);
     // setUpdatedBranch(null);
-    setHasBranchOverride(membership?.branchOverride !== null);
+    setHasBranchOverride(hasRole(Roles.MembershipAdmin));
     setIsBranchOverrideSelected(membership?.branchOverride === true);
     setCanEditBranch(false);
     setCanDeleteBranch(false);
-    // setHasDaAbroad(membership?.daAbroad === true);
+    setHasDaAbroad(true);
     setIsDaAbroadSelected(membership?.daAbroad === true);
     setIsDawnOptOutSelected(membership?.dawnOptOut);
     // setShowMembershipInfo(false);
@@ -275,11 +282,11 @@ const MembershipProvider: FunctionComponent<
     setIsDaYouthSelected(membership?.daYouth);
     setBranch(null);
     setUpdatedBranch(null);
-    setHasBranchOverride(membership?.branchOverride !== null);
+    setHasBranchOverride(hasRole(Roles.MembershipAdmin));
     setIsBranchOverrideSelected(membership?.branchOverride === true);
     setCanEditBranch(false);
     setCanDeleteBranch(false);
-    // setHasDaAbroad(membership?.daAbroad === true);
+    setHasDaAbroad(true);
     setIsDaAbroadSelected(membership?.daAbroad === true);
     setIsDawnOptOutSelected(membership?.dawnOptOut);
     setShowMembershipInfo(false);
@@ -673,6 +680,7 @@ const MembershipProvider: FunctionComponent<
         cancellationInfo,
         setCancellationInfo,
         onChange,
+        hasRole,
       }}>
       {children}
     </MembershipContext.Provider>
