@@ -52,7 +52,7 @@ const Index: FunctionComponent = () => {
   }
 
   return (
-    <MainLayout breadcrumb={breadcrumb} panelled={false}>
+    <MainLayout breadcrumb={breadcrumb} panelled={false} restrictWidth="1400px">
       {isLoading && personLoading ? (
         <Spinner show={isLoading} />
       ) : (
