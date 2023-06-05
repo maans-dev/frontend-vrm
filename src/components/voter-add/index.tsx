@@ -1,8 +1,9 @@
-import { FormEvent, FunctionComponent, useState } from 'react';
+import { FormEvent, FunctionComponent, useEffect, useState } from 'react';
 import {
   EuiButton,
   EuiButtonEmpty,
   EuiCallOut,
+  EuiCheckableCard,
   EuiDatePicker,
   EuiEmptyPrompt,
   EuiFieldText,
@@ -25,6 +26,7 @@ import { useRouter } from 'next/router';
 import { isValidRSAIDnumber } from '@lib/validation/idValidation';
 import { useSession } from 'next-auth/react';
 import { appsignal, redactObject } from '@lib/appsignal';
+import usePersonSearchFetcher from '@lib/fetcher/person/person-search.fetcher';
 
 export type Props = {
   notFound?: boolean;
@@ -48,6 +50,10 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState('');
+  const [searchId, setSearchId] = useState(null);
+  const [userExists, setUserExists] = useState<boolean>(false);
+  const [selectedOption, setSelectedOption] = useState<'dob' | 'id'>();
+  const { results, isLoading, error } = usePersonSearchFetcher(searchId);
 
   const closeModal = () => setIsModalVisible(false);
   const showModal = () => {
@@ -155,6 +161,7 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
 
   const handleDOBChange = (date: Moment) => {
     setDob(date);
+    setUserExists(false);
   };
 
   const addFormId = useGeneratedHtmlId({ prefix: 'addVoterForm' });
@@ -205,6 +212,7 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
             isInvalid={'firstName' in validationErrors}
             error={validationErrors?.firstName}>
             <EuiFieldText
+              compressed
               id="firstName"
               name="firstName"
               autoComplete="off"
@@ -220,6 +228,7 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
             isInvalid={'surname' in validationErrors}
             error={validationErrors?.surname}>
             <EuiFieldText
+              compressed
               id="surname"
               name="surname"
               autoComplete="off"
@@ -232,38 +241,79 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
         </EuiFormFieldset>
 
         <EuiSpacer />
-
         <EuiFormFieldset legend={{ children: 'Either SA ID or Date of birth' }}>
-          <EuiFormRow
-            label="South African ID number"
-            isInvalid={'idNumber' in validationErrors}
-            error={validationErrors?.idNumber}>
-            <EuiFieldText
-              id="idNumber"
-              name="idNumber"
-              autoComplete="off"
-              value={id}
-              maxLength={13}
-              minLength={13}
-              onChange={e => setId(e.target.value.replace(/[^0-9,+]/g, ''))}
-            />
-          </EuiFormRow>
+          <EuiCheckableCard
+            id="IdNumber"
+            label={
+              <EuiText size="xs" style={{ marginTop: '-10px' }}>
+                <strong>South African ID number</strong>
+              </EuiText>
+            }
+            value={id}
+            checked={selectedOption === 'id'}
+            onChange={() => {
+              setDob(null);
+              setSelectedOption('id');
+            }}>
+            <EuiFormRow
+              isInvalid={'idNumber' in validationErrors}
+              error={validationErrors?.idNumber}>
+              <EuiFieldText
+                compressed
+                style={{
+                  marginTop: '-10px',
+                }}
+                id="idNumber"
+                disabled={selectedOption === 'dob'}
+                name="idNumber"
+                autoComplete="off"
+                value={id}
+                isLoading={isLoading}
+                maxLength={13}
+                onChange={e => {
+                  const idValue = e.target.value.replace(/[^0-9,+]/g, '');
+                  setId(idValue);
+                  setValidationErrors({});
+                  setUserExists(false);
+                  setSelectedOption('id');
+                }}
+              />
+            </EuiFormRow>
+          </EuiCheckableCard>
 
-          <EuiFormRow
-            label="Date of birth"
-            isInvalid={'dob' in validationErrors}
-            error={validationErrors?.dob}>
-            <EuiDatePicker
-              id="dob"
-              name="dob"
-              autoComplete="off"
-              dateFormat={['YYYY-MM-DD']}
-              selected={dob}
-              maxDate={moment().subtract(17, 'year')}
-              yearDropdownItemNumber={120}
-              onChange={handleDOBChange}
-            />
-          </EuiFormRow>
+          <EuiSpacer />
+
+          <EuiCheckableCard
+            id="dob"
+            label={
+              <EuiText size="xs" style={{ marginTop: '-10px' }}>
+                <strong>Date of birth</strong>
+              </EuiText>
+            }
+            value="dob"
+            checked={selectedOption === 'dob'}
+            onChange={() => {
+              setSelectedOption('dob');
+              setValidationErrors({});
+              setId('');
+            }}>
+            <EuiFormRow
+              isInvalid={'dob' in validationErrors}
+              error={validationErrors?.dob}>
+              <EuiDatePicker
+                css={{ marginTop: '-10px', maxHeight: '32px' }}
+                disabled={selectedOption === 'id'}
+                id="dob"
+                name="dob"
+                autoComplete="off"
+                dateFormat={['YYYY-MM-DD']}
+                selected={dob}
+                maxDate={moment().subtract(17, 'year')}
+                yearDropdownItemNumber={120}
+                onChange={handleDOBChange}
+              />
+            </EuiFormRow>
+          </EuiCheckableCard>
         </EuiFormFieldset>
       </EuiForm>
     </div>
@@ -283,7 +333,11 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
         <EuiModalFooter>
           <EuiButtonEmpty onClick={closeModal}>Cancel</EuiButtonEmpty>
 
-          <EuiButton type="submit" form={addFormId} fill>
+          <EuiButton
+            type="submit"
+            form={addFormId}
+            fill
+            disabled={userExists || isLoading}>
             Save
           </EuiButton>
         </EuiModalFooter>
@@ -291,8 +345,39 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
     );
   }
 
+  useEffect(() => {
+    if (id && id.length === 13) {
+      setSearchId({ idNumber: id });
+    } else {
+      setSearchId(null);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (results && id.length === 13) {
+      if (results.length > 0) {
+        // User exists
+        setUserExists(true);
+        setValidationErrors({ idNumber: 'This ID already exists' });
+        setId('');
+      } else {
+        // User does not exist
+        setUserExists(false);
+        setValidationErrors({});
+      }
+    }
+  }, [results, error, id.length]);
+
   return (
     <>
+      {error && (
+        <>
+          <EuiCallOut color="danger" title="Something went wrong">
+            <p>{error.message}</p>
+          </EuiCallOut>
+          <EuiSpacer />
+        </>
+      )}
       <EuiEmptyPrompt
         iconType={AiOutlineUserAdd}
         iconColor="primary"
