@@ -185,7 +185,7 @@ const MembershipProvider: FunctionComponent<
   };
 
   const onDeleteDaAbroad = () => {
-    setMembershipBranch(undefined);
+    // setMembershipBranch(undefined);
     setIsDaAbroadSelected(false);
     setUpdatedBranch(undefined);
     setBranch(undefined);
@@ -306,17 +306,39 @@ const MembershipProvider: FunctionComponent<
 
   useEffect(() => {
     setShowMembershipInfo(
-      typeof updatedBranch === 'undefined' ||
+      (typeof updatedBranch === 'undefined' && typeof branch === 'undefined') ||
         (membership?.status && membership?.status !== 'NotAMember')
     );
-  }, [membership?.status, updatedBranch]);
+  }, [membership?.status, updatedBranch, branch]);
 
   // Set default membership branch
   useEffect(() => {
-    if (branch) return;
     // Has a membership branch
+    if (
+      contextData?.address?.structure?.votingDistrict_id &&
+      !contextData?.address?.structure?.deleted &&
+      !isBranchOverrideSelected
+    ) {
+      setUpdatedBranch({
+        label: `${contextData?.address?.votingDistrict} (${contextData?.address?.structure?.votingDistrict_id})`,
+        description: `Voting district, ${contextData?.address?.province}`,
+        showConfirmCallout: true,
+        structure: contextData?.address?.structure,
+      });
+      return;
+    }
+
+    if (
+      contextData?.address?.structure?.deleted &&
+      (!isBranchOverrideSelected || !isDaAbroadSelected)
+    ) {
+      setBranch(undefined);
+      setUpdatedBranch(undefined);
+      return;
+    }
+
     if (membershipBranch?.key) {
-      if (membershipBranch.type === 'COUNTRY') {
+      if (membershipBranch.type === 'COUNTRY' && isDaAbroadSelected) {
         setBranch({
           label: countries?.[0]?.country || membershipBranch?.country_code,
           description: '',
@@ -325,7 +347,12 @@ const MembershipProvider: FunctionComponent<
         });
         return;
       } else {
-        if (isBranchOverrideSelected) {
+        if (
+          membershipBranch.type !== 'COUNTRY' &&
+          membershipBranch?.votingDistrict_id ===
+            personStructure?.votingDistrict_id &&
+          !contextData?.address?.structure?.deleted
+        ) {
           setBranch({
             label: `${membershipBranch.votingDistrict} (${membershipBranch.votingDistrict_id})`,
             description: getStructureDescription(membershipBranch),
@@ -334,11 +361,52 @@ const MembershipProvider: FunctionComponent<
           });
           return;
         }
+
+        if (
+          membershipBranch.type !== 'COUNTRY' &&
+          membershipBranch?.votingDistrict_id !==
+            personStructure?.votingDistrict_id &&
+          isBranchOverrideSelected
+        ) {
+          setBranch({
+            label: `${membershipBranch.votingDistrict} (${membershipBranch.votingDistrict_id})`,
+            description: getStructureDescription(membershipBranch),
+            showConfirmCallout: false,
+            structure: membershipBranch,
+          });
+          return;
+        }
+
+        // fallback
+        setBranch(undefined);
+        if (personStructure?.key && !contextData?.address?.structure?.deleted) {
+          // has a person structure so set it as the updated branch to force a save
+          setUpdatedBranch({
+            label: `${personStructure.votingDistrict} (${personStructure.votingDistrict_id})`,
+            description: getStructureDescription(personStructure),
+            showConfirmCallout: true,
+            structure: personStructure,
+          });
+          return;
+        }
+        if (
+          contextData?.address?.structure?.votingDistrict_id &&
+          !contextData?.address?.structure?.deleted
+        ) {
+          // has a person structure so set it as the updated branch to force a save
+          setUpdatedBranch({
+            label: `${contextData?.address?.votingDistrict} (${contextData?.address?.structure?.votingDistrict_id})`,
+            description: `Voting district, ${contextData?.address?.province}`,
+            showConfirmCallout: true,
+            structure: contextData?.address?.structure,
+          });
+        }
+        return;
       }
     }
 
     // no membership branch
-    if (!membershipBranch?.key || !isBranchOverrideSelected) {
+    if (!membershipBranch?.key) {
       if (personStructure?.key) {
         // has a person structure so set it as the updated branch to force a save
         setUpdatedBranch({
@@ -359,13 +427,14 @@ const MembershipProvider: FunctionComponent<
       }
     }
   }, [
-    branch,
+    // branch,
     membershipBranch,
     personStructure,
     countries,
     isDaAbroadSelected,
     isBranchOverrideSelected,
     contextData?.address?.structure,
+    contextData?.address?.structure?.deleted,
   ]);
 
   // Handle branch editable/deletable
@@ -550,6 +619,7 @@ const MembershipProvider: FunctionComponent<
     isDawnOptOutSelected,
     hasDaAbroad,
     hasBranchOverride,
+    contextData?.address?.structure,
   ]);
 
   return (

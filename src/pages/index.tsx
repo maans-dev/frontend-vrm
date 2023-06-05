@@ -92,17 +92,6 @@ const Index: FunctionComponent = () => {
           </EuiFlexItem>
         )} */}
 
-        {session && (
-          <EuiFlexItem>
-            <EuiCard
-              icon={<TbReport size="42px" />}
-              layout="horizontal"
-              title="My Activity"
-              description="My VRM history of canvassing, capturing & voter edits"
-              onClick={() => router.push('/my-activity')}
-            />
-          </EuiFlexItem>
-        )}
         {hasRole(Roles.ActivityReport) && (
           <EuiFlexItem>
             <EuiCard
@@ -111,6 +100,18 @@ const Index: FunctionComponent = () => {
               title="Activity Reports"
               description="VRM history of canvassing, capturing & voter edits"
               onClick={() => router.push('/activity-reports/voter-search')}
+            />
+          </EuiFlexItem>
+        )}
+
+        {session && (
+          <EuiFlexItem>
+            <EuiCard
+              icon={<TbReport size="42px" />}
+              layout="horizontal"
+              title="My Activity"
+              description="My VRM history of canvassing, capturing & voter edits"
+              onClick={() => router.push('/my-activity')}
             />
           </EuiFlexItem>
         )}
