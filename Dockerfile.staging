@@ -18,7 +18,7 @@ ENV NEXT_TELEMETRY_DISABLED 1
 ARG CI_COMMIT_SHORT_SHA
 ENV NEXT_PUBLIC_VERSION ${CI_COMMIT_SHORT_SHA}
 
-RUN yarn build
+RUN yarn build:staging
 
 # Production image, copy all the files and run next
 FROM node:19-alpine AS production
