@@ -4,6 +4,7 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiFormFieldset,
+  EuiLink,
   EuiSpacer,
   EuiText,
 } from '@elastic/eui';
@@ -20,6 +21,7 @@ const BranchInfo: FunctionComponent = () => {
     setShowBranchOverrideModal,
     onDeleteDaAbroad,
     onDeleteBranchOverride,
+    onSelectAddressTab,
   } = useContext(MembershipContext);
 
   const [branchToDisplay, setBranchToDisplay] = useState(
@@ -43,8 +45,27 @@ const BranchInfo: FunctionComponent = () => {
   };
 
   useEffect(() => {
-    setBranchToDisplay(updatedBranch || branch);
-  }, [branch, branchToDisplay, updatedBranch]);
+    if (updatedBranch || branch) {
+      setBranchToDisplay(updatedBranch || branch);
+    } else {
+      setBranchToDisplay({
+        label: (
+          <EuiText size="s" color="danger">
+            No geocoded address found.
+          </EuiText>
+        ),
+        description: (
+          <EuiLink color="primary" onClick={() => onSelectAddressTab()}>
+            <EuiText size="s">
+              Add a geocoded address for this person here.
+            </EuiText>
+          </EuiLink>
+        ),
+        showConfirmCallout: false,
+        structure: null,
+      });
+    }
+  }, [branch, updatedBranch]);
 
   return (
     <EuiFormFieldset legend={{ children: 'Branch Info' }}>

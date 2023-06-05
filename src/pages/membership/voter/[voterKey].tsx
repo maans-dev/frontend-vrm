@@ -228,7 +228,8 @@ const Voter: FunctionComponent = () => {
                 onClick={() => handleTabChange(3)}
                 isSelected={selectedTab === 3}>
                 {person?.membership?.structure?.key === null &&
-                person?.membership?.status !== 'NotAMember' ? (
+                person?.membership?.status !== 'NotAMember' &&
+                person?.membership?.status ? (
                   <EuiText size="xs" color="warning">
                     <EuiIcon type="alert" color="warning" />{' '}
                     <strong>Membership</strong>
@@ -293,7 +294,9 @@ const Voter: FunctionComponent = () => {
             </div>
 
             <div style={{ display: selectedTab === 3 ? 'block' : 'none' }}>
-              <MembershipProvider person={person}>
+              <MembershipProvider
+                person={person}
+                onSelectAddressTab={handleGoToAddress}>
                 <Membership />
               </MembershipProvider>
             </div>

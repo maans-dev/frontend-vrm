@@ -25,7 +25,7 @@ import {
 
 export interface Branch {
   label: string | React.ReactNode;
-  description: string;
+  description: string | React.ReactNode;
   showConfirmCallout: boolean;
   structure: Partial<Structure>;
 }
@@ -37,6 +37,7 @@ export interface CancellationInfo {
 
 export type MembershipContextType = {
   person: Partial<Person>;
+  onSelectAddressTab: () => void;
   personAge: number;
   membership: Membership;
   statusColour: string;
@@ -91,9 +92,9 @@ export const MembershipContext = createContext<Partial<MembershipContextType>>(
 );
 
 const MembershipProvider: FunctionComponent<
-  Pick<MembershipContextType, 'person'>
-> = ({ children, person }) => {
-  const { setUpdatePayload } = useContext(CanvassingContext);
+  Pick<MembershipContextType, 'person' | 'onSelectAddressTab'>
+> = ({ children, person, onSelectAddressTab }) => {
+  const { setUpdatePayload, data: contextData } = useContext(CanvassingContext);
 
   const onChange = (update: PersonUpdate<MembershipUpdate>) => {
     update.data.type = updateType;
@@ -148,7 +149,7 @@ const MembershipProvider: FunctionComponent<
 
   const [showBranchOverrideModal, setShowBranchOverrideModal] = useState(false);
 
-  const [hasDaAbroad, setHasDaAbroad] = useState(membership?.daAbroad !== null);
+  const [hasDaAbroad, setHasDaAbroad] = useState(true);
 
   const [isDaAbroadSelected, setIsDaAbroadSelected] = useState(
     membership?.daAbroad === true
@@ -347,6 +348,15 @@ const MembershipProvider: FunctionComponent<
           structure: personStructure,
         });
       }
+      if (contextData?.address?.structure?.votingDistrict_id) {
+        // has a person structure so set it as the updated branch to force a save
+        setUpdatedBranch({
+          label: `${contextData?.address?.votingDistrict} (${contextData?.address?.structure?.votingDistrict_id})`,
+          description: `Voting district, ${contextData?.address?.province}`,
+          showConfirmCallout: true,
+          structure: contextData?.address?.structure,
+        });
+      }
     }
   }, [
     branch,
@@ -355,6 +365,7 @@ const MembershipProvider: FunctionComponent<
     countries,
     isDaAbroadSelected,
     isBranchOverrideSelected,
+    contextData?.address?.structure,
   ]);
 
   // Handle branch editable/deletable
@@ -545,6 +556,7 @@ const MembershipProvider: FunctionComponent<
     <MembershipContext.Provider
       value={{
         person,
+        onSelectAddressTab,
         membership,
         statusColour,
         personAge,
