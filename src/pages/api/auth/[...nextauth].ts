@@ -82,8 +82,11 @@ export const authOptions: NextAuthOptions = {
   },
   // debug: true,
   callbacks: {
-    async jwt({ token, user, account, profile }) {
+    async jwt({ token, user, account, profile, trigger, session }) {
       if (token?.error) delete token.error;
+      if (trigger === 'update' && session?.disclosureAccepted) {
+        token.disclosureAccepted = session.disclosureAccepted;
+      }
       if (account && user && profile && user?.user?.darn_number) {
         token.accessToken = account.access_token;
         token.accessTokenExpires = account.expires_at;
@@ -120,6 +123,7 @@ export const authOptions: NextAuthOptions = {
         session.user.roles = token.roles as string[];
         session.accessToken = token.accessToken as string;
         session.error = token.error as string;
+        session.disclosureAccepted = token.disclosureAccepted as boolean;
         delete session.user.image;
         // console.log('session', { session, token, user });
         session.user.roles = await fetchAndExtractRoles(

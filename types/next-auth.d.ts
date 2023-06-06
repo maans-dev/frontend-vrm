@@ -1,9 +1,10 @@
-import NextAuth, { DefaultSession, DefaultUser } from 'next-auth';
+import { DefaultSession, DefaultUser } from 'next-auth';
 
 declare module 'next-auth' {
   export interface Session {
     accessToken: string;
     error?: string;
+    disclosureAccepted?: boolean;
     user: {
       givenName: string;
       surname: string;
