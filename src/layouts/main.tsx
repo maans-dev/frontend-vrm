@@ -23,6 +23,13 @@ import Spinner from '@components/spinner/spinner';
 import { Roles } from '@lib/domain/auth';
 import dynamic from 'next/dynamic';
 
+const DisclosureNoticeModal = dynamic(
+  () => import('@components/disclosure-notice/disclosure-modal'),
+  {
+    ssr: false,
+  }
+);
+
 const Footer = dynamic(() => import('@components/footer/footer'), {
   ssr: false,
 });
@@ -48,7 +55,6 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
   ...rest
 }) => {
   const router = useRouter();
-  // const { euiTheme } = useEuiTheme();
 
   const [showSubHeader, setShowSubHeader] = useState(false);
   // const [showCanvassHeader, setShowCanvassHeader] = useState(false);
@@ -70,6 +76,7 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
 
   return (
     <div css={{ position: 'relative' }}>
+      <DisclosureNoticeModal />
       <Spinner show={showSpinner} />
       <EuiPageTemplate
         style={{
