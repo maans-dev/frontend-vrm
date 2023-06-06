@@ -104,7 +104,11 @@ const MembershipProvider: FunctionComponent<
     hasRoleUtil(role, session?.user?.roles, false);
 
   const onChange = (update: PersonUpdate<MembershipUpdate>) => {
-    update.data.type = updateType;
+    if (update.field === 'comments') {
+      update.data.type = 'membership';
+    } else {
+      update.data.type = updateType;
+    }
     setUpdatePayload(update);
   };
 
