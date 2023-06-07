@@ -1,4 +1,4 @@
-import { FunctionComponent, useContext, useState } from 'react';
+import { FunctionComponent, useContext, useEffect, useState } from 'react';
 import {
   EuiButtonEmpty,
   EuiFieldText,
@@ -16,8 +16,9 @@ export type Props = {
 
 const AddEditEmail: FunctionComponent<Props> = ({ emailContact, onUpdate }) => {
   const [email, setEmail] = useState(emailContact?.value || '');
-  const { nextId } = useContext(CanvassingContext);
+  const { nextId, data } = useContext(CanvassingContext);
   const [isInvalid, setIsInvalid] = useState(false);
+  const [duplicateEntry, setDuplicateEntry] = useState(false);
 
   function isEmail(value: string): boolean {
     const pattern =
@@ -52,6 +53,19 @@ const AddEditEmail: FunctionComponent<Props> = ({ emailContact, onUpdate }) => {
     }
   };
 
+  useEffect(() => {
+    if (
+      data &&
+      data.contacts &&
+      data.contacts.length > 0 &&
+      data.contacts[0].value === email
+    ) {
+      setDuplicateEntry(true);
+    } else {
+      setDuplicateEntry(false);
+    }
+  }, [data, email]);
+
   return (
     <EuiFlexGroup responsive={false} gutterSize="xs">
       <EuiFlexItem>
@@ -72,7 +86,7 @@ const AddEditEmail: FunctionComponent<Props> = ({ emailContact, onUpdate }) => {
       <EuiFlexItem grow={false}>
         <EuiFormRow display="rowCompressed">
           <EuiButtonEmpty
-            disabled={!email}
+            disabled={!email || duplicateEntry}
             size="s"
             css={{ minWidth: '50px' }}
             onClick={handleUpdate}>

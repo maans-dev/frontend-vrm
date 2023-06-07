@@ -1,4 +1,4 @@
-import { FunctionComponent, useContext, useState } from 'react';
+import { FunctionComponent, useContext, useEffect, useState } from 'react';
 import {
   EuiButtonEmpty,
   EuiFieldText,
@@ -80,7 +80,8 @@ const AddEditNumber: FunctionComponent<Props> = ({
   const [phoneNumber, setPhoneNumber] = useState(phoneContact?.value || '');
   const [isInvalid, setIsInvalid] = useState(false);
   const [error, setError] = useState('');
-  const { nextId } = useContext(CanvassingContext);
+  const { nextId, data } = useContext(CanvassingContext);
+  const [duplicateEntry, setDuplicateEntry] = useState(false);
 
   const onChangePhoneType = value => {
     setSelectedPhoneType(value);
@@ -159,6 +160,19 @@ const AddEditNumber: FunctionComponent<Props> = ({
     }
   };
 
+  useEffect(() => {
+    if (
+      data &&
+      data.contacts &&
+      data.contacts.length > 0 &&
+      data.contacts[0].value === phoneNumber
+    ) {
+      setDuplicateEntry(true);
+    } else {
+      setDuplicateEntry(false);
+    }
+  }, [data, phoneNumber]);
+
   return (
     <EuiFlexGroup responsive={false} gutterSize="xs">
       <EuiFlexItem grow={false} css={{ minWidth: '40px' }}>
@@ -194,7 +208,7 @@ const AddEditNumber: FunctionComponent<Props> = ({
       <EuiFlexItem grow={false}>
         <EuiFormRow display="rowCompressed">
           <EuiButtonEmpty
-            disabled={!phoneNumber}
+            disabled={!phoneNumber || duplicateEntry}
             size="s"
             css={{ minWidth: '50px' }}
             onClick={handleUpdate}>
