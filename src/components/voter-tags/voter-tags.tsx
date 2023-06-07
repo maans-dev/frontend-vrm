@@ -1,10 +1,17 @@
 import React, {
   FunctionComponent,
+  useCallback,
   useContext,
   useEffect,
   useState,
 } from 'react';
-import { EuiComboBox, EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
+import {
+  EuiComboBox,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiFormErrorText,
+  EuiSpacer,
+} from '@elastic/eui';
 import Tag from './tag';
 import { Field } from '@lib/domain/person';
 import { CanvassingContext } from '@lib/context/canvassing.context';
@@ -22,10 +29,11 @@ export type IPartyTags = {
 export interface Props {
   fields: Partial<Field>[];
   onChange?: (f: Partial<Field>) => void;
-  isLoading?: boolean;
   searchFields: Partial<Field>[];
   handleSearchChange: (searchTerm: string) => void;
   searchValue: string;
+  isLoading?: boolean;
+  tagFetcherror: Error;
 }
 
 const VoterTags: FunctionComponent<Props> = ({
@@ -35,6 +43,7 @@ const VoterTags: FunctionComponent<Props> = ({
   searchFields,
   handleSearchChange,
   searchValue,
+  tagFetcherror,
 }: Props) => {
   const [originalFields, setOriginalFields] = useState(
     fields?.filter(f => !CanvassingTagCodes.includes(f.field.code))
@@ -44,9 +53,7 @@ const VoterTags: FunctionComponent<Props> = ({
   );
   const { nextId } = useContext(CanvassingContext);
 
-  // TODO: Memoize the callback function used in the useEffect hook by using useCallback. This can improve the performance of the component by avoiding unnecessary re-renders when the fields array is updated.
-  // TODO: Review if there is a better solution to handle the state update in useEffect after the fields have been set.
-  useEffect(() => {
+  const handleFieldsUpdate = useCallback(() => {
     setFieldsInternal(
       fields?.filter(f => !CanvassingTagCodes.includes(f.field.code))
     );
@@ -55,11 +62,9 @@ const VoterTags: FunctionComponent<Props> = ({
     );
   }, [fields]);
 
-  useCanvassFormReset(() => {
-    setFieldsInternal(
-      fields?.filter(f => !CanvassingTagCodes.includes(f.field.code))
-    );
-  });
+  useEffect(() => {
+    handleFieldsUpdate();
+  }, [handleFieldsUpdate]);
 
   const renderedBadges = fieldsInternal
     ? [...fieldsInternal]
@@ -106,8 +111,23 @@ const VoterTags: FunctionComponent<Props> = ({
     onChange(updatedField);
   };
 
+  useCanvassFormReset(() => {
+    setFieldsInternal(
+      fields?.filter(f => !CanvassingTagCodes.includes(f.field.code))
+    );
+  });
+
   return (
     <>
+      {tagFetcherror && (
+        <>
+          <EuiFormErrorText style={{ marginLeft: '5px' }}>
+            An error occurred while fetching the tags. Please try again later.
+          </EuiFormErrorText>
+          <EuiSpacer size="s" />
+        </>
+      )}
+
       <EuiComboBox
         // compressed
         async
