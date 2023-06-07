@@ -1,9 +1,11 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { EuiConfirmModal, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui';
+import { EuiConfirmModal, EuiText, EuiTitle } from '@elastic/eui';
 import { signOut, useSession } from 'next-auth/react';
 import { css } from '@emotion/react';
+import { useRouter } from 'next/router';
 
 const DisclosureNoticeModal: FunctionComponent = () => {
+  const router = useRouter();
   const { data: session, update } = useSession();
   const isFeatureEnabled = process.env.NEXT_PUBLIC_DISCLOSURE_MODAL;
   const [shouldModalRender, setShouldModalRender] = useState(false); //This avoids flashing the modal after user has already accepted
@@ -13,7 +15,6 @@ const DisclosureNoticeModal: FunctionComponent = () => {
     const data = {
       accepted: true,
     };
-
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -22,9 +23,7 @@ const DisclosureNoticeModal: FunctionComponent = () => {
       },
       body: JSON.stringify(data),
     });
-
-    const respPayload = await response.clone().json();
-
+    // const respPayload = await response.clone().json();
     if (!response.ok) {
       const errJson = JSON.parse(await response.clone().text());
       console.log(errJson);
@@ -40,7 +39,11 @@ const DisclosureNoticeModal: FunctionComponent = () => {
   useEffect(() => {
     if (!session) return;
     setShouldModalRender(true);
-  }, [session]);
+
+    if (!session.disclosureAccepted) {
+      router.push('/'); // Navigate back to the home screen
+    }
+  }, [session, session?.disclosureAccepted]);
 
   return shouldModalRender &&
     isFeatureEnabled &&
@@ -57,8 +60,7 @@ const DisclosureNoticeModal: FunctionComponent = () => {
       cancelButtonText="Decline"
       confirmButtonText="Accept"
       defaultFocusedButton="confirm">
-      <EuiSpacer size="xs" />
-      <EuiTitle size="s">
+      <EuiTitle size="s" css={{ paddingTop: '10px' }}>
         <h3>Authorized Users and Access</h3>
       </EuiTitle>
       <EuiText size="s">
