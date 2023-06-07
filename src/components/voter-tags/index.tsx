@@ -13,8 +13,7 @@ export type Props = {
 
 const Tags: FunctionComponent<Props> = ({ fields, onChange }) => {
   const [searchValue, setSearchValue] = useState('');
-  // TODO: Add error handling for useTagFetcher
-  const { data, isLoading } = useTagFetcher(searchValue);
+  const { data, isLoading, error } = useTagFetcher(searchValue);
   const [searchFields, setSearchFields] = useState<Partial<Field>[]>(null);
 
   useEffect(() => {
@@ -70,6 +69,7 @@ const Tags: FunctionComponent<Props> = ({ fields, onChange }) => {
 
   return (
     <VoterTags
+      tagFetcherror={error}
       isLoading={isLoading}
       fields={fields}
       onChange={handleChange}
