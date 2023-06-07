@@ -51,14 +51,16 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
   };
 
   const setSelectedAddress = (option: Partial<Address>) => {
-    if (option.latitude && option.longitude) {
-      option.geocodeSource = GeocodedAddressSource.GEOCODED_ADDRESS;
-    } else {
-      option.geocodeSource = GeocodedAddressSource.UNGEOCODED;
-    }
+    if (!option?.geocodeSource) {
+      if (option.latitude && option.longitude) {
+        option.geocodeSource = GeocodedAddressSource.GEOCODED_ADDRESS;
+      } else {
+        option.geocodeSource = GeocodedAddressSource.UNGEOCODED;
+      }
 
-    if (option?.service?.type === 'VOTING_DISTRICT') {
-      option.geocodeSource = GeocodedAddressSource.GEOCODED_VD;
+      if (option?.service?.type === 'VOTING_DISTRICT') {
+        option.geocodeSource = GeocodedAddressSource.GEOCODED_VD;
+      }
     }
 
     setAddress({ ...option, buildingName: '', buildingNo: '', comment: '' });

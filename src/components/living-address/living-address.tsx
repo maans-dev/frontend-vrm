@@ -49,7 +49,11 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
       userDecisionTimeout: 5000,
     });
 
-  const onUseMyLocation = async (latitude: number, longitude: number) => {
+  const onUseMyLocation = async (
+    latitude: number,
+    longitude: number,
+    geocodeSource: GeocodedAddressSource
+  ) => {
     setIsLoading(true);
     setSearchResults([]);
 
@@ -91,7 +95,15 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
 
     const respPayload = await response.json();
 
-    setSearchResults(respPayload?.data?.results?.values || []);
+    const results = respPayload?.data?.results?.values.map(a => {
+      return a.service.type !== 'ROOFTOP'
+        ? { ...a, latitude, longitude, geocodeSource }
+        : a;
+    });
+
+    // console.log('[results]', { latitude, longitude, results });
+
+    setSearchResults(results || []);
   };
 
   const getFormattedAddress = () => {
@@ -247,7 +259,13 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
           iconSide="left"
           // disabled={!isGeolocationEnabled}
           color="primary"
-          onClick={() => onUseMyLocation(coords.latitude, coords.longitude)}>
+          onClick={() =>
+            onUseMyLocation(
+              coords.latitude,
+              coords.longitude,
+              GeocodedAddressSource.GEOCODED_DEVICE
+            )
+          }>
           Use device location
         </EuiButton>
       );
@@ -384,7 +402,16 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
             </EuiPanel>
           </EuiFormRow>
         </EuiFlexItem>
-        <Map address={updatedAddress} onAddressChange={onUseMyLocation} />
+        <Map
+          address={updatedAddress}
+          onAddressChange={(latitude, longitude) =>
+            onUseMyLocation(
+              latitude,
+              longitude,
+              GeocodedAddressSource.GEOCODED_PIN
+            )
+          }
+        />
       </EuiFlexGroup>
     </div>
   );

@@ -17,6 +17,7 @@ export enum GeocodedAddressSource {
   GEOCODED_VD = 'GEOCODED_VD',
   GEOCODED_ADDRESS = 'GEOCODED_ADDRESS',
   GEOCODED_PIN = 'GEOCODED_PIN',
+  GEOCODED_DEVICE = 'GEOCODED_DEVICE',
 }
 
 export enum Province {
