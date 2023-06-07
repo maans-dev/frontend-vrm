@@ -18,6 +18,7 @@ import { MembershipPayment, Person } from '@lib/domain/person';
 import moment from 'moment';
 import { FunctionComponent, useContext, useEffect, useState } from 'react';
 import { MembershipContext } from '../membership.context';
+import { MembershipPaymentOptions } from '../utils';
 
 const RenewModal: FunctionComponent = () => {
   const {
@@ -150,22 +151,23 @@ const RenewModal: FunctionComponent = () => {
 
             <EuiFormRow label="Years / Amount" display="rowCompressed">
               <EuiSelect
-                options={[
-                  { value: 'option_one', text: '1 Year / R10' },
-                  { value: 'option_two', text: '5 Years / R50' },
-                ]}
-                value={years === 1 ? 'option_one' : 'option_two'}
+                options={MembershipPaymentOptions.map(option => ({
+                  value: option.value,
+                  text: option.text,
+                }))}
+                value={
+                  MembershipPaymentOptions.find(
+                    option => option.years === years
+                  )?.value
+                }
                 compressed
                 onChange={e => {
-                  switch (e.target.value) {
-                    case 'option_one':
-                      setYears(1);
-                      setAmount(10);
-                      break;
-                    case 'option_two':
-                      setYears(5);
-                      setAmount(50);
-                      break;
+                  const selectedOption = MembershipPaymentOptions.find(
+                    option => option.value === e.target.value
+                  );
+                  if (selectedOption) {
+                    setYears(selectedOption.years);
+                    setAmount(selectedOption.amount);
                   }
                 }}
               />

@@ -1,4 +1,3 @@
-import CountrySearch from '@components/country-search';
 import Structres from '@components/structure-search';
 import {
   EuiButton,
@@ -19,11 +18,6 @@ import { Structure } from '@lib/domain/person';
 import { FunctionComponent, useContext, useState } from 'react';
 import { MembershipContext } from '../membership.context';
 
-interface Country {
-  name: string;
-  code: string;
-}
-
 const BranchOverrideModal: FunctionComponent = () => {
   const {
     isBranchOverrideSelected,
@@ -34,8 +28,6 @@ const BranchOverrideModal: FunctionComponent = () => {
     setIsBranchOverrideSelected,
     getStructureDescription,
     personStructure,
-    membership,
-    onChange,
   } = useContext(MembershipContext);
 
   const [selectedOverrideBranch, setSelectedOverrideBranch] =

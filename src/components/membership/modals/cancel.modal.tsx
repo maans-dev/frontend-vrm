@@ -1,9 +1,6 @@
-import PersonSearch from '@components/person-search';
 import {
   EuiButton,
   EuiButtonEmpty,
-  EuiDatePicker,
-  EuiFieldText,
   EuiFormFieldset,
   EuiFormRow,
   EuiModal,
@@ -15,14 +12,11 @@ import {
   EuiSelect,
   EuiTextArea,
 } from '@elastic/eui';
-import { Membership, MembershipPayment, Person } from '@lib/domain/person';
-import moment from 'moment';
 import { FunctionComponent, useContext, useEffect, useState } from 'react';
 import { CancellationInfo, MembershipContext } from '../membership.context';
 
 const CancelModal: FunctionComponent = () => {
   const {
-    person,
     isCancelModalVisible,
     setIsCancelModalVisible,
     setUpdateType,
