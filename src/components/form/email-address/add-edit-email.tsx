@@ -58,7 +58,7 @@ const AddEditEmail: FunctionComponent<Props> = ({ emailContact, onUpdate }) => {
       data &&
       data.contacts &&
       data.contacts.length > 0 &&
-      data.contacts[0].value === email
+      data.contacts.some(contact => contact.value === email)
     ) {
       setDuplicateEntry(true);
     } else {

@@ -165,7 +165,7 @@ const AddEditNumber: FunctionComponent<Props> = ({
       data &&
       data.contacts &&
       data.contacts.length > 0 &&
-      data.contacts[0].value === phoneNumber
+      data.contacts.some(contact => contact.value === phoneNumber)
     ) {
       setDuplicateEntry(true);
     } else {
