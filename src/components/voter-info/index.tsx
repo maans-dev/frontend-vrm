@@ -23,6 +23,7 @@ import { MdHowToVote } from 'react-icons/md';
 import { renderName } from '@lib/person/utils';
 
 export type Props = {
+  deceased?: boolean;
   darn: number;
   salutation: string;
   givenName: string;
@@ -37,6 +38,7 @@ export type Props = {
 };
 
 const VoterInfo: FunctionComponent<Props> = ({
+  deceased,
   darn,
   salutation,
   givenName,
@@ -50,6 +52,8 @@ const VoterInfo: FunctionComponent<Props> = ({
   membership,
 }) => {
   const getBadgeColour = () => {
+    if (deceased) return '#cccccc';
+
     if (colourCode?.colour && colourCode?.colour !== 'FFFFFF')
       return `#${colourCode.colour}`;
 
@@ -71,7 +75,7 @@ const VoterInfo: FunctionComponent<Props> = ({
               </EuiTextColor>
             </EuiTitle>
           </EuiFlexItem>
-          {['Active', 'Expired'].includes(membership?.status) && (
+          {['Active', 'Expired'].includes(membership?.status) && !deceased && (
             <EuiFlexItem
               grow={false}
               style={{ inlineSize: 'auto', flexBasis: 'auto' }}>
@@ -92,7 +96,7 @@ const VoterInfo: FunctionComponent<Props> = ({
             iconType={
               colourCode?.name == 'Green' ? 'checkInCircleFilled' : null
             }>
-            {colourCode?.description}
+            {deceased ? 'Deceased' : colourCode?.description}
           </EuiBadge>
         </EuiFlexItem>
       </EuiFlexGroup>

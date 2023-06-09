@@ -191,6 +191,7 @@ const Voter: FunctionComponent = () => {
       restrictWidth="1400px">
       <EuiPanel>
         <VoterInfo
+          deceased={person?.deceased}
           darn={person?.key}
           salutation={person?.salutation}
           givenName={person?.givenName || person?.firstName}

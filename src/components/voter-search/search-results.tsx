@@ -153,11 +153,11 @@ const SearchResults: FunctionComponent<Props> = ({
       field: 'colourCode',
       name: 'Colour Code',
       valign: 'top',
-      render: (color: Person['colourCode']) => (
+      render: (color: Person['colourCode'], person: Person) => (
         <EuiBadge
           // css={{ color: 'white !important' }}
-          color={`#${color.colour}`}>
-          {color.description}
+          color={person?.deceased ? '#cccccc' : `#${color.colour}`}>
+          {person?.deceased ? 'Deceased' : color?.description}
         </EuiBadge>
       ),
       mobileOptions: {
