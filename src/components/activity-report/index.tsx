@@ -7,6 +7,7 @@ import {
 import { css } from '@emotion/react';
 import { MyActivityReport } from '@lib/domain/person-history';
 import React, { FunctionComponent, useEffect, useState } from 'react';
+import startCase from 'lodash/startCase';
 
 export interface Props {
   report: MyActivityReport[];
@@ -40,14 +41,7 @@ const ActivityReportTable: FunctionComponent<Props> = ({ report }) => {
 
   const items = reportItems?.map(item => ({
     id: item.person,
-    name:
-      item.name === 'canvassed'
-        ? 'Canvassed'
-        : item.name === 'votersCanvassed'
-        ? 'Voters Canvassed'
-        : item.name === 'captures'
-        ? 'Captures'
-        : item.name,
+    name: startCase(item.name),
     prev7days: item.prev7days,
     prev30days: item.prev30days,
     ytd: item.ytd,
