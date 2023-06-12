@@ -17,10 +17,15 @@ export default function usePersonFetcher(key: string) {
     }
   );
 
+  let emptyError;
+  if (!data?.length && !error) {
+    emptyError = new Error(`A voter with DARN "${key}" does not exist`);
+  }
+
   return {
     person: data?.[0],
     isLoading,
-    error: error,
+    error: error || emptyError,
     mutate,
     isValidating,
   };

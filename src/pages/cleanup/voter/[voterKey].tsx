@@ -3,6 +3,7 @@ import {
   EuiBreadcrumb,
   EuiButton,
   EuiButtonEmpty,
+  EuiCallOut,
   EuiFlexGroup,
   EuiFlexItem,
   EuiForm,
@@ -31,7 +32,7 @@ import { useLeavePageConfirmation } from '@lib/hooks/useLeavePageConfirmation';
 const Voter: FunctionComponent = () => {
   const router = useRouter();
   const voterKey = router.query.voterKey as string;
-  const { person, isLoading, isValidating } = usePersonFetcher(voterKey);
+  const { person, isLoading, isValidating, error } = usePersonFetcher(voterKey);
   const [selectedTab, setSelectedTab] = useState(0);
 
   const {
@@ -102,16 +103,6 @@ const Voter: FunctionComponent = () => {
     if (person) setPerson(person);
   }, [person, setPerson]);
 
-  if (isLoading || !voterKey) {
-    return (
-      <MainLayout
-        breadcrumb={breadcrumb}
-        showSpinner={isLoading}
-        panelled={false}
-      />
-    );
-  }
-
   const tabsStyle = css`
     .euiTab {
       position: relative;
@@ -160,6 +151,22 @@ const Voter: FunctionComponent = () => {
       display: none;
     }
   `;
+
+  if (error) {
+    return (
+      <MainLayout
+        breadcrumb={breadcrumb}
+        showSpinner={isLoading || isSubmitting || isValidating || !voterKey}
+        panelled={false}>
+        <EuiCallOut
+          title="Something went wrong"
+          color="danger"
+          iconType="error">
+          {error?.message}
+        </EuiCallOut>
+      </MainLayout>
+    );
+  }
 
   if (isLoading || isSubmitting || isValidating || !voterKey) {
     return (

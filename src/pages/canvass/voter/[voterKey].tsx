@@ -31,7 +31,7 @@ import { useLeavePageConfirmation } from '@lib/hooks/useLeavePageConfirmation';
 const Voter: FunctionComponent = () => {
   const router = useRouter();
   const voterKey = router.query['voterKey'] as string;
-  const { person, isLoading, isValidating } = usePersonFetcher(voterKey);
+  const { person, isLoading, isValidating, error } = usePersonFetcher(voterKey);
   const [confirmed, setConfirmed] = useState(false);
 
   const {
@@ -116,6 +116,22 @@ const Voter: FunctionComponent = () => {
     if (person) setPerson(person);
   }, [person, setPerson]);
 
+  if (error) {
+    return (
+      <MainLayout
+        breadcrumb={breadcrumb}
+        showSpinner={isLoading || isSubmitting || isValidating || !voterKey}
+        panelled={false}>
+        <EuiCallOut
+          title="Something went wrong"
+          color="danger"
+          iconType="error">
+          {error?.message}
+        </EuiCallOut>
+      </MainLayout>
+    );
+  }
+
   if (isLoading || isSubmitting || isValidating || !voterKey) {
     return (
       <MainLayout
@@ -134,7 +150,7 @@ const Voter: FunctionComponent = () => {
       <EuiPanel>
         <VoterInfo
           deceased={person?.deceased}
-          darn={person.key}
+          darn={person?.key}
           salutation={person?.salutation}
           givenName={person?.givenName || person?.firstName}
           surname={person?.surname}
