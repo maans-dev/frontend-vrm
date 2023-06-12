@@ -34,7 +34,7 @@ import MembershipProvider from '@components/membership/membership.context';
 const Voter: FunctionComponent = () => {
   const router = useRouter();
   const voterKey = router.query.voterKey as string;
-  const { person, isLoading } = usePersonFetcher(voterKey);
+  const { person, isLoading, isValidating } = usePersonFetcher(voterKey);
   const [selectedTab, setSelectedTab] = useState(0);
 
   const {
@@ -173,12 +173,13 @@ const Voter: FunctionComponent = () => {
     handleTabChange(1);
   }
 
-  if (isLoading || !voterKey) {
+  if (isLoading || isSubmitting || isValidating || !voterKey) {
     return (
       <MainLayout
         breadcrumb={breadcrumb}
-        showSpinner={isLoading}
+        showSpinner={isLoading || isSubmitting || isValidating || !voterKey}
         panelled={false}
+        restrictWidth="1400px"
       />
     );
   }

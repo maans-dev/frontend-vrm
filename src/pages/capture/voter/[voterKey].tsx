@@ -31,7 +31,7 @@ import { useLeavePageConfirmation } from '@lib/hooks/useLeavePageConfirmation';
 const Voter: FunctionComponent = () => {
   const router = useRouter();
   const voterKey = router.query.voterKey as string;
-  const { person, isLoading } = usePersonFetcher(voterKey);
+  const { person, isLoading, isValidating } = usePersonFetcher(voterKey);
   const [confirmed, setConfirmed] = useState(false);
 
   const {
@@ -116,29 +116,21 @@ const Voter: FunctionComponent = () => {
     if (person) setPerson(person);
   }, [person, setPerson]);
 
-  if (isLoading || !voterKey) {
+  if (isLoading || isSubmitting || isValidating || !voterKey) {
     return (
       <MainLayout
         breadcrumb={breadcrumb}
-        showSpinner={isLoading}
+        showSpinner={isLoading || isSubmitting || isValidating || !voterKey}
         panelled={false}
       />
     );
   }
 
-  // if (error) {
-  //   return (
-  //     <EuiCallOut title="Error" color="danger" iconType="alert">
-  //       {error}
-  //     </EuiCallOut>
-  //   );
-  // }
-
   return (
     <MainLayout
       breadcrumb={breadcrumb}
       panelled={false}
-      showSpinner={isSubmitting}>
+      showSpinner={isLoading || isSubmitting || isValidating}>
       {/* {isComplete && successModal} */}
       <EuiPanel>
         <VoterInfo

@@ -31,7 +31,7 @@ import { useLeavePageConfirmation } from '@lib/hooks/useLeavePageConfirmation';
 const Voter: FunctionComponent = () => {
   const router = useRouter();
   const voterKey = router.query.voterKey as string;
-  const { person, isLoading } = usePersonFetcher(voterKey);
+  const { person, isLoading, isValidating } = usePersonFetcher(voterKey);
   const [selectedTab, setSelectedTab] = useState(0);
 
   const {
@@ -161,10 +161,21 @@ const Voter: FunctionComponent = () => {
     }
   `;
 
+  if (isLoading || isSubmitting || isValidating || !voterKey) {
+    return (
+      <MainLayout
+        breadcrumb={breadcrumb}
+        showSpinner={isLoading || isSubmitting || isValidating || !voterKey}
+        restrictWidth="1400px"
+        panelled={false}
+      />
+    );
+  }
+
   return (
     <MainLayout
       breadcrumb={breadcrumb}
-      showSpinner={isSubmitting}
+      showSpinner={isLoading || isSubmitting || isValidating}
       restrictWidth="1400px"
       panelled={false}>
       {/* {isComplete && successModal} */}

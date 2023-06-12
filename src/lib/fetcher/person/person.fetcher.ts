@@ -5,7 +5,7 @@ import { fetcherAPI } from '../api.fetcher';
 export default function usePersonFetcher(key: string) {
   const shouldFetch = key ? true : false;
 
-  const { data, error, isLoading, mutate } = useSWR<Person[]>(
+  const { data, error, isLoading, mutate, isValidating } = useSWR<Person[]>(
     shouldFetch
       ? `/person?key=${key}&template=["Address","Contact","Fields","Comment","Canvass","Membership"]`
       : null,
@@ -22,5 +22,6 @@ export default function usePersonFetcher(key: string) {
     isLoading,
     error: error,
     mutate,
+    isValidating,
   };
 }
