@@ -35,11 +35,16 @@ const BranchOverrideModal: FunctionComponent = () => {
 
   const handleSetBranch = () => {
     setUpdatedBranch({
-      label: `${selectedOverrideBranch.votingDistrict} (${selectedOverrideBranch.votingDistrict_id})`,
+      label:
+        selectedOverrideBranch.type.toLowerCase() === 'ward'
+          ? selectedOverrideBranch.formatted
+          : `${selectedOverrideBranch.votingDistrict} (${selectedOverrideBranch.votingDistrict_id})`,
       description: getStructureDescription(selectedOverrideBranch),
       showConfirmCallout: false,
       structure: {
-        votingDistrict_id: selectedOverrideBranch.votingDistrict_id,
+        ...(selectedOverrideBranch.type.toLowerCase() === 'ward'
+          ? { ward: selectedOverrideBranch.ward }
+          : { votingDistrict_id: selectedOverrideBranch.votingDistrict_id }),
         type: selectedOverrideBranch?.type,
       },
     });
@@ -84,8 +89,9 @@ const BranchOverrideModal: FunctionComponent = () => {
                   <EuiFlexItem>
                     <EuiText size="s" color="primary">
                       <strong>
-                        {selectedOverrideBranch.votingDistrict} (
-                        {selectedOverrideBranch.votingDistrict_id})
+                        {selectedOverrideBranch.type.toLowerCase() === 'ward'
+                          ? selectedOverrideBranch.formatted
+                          : `${selectedOverrideBranch.votingDistrict} (${selectedOverrideBranch.votingDistrict_id})`}
                       </strong>
                     </EuiText>
                     <EuiText>

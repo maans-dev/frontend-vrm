@@ -365,7 +365,10 @@ const MembershipProvider: FunctionComponent<
           !contextData?.address?.structure?.deleted
         ) {
           setBranch({
-            label: `${membershipBranch.votingDistrict} (${membershipBranch.votingDistrict_id})`,
+            label:
+              membershipBranch.type.toLowerCase() === 'ward'
+                ? membershipBranch.formatted
+                : `${membershipBranch.votingDistrict} (${membershipBranch.votingDistrict_id})`,
             description: getStructureDescription(membershipBranch),
             showConfirmCallout: false,
             structure: membershipBranch,
@@ -380,7 +383,10 @@ const MembershipProvider: FunctionComponent<
           isBranchOverrideSelected
         ) {
           setBranch({
-            label: `${membershipBranch.votingDistrict} (${membershipBranch.votingDistrict_id})`,
+            label:
+              membershipBranch.type.toLowerCase() === 'ward'
+                ? membershipBranch.formatted
+                : `${membershipBranch.votingDistrict} (${membershipBranch.votingDistrict_id})`,
             description: getStructureDescription(membershipBranch),
             showConfirmCallout: false,
             structure: membershipBranch,
@@ -393,7 +399,10 @@ const MembershipProvider: FunctionComponent<
         if (personStructure?.key && !contextData?.address?.structure?.deleted) {
           // has a person structure so set it as the updated branch to force a save
           setUpdatedBranch({
-            label: `${personStructure.votingDistrict} (${personStructure.votingDistrict_id})`,
+            label:
+              personStructure.type.toLowerCase() === 'ward'
+                ? personStructure.formatted
+                : `${personStructure.votingDistrict} (${personStructure.votingDistrict_id})`,
             description: getStructureDescription(personStructure),
             showConfirmCallout: true,
             structure: personStructure,
@@ -539,7 +548,11 @@ const MembershipProvider: FunctionComponent<
           daAbroad: isDaAbroadSelected,
           branchOverride: isBranchOverrideSelected,
           structure: {
-            votingDistrict_id: +updatedBranch?.structure?.votingDistrict_id,
+            ...(updatedBranch.structure.type.toLowerCase() === 'ward'
+              ? { ward: +updatedBranch.structure.ward }
+              : {
+                  votingDistrict_id: +updatedBranch.structure.votingDistrict_id,
+                }),
           },
         },
       });
