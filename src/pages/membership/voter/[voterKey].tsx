@@ -174,12 +174,9 @@ const Voter: FunctionComponent = () => {
     handleTabChange(1);
   }
 
-  if (error) {
+  if (error && !isLoading && !isSubmitting && !isValidating && voterKey) {
     return (
-      <MainLayout
-        breadcrumb={breadcrumb}
-        showSpinner={isLoading || isSubmitting || isValidating || !voterKey}
-        panelled={false}>
+      <MainLayout breadcrumb={breadcrumb} panelled={false}>
         <EuiCallOut
           title="Something went wrong"
           color="danger"
