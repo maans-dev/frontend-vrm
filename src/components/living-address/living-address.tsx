@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useState } from 'react';
+import { FunctionComponent, useContext, useEffect, useState } from 'react';
 import {
   EuiButton,
   EuiFieldText,
@@ -15,7 +15,7 @@ import {
 } from '@elastic/eui';
 import { FaHouseUser, FaUndo, FaStoreAltSlash } from 'react-icons/fa';
 import FillInManuallyModal from './fill-in-manually-modal';
-import { Address } from '@lib/domain/person';
+import { Address, Structure } from '@lib/domain/person';
 import { useGeolocated } from 'react-geolocated';
 import { useSession } from 'next-auth/react';
 import SearchResultsModal from './search-results-modal';
@@ -28,6 +28,7 @@ import SearchAddress from '@components/address-search';
 import { GeocodedAddressSource } from '@lib/domain/person-enum';
 import { MdHowToVote } from 'react-icons/md';
 import { appsignal } from '@lib/appsignal';
+import { CanvassingContext } from '@lib/context/canvassing.context';
 
 export type Props = {
   address: Address;
@@ -36,11 +37,13 @@ export type Props = {
 
 const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
   const { data: session } = useSession();
+  const { data, person } = useContext(CanvassingContext);
   const isMobile = useIsWithinBreakpoints(['xs', 's']);
   const [isLoading, setIsLoading] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [updatedAddress, setUpdatedAddress] =
     useState<Partial<Address>>(address);
+  const [votingDistrict, setVotingDistrict] = useState<string>();
   const { coords, isGeolocationAvailable, isGeolocationEnabled } =
     useGeolocated({
       positionOptions: {
@@ -108,19 +111,18 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
 
   const getFormattedAddress = () => {
     if (!updatedAddress) return 'Unknown';
-
-    if (updatedAddress.geocodeSource === GeocodedAddressSource.GEOCODED_VD) {
-      return (
-        <EuiFlexGroup responsive={false} gutterSize="xs">
-          <EuiFlexItem grow={false}>
-            <EuiIcon type={MdHowToVote} />
-          </EuiFlexItem>
-          <EuiFlexItem>
-            {updatedAddress?.structure?.formatted ?? updatedAddress.formatted}
-          </EuiFlexItem>
-        </EuiFlexGroup>
-      );
-    }
+    // if (updatedAddress.geocodeSource === GeocodedAddressSource.GEOCODED_VD) {
+    //   return (
+    //     <EuiFlexGroup responsive={false} gutterSize="xs">
+    //       <EuiFlexItem grow={false}>
+    //         <EuiIcon type={MdHowToVote} />
+    //       </EuiFlexItem>
+    //       <EuiFlexItem>
+    //         {updatedAddress?.structure?.formatted ?? updatedAddress.formatted}
+    //       </EuiFlexItem>
+    //     </EuiFlexGroup>
+    //   );
+    // }
 
     // if (
     //   'formatted' in updatedAddress &&
@@ -166,6 +168,13 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
     )
       formatted = `${formatted} ${updatedAddress.postalCode}`;
 
+    if (
+      (updatedAddress && updatedAddress.geocodeSource === 'GEOCODED_VD') ||
+      updatedAddress.province_enum.toString() === ''
+    ) {
+      return <EuiText size="xs">Unkown</EuiText>;
+    }
+
     return formatted !== '' ? formatted : 'Unknown';
   };
 
@@ -196,6 +205,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
       ]),
       structure: {
         votingDistrict_id: +selectedAddress.votingDistrict_id,
+        formatted: selectedAddress.structure?.formatted,
       },
     };
 
@@ -306,6 +316,17 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
     onChange(emptyAddress);
   };
 
+  function formatVotingDistrict(structure) {
+    const votingDistrict = structure.votingDistrict;
+    const votingDistrictId = structure.votingDistrict_id;
+    const municipality =
+      structure.municipalityShortName || structure?.municipality;
+    const ward_num = structure.ward_num;
+    const province = structure.province_enum;
+
+    return `${votingDistrict} (${votingDistrictId}), ${municipality} Ward ${ward_num}, ${province}`;
+  }
+
   useCanvassFormReset(() => {
     setUpdatedAddress(address);
   });
@@ -313,6 +334,21 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
   useEffect(() => {
     setUpdatedAddress(address);
   }, [address]);
+
+  useEffect(() => {
+    if (person && person.address && person.address.structure.key) {
+      setVotingDistrict(person.address.structure.formatted);
+    } else if (person && person.address && !person.address.structure?.key) {
+      setVotingDistrict('No Voting District Geocoded');
+    }
+    if (data.address) {
+      if (!data.address.structure.formatted) {
+        setVotingDistrict(formatVotingDistrict(data.address));
+      } else {
+        setVotingDistrict(data.address.structure.formatted);
+      }
+    }
+  }, [person, data.address]);
 
   return (
     <div style={{ position: 'relative' }}>
@@ -399,6 +435,17 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
           <EuiFormRow display="rowCompressed" label="Address on File">
             <EuiPanel hasShadow={false} hasBorder={true} paddingSize="s">
               <EuiText size="xs">{getFormattedAddress()}</EuiText>
+            </EuiPanel>
+          </EuiFormRow>
+          <EuiSpacer size="m" />
+          <EuiFormRow display="rowCompressed" label="Voting District">
+            <EuiPanel hasShadow={false} hasBorder={true} paddingSize="s">
+              <EuiFlexGroup responsive={false} gutterSize="xs">
+                <EuiFlexItem grow={false}>
+                  <EuiIcon type={MdHowToVote} />
+                </EuiFlexItem>
+                <EuiText size="xs">{votingDistrict}</EuiText>
+              </EuiFlexGroup>
             </EuiPanel>
           </EuiFormRow>
         </EuiFlexItem>
