@@ -15,6 +15,7 @@ import router from 'next/router';
 import { css } from '@emotion/react';
 import { Person } from '@lib/domain/person';
 import VoterAdd from '@components/voter-add';
+import { renderName } from '@lib/person/utils';
 
 export type Props = {
   results?: Person[];
@@ -70,41 +71,36 @@ const SearchResults: FunctionComponent<Props> = ({
       },
       css: { minWidth: '100px' },
     },
-    // {
-    //   name: 'Full Name',
-    //   valign: 'top',
-    //   render: (item: Person) => (
-    //     <div>
-    //       {item.salutation} {item.firstName} {item.surname}
-    //     </div>
-    //   ),
-    //   mobileOptions: {
-    //     header: false,
-    //     width: '100%',
-    //     render: (item: Person) => (
-    //       <strong>
-    //         {item.salutation} {item.firstName} {item.surname}
-    //       </strong>
-    //     ),
-    //   },
-    // },
     {
       field: 'surname',
       name: 'Surname',
       valign: 'top',
       css: { minWidth: '120px' },
+      mobileOptions: {
+        header: false,
+        width: '100%',
+        render: (item: Person) => <strong>{renderName(item)}</strong>,
+      },
     },
     {
       field: 'firstName',
       name: 'First Name',
       valign: 'top',
       css: { minWidth: '120px' },
+      mobileOptions: {
+        show: false,
+        header: false,
+      },
     },
     {
       field: 'givenName',
       name: 'Given Name',
       valign: 'top',
       css: { minWidth: '120px' },
+      mobileOptions: {
+        show: false,
+        header: false,
+      },
     },
     {
       field: 'dob',
@@ -169,7 +165,17 @@ const SearchResults: FunctionComponent<Props> = ({
       field: 'iec.regStatus',
       name: 'Reg Status',
       valign: 'top',
-      css: { minWidth: '90px' },
+      css: { minWidth: '120px' },
+      render: (regStatus: Person['iec']['regStatus']) => {
+        switch (regStatus) {
+          case 'VERIFIED':
+            return 'Registered';
+          case 'REJECTED':
+            return 'Not Registered';
+          default:
+            return regStatus;
+        }
+      },
       mobileOptions: {
         show: false,
       },

@@ -35,6 +35,9 @@ export interface Person {
   comments: Comment[];
   contacts: Contact[];
   fields: Field[];
+  iec?: {
+    regStatus: 'VERIFIED' | 'REJECTED' | string;
+  };
 }
 
 export interface Membership {
