@@ -148,6 +148,8 @@ const AddressResults = ({ address, onSelect, isLoading }: Props) => {
 
       selectedAddress.value.votingDistrict_id =
         +structureInfo[0].votingDistrict_id;
+      selectedAddress.value.structure = {};
+      selectedAddress.value.structure.formatted = structureInfo[0].formatted;
     }
 
     // add geocoded source
