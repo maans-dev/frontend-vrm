@@ -84,7 +84,9 @@ const ContactDetails: FunctionComponent<Props> = ({
     value: languageOption,
   }));
   const [deceasedInternal, setDeceasedInternal] = useState<boolean>(deceased);
-  const [givenNameInternal, setGivenNameInternal] = useState<string>(givenName);
+  const [givenNameInternal, setGivenNameInternal] = useState<string>(
+    givenName || ''
+  );
 
   // const { registerResetHandler } = useContext(CanvassingContext);
 
