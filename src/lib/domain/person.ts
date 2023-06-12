@@ -162,6 +162,7 @@ export interface Affiliation {
 
 export interface LivingStructure {
   key: string;
+  formatted: string;
   province: string;
   municipality: string;
   municipalityCatB: string;
@@ -180,6 +181,7 @@ export interface LivingStructure {
 
 export interface RegisteredStructure {
   key: string;
+  formatted: string;
   province: string;
   municipality: string;
   municipalityCatB: string;
