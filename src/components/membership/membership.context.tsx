@@ -571,13 +571,18 @@ const MembershipProvider: FunctionComponent<
       return;
     }
 
+    const updatedPayment = {
+      ...payment,
+    };
+
+    if ((payment?.recruitedBy as Partial<Person>)?.key) {
+      updatedPayment.recruitedBy = (payment.recruitedBy as Partial<Person>).key;
+    }
+
     onChange({
       field: 'membership',
       data: {
-        payment: {
-          ...payment,
-          recruitedBy: (payment.recruitedBy as Partial<Person>).key,
-        },
+        payment: updatedPayment,
       },
     });
   }, [payment]);

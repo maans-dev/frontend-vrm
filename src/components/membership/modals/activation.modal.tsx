@@ -94,7 +94,8 @@ const ActivationModal: FunctionComponent = () => {
 
   useEffect(() => {
     const isRecruitedByValid =
-      recruitedBy !== undefined && recruitedBy?.key?.toString().length === 8;
+      !recruitedBy ||
+      (recruitedBy && recruitedBy?.key?.toString().length === 8);
     const isReferenceNumberValid = !!referenceNumber;
     const isDateValid = date.isValid();
     const isTypeValid = !!type;
