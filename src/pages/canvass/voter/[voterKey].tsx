@@ -133,6 +133,7 @@ const Voter: FunctionComponent = () => {
       panelled={false}>
       <EuiPanel>
         <VoterInfo
+          deceased={person?.deceased}
           darn={person.key}
           salutation={person?.salutation}
           givenName={person?.givenName || person?.firstName}
