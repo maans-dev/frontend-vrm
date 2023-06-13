@@ -24,6 +24,7 @@ import { GiHouse } from 'react-icons/gi';
 import { MdHowToVote } from 'react-icons/md';
 import { renderName } from '@lib/person/utils';
 import { useStickyVoterInfo } from '@lib/hooks/useStickyVoterInfo';
+import { css } from '@emotion/react';
 
 export type Props = {
   deceased?: boolean;
@@ -175,6 +176,15 @@ const VoterInfo: FunctionComponent<Props> = ({
             </EuiFlexGroup>
             <EuiFlexItem grow={false}>
               <EuiBadge
+                css={
+                  isMobile &&
+                  css`
+                    .euiBadge__text {
+                      text-align: right;
+                      width: 100%;
+                    }
+                  `
+                }
                 color={getBadgeColour()}
                 iconType={
                   colourCode?.name == 'Green' ? 'checkInCircleFilled' : null
