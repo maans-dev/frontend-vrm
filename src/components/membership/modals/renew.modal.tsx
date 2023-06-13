@@ -69,7 +69,7 @@ const RenewModal: FunctionComponent = () => {
       years,
       amount,
       type,
-      date: date.format('YYYY-DD-MM'),
+      date: date.format('YYYY-MM-DD'),
       referenceNumber,
       receiptNumber: referenceNumber,
     };
@@ -178,10 +178,10 @@ const RenewModal: FunctionComponent = () => {
               <EuiDatePicker
                 name="dob"
                 autoComplete="off"
-                dateFormat={['D MMM YYYY']}
+                dateFormat={['D MMM YYYY', 'YYYY-MM-DD', 'YYYYMMDD']}
                 maxDate={moment()}
                 yearDropdownItemNumber={5}
-                value={date.format('YYYY-MM-DD')}
+                selected={date}
                 onChange={selectedDate => {
                   const today = moment();
 

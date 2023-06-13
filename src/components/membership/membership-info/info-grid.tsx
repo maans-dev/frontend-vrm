@@ -17,7 +17,7 @@ const InfoGrid: FunctionComponent<Props> = ({
 }) => {
   const formatDate = (dateString: string) => {
     if (!dateString) return 'Unknown';
-    return moment(dateString).format('YYYY-MM-DD');
+    return moment(dateString).format('D MMM YYYY');
   };
 
   return (

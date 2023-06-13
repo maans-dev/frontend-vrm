@@ -24,7 +24,7 @@ const PaymentInfo: FunctionComponent = () => {
               <EuiText size="s">Membership Number:</EuiText>
               <strong>{payment.membershipNumber}</strong>
               <EuiText size="s">Date:</EuiText>
-              <strong>{moment(payment.date).format('YYYY/MM/DD')}</strong>
+              <strong>{moment(payment.date).format('D MMM YYYY')}</strong>
               <EuiText size="s">Amount:</EuiText>
               <strong>R {payment.amount}</strong>
               <EuiText size="s">Years:</EuiText>
