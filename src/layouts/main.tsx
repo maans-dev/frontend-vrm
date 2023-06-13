@@ -103,9 +103,6 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
             css={{
               background: 'red',
               padding: '10px',
-              // position: 'sticky',
-              // top: '0px',
-              // zIndex: '999999',
               width: '100%',
             }}>
             <strong>

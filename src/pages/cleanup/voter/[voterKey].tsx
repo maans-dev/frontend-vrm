@@ -182,23 +182,21 @@ const Voter: FunctionComponent = () => {
       showSpinner={isLoading || isSubmitting || isValidating}
       restrictWidth="1400px"
       panelled={false}>
-      {/* {isComplete && successModal} */}
-      <EuiPanel>
-        <VoterInfo
-          deceased={person?.deceased}
-          darn={person?.key}
-          salutation={person?.salutation}
-          givenName={person?.givenName || person?.firstName}
-          surname={person?.surname}
-          dob={moment(person?.dob, 'YYYYMMDD').toDate()}
-          colourCode={person?.colourCode}
-          canvassedBy={person?.canvassedBy}
-          modified={person?.modified}
-          livingStructure={person?.livingStructure}
-          registeredStructure={person?.registeredStructure}
-          membership={person?.membership}
-        />
-      </EuiPanel>
+      <VoterInfo
+        deceased={person?.deceased}
+        darn={person?.key}
+        salutation={person?.salutation}
+        givenName={person?.givenName || person?.firstName}
+        surname={person?.surname}
+        dob={moment(person?.dob, 'YYYYMMDD').toDate()}
+        colourCode={person?.colourCode}
+        canvassedBy={person?.canvassedBy}
+        modified={person?.modified}
+        livingStructure={person?.livingStructure}
+        registeredStructure={person?.registeredStructure}
+        membership={person?.membership}
+      />
+
       <EuiSpacer />
       <EuiForm fullWidth isInvalid={serverError !== ''} error={[serverError]}>
         <EuiFlexGroup direction="row" gutterSize="xs">

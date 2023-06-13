@@ -1,5 +1,6 @@
 import { FunctionComponent } from 'react';
 import {
+  EuiAccordion,
   EuiBadge,
   EuiFlexGroup,
   EuiFlexItem,
@@ -9,6 +10,7 @@ import {
   EuiText,
   EuiTextColor,
   EuiTitle,
+  useIsWithinBreakpoints,
 } from '@elastic/eui';
 import moment from 'moment';
 import {
@@ -21,6 +23,7 @@ import {
 import { GiHouse } from 'react-icons/gi';
 import { MdHowToVote } from 'react-icons/md';
 import { renderName } from '@lib/person/utils';
+import { useStickyVoterInfo } from '@lib/hooks/useStickyVoterInfo';
 
 export type Props = {
   deceased?: boolean;
@@ -51,6 +54,9 @@ const VoterInfo: FunctionComponent<Props> = ({
   registeredStructure,
   membership,
 }) => {
+  const isMobile = useIsWithinBreakpoints(['xs', 's']);
+  const { offsetTopRefEl, offsetTop } = useStickyVoterInfo();
+
   const getBadgeColour = () => {
     if (deceased) return '#cccccc';
 
@@ -60,50 +66,12 @@ const VoterInfo: FunctionComponent<Props> = ({
     return 'hollow';
   };
 
-  return (
+  const renderExtraInfo = (
     <>
       <EuiFlexGroup
         justifyContent="spaceBetween"
-        alignItems="center"
-        gutterSize="xs">
-        <EuiFlexGroup alignItems="center" gutterSize="s">
-          <EuiFlexItem grow={false}>
-            <EuiTitle size="xs">
-              <EuiTextColor>
-                {renderName({ salutation, givenName, surname })} (
-                {moment().diff(dob, 'years', false)})
-              </EuiTextColor>
-            </EuiTitle>
-          </EuiFlexItem>
-          {['Active', 'Expired'].includes(membership?.status) && !deceased && (
-            <EuiFlexItem
-              grow={false}
-              style={{ inlineSize: 'auto', flexBasis: 'auto' }}>
-              <EuiBadge
-                css={{ borderRadius: '10px' }}
-                color={
-                  membership?.status === 'Expired' ? '#cccccc' : 'primary'
-                }>
-                Membership <strong>{membership?.status}</strong> (
-                {membership?.expiry})
-              </EuiBadge>
-            </EuiFlexItem>
-          )}
-        </EuiFlexGroup>
-        <EuiFlexItem grow={false}>
-          <EuiBadge
-            color={getBadgeColour()}
-            iconType={
-              colourCode?.name == 'Green' ? 'checkInCircleFilled' : null
-            }>
-            {deceased ? 'Deceased' : colourCode?.description}
-          </EuiBadge>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-
-      <EuiSpacer size="s" />
-
-      <EuiFlexGroup justifyContent="spaceBetween" gutterSize="xs">
+        gutterSize="xs"
+        responsive={true}>
         <EuiFlexItem grow={false}>
           <EuiText size="xs">
             DOB <strong>{moment(dob).format('YYYY/MM/DD')}</strong>
@@ -132,6 +100,7 @@ const VoterInfo: FunctionComponent<Props> = ({
       </EuiFlexGroup>
 
       <EuiSpacer size="s" />
+
       <EuiFlexGroup gutterSize="xs" justifyContent="spaceBetween">
         <EuiFlexItem>
           <EuiPanel paddingSize="xs" hasBorder={true}>
@@ -154,6 +123,72 @@ const VoterInfo: FunctionComponent<Props> = ({
           </EuiPanel>
         </EuiFlexItem>
       </EuiFlexGroup>
+    </>
+  );
+
+  const accordion = (
+    <EuiAccordion id="extra-info" buttonContent="Show voter details">
+      <EuiSpacer size="m" />
+      {renderExtraInfo}
+    </EuiAccordion>
+  );
+
+  return (
+    <>
+      <div ref={offsetTopRefEl} />
+      <div
+        style={{
+          display: 'block',
+          position: 'sticky',
+          width: 'auto',
+          top: `${offsetTop - 25}px`,
+          zIndex: 3,
+        }}>
+        <EuiPanel>
+          <EuiFlexGroup
+            justifyContent="spaceBetween"
+            alignItems="center"
+            gutterSize="xs">
+            <EuiFlexGroup alignItems="center" gutterSize="s">
+              <EuiFlexItem grow={false}>
+                <EuiTitle size="xs">
+                  <EuiTextColor>
+                    {renderName({ salutation, givenName, surname })} (
+                    {moment().diff(dob, 'years', false)})
+                  </EuiTextColor>
+                </EuiTitle>
+              </EuiFlexItem>
+              {['Active', 'Expired'].includes(membership?.status) && !deceased && (
+                <EuiFlexItem
+                  grow={false}
+                  style={{ inlineSize: 'auto', flexBasis: 'auto' }}>
+                  <EuiBadge
+                    css={{ borderRadius: '10px' }}
+                    color={
+                      membership?.status === 'Expired' ? '#cccccc' : 'primary'
+                    }>
+                    Membership <strong>{membership?.status}</strong> (
+                    {membership?.expiry})
+                  </EuiBadge>
+                </EuiFlexItem>
+              )}
+            </EuiFlexGroup>
+            <EuiFlexItem grow={false}>
+              <EuiBadge
+                color={getBadgeColour()}
+                iconType={
+                  colourCode?.name == 'Green' ? 'checkInCircleFilled' : null
+                }>
+                {deceased ? 'Deceased' : colourCode?.description}
+              </EuiBadge>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+
+          <EuiSpacer size="s" />
+
+          {isMobile ? accordion : renderExtraInfo}
+        </EuiPanel>
+      </div>
     </>
   );
 };
