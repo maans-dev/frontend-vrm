@@ -94,7 +94,7 @@ const SearchResults: FunctionComponent<Props> = ({
     },
     {
       field: 'givenName',
-      name: 'Given Name',
+      name: 'Preferred Name',
       valign: 'top',
       css: { minWidth: '120px' },
       mobileOptions: {
