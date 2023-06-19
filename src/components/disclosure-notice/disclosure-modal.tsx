@@ -40,10 +40,10 @@ const DisclosureNoticeModal: FunctionComponent = () => {
     if (!session) return;
     setShouldModalRender(true);
 
-    if (!session.disclosureAccepted) {
+    if (isFeatureEnabled && !session.disclosureAccepted) {
       router.push('/'); // Navigate back to the home screen
     }
-  }, [session, session?.disclosureAccepted]);
+  }, [session, session?.disclosureAccepted, isFeatureEnabled]);
 
   return shouldModalRender &&
     isFeatureEnabled &&
