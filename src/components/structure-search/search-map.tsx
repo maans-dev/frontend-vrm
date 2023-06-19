@@ -22,6 +22,7 @@ export interface Props {
     },
     value: Structure
   ) => void;
+  showSelected?: boolean;
 }
 
 interface SelectedStrucure {
@@ -39,6 +40,7 @@ const SearchMap: FunctionComponent<Props> = ({
   structures,
   isLoading,
   onSelect,
+  showSelected,
 }: Props) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [selectedStructure, setSelectedStructure] =
@@ -86,7 +88,9 @@ const SearchMap: FunctionComponent<Props> = ({
       } = selected;
       if (onSelect) {
         onSelect(label, value, description);
-      } else {
+      }
+
+      if (showSelected) {
         setSelectedStructure(selectedStructure => {
           if (selectedStructure && selectedStructure.value === selected.value) {
             return selectedStructure;

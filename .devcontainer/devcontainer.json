@@ -22,7 +22,8 @@
 			"extensions": [
 				"ms-azuretools.vscode-docker",
 				"eamodio.gitlens",
-				"rangav.vscode-thunder-client"
+				"rangav.vscode-thunder-client",
+				"yoavbls.pretty-ts-errors"
 			]
 		}
 	}

@@ -5,6 +5,7 @@ import useTagFetcher from '@lib/fetcher/tags/tags';
 import { FieldsUpdate, PersonUpdate } from '@lib/domain/person-update';
 import { CanvassingTagCodes } from '@lib/domain/tags';
 import { debounce } from 'lodash';
+import { EuiCallOut } from '@elastic/eui';
 
 export type Props = {
   fields: Field[];
@@ -25,6 +26,23 @@ const Tags: FunctionComponent<Props> = ({ fields, onChange }) => {
       }));
     setSearchFields(f);
   }, [data]);
+
+  if (error) {
+    let errorMessage = 'An error occurred while fetching the data.';
+    if (error.response) {
+      errorMessage = `Server error: ${error.response.status} ${error.response.statusText}`;
+    } else if (error.request) {
+      errorMessage = 'Network error: Could not connect to the server.';
+    }
+    return (
+      <EuiCallOut title="Error" color="danger" iconType="alert">
+        <p>{errorMessage}</p>
+        <p>
+          Please try again later or contact support if the problem persists.
+        </p>
+      </EuiCallOut>
+    );
+  }
 
   const debouncedHandleSearchChange = debounce((value: string) => {
     setSearchValue(value);

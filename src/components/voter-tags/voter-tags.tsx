@@ -66,6 +66,12 @@ const VoterTags: FunctionComponent<Props> = ({
     handleFieldsUpdate();
   }, [handleFieldsUpdate]);
 
+  useCanvassFormReset(() => {
+    setFieldsInternal(
+      fields?.filter(f => !CanvassingTagCodes.includes(f.field.code))
+    );
+  });
+
   const renderedBadges = fieldsInternal
     ? [...fieldsInternal]
         .reverse()

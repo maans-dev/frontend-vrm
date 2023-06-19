@@ -10,9 +10,10 @@ export type Props = {
     data: Partial<Structure>,
     value: Structure
   ) => void;
+  showSelected?: boolean;
 };
 
-const Structres: FunctionComponent<Props> = ({ onSelect }) => {
+const Structres: FunctionComponent<Props> = ({ onSelect, showSelected }) => {
   const [searchValue, setSearchValue] = useState('');
   const { structures, isLoading } = useStructureFetcher(searchValue);
   const [structuresInternal, setStructuresInternal] =
@@ -36,6 +37,7 @@ const Structres: FunctionComponent<Props> = ({ onSelect }) => {
 
   return (
     <SearchMap
+      showSelected={showSelected}
       isLoading={isLoading}
       handleSearchChange={handleSearchChange}
       structures={structuresInternal}
