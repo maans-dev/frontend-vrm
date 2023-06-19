@@ -548,7 +548,7 @@ const MembershipProvider: FunctionComponent<
           daAbroad: isDaAbroadSelected,
           branchOverride: isBranchOverrideSelected,
           structure: {
-            ...(updatedBranch.structure.type.toLowerCase() === 'ward'
+            ...(updatedBranch?.structure?.type?.toLowerCase() === 'ward'
               ? { ward: +updatedBranch.structure.ward }
               : {
                   votingDistrict_id: +updatedBranch.structure.votingDistrict_id,
