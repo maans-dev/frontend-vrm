@@ -53,7 +53,7 @@ const Membership: FunctionComponent = () => {
                 <MembershipEvents personKey={person?.key} />
               </EuiFormFieldset>
 
-              <EuiSpacer size="l" />
+              <EuiSpacer size="m" />
 
               <EuiFormFieldset legend={{ children: 'Membership Comments' }}>
                 <Comments

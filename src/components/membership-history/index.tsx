@@ -27,7 +27,7 @@ const MembershipEvents: FunctionComponent<Props> = ({ personKey }) => {
   const [endMoment] = useState(dateMath.parse(end, { roundUp: true }));
 
   const [activePage, setActivePage] = useState(0);
-  const [rowSize] = useState(10);
+  const [rowSize] = useState(4);
 
   const [pageCount, setPageCount] = useState(0);
 
