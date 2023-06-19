@@ -11,6 +11,7 @@ import {
   EuiFormRow,
   EuiPanel,
   EuiSpacer,
+  EuiText,
 } from '@elastic/eui';
 import MainLayout from '@layouts/main';
 import { useRouter } from 'next/router';
@@ -43,16 +44,9 @@ const Voter: FunctionComponent = () => {
     serverError,
     resetForm,
     data,
+    validationError,
   } = useContext(CanvassingContext);
   useLeavePageConfirmation(isDirty);
-
-  useEffect(() => {
-    if (data?.affiliation?.confirmed === true) {
-      setConfirmed(true);
-    } else {
-      setConfirmed(false);
-    }
-  }, [data?.affiliation?.confirmed, data]);
 
   const breadcrumb: EuiBreadcrumb[] = [
     {
@@ -84,37 +78,92 @@ const Voter: FunctionComponent = () => {
     },
   ];
 
-  const formActions = (
-    <EuiFlexGroup direction="row" responsive={false} justifyContent="flexEnd">
-      <EuiFlexItem grow={false}>
-        <EuiButtonEmpty
-          size="m"
-          disabled={isSubmitting}
-          onClick={() => resetForm()}>
-          Reset
-        </EuiButtonEmpty>
-      </EuiFlexItem>
-      <EuiFlexItem grow={false}>
-        <EuiButton
-          size="m"
-          fill
-          iconType="save"
-          disabled={!isDirty || confirmed === false}
-          isLoading={isSubmitting}
-          onClick={() => submitUpdatePayload()}>
-          Save
-        </EuiButton>
-      </EuiFlexItem>
-    </EuiFlexGroup>
-  );
-
   const onChange = (update: PersonUpdate<GeneralUpdate>) => {
     setUpdatePayload(update);
   };
 
+  const handleErrorScroll = () => {
+    const section = document.getElementById('phoneNumberField');
+    if (section) {
+      const yOffset = -100;
+      const y =
+        section.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
+
+  const validationErrorMessage = (
+    <EuiFlexGroup justifyContent="flexEnd">
+      <EuiFlexItem grow={false} style={{ width: '450px' }}>
+        <EuiCallOut
+          title="Validation Error"
+          color="danger"
+          iconType="alert"
+          onClick={handleErrorScroll}
+          style={{ marginRight: '0' }}
+          size="s">
+          <EuiText color="danger" size="s" textAlign="right">
+            <p>{validationError}</p>
+          </EuiText>
+        </EuiCallOut>
+      </EuiFlexItem>
+    </EuiFlexGroup>
+  );
+
+  const affiliationMessage = (
+    <EuiFlexGroup justifyContent="flexEnd">
+      <EuiFlexItem grow={false} style={{ width: '450px' }}>
+        <EuiCallOut
+          title="Affiliation Not Confirmed"
+          color="warning"
+          iconType="alert"
+          style={{ marginRight: '0' }}
+          size="s">
+          <EuiText color="warning" size="s" textAlign="right">
+            Please confirm the voter&apos;s affiliation.
+          </EuiText>
+        </EuiCallOut>
+      </EuiFlexItem>
+    </EuiFlexGroup>
+  );
+
+  const formActions = (
+    <>
+      <EuiFlexGroup direction="row" responsive={false} justifyContent="flexEnd">
+        <EuiFlexItem grow={false}>
+          <EuiButtonEmpty
+            size="m"
+            disabled={isSubmitting}
+            onClick={() => resetForm()}>
+            Reset
+          </EuiButtonEmpty>
+        </EuiFlexItem>
+        <EuiFlexItem grow={false}>
+          <EuiButton
+            size="m"
+            fill
+            iconType="save"
+            disabled={!isDirty || confirmed === false || !!validationError}
+            isLoading={isSubmitting}
+            onClick={() => submitUpdatePayload()}>
+            Save
+          </EuiButton>
+        </EuiFlexItem>
+      </EuiFlexGroup>
+    </>
+  );
+
   useEffect(() => {
     if (person) setPerson(person);
   }, [person, setPerson]);
+
+  useEffect(() => {
+    if (data?.affiliation?.confirmed === true) {
+      setConfirmed(true);
+    } else {
+      setConfirmed(false);
+    }
+  }, [data?.affiliation?.confirmed, data]);
 
   if (error && !isLoading && !isSubmitting && !isValidating && voterKey) {
     return (
@@ -203,16 +252,10 @@ const Voter: FunctionComponent = () => {
         <EuiSpacer />
         <CanvassingSelectionDetails />
         <EuiSpacer />
-        {!confirmed && (
-          <EuiCallOut
-            title="Affiliation Not Confirmed"
-            color="warning"
-            iconType="alert"
-            size="s"></EuiCallOut>
-        )}
-
+        {!confirmed ? affiliationMessage : null}
+        <EuiSpacer size="xs" />
+        {data.contacts && validationError ? validationErrorMessage : null}
         <EuiSpacer />
-
         {formActions}
       </EuiForm>
     </MainLayout>

@@ -14,6 +14,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useState,
 } from 'react';
 import { ToastContext } from './toast.context';
@@ -22,6 +23,7 @@ import moment from 'moment';
 import { useSession } from 'next-auth/react';
 import { useSWRConfig } from 'swr';
 import { appsignal, redactObject } from '@lib/appsignal';
+import { validateContactInformation } from '@components/form/form-utils';
 
 export type CanvassingContextType = {
   data: Partial<PersonUpdateRequest> & Partial<{ canvass: CanvassUpdate }>;
@@ -47,6 +49,8 @@ export type CanvassingContextType = {
   resetForm: () => void;
   handleTabChange: (tabNumber: number) => void;
   selectedTab: number;
+  validationError: string;
+  setValidationError: (update: string) => void;
 };
 
 export const CanvassingContext = createContext<Partial<CanvassingContextType>>(
@@ -73,6 +77,7 @@ const CanvassingProvider = ({ children }) => {
   const { addToast } = useContext(ToastContext);
   const { mutate } = useSWRConfig();
   const [selectedTab, setSelectedTab] = useState(1);
+  const [validationError, setValidationError] = useState<string>('');
 
   const setPerson = (person: Person) => setPersonInternal(person);
 
@@ -505,6 +510,16 @@ const CanvassingProvider = ({ children }) => {
     }
   }, [router]);
 
+  useLayoutEffect(() => {
+    if (data?.contacts) {
+      const { errorText } = validateContactInformation(
+        data.contacts,
+        person.contacts
+      );
+      setValidationError(errorText);
+    }
+  }, [data?.contacts, person?.contacts]);
+
   // TODO: Remove this when stable as it's just for debugging
   useEffect(() => {
     console.log('[CONTEXT]', { data, person });
@@ -544,6 +559,8 @@ const CanvassingProvider = ({ children }) => {
         resetForm,
         handleTabChange,
         selectedTab,
+        validationError,
+        setValidationError,
       }}>
       {children}
     </CanvassingContext.Provider>

@@ -1,8 +1,9 @@
-import { FunctionComponent } from 'react';
-import { EuiPanel } from '@elastic/eui';
-import PhoneNumberLine from './phone-number';
-import AddEditNumber from './add-edit-number';
+import { FunctionComponent, useContext } from 'react';
+import { EuiButton, EuiFlexItem, EuiPanel } from '@elastic/eui';
+// import AddEditNumber from './add-edit-number';
 import { PhoneContact } from '@lib/domain/phone-numbers';
+import PhoneNumberLine from './phone-number';
+import { CanvassingContext } from '@lib/context/canvassing.context';
 
 export type Props = {
   phoneContacts: PhoneContact[];
@@ -13,6 +14,17 @@ const PhoneNumbers: FunctionComponent<Props> = ({
   phoneContacts,
   onUpdate,
 }) => {
+  const { nextId } = useContext(CanvassingContext);
+  const addNewField = () => {
+    const newPhoneContact: PhoneContact = {
+      value: '',
+      type: '',
+      key: nextId(),
+      category: 'PHONE',
+    };
+    onUpdate(newPhoneContact);
+  };
+
   return (
     <EuiPanel hasShadow={false} paddingSize="none">
       {phoneContacts?.map(phoneContact => (
@@ -23,7 +35,18 @@ const PhoneNumbers: FunctionComponent<Props> = ({
           onUpdate={onUpdate}
         />
       ))}
-      <AddEditNumber onUpdate={onUpdate} />
+      <EuiFlexItem>
+        <EuiButton
+          id="add-phone-button"
+          onClick={addNewField}
+          fill
+          size="s"
+          iconType="plusInCircle"
+          iconSide="right"
+          style={{ alignSelf: 'flex-end' }}>
+          Add a new phone number
+        </EuiButton>
+      </EuiFlexItem>
     </EuiPanel>
   );
 };
