@@ -82,7 +82,13 @@ export const validateContactInformation = (
   const duplicateEmails: Contact[] = [];
 
   for (const contact of emailContacts) {
-    if (contact.deleted || contact.canContact || contact.confirmed) {
+    if (
+      contact.deleted ||
+      contact.canContact ||
+      contact.confirmed ||
+      !contact.canContact ||
+      !contact.confirmed
+    ) {
       continue;
     }
     if (!isEmail(contact.value)) {
@@ -119,7 +125,13 @@ export const validateContactInformation = (
     const duplicatePhoneNumbers: Contact[] = [];
 
     for (const contact of phoneContacts) {
-      if (contact.deleted || contact.canContact || contact.confirmed) {
+      if (
+        contact.deleted ||
+        contact.canContact ||
+        contact.confirmed ||
+        !contact.canContact ||
+        !contact.confirmed
+      ) {
         continue;
       }
       const contactType =
