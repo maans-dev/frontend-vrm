@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 const DisclosureNoticeModal: FunctionComponent = () => {
   const router = useRouter();
   const { data: session, update } = useSession();
-  const isFeatureEnabled = process.env.NEXT_PUBLIC_DISCLOSURE_MODAL;
+  const isFeatureEnabled = process.env.NEXT_PUBLIC_DISCLOSURE_MODAL === 'true';
   const [shouldModalRender, setShouldModalRender] = useState(false); //This avoids flashing the modal after user has already accepted
 
   const handleConfirm = async () => {
