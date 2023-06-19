@@ -341,7 +341,12 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
     } else if (person && person.address && !person.address.structure?.key) {
       setVotingDistrict('No Voting District Geocoded');
     }
-    if (data.address) {
+    if (
+      data.address &&
+      !data.address.comment &&
+      !data.address.buildingNo &&
+      !data.address.buildingName
+    ) {
       if (!data.address.structure.formatted) {
         setVotingDistrict(formatVotingDistrict(data.address));
       } else {
