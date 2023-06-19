@@ -144,10 +144,10 @@ const EmailAddressLine: FunctionComponent<Props> = ({
                         size="xs"
                         iconType={
                           emailContact?.canContact
-                            ? 'minusInCircle'
-                            : 'plusInCircle'
+                            ? 'plusInCircle'
+                            : 'minusInCircle'
                         }
-                        color={emailContact?.canContact ? 'warning' : 'primary'}
+                        color={emailContact?.canContact ? 'primary' : 'warning'}
                         css={{ minWidth: '50px' }}
                         onClick={e => {
                           toggleDNC();

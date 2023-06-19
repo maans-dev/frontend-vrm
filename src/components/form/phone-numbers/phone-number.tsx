@@ -267,10 +267,10 @@ const PhoneNumberLine: FunctionComponent<Props> = ({
                         size="xs"
                         iconType={
                           phoneContact?.canContact
-                            ? 'minusInCircle'
-                            : 'plusInCircle'
+                            ? 'plusInCircle'
+                            : 'minusInCircle'
                         }
-                        color={phoneContact?.canContact ? 'warning' : 'primary'}
+                        color={phoneContact?.canContact ? 'primary' : 'warning'}
                         onClick={e => {
                           toggleDNC();
                           e.preventDefault();
