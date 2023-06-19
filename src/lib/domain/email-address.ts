@@ -3,7 +3,7 @@ export interface EmailContact {
   value: string;
   type?: 'WORK' | 'HOME' | string;
   category: 'PHONE' | 'CUSTOM' | string;
-  canContact: boolean;
+  canContact?: boolean;
   confirmed?: boolean;
   deleted?: boolean;
 }

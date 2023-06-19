@@ -47,12 +47,17 @@ const Voter: FunctionComponent = () => {
     isDirty,
     serverError,
     resetForm,
+    validationError,
   } = useContext(CanvassingContext);
   useLeavePageConfirmation(isDirty);
 
   const handleTabChange = (tab: number) => {
     setSelectedTab(tab);
   };
+
+  function handleGoToAddress() {
+    setSelectedTab(1);
+  }
 
   const breadcrumb: EuiBreadcrumb[] = [
     {
@@ -94,11 +99,29 @@ const Voter: FunctionComponent = () => {
           size="m"
           fill
           iconType="save"
-          disabled={!isDirty}
+          disabled={!isDirty || !!validationError}
           isLoading={isSubmitting}
           onClick={() => submitUpdatePayload()}>
           Save
         </EuiButton>
+      </EuiFlexItem>
+    </EuiFlexGroup>
+  );
+
+  const validationErrorMessage = (
+    <EuiFlexGroup justifyContent="flexEnd">
+      <EuiFlexItem grow={false} style={{ width: '450px' }}>
+        <EuiCallOut
+          title="Validation Error"
+          color="danger"
+          iconType="alert"
+          onClick={() => setSelectedTab(0)}
+          style={{ marginRight: '0' }}
+          size="s">
+          <EuiText color="danger" size="s" textAlign="right">
+            <p>{validationError}</p>
+          </EuiText>
+        </EuiCallOut>
       </EuiFlexItem>
     </EuiFlexGroup>
   );
@@ -170,10 +193,6 @@ const Voter: FunctionComponent = () => {
     }
   `;
 
-  function handleGoToAddress() {
-    handleTabChange(1);
-  }
-
   if (error && !isLoading && !isSubmitting && !isValidating && voterKey) {
     return (
       <MainLayout breadcrumb={breadcrumb} panelled={false}>
@@ -195,6 +214,19 @@ const Voter: FunctionComponent = () => {
         panelled={false}
         restrictWidth="1400px"
       />
+    );
+  }
+
+  let tabContent;
+
+  if (!validationError) {
+    tabContent = 'Basic & Contact';
+  } else {
+    tabContent = (
+      <EuiText size="xs" color="warning">
+        <EuiIcon type="alert" color="warning" />{' '}
+        <strong>Basic & Contact</strong>
+      </EuiText>
     );
   }
 
@@ -227,7 +259,7 @@ const Voter: FunctionComponent = () => {
               <EuiTab
                 onClick={() => handleTabChange(0)}
                 isSelected={selectedTab === 0}>
-                Basic & Contact
+                {tabContent}
               </EuiTab>
               <EuiTab
                 onClick={() => handleTabChange(1)}
@@ -258,19 +290,6 @@ const Voter: FunctionComponent = () => {
                 isSelected={selectedTab === 4}>
                 History
               </EuiTab>
-              {/* <EuiTab
-                onClick={() => handleTabChange(5)}
-                isSelected={selectedTab === 5}>
-                {person?.membership?.structure?.key === null &&
-                person?.membership?.status !== 'NotAMember' ? (
-                  <EuiText size="xs" color="warning">
-                    <EuiIcon type="alert" color="warning" />{' '}
-                    <strong>Membership</strong>
-                  </EuiText>
-                ) : (
-                  'Membership Old'
-                )}
-              </EuiTab> */}
             </EuiTabs>
             <EuiSpacer />
 
@@ -326,18 +345,10 @@ const Voter: FunctionComponent = () => {
                 <PersonHistory personKey={person.key} />
               </EuiFormFieldset>
             </div>
-
-            {/* <div style={{ display: selectedTab === 5 ? 'block' : 'none' }}>
-              <MembershipOld
-                person={person}
-                personMembership={person?.membership}
-                selectAddress={handleGoToAddress}
-                onMembershipChange={onChange}
-              />
-            </div> */}
           </EuiFlexItem>
         </EuiFlexGroup>
-
+        <EuiSpacer />
+        {data.contacts && validationError && validationErrorMessage}
         <EuiSpacer />
         {formActions}
       </EuiForm>

@@ -8,10 +8,12 @@ import {
   EuiFlexItem,
   EuiForm,
   EuiFormFieldset,
+  EuiIcon,
   EuiPanel,
   EuiSpacer,
   EuiTab,
   EuiTabs,
+  EuiText,
 } from '@elastic/eui';
 import MainLayout from '@layouts/main';
 import { useRouter } from 'next/router';
@@ -43,6 +45,8 @@ const Voter: FunctionComponent = () => {
     isDirty,
     serverError,
     resetForm,
+    validationError,
+    data,
   } = useContext(CanvassingContext);
   useLeavePageConfirmation(isDirty);
 
@@ -86,11 +90,29 @@ const Voter: FunctionComponent = () => {
           size="m"
           fill
           iconType="save"
-          disabled={!isDirty}
+          disabled={!isDirty || !!validationError}
           isLoading={isSubmitting}
           onClick={() => submitUpdatePayload()}>
           Save
         </EuiButton>
+      </EuiFlexItem>
+    </EuiFlexGroup>
+  );
+
+  const validationErrorMessage = (
+    <EuiFlexGroup justifyContent="flexEnd">
+      <EuiFlexItem grow={false} style={{ width: '450px' }}>
+        <EuiCallOut
+          title="Validation Error"
+          color="danger"
+          iconType="alert"
+          onClick={() => setSelectedTab(0)}
+          style={{ marginRight: '0' }}
+          size="s">
+          <EuiText color="danger" size="s" textAlign="right">
+            <p>{validationError}</p>
+          </EuiText>
+        </EuiCallOut>
       </EuiFlexItem>
     </EuiFlexGroup>
   );
@@ -205,7 +227,14 @@ const Voter: FunctionComponent = () => {
               <EuiTab
                 onClick={() => setSelectedTab(0)}
                 isSelected={selectedTab === 0}>
-                Basic & Contact
+                {validationError ? (
+                  <EuiText size="xs" color="warning">
+                    <EuiIcon type="alert" color="warning" />{' '}
+                    <strong>Basic & Contact</strong>
+                  </EuiText>
+                ) : (
+                  'Basic & Contact'
+                )}
               </EuiTab>
               <EuiTab
                 onClick={() => setSelectedTab(1)}
@@ -275,7 +304,8 @@ const Voter: FunctionComponent = () => {
             </div>
           </EuiFlexItem>
         </EuiFlexGroup>
-
+        <EuiSpacer />
+        {data.contacts && validationError && validationErrorMessage}
         <EuiSpacer />
         {formActions}
       </EuiForm>

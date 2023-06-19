@@ -331,6 +331,7 @@ export interface Contact {
   modifiedBy: number;
   created: string;
   modified: string;
+  deleted?: boolean;
 }
 
 export interface Value {

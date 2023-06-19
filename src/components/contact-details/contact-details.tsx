@@ -1,4 +1,3 @@
-import EmailAddress from '@components/form/email-address';
 import PhoneNumbers from '@components/form/phone-numbers';
 import {
   EuiComboBox,
@@ -21,6 +20,7 @@ import {
 import { PhoneContact } from '@lib/domain/phone-numbers';
 import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
 import { FunctionComponent, useEffect, useState } from 'react';
+import EmailAddress from '@components/form/email-address';
 
 interface Props {
   language: string;
@@ -87,8 +87,6 @@ const ContactDetails: FunctionComponent<Props> = ({
   const [givenNameInternal, setGivenNameInternal] = useState<string>(
     givenName || ''
   );
-
-  // const { registerResetHandler } = useContext(CanvassingContext);
 
   const handleLanguageChange = (
     selectedOptions: {
@@ -187,7 +185,6 @@ const ContactDetails: FunctionComponent<Props> = ({
     }
     onEmailChange({ field: 'contacts', data: update });
   };
-
   const handleDeceasedChange = e => {
     const value = e.target.checked;
     setDeceasedInternal(value);
