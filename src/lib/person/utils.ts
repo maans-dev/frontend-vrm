@@ -9,6 +9,6 @@ export interface Names {
 export const renderName = (names: Names | Partial<Person>) => {
   const title = names?.salutation ? `${names?.salutation} ` : '';
   if (names?.givenName) return `${title}${names.givenName} ${names.surname}`;
-  if (!names?.surname) return 'Uknknown';
+  if (!names?.surname) return 'Unknown';
   return `${title}${names.firstName} ${names.surname}`;
 };
