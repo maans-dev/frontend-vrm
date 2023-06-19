@@ -82,6 +82,9 @@ export const validateContactInformation = (
   const duplicateEmails: Contact[] = [];
 
   for (const contact of emailContacts) {
+    if (contact.deleted || contact.canContact || contact.confirmed) {
+      continue;
+    }
     if (!isEmail(contact.value)) {
       isValid = false;
       emailErrorText = 'Please enter a valid email address';
@@ -116,10 +119,9 @@ export const validateContactInformation = (
     const duplicatePhoneNumbers: Contact[] = [];
 
     for (const contact of phoneContacts) {
-      if (contact.deleted) {
+      if (contact.deleted || contact.canContact || contact.confirmed) {
         continue;
       }
-
       const contactType =
         contact?.type ||
         personContacts?.find(personContact => personContact.key === contact.key)
