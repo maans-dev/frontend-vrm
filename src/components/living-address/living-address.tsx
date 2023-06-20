@@ -170,7 +170,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
 
     if (
       (updatedAddress && updatedAddress.geocodeSource === 'GEOCODED_VD') ||
-      updatedAddress.province_enum.toString() === ''
+      updatedAddress?.province_enum?.toString() === ''
     ) {
       return <EuiText size="xs">Unkown</EuiText>;
     }
@@ -324,6 +324,8 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
     const ward_num = structure.ward_num;
     const province = structure.province_enum;
 
+    if (data?.address?.deleted) return 'No Voting District Geocoded';
+
     return `${votingDistrict} (${votingDistrictId}), ${municipality} Ward ${ward_num}, ${province}`;
   }
 
@@ -338,7 +340,10 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
   useEffect(() => {
     if (person && person.address && person.address.structure.key) {
       setVotingDistrict(person.address.structure.formatted);
-    } else if (person && person.address && !person.address.structure?.key) {
+    } else if (
+      (person && person.address && !person.address.structure?.key) ||
+      data?.address?.deleted
+    ) {
       setVotingDistrict('No Voting District Geocoded');
     }
     if (
@@ -347,7 +352,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
       !data.address.buildingNo &&
       !data.address.buildingName
     ) {
-      if (!data.address.structure.formatted) {
+      if (!data.address?.structure?.formatted) {
         setVotingDistrict(formatVotingDistrict(data.address));
       } else {
         setVotingDistrict(data.address.structure.formatted);
