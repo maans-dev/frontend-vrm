@@ -146,10 +146,12 @@ const AddressResults = ({ address, onSelect, isLoading }: Props) => {
         return;
       }
 
+      // Add missing structure values from forward geocoded address
       selectedAddress.value.votingDistrict_id =
         +structureInfo[0].votingDistrict_id;
-      selectedAddress.value.structure = {};
-      selectedAddress.value.structure.formatted = structureInfo[0].formatted;
+      selectedAddress.value.votingDistrict = structureInfo[0].votingDistrict;
+      selectedAddress.value.province = structureInfo[0].province;
+      selectedAddress.value.structure = structureInfo[0];
     }
 
     // add geocoded source
