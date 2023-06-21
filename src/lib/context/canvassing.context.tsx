@@ -14,7 +14,6 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useLayoutEffect,
   useState,
 } from 'react';
 import { ToastContext } from './toast.context';
@@ -510,7 +509,7 @@ const CanvassingProvider = ({ children }) => {
     }
   }, [router]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (data?.contacts) {
       const { errorText } = validateContactInformation(
         data.contacts,
