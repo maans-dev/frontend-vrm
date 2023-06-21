@@ -37,13 +37,13 @@ export type Props = {
 
 const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
   const { data: session } = useSession();
-  const { data, person } = useContext(CanvassingContext);
+  const { data, person, votingDistrict, setVotingDistrict } =
+    useContext(CanvassingContext);
   const isMobile = useIsWithinBreakpoints(['xs', 's']);
   const [isLoading, setIsLoading] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [updatedAddress, setUpdatedAddress] =
     useState<Partial<Address>>(address);
-  const [votingDistrict, setVotingDistrict] = useState<string>();
   const { coords, isGeolocationAvailable, isGeolocationEnabled } =
     useGeolocated({
       positionOptions: {
@@ -104,32 +104,11 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
         : a;
     });
 
-    // console.log('[results]', { latitude, longitude, results });
-
     setSearchResults(results || []);
   };
 
   const getFormattedAddress = () => {
     if (!updatedAddress) return 'Unknown';
-    // if (updatedAddress.geocodeSource === GeocodedAddressSource.GEOCODED_VD) {
-    //   return (
-    //     <EuiFlexGroup responsive={false} gutterSize="xs">
-    //       <EuiFlexItem grow={false}>
-    //         <EuiIcon type={MdHowToVote} />
-    //       </EuiFlexItem>
-    //       <EuiFlexItem>
-    //         {updatedAddress?.structure?.formatted ?? updatedAddress.formatted}
-    //       </EuiFlexItem>
-    //     </EuiFlexGroup>
-    //   );
-    // }
-
-    // if (
-    //   'formatted' in updatedAddress &&
-    //   updatedAddress.formatted !== '' &&
-    //   updatedAddress.formatted !== null
-    // )
-    //   return updatedAddress?.formatted;
 
     let formatted = '';
     if (
@@ -324,7 +303,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
     const ward_num = structure.ward_num;
     const province = structure.province_enum;
 
-    if (data?.address?.deleted) return 'No Voting District Geocoded';
+    if (data?.address?.deleted) return 'Living address not geocoded';
 
     return `${votingDistrict} (${votingDistrictId}), ${municipality} Ward ${ward_num}, ${province}`;
   }
@@ -337,26 +316,29 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
     setUpdatedAddress(address);
   }, [address]);
 
+  // update living address VD
   useEffect(() => {
-    if (person && person.address && person.address.structure.key) {
-      setVotingDistrict(person.address.structure.formatted);
-    } else if (
-      (person && person.address && !person.address.structure?.key) ||
-      data?.address?.deleted
-    ) {
-      setVotingDistrict('No Voting District Geocoded');
+    if (data?.address?.structure?.deleted) {
+      setVotingDistrict('Living address not geocoded');
+      return;
     }
-    if (
-      data.address &&
-      !data.address.comment &&
-      !data.address.buildingNo &&
-      !data.address.buildingName
-    ) {
+
+    if (data?.address) {
       if (!data.address?.structure?.formatted) {
         setVotingDistrict(formatVotingDistrict(data.address));
       } else {
         setVotingDistrict(data.address.structure.formatted);
       }
+      return;
+    }
+
+    if (person && person?.address) {
+      if (person.address?.structure?.key) {
+        setVotingDistrict(person.address.structure?.formatted);
+      } else {
+        setVotingDistrict('Living address not geocoded');
+      }
+      return;
     }
   }, [person, data.address]);
 

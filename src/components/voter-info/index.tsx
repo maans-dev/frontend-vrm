@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useContext, useEffect, useState } from 'react';
 import {
   EuiAccordion,
   EuiBadge,
@@ -18,6 +18,7 @@ import {
   ColourCode,
   LivingStructure,
   Membership,
+  Person,
   RegisteredStructure,
 } from '@lib/domain/person';
 import { GiHouse } from 'react-icons/gi';
@@ -25,6 +26,9 @@ import { MdHowToVote } from 'react-icons/md';
 import { renderName } from '@lib/person/utils';
 import { useStickyVoterInfo } from '@lib/hooks/useStickyVoterInfo';
 import { css } from '@emotion/react';
+import { CanvassingContext } from '@lib/context/canvassing.context';
+import { useSession } from 'next-auth/react';
+import { appsignal } from '@lib/appsignal';
 
 export type Props = {
   deceased?: boolean;
@@ -57,15 +61,99 @@ const VoterInfo: FunctionComponent<Props> = ({
 }) => {
   const isMobile = useIsWithinBreakpoints(['xs', 's']);
   const { offsetTopRefEl, offsetTop } = useStickyVoterInfo();
+  const [hasUpdatedAddress, setHasUpdatedAddress] = useState(false);
+  const [updatedColorCode, setUpdatedColorCode] = useState<ColourCode>(null);
+  const { data: session } = useSession();
+
+  const { data: contextData, votingDistrict } = useContext(CanvassingContext);
 
   const getBadgeColour = () => {
     if (deceased) return '#cccccc';
 
-    if (colourCode?.colour && colourCode?.colour !== 'FFFFFF')
-      return `#${colourCode.colour}`;
+    if (getColourCode?.colour && getColourCode?.colour !== 'FFFFFF')
+      return `#${getColourCode.colour}`;
 
     return 'hollow';
   };
+
+  const getColourCode = updatedColorCode ?? colourCode;
+
+  const renderLivingAddress = () => {
+    if (hasUpdatedAddress) return votingDistrict;
+
+    if (livingStructure?.votingDistrict && livingStructure?.formatted)
+      return livingStructure.formatted;
+
+    return 'Unknown';
+  };
+
+  useEffect(() => {
+    if (!contextData?.address) return;
+
+    if (
+      livingStructure.votingDistrict_id !==
+      contextData.address?.votingDistrict_id
+    ) {
+      setHasUpdatedAddress(true);
+    }
+  }, [contextData?.address, livingStructure?.votingDistrict_id]);
+
+  // update colourCode when VD is changed
+  useEffect(() => {
+    setUpdatedColorCode(null);
+    if (!contextData?.address || !registeredStructure?.votingDistrict_id)
+      return;
+
+    if (
+      contextData?.address?.structure?.votingDistrict_id ===
+      registeredStructure?.votingDistrict_id
+    )
+      return;
+
+    const getColourCode = async () => {
+      const lvd = contextData.address?.structure?.deleted
+        ? 0
+        : contextData.address?.structure?.votingDistrict_id;
+      const rvd = registeredStructure?.votingDistrict_id;
+      const url = `${process.env.NEXT_PUBLIC_API_BASE}/address/colourcode?livingVotingDistrict_id=${lvd}&registeredVotingDistrict_id=${rvd}`;
+      const response = await fetch(url, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session?.accessToken}`,
+        },
+        method: 'GET',
+      });
+
+      if (!response.ok) {
+        // throw 'Unable to load Voting District for this address';
+        const errJson = JSON.parse(await response.text());
+        appsignal.sendError(
+          new Error(
+            `Unable to load Voting District for this address: ${errJson.message}`
+          ),
+          span => {
+            span.setAction('api-call');
+            span.setParams({
+              route: url,
+              user: session.user.darn,
+            });
+            span.setTags({ user_darn: session.user.darn.toString() });
+          }
+        );
+        return;
+      }
+
+      const colourCode = await response.json();
+      if (colourCode.length) setUpdatedColorCode(colourCode[0]);
+    };
+
+    getColourCode();
+  }, [
+    session?.accessToken,
+    session?.user.darn,
+    contextData?.address,
+    registeredStructure?.votingDistrict_id,
+  ]);
 
   const renderExtraInfo = (
     <>
@@ -106,10 +194,7 @@ const VoterInfo: FunctionComponent<Props> = ({
         <EuiFlexItem>
           <EuiPanel paddingSize="xs" hasBorder={true}>
             <EuiText size="xs" css={{ textTransform: 'capitalize' }}>
-              <EuiIcon type={GiHouse} />{' '}
-              {livingStructure?.votingDistrict
-                ? livingStructure.formatted
-                : 'Unknown'}
+              <EuiIcon type={GiHouse} /> {renderLivingAddress()}
             </EuiText>
           </EuiPanel>
         </EuiFlexItem>
@@ -187,9 +272,9 @@ const VoterInfo: FunctionComponent<Props> = ({
                 }
                 color={getBadgeColour()}
                 iconType={
-                  colourCode?.name == 'Green' ? 'checkInCircleFilled' : null
+                  getColourCode?.name == 'Green' ? 'checkInCircleFilled' : null
                 }>
-                {deceased ? 'Deceased' : colourCode?.description}
+                {deceased ? 'Deceased' : getColourCode?.description}
               </EuiBadge>
             </EuiFlexItem>
           </EuiFlexGroup>

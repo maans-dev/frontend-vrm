@@ -50,6 +50,8 @@ export type CanvassingContextType = {
   selectedTab: number;
   validationError: string;
   setValidationError: (update: string) => void;
+  votingDistrict: string;
+  setVotingDistrict: (value: string) => void;
 };
 
 export const CanvassingContext = createContext<Partial<CanvassingContextType>>(
@@ -77,6 +79,7 @@ const CanvassingProvider = ({ children }) => {
   const { mutate } = useSWRConfig();
   const [selectedTab, setSelectedTab] = useState(1);
   const [validationError, setValidationError] = useState<string>('');
+  const [votingDistrict, setVotingDistrict] = useState<string>('');
 
   const setPerson = (person: Person) => setPersonInternal(person);
 
@@ -560,6 +563,8 @@ const CanvassingProvider = ({ children }) => {
         selectedTab,
         validationError,
         setValidationError,
+        votingDistrict,
+        setVotingDistrict,
       }}>
       {children}
     </CanvassingContext.Provider>
