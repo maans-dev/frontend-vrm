@@ -1,10 +1,9 @@
-import { validatePhoneInput } from '@components/form/form-utils';
+import { isEmail } from '@components/form/form-utils';
 import { Contact } from '@lib/domain/person';
 import { useState, useEffect } from 'react';
 
-export const usePhoneValidation = (
-  phoneContactValue: string,
-  phoneType: string,
+export const useEmailValidation = (
+  value: string,
   updatedContacts: Contact[],
   personContacts: Contact[]
 ): { isValid: boolean; validationError: string } => {
@@ -12,15 +11,14 @@ export const usePhoneValidation = (
   const [validationError, setValidationError] = useState('');
 
   useEffect(() => {
-    const { valid, errorText } = validatePhoneInput(
-      phoneContactValue,
-      phoneType,
+    const { valid, errorText } = isEmail(
+      value,
       updatedContacts,
       personContacts
     );
     setValidationError(errorText);
     setIsValid(valid);
-  }, [phoneType, phoneContactValue, updatedContacts, personContacts]);
+  }, [value, updatedContacts, personContacts]);
 
   return { isValid, validationError };
 };

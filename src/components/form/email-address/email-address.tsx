@@ -15,6 +15,7 @@ import { EmailContact } from '@lib/domain/email-address';
 import { isEmail } from '../form-utils';
 import { GoCircleSlash } from 'react-icons/go';
 import { CanvassingContext } from '@lib/context/canvassing.context';
+import { useEmailValidation } from './useEmailValidation';
 
 export type Props = {
   emailContact: EmailContact;
@@ -31,7 +32,12 @@ const EmailAddressLine: FunctionComponent<Props> = ({
   const [showActions, setShowActions] = useState(false);
   const onActionsClick = () => setShowActions(showActions => !showActions);
   const hideActions = () => setShowActions(false);
-  const { setValidationError } = useContext(CanvassingContext);
+  const { setValidationError, data, person } = useContext(CanvassingContext);
+  const { isValid, validationError } = useEmailValidation(
+    emailContact.value,
+    data?.contacts,
+    person?.contacts
+  );
 
   const handleRemove = () => {
     setValidationError('');
@@ -54,8 +60,8 @@ const EmailAddressLine: FunctionComponent<Props> = ({
       <EuiFlexItem>
         <EuiFormRow
           display="rowCompressed"
-          isInvalid={!isEmail(emailContact.value)}
-          error="Enter a valid email address">
+          isInvalid={!isValid}
+          error={validationError}>
           <EuiFieldText
             compressed
             append={
@@ -171,9 +177,9 @@ const EmailAddressLine: FunctionComponent<Props> = ({
                 </div>
               )
             }
-            placeholder="Enter a email address"
+            placeholder={validationError}
             value={emailContact.value}
-            isInvalid={!isEmail(emailContact.value)}
+            isInvalid={!isValid}
             inputMode="numeric"
             onChange={e => {
               const updatedValue = e.target.value.slice(0, 100);

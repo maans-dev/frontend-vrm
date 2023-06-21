@@ -1,10 +1,40 @@
 import { Contact } from '@lib/domain/person';
 
-export function isEmail(value: string): boolean {
+export function isEmail(
+  value: string,
+  updatedContacts?: Contact[],
+  personContacts?: Contact[]
+): { valid: boolean; errorText: string } {
+  const emailContacts =
+    updatedContacts?.filter(contact => contact.category === 'EMAIL') || [];
+
+  const uniqueEmails = new Set<string>();
+  const duplicateEmails: Contact[] = [];
+
+  for (const contact of emailContacts) {
+    const isDuplicateInUpdated =
+      emailContacts.filter(c => c.value === contact.value).length > 1;
+
+    const isDuplicateInPerson =
+      personContacts?.some(c => c.value === contact.value) || false;
+
+    if (isDuplicateInUpdated || isDuplicateInPerson) {
+      duplicateEmails.push(contact);
+    } else {
+      uniqueEmails.add(contact.value);
+    }
+  }
+
+  if (duplicateEmails.length > 0) {
+    return { valid: false, errorText: 'Duplicate email addresses found' };
+  }
+
   const pattern =
     /^[A-Za-z0-9.!#$%&''*+-/=?^_`{|}~]+@[A-Za-z0-9.-]+[.][A-Za-z]+$/i;
   const valid = pattern.test(value);
-  return valid;
+  const errorText = valid ? '' : 'Enter a valid email address';
+
+  return { valid, errorText };
 }
 
 export function isPhoneNumber(value: string): boolean {
@@ -34,36 +64,63 @@ export function isIntlPhoneNumber(value: string): boolean {
 
 export const validatePhoneInput = (
   inputValue: string,
-  selectedPhoneType: string
+  selectedPhoneType: string,
+  updatedContacts?: Contact[],
+  personContacts?: Contact[]
 ) => {
-  let valid = false;
-  let errorText = '';
+  const phoneContacts =
+    updatedContacts?.filter(contact => contact.category !== 'EMAIL') || [];
 
-  if (inputValue) {
+  const uniquePhoneNumbers = new Set<string>();
+  const duplicatePhoneNumbers: Contact[] = [];
+
+  for (const contact of phoneContacts) {
+    const isDuplicateInUpdated =
+      phoneContacts.filter(c => c.value === contact.value).length > 1;
+
+    const isDuplicateInPerson =
+      personContacts?.some(
+        c => c.value === contact.value && c.type === selectedPhoneType
+      ) || false;
+
+    if (isDuplicateInUpdated || isDuplicateInPerson) {
+      duplicatePhoneNumbers.push(contact);
+    } else {
+      uniquePhoneNumbers.add(contact.value);
+    }
+  }
+
+  let isValid = true;
+  let phoneErrorText = '';
+
+  if (duplicatePhoneNumbers.length > 0) {
+    isValid = false;
+    phoneErrorText = 'Duplicate phone numbers found';
+  } else if (inputValue) {
     switch (selectedPhoneType) {
       case 'CELL':
-        valid = isCellPhoneNumber(inputValue);
-        errorText = valid ? '' : 'Enter a valid mobile number';
+        isValid = isCellPhoneNumber(inputValue);
+        phoneErrorText = isValid ? '' : 'Enter a valid mobile number';
         break;
       case 'WORK':
       case 'HOME':
-        valid = isPhoneNumber(inputValue);
-        errorText = valid ? '' : 'Enter a valid phone number';
+        isValid = isPhoneNumber(inputValue);
+        phoneErrorText = isValid ? '' : 'Enter a valid phone number';
         break;
       case 'INTERNATIONAL':
-        valid = isIntlPhoneNumber(inputValue);
-        errorText = valid ? '' : 'Enter a valid international number';
+        isValid = isIntlPhoneNumber(inputValue);
+        phoneErrorText = isValid ? '' : 'Enter a valid international number';
         break;
       default:
-        valid = false;
-        errorText = 'Please select a phone type';
+        isValid = false;
+        phoneErrorText = 'Please select a phone type';
     }
   } else {
-    valid = false;
-    errorText = 'Enter a phone number';
+    isValid = false;
+    phoneErrorText = 'Enter a phone number';
   }
 
-  return { valid, errorText: valid ? '' : errorText };
+  return { valid: isValid, errorText: isValid ? '' : phoneErrorText };
 };
 
 export const validateContactInformation = (
@@ -82,18 +139,19 @@ export const validateContactInformation = (
   const duplicateEmails: Contact[] = [];
 
   for (const contact of emailContacts) {
-    if (
-      contact.deleted ||
-      contact.canContact ||
-      contact.confirmed ||
-      !contact.canContact ||
-      !contact.confirmed
-    ) {
+    if (contact.deleted || typeof contact.key === 'string') {
       continue;
     }
-    if (!isEmail(contact.value)) {
+
+    const { valid: emailIsValid, errorText: emailValidationError } = isEmail(
+      contact.value,
+      updatedContacts,
+      personContacts
+    );
+
+    if (!emailIsValid) {
       isValid = false;
-      emailErrorText = 'Please enter a valid email address';
+      emailErrorText = emailValidationError;
       break;
     }
 
@@ -123,28 +181,27 @@ export const validateContactInformation = (
 
     const uniquePhoneNumbers = new Set<string>();
     const duplicatePhoneNumbers: Contact[] = [];
-
     for (const contact of phoneContacts) {
-      if (
-        contact.deleted ||
-        contact.canContact ||
-        contact.confirmed ||
-        !contact.canContact ||
-        !contact.confirmed
-      ) {
+      if (contact.deleted || typeof contact.key === 'string') {
         continue;
       }
+
       const contactType =
         contact?.type ||
         personContacts?.find(personContact => personContact.key === contact.key)
           ?.type;
 
-      const { valid: contactIsValid, errorText: contactValidationError } =
-        validatePhoneInput(contact.value, contactType);
+      const { valid: phoneIsValid, errorText: phoneValidationError } =
+        validatePhoneInput(
+          contact.value,
+          contactType,
+          updatedContacts,
+          personContacts
+        );
 
-      if (!contactIsValid) {
+      if (!phoneIsValid) {
         isValid = false;
-        phoneErrorText = contactValidationError;
+        phoneErrorText = phoneValidationError;
         break;
       }
 

@@ -20,6 +20,8 @@ const EmailAddress: FunctionComponent<Props> = ({
       type: 'CUSTOM',
       key: nextId(),
       category: 'EMAIL',
+      canContact: true,
+      confirmed: true,
     };
     onUpdate(newEmailContact);
   };

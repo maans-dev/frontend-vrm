@@ -94,35 +94,31 @@ const Voter: FunctionComponent = () => {
 
   const validationErrorMessage = (
     <EuiFlexGroup justifyContent="flexEnd">
-      <EuiFlexItem grow={false} style={{ width: '450px' }}>
+      <EuiFlexItem grow={false}>
         <EuiCallOut
-          title="Validation Error"
+          style={{
+            textAlign: 'right',
+            marginRight: '0',
+            minWidth: '250px',
+          }}
+          title={validationError}
           color="danger"
           iconType="alert"
           onClick={handleErrorScroll}
-          style={{ marginRight: '0' }}
-          size="s">
-          <EuiText color="danger" size="s" textAlign="right">
-            <p>{validationError}</p>
-          </EuiText>
-        </EuiCallOut>
+          size="s"></EuiCallOut>
       </EuiFlexItem>
     </EuiFlexGroup>
   );
 
   const affiliationMessage = (
     <EuiFlexGroup justifyContent="flexEnd">
-      <EuiFlexItem grow={false} style={{ width: '450px' }}>
+      <EuiFlexItem grow={false}>
         <EuiCallOut
           title="Affiliation Not Confirmed"
           color="warning"
           iconType="alert"
-          style={{ marginRight: '0' }}
-          size="s">
-          <EuiText color="warning" size="s" textAlign="right">
-            Please confirm the voter&apos;s affiliation.
-          </EuiText>
-        </EuiCallOut>
+          style={{ marginRight: '0', textAlign: 'right', minWidth: '250px' }}
+          size="s"></EuiCallOut>
       </EuiFlexItem>
     </EuiFlexGroup>
   );

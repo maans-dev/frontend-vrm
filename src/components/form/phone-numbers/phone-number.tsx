@@ -121,7 +121,7 @@ const PhoneNumberLine: FunctionComponent<Props> = ({
       ),
     },
   ];
-
+  const { setValidationError, person, data } = useContext(CanvassingContext);
   const { euiTheme } = useEuiTheme();
   const [phoneType, setPhoneType] = useState(phoneContact?.type);
   const [typeIcon, setTypeIcon] = useState<ReactElement>(null);
@@ -130,9 +130,10 @@ const PhoneNumberLine: FunctionComponent<Props> = ({
   const hideActions = () => setShowActions(false);
   const { isValid, validationError } = usePhoneValidation(
     phoneContact.value,
-    phoneType
+    phoneType,
+    data?.contacts,
+    person?.contacts
   );
-  const { setValidationError } = useContext(CanvassingContext);
 
   const onChangePhoneType = (value: string) => {
     setPhoneType(value);

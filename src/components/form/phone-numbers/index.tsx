@@ -21,6 +21,8 @@ const PhoneNumbers: FunctionComponent<Props> = ({
       type: '',
       key: nextId(),
       category: 'PHONE',
+      canContact: true,
+      confirmed: true,
     };
     onUpdate(newPhoneContact);
   };
