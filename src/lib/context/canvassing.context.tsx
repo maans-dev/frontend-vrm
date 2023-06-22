@@ -109,7 +109,8 @@ const CanvassingProvider = ({ children }) => {
     if (
       typeof update.data === 'object' &&
       !Array.isArray(update.data) &&
-      'deleted' in update.data
+      'deleted' in update.data &&
+      update.data.deleted === true
     ) {
       for (const key in update.data) {
         if (key !== 'key' && key !== 'deleted') delete update.data[key];

@@ -274,16 +274,6 @@ const ContactDetails: FunctionComponent<Props> = ({
       </EuiFormRow>
 
       <EuiSpacer size="m" />
-      <EuiSwitch
-        label="Deceased?"
-        compressed
-        checked={deceasedInternal}
-        name="deceased"
-        aria-label="Toggle deceased status"
-        onChange={handleDeceasedChange}
-      />
-
-      <EuiSpacer size="m" />
 
       <EuiFormRow display="rowCompressed" label="Language">
         <EuiComboBox

@@ -182,6 +182,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
         'person',
         'structure',
       ]),
+      deleted: false,
       structure: {
         votingDistrict_id: +selectedAddress.votingDistrict_id,
         formatted: selectedAddress.structure?.formatted,
@@ -219,7 +220,6 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
       ]),
       [field]: value,
     };
-
     if (
       'votingDistrict_id' in updatedAddress.structure &&
       address.structure.votingDistrict_id !==
@@ -291,7 +291,6 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
       deleted: true,
     };
     setUpdatedAddress(emptyAddress);
-    onChange(null);
     onChange(emptyAddress);
   };
 
@@ -323,11 +322,15 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
       return;
     }
 
-    if (data?.address) {
+    if (
+      data?.address &&
+      (data?.address?.votingDistrict_id ||
+        data?.address?.structure?.votingDistrict_id)
+    ) {
       if (!data.address?.structure?.formatted) {
         setVotingDistrict(formatVotingDistrict(data.address));
       } else {
-        setVotingDistrict(data.address.structure.formatted);
+        setVotingDistrict(data.address?.structure?.formatted);
       }
       return;
     }
@@ -340,7 +343,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
       }
       return;
     }
-  }, [person, data.address]);
+  }, [person?.address, data?.address]);
 
   return (
     <div style={{ position: 'relative' }}>
@@ -426,7 +429,9 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
           <EuiSpacer size="m" />
           <EuiFormRow display="rowCompressed" label="Address on File">
             <EuiPanel hasShadow={false} hasBorder={true} paddingSize="s">
-              <EuiText size="xs">{getFormattedAddress()}</EuiText>
+              <EuiText size="xs">
+                {data?.address?.deleted ? 'Unknown' : getFormattedAddress()}
+              </EuiText>
             </EuiPanel>
           </EuiFormRow>
           <EuiSpacer size="m" />
@@ -436,7 +441,9 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
                 <EuiFlexItem grow={false}>
                   <EuiIcon type={MdHowToVote} />
                 </EuiFlexItem>
-                <EuiText size="xs">{votingDistrict}</EuiText>
+                <EuiText size="xs">
+                  {data?.address?.deleted ? 'Unknown' : votingDistrict}
+                </EuiText>
               </EuiFlexGroup>
             </EuiPanel>
           </EuiFormRow>

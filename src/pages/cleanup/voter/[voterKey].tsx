@@ -9,7 +9,6 @@ import {
   EuiForm,
   EuiFormFieldset,
   EuiIcon,
-  EuiPanel,
   EuiSpacer,
   EuiTab,
   EuiTabs,
@@ -30,6 +29,7 @@ import { CanvassingContext } from '@lib/context/canvassing.context';
 import { css } from '@emotion/react';
 import PersonHistory from '@components/person-history';
 import { useLeavePageConfirmation } from '@lib/hooks/useLeavePageConfirmation';
+import DeceasedOrMoved from '@components/deceased-or-moved';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
@@ -101,18 +101,18 @@ const Voter: FunctionComponent = () => {
 
   const validationErrorMessage = (
     <EuiFlexGroup justifyContent="flexEnd">
-      <EuiFlexItem grow={false} style={{ width: '450px' }}>
+      <EuiFlexItem grow={false}>
         <EuiCallOut
-          title="Validation Error"
+          style={{
+            textAlign: 'right',
+            marginRight: '0',
+            minWidth: '250px',
+          }}
+          title={validationError}
           color="danger"
           iconType="alert"
           onClick={() => setSelectedTab(0)}
-          style={{ marginRight: '0' }}
-          size="s">
-          <EuiText color="danger" size="s" textAlign="right">
-            <p>{validationError}</p>
-          </EuiText>
-        </EuiCallOut>
+          size="s"></EuiCallOut>
       </EuiFlexItem>
     </EuiFlexGroup>
   );
@@ -219,6 +219,16 @@ const Voter: FunctionComponent = () => {
         membership={person?.membership}
       />
 
+      <EuiSpacer />
+      <EuiFormFieldset legend={{ children: 'Deceased or moved?' }}>
+        <DeceasedOrMoved
+          deceased={person?.deceased}
+          fields={person?.fields}
+          onDeceasedChange={onChange}
+          onMovedChange={onChange}
+          onAddressChange={onChange}
+        />
+      </EuiFormFieldset>
       <EuiSpacer />
       <EuiForm fullWidth isInvalid={serverError !== ''} error={[serverError]}>
         <EuiFlexGroup direction="row" gutterSize="xs">
