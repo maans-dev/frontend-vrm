@@ -126,10 +126,10 @@ const VoterInfo: FunctionComponent<Props> = ({
 
       if (!response.ok) {
         // throw 'Unable to load Voting District for this address';
-        const errJson = JSON.parse(await response.text());
+        const errMsg = await response.text();
         appsignal.sendError(
           new Error(
-            `Unable to load Voting District for this address: ${errJson.message}`
+            `Unable to load Voting District for this address: ${errMsg}`
           ),
           span => {
             span.setAction('api-call');
