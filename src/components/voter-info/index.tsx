@@ -88,7 +88,10 @@ const VoterInfo: FunctionComponent<Props> = ({
   };
 
   useEffect(() => {
-    if (!contextData?.address) return;
+    if (!contextData?.address) {
+      setHasUpdatedAddress(false);
+      return;
+    }
 
     if (
       livingStructure.votingDistrict_id !==
@@ -100,20 +103,18 @@ const VoterInfo: FunctionComponent<Props> = ({
 
   // update colourCode when VD is changed
   useEffect(() => {
-    setUpdatedColorCode(null);
+    if (!contextData?.address) {
+      setUpdatedColorCode(null);
+    }
+
     if (!contextData?.address || !registeredStructure?.votingDistrict_id)
       return;
 
-    if (
-      contextData?.address?.structure?.votingDistrict_id ===
-      registeredStructure?.votingDistrict_id
-    )
-      return;
-
     const getColourCode = async () => {
-      const lvd = contextData.address?.structure?.deleted
-        ? 0
-        : contextData.address?.structure?.votingDistrict_id;
+      const lvd =
+        contextData.address?.structure?.deleted || contextData.address?.deleted
+          ? 0
+          : contextData.address?.structure?.votingDistrict_id;
       const rvd = registeredStructure?.votingDistrict_id;
       const url = `${process.env.NEXT_PUBLIC_API_BASE}/address/colourcode?livingVotingDistrict_id=${lvd}&registeredVotingDistrict_id=${rvd}`;
       const response = await fetch(url, {
@@ -150,9 +151,9 @@ const VoterInfo: FunctionComponent<Props> = ({
     getColourCode();
   }, [
     session?.accessToken,
-    session?.user.darn,
-    contextData?.address,
+    session.user.darn,
     registeredStructure?.votingDistrict_id,
+    contextData.address,
   ]);
 
   const renderExtraInfo = (
