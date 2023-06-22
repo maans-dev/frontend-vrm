@@ -51,7 +51,6 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
   };
 
   const setSelectedAddress = (option: Partial<Address>) => {
-    console.log('setSelectedAddress', option);
     if (!option?.geocodeSource) {
       if (option.latitude && option.longitude) {
         option.geocodeSource = GeocodedAddressSource.GEOCODED_ADDRESS;

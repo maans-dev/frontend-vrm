@@ -5,8 +5,9 @@ import {
   FieldsUpdate,
   PersonUpdate,
 } from '@lib/domain/person-update';
-import { FunctionComponent, useContext } from 'react';
+import { FunctionComponent, useContext, useEffect, useState } from 'react';
 import LivingAddress from './living-address';
+import useTagFetcher from '@lib/fetcher/tags/tags';
 
 export type Props = {
   address: Address;
@@ -17,6 +18,8 @@ export type Props = {
 
 const Address: FunctionComponent<Props> = ({ address, onChange }) => {
   const { nextId } = useContext(CanvassingContext);
+  const { data: movedTag } = useTagFetcher('MVD'); //TODO handle when fetch fails
+  const [movedKey, setMovedKey] = useState<string>();
 
   const doChange = (address: Partial<Address>) => {
     onChange({
@@ -24,19 +27,27 @@ const Address: FunctionComponent<Props> = ({ address, onChange }) => {
       data: address,
     });
 
-    if (address && 'deleted' in address) {
+    if (address.deleted === true) {
       onChange({
         field: 'fields',
         data: {
           key: nextId(),
           value: true,
           field: {
-            key: 'd615d744-3e66-6bf6-fa37-455c40dbb098',
+            key: movedKey,
           },
         },
       });
     }
   };
+
+  useEffect(() => {
+    //Get Moved Tag Key
+    if (movedTag) {
+      const updatemovedKey = movedTag.map(tag => tag.key);
+      setMovedKey(updatemovedKey[0]);
+    }
+  }, [movedTag]);
 
   return (
     <>

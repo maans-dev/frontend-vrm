@@ -9,9 +9,7 @@ import {
   EuiForm,
   EuiFormFieldset,
   EuiFormRow,
-  EuiPanel,
   EuiSpacer,
-  EuiText,
 } from '@elastic/eui';
 import MainLayout from '@layouts/main';
 import { useRouter } from 'next/router';
@@ -28,6 +26,7 @@ import { GeneralUpdate, PersonUpdate } from '@lib/domain/person-update';
 import { CanvassingContext } from '@lib/context/canvassing.context';
 import { CanvassingSelectionDetails } from '@components/canvassing-type/canvassing-selection-details';
 import { useLeavePageConfirmation } from '@lib/hooks/useLeavePageConfirmation';
+import DeceasedOrMoved from '@components/deceased-or-moved';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
@@ -204,6 +203,16 @@ const Voter: FunctionComponent = () => {
         membership={person?.membership}
       />
 
+      <EuiSpacer />
+      <EuiFormFieldset legend={{ children: 'Deceased or moved?' }}>
+        <DeceasedOrMoved
+          deceased={person?.deceased}
+          fields={person?.fields}
+          onDeceasedChange={onChange}
+          onMovedChange={onChange}
+          onAddressChange={onChange}
+        />
+      </EuiFormFieldset>
       <EuiSpacer />
       <EuiForm fullWidth isInvalid={serverError !== ''} error={[serverError]}>
         <EuiFormFieldset legend={{ children: 'Canvassing tags' }}>

@@ -24,6 +24,7 @@ export type GeneralUpdate =
   | GivenNameUpdate
   | CommentsUpdate
   | FieldsUpdate
+  | MovedUpdate
   | AddressUpdate
   | MembershipUpdate;
 
@@ -33,6 +34,7 @@ export type KeyedUpdate =
   | PhoneUpdate
   | EmailUpdate
   | CommentsUpdate
+  | MovedUpdate
   | FieldsUpdate;
 
 export type AffiliateUpdate = Pick<Affiliation, 'key' | 'name' | 'confirmed'>;
@@ -47,6 +49,7 @@ export type EmailUpdate = Pick<
 >;
 export type DeceasedUpdate = boolean;
 export type GivenNameUpdate = string;
+export type MovedUpdate = Pick<Partial<Field>, 'key' | 'field' | 'value'>;
 export type FieldsUpdate = Pick<Partial<Field>, 'key' | 'field' | 'value'>;
 export type CommentsUpdate = Pick<
   Partial<CommentsType>,
