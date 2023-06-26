@@ -1630,11 +1630,11 @@
     "colId": "history",
     "containerId": "",
     "name": "https://sturdy-giggle.da-io.net/person?limit=10",
-    "url": "https://sturdy-giggle.da-io.net/person?dob=740830",
+    "url": "https://georoles.da-io.net/accessible-geographies/multiple-roles?roles=vrmCanvass&roles=vrmMembership&roles=vrmMembershipAdmin&roles=vrmSheetGen&roles=vrmBulkComms&roles=vrmVoterEdit&roles=vrmSuperUser&roles=vrmActivityReport",
     "method": "GET",
     "sortNum": 0,
     "created": "2023-03-14T08:57:49.210Z",
-    "modified": "2023-03-14T14:17:30.084Z",
+    "modified": "2023-06-22T12:14:49.386Z",
     "headers": [],
     "params": [
       {
@@ -1656,8 +1656,8 @@
         "isPath": false
       },
       {
-        "name": "dob",
-        "value": "740830",
+        "name": "roles",
+        "value": "vrmCanvass",
         "isPath": false
       },
       {
@@ -1677,8 +1677,47 @@
         "value": "8408057815083",
         "isDisabled": true,
         "isPath": false
+      },
+      {
+        "name": "roles",
+        "value": "vrmMembership",
+        "isPath": false
+      },
+      {
+        "name": "roles",
+        "value": "vrmMembershipAdmin",
+        "isPath": false
+      },
+      {
+        "name": "roles",
+        "value": "vrmSheetGen",
+        "isPath": false
+      },
+      {
+        "name": "roles",
+        "value": "vrmBulkComms",
+        "isPath": false
+      },
+      {
+        "name": "roles",
+        "value": "vrmVoterEdit",
+        "isPath": false
+      },
+      {
+        "name": "roles",
+        "value": "vrmSuperUser",
+        "isPath": false
+      },
+      {
+        "name": "roles",
+        "value": "vrmActivityReport",
+        "isPath": false
       }
     ],
+    "auth": {
+      "type": "bearer",
+      "bearer": "416c403ca0dadf80523335efbbd2fffee4d2cc18cbf9bb1e8419c186f102cded28c3e2c151339afaa24d39509c39c9c1"
+    },
     "tests": []
   }
 ]

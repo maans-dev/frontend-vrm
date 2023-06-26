@@ -15,7 +15,6 @@ export default function usePersonSearchFetcher(
   offset = 0,
 ) {
   const shouldFetch = params ? true : false;
-
   // handle phone and email params
   let contactibility = null;
   if (shouldFetch) {
@@ -34,11 +33,12 @@ export default function usePersonSearchFetcher(
     }
   }
 
+  const url = `/person?count=true&limit=${limit}&offset=${offset}&template=["Address","IEC","Contact"]&orderBy={"ignoreDefault":true,"values":[{"key":"surname","metaData":{"direction":"ASC"}},{"key":"firstName"}]}&${new URLSearchParams(
+    params as never).toString()}`;
+
   const { data, error, isLoading, mutate } = useSWR<PersonSearchResponse>(
     shouldFetch
-      ? `/person?count=true&limit=${limit}&offset=${offset}&template=["Address","IEC","Contact"]&orderBy={"ignoreDefault":true,"values":[{"key":"surname","metaData":{"direction":"ASC"}},{"key":"firstName"}]}&${new URLSearchParams(
-        params as never
-      ).toString()}`
+      ? url
       : null,
     fetcherAPI,
     {
@@ -48,11 +48,16 @@ export default function usePersonSearchFetcher(
     }
   );
 
+  let wrappedError = null;
+  if (error) {
+    wrappedError = new Error(`Voter search failed: ${error.message}`, {cause: error});
+  }
+
   return {
     results: data?.values,
     count: data?.count,
     isLoading,
-    error: error,
+    error: wrappedError,
     mutate
   };
 }

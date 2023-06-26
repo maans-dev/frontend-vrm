@@ -22,7 +22,7 @@ async function refreshAccessToken(token) {
     grant_type: 'refresh_token',
     client_id: process.env.DA_ID,
     client_secret: process.env.DA_SECRET,
-    refresh_token: token.refreshToken,
+    refresh_token: `${token.refreshToken}`,
   });
 
   try {
@@ -41,7 +41,11 @@ async function refreshAccessToken(token) {
     const tokens: TokenSet = await response.clone().json();
     // console.log('[TOKENS]', tokens);
 
-    console.log('[REFRESHED ACCESS TOKEN]');
+    console.log(
+      '[REFRESHED ACCESS TOKEN]',
+      tokens,
+      moment.unix(Math.floor(Date.now() / 1000 + (tokens.expires_in as number)))
+    );
     appsignal.addBreadcrumb({
       category: 'Log',
       action: 'REFRESHED ACCESS TOKEN',
@@ -58,11 +62,12 @@ async function refreshAccessToken(token) {
     console.log('[RefreshAccessTokenError]', error);
 
     appsignal.sendError(
-      new Error(`Unable to refresh access token: ${error.message}`),
+      new Error(`Unable to refresh access token: ${error?.message || error}`),
       span => {
         span.setAction('auth:refresh_token');
         span.setParams({
           route: url,
+          error: JSON.stringify(error),
         });
         // span.setTags({ user_darn: session.user.darn.toString() }); // TODO: we probaly need the user darn here
       }
@@ -102,15 +107,7 @@ export const authOptions: NextAuthOptions = {
         // console.log('jwt', { token, account });
       }
 
-      // Return previous token if the access token has not expired yet
-      const expiresAt = moment.unix(token.accessTokenExpires as number);
-      if (expiresAt.diff(moment(), 'm') >= 5) {
-        // we expire the token 5 min earlier than actual
-        return token;
-      }
-
-      // Access token has expired, try to update it
-      return refreshAccessToken(token);
+      return token;
     },
     async session({ session, token, user }) {
       // console.log('session', { session, token });
@@ -126,10 +123,15 @@ export const authOptions: NextAuthOptions = {
         session.disclosureAccepted = token.disclosureAccepted as boolean;
         delete session.user.image;
         // console.log('session', { session, token, user });
-        session.user.roles = await fetchAndExtractRoles(
-          session.accessToken,
-          session.user.darn
-        );
+        try {
+          session.user.roles = await fetchAndExtractRoles(
+            `${session.accessToken}`,
+            session.user.darn,
+            3
+          );
+        } catch (e) {
+          throw e;
+        }
       }
 
       return session;
@@ -137,6 +139,7 @@ export const authOptions: NextAuthOptions = {
     async redirect({ url, baseUrl }) {
       // allow redirect to DA SSO logout page for federated signout
       if (url === 'https://login.voteda.org/logout') return url;
+      if (url.startsWith('/')) return `${url}`;
       return baseUrl;
     },
   },

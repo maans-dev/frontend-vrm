@@ -13,49 +13,73 @@ export const hasRole = (
 
 export const fetchAndExtractRoles = async (
   accessToken,
-  darn_number: number
+  darn_number: number,
+  retries: number
 ) => {
-  // default to empty list of roles
-  const roles: string[] = [];
+  let url = '';
+  try {
+    // default to empty list of roles
+    const roles: string[] = [];
 
-  let rolesQry = '';
-  Object.values(Roles).forEach((role, i) => {
-    // if (role === Roles.SuperUser) return; // Just for debugging
-    rolesQry += `${i === 0 ? '' : '&'}roles=${role}`;
-  });
-
-  const url = `${process.env.NEXT_PUBLIC_GEO_API_BASE}/accessible-geographies/multiple-roles?${rolesQry}`;
-  // console.log('ROLES QRY', url);
-  const structureResponse = await fetch(url, {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-
-  if (!structureResponse.ok) {
-    const msg = await structureResponse.clone().text();
-    appsignal.sendError(new Error(`Unable to fetch roles: ${msg}`), span => {
-      span.setAction('api-call');
-      span.setParams({
-        route: url,
-      });
-      span.setTags({ user_darn: darn_number?.toString() });
+    let rolesQry = '';
+    Object.values(Roles).forEach((role, i) => {
+      // if (role === Roles.SuperUser) return; // Just for debugging
+      rolesQry += `${i === 0 ? '' : '&'}roles=${role}`;
     });
-    throw msg;
-  }
 
-  const struct = await structureResponse.clone().json();
-  // console.log('[STRUCTURES]', struct);
+    url = `${process.env.NEXT_PUBLIC_GEO_API_BASE}/accessible-geographies/multiple-roles?${rolesQry}`;
 
-  for (const role of Object.values(Roles)) {
-    if (!(role in struct)) continue;
-    for (const s in Object.values(struct[role])) {
-      if (s.length > 0) {
-        roles.push(role);
-        break;
+    const structureResponse = await fetch(url, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    if (!structureResponse.ok) {
+      const msg = await structureResponse.clone().text();
+      throw msg;
+    }
+
+    const struct = await structureResponse.clone().json();
+    // console.log('[STRUCTURES]', struct);
+
+    for (const role of Object.values(Roles)) {
+      if (!(role in struct)) continue;
+      for (const s in Object.values(struct[role])) {
+        if (s.length > 0) {
+          roles.push(role);
+          break;
+        }
       }
     }
+
+    // console.log('[ROLES]', roles);
+    return roles;
+  } catch (e) {
+    if (retries > 0) {
+      await sleep(300);
+      appsignal.addBreadcrumb({
+        category: 'Log',
+        action: 'FETCH AND EXTRACT ROLES',
+        metadata: {
+          attempt: retries,
+          error: e,
+        },
+      });
+      return fetchAndExtractRoles(accessToken, darn_number, retries - 1);
+    }
+    appsignal.sendError(
+      new Error(`Auth Error:fetchAndExtractRoles: ${e}`),
+      span => {
+        span.setAction('auth:fetchAndExtractRoles');
+        span.setParams({
+          route: url,
+          error: e,
+        });
+        span.setTags({ user_darn: darn_number?.toString() });
+      }
+    );
+    throw e;
   }
-
-  // console.log('[ROLES]', roles);
-
-  return roles;
 };
+
+const sleep = (delay: number) =>
+  new Promise(resolve => setTimeout(resolve, delay));

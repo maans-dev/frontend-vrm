@@ -64,7 +64,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
     const response = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${session.accessToken}`,
+        Authorization: `Bearer ${session?.accessToken}`,
       },
       method: 'POST',
       body: JSON.stringify({

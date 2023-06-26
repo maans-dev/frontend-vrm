@@ -186,6 +186,19 @@ const Voter: FunctionComponent = () => {
       breadcrumb={breadcrumb}
       panelled={false}
       showSpinner={isLoading || isSubmitting || isValidating}>
+      {error && (
+        <>
+          <EuiCallOut
+            title="Something went wrong"
+            color="danger"
+            iconType="alert">
+            {error?.message || typeof error === 'string'
+              ? error
+              : 'Unknown error'}
+          </EuiCallOut>
+          <EuiSpacer />
+        </>
+      )}
       <VoterInfo
         deceased={person?.deceased}
         darn={person?.key}

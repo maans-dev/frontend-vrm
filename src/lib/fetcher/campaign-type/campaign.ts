@@ -8,9 +8,16 @@ export default function useCanvassTypeFetcher() {
     fetcherAPI
   );
 
+  let wrappedError = null;
+  if (error) {
+    wrappedError = new Error(`Unable to load campaigns: ${error.message}`, {
+      cause: error,
+    });
+  }
+
   return {
     campaignType: data,
     isLoading: isLoading && !error && !data,
-    error,
+    error: wrappedError,
   };
 }

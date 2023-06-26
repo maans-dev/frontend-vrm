@@ -38,7 +38,7 @@ const PersonSearch: FunctionComponent<Props> = ({
     setPersonSearchError('');
     const url = `${process.env.NEXT_PUBLIC_API_BASE}/person?identity=${canvasserSearchText}`;
     const response = await fetch(url, {
-      headers: { Authorization: `Bearer ${session.accessToken}` },
+      headers: { Authorization: `Bearer ${session?.accessToken}` },
     });
 
     if (!response.ok) {

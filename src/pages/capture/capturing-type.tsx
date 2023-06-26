@@ -105,16 +105,19 @@ const CaptureType: FunctionComponent = () => {
     );
   }
 
-  if (error) {
-    return (
-      <EuiCallOut title="Error" color="danger" iconType="alert">
-        {error}
-      </EuiCallOut>
-    );
-  }
-
   return (
     <MainLayout breadcrumb={breadcrumb} panelled={false}>
+      {error && (
+        <>
+          <EuiCallOut
+            title="Somethig went wrong"
+            color="danger"
+            iconType="alert">
+            {error?.message ? error.message : 'Unknown error'}
+          </EuiCallOut>
+          <EuiSpacer />
+        </>
+      )}
       <Global
         styles={css`
           li.euiSelectableListItem[aria-checked='true'] {
