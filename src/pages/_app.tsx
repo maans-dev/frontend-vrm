@@ -14,6 +14,7 @@ import { Session } from 'next-auth';
 import AuthHandler from '@components/auth/auth-handler';
 import { ErrorBoundary } from '@appsignal/react';
 import { appsignal, initAppsignal } from '@lib/appsignal';
+import SwrGlobalErrorHandler from '@components/error/swr-global-error-handler';
 
 /**
  * Next.js uses the App component to initialize pages. You can override it
@@ -38,23 +39,25 @@ const EuiApp: FunctionComponent<AppProps<{ session: Session }>> = ({
         <title>VRM</title>
       </Head>
       <Global styles={globalStyes} />
-      <Theme>
-        <Chrome>
-          <ErrorBoundary instance={appsignal}>
-            <SessionProvider
-              session={session}
-              refetchInterval={60} // refresh session every 60 seconds
-              refetchOnWindowFocus={true}>
-              <ToastProvider>
-                <CanvassingProvider>
-                  <AuthHandler />
-                  <Component {...pageProps} />
-                </CanvassingProvider>
-              </ToastProvider>
-            </SessionProvider>
-          </ErrorBoundary>
-        </Chrome>
-      </Theme>
+      <SessionProvider
+        session={session}
+        refetchInterval={60} // refresh session every 60 seconds
+        refetchOnWindowFocus={true}>
+        <ToastProvider>
+          <SwrGlobalErrorHandler>
+            <Theme>
+              <Chrome>
+                <ErrorBoundary instance={appsignal}>
+                  <CanvassingProvider>
+                    <AuthHandler />
+                    <Component {...pageProps} />
+                  </CanvassingProvider>
+                </ErrorBoundary>
+              </Chrome>
+            </Theme>
+          </SwrGlobalErrorHandler>
+        </ToastProvider>
+      </SessionProvider>
     </>
   );
 };

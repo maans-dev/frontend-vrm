@@ -27,7 +27,8 @@ export const DaAuthProvider: Provider = {
 
       userInfo.roles = await fetchAndExtractRoles(
         tokens.access_token,
-        userInfo?.peopleApiDetails?.darn_number
+        userInfo?.peopleApiDetails?.darn_number,
+        3
       );
       return userInfo;
     },

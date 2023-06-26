@@ -94,7 +94,7 @@ const AddressResults = ({ address, onSelect, isLoading }: Props) => {
       const response = await fetch(url, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${session.accessToken}`,
+          Authorization: `Bearer ${session?.accessToken}`,
         },
         method: 'GET',
       });

@@ -75,16 +75,19 @@ const CanvassingType: FunctionComponent = () => {
     );
   }
 
-  if (error) {
-    return (
-      <EuiCallOut title="Error" color="danger" iconType="alert">
-        {error}
-      </EuiCallOut>
-    );
-  }
-
   return (
     <MainLayout breadcrumb={breadcrumb} panelled={false}>
+      {error && (
+        <>
+          <EuiCallOut
+            title="Somethig went wrong"
+            color="danger"
+            iconType="alert">
+            {error?.message ? error.message : 'Unknown error'}
+          </EuiCallOut>
+          <EuiSpacer />
+        </>
+      )}
       <Global
         styles={css`
           li.euiSelectableListItem[aria-checked='true'] {
@@ -98,9 +101,7 @@ const CanvassingType: FunctionComponent = () => {
       <EuiText size="xs">
         <h3>Which campaign are you canvassing for?</h3>
       </EuiText>
-
       <EuiSpacer size="m" />
-
       <CampaignSelect
         campaigns={campaignData}
         selectedKey={data?.canvass?.activity}
@@ -114,15 +115,11 @@ const CanvassingType: FunctionComponent = () => {
           setCampaign(update);
         }}
       />
-
       <EuiSpacer size="l" />
-
       <EuiText size="xs">
         <h3>How was this voter canvassed?</h3>
       </EuiText>
-
       <EuiSpacer size="s" />
-
       <CanvassingTypeSelect
         canvassTypes={canvassTypeData}
         selectedType={data?.canvass?.type}

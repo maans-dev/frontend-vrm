@@ -13,7 +13,6 @@ import {
 } from '@elastic/eui';
 import MainLayout from '@layouts/main';
 import { css, Global } from '@emotion/react';
-import useCanvassTypeFetcher from '@lib/fetcher/campaign-type/campaign';
 import { SortingType } from '@components/sorting-type/type';
 import GeneratedSheets from '@components/generated-sheets';
 import useSheetGenFetcher from '@lib/fetcher/sheetgen/sheetgen';

@@ -117,7 +117,7 @@ const SheetGenerationModal: FunctionComponent<Props> = ({
     <>
       {campaignTypeError && (
         <EuiCallOut title="Campaign Type Error" color="danger" iconType="alert">
-          {campaignTypeError}
+          {campaignTypeError.message}
         </EuiCallOut>
       )}
 
