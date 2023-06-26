@@ -3,8 +3,10 @@ import {
   EuiCheckableCard,
   EuiFieldText,
   EuiFlexItem,
+  EuiIcon,
   EuiInputPopover,
   EuiSpacer,
+  EuiToolTip,
 } from '@elastic/eui';
 import { Structure } from '@lib/domain/person';
 import StructureResults from './search-results';
@@ -66,6 +68,11 @@ const SearchMap: FunctionComponent<Props> = ({
       }}
       data-test-subj="searchMapInput"
       aria-label="Structure search"
+      append={
+        <EuiToolTip content='E.g. "TSHWANE Ward 92" or "ARCADIA PRIMARY SCHOOL"'>
+          <EuiIcon type="questionInCircle" color="subdued" size="l" />
+        </EuiToolTip>
+      }
     />
   );
 
