@@ -1,12 +1,12 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 import {
   EuiCheckableCard,
   EuiFieldText,
   EuiFlexItem,
-  EuiIcon,
+  EuiIconTip,
   EuiInputPopover,
   EuiSpacer,
-  EuiToolTip,
+  EuiText,
 } from '@elastic/eui';
 import { Structure } from '@lib/domain/person';
 import StructureResults from './search-results';
@@ -69,9 +69,28 @@ const SearchMap: FunctionComponent<Props> = ({
       data-test-subj="searchMapInput"
       aria-label="Structure search"
       append={
-        <EuiToolTip content='E.g. "TSHWANE Ward 92" or "ARCADIA PRIMARY SCHOOL"'>
-          <EuiIcon type="questionInCircle" color="subdued" size="l" />
-        </EuiToolTip>
+        <EuiIconTip
+          css={{
+            width: '800px',
+          }}
+          color="primary"
+          title="Search for a structure by it's name or code:"
+          content={
+            <EuiText size="s">
+              <ul>
+                <li>
+                  Ward: <strong>TSHWANE Ward 92</strong>
+                </li>
+                <li>
+                  VD: <strong>ARCADIA PRIMARY SCHOOL</strong>
+                </li>
+                <li>
+                  Code: <strong>97090252</strong>
+                </li>
+              </ul>
+            </EuiText>
+          }
+        />
       }
     />
   );
