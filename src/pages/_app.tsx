@@ -15,6 +15,7 @@ import AuthHandler from '@components/auth/auth-handler';
 import { ErrorBoundary } from '@appsignal/react';
 import { appsignal, initAppsignal } from '@lib/appsignal';
 import SwrGlobalErrorHandler from '@components/error/swr-global-error-handler';
+import RouteGuard from '@components/route-guard';
 
 /**
  * Next.js uses the App component to initialize pages. You can override it
@@ -50,7 +51,9 @@ const EuiApp: FunctionComponent<AppProps<{ session: Session }>> = ({
                 <ErrorBoundary instance={appsignal}>
                   <CanvassingProvider>
                     <AuthHandler />
-                    <Component {...pageProps} />
+                    <RouteGuard>
+                      <Component {...pageProps} />
+                    </RouteGuard>
                   </CanvassingProvider>
                 </ErrorBoundary>
               </Chrome>

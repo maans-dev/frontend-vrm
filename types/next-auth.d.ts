@@ -13,6 +13,8 @@ declare module 'next-auth' {
       darn: number;
       roles: string[];
     } & DefaultSession['user'];
+    features: string[];
+    maintenanceMessage: string;
   }
 
   export interface User {
