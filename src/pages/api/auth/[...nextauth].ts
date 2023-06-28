@@ -5,6 +5,7 @@ import { fetchAndExtractRoles } from '@lib/auth/utils';
 import { OAuthConfig } from 'next-auth/providers';
 import { appsignal } from '@lib/appsignal';
 import moment from 'moment';
+import { unleashClient } from '@lib/feature-toggles/unleash';
 
 /**
  * Takes a token, and returns a new token with updated
@@ -132,6 +133,16 @@ export const authOptions: NextAuthOptions = {
         } catch (e) {
           throw e;
         }
+        // get feature toggles
+        const toggles = unleashClient.getFeatureToggleDefinitions();
+        session.features = toggles
+          .filter(item => item.enabled)
+          .map(item => {
+            if (item.name === 'maintenance-mode') {
+              session.maintenanceMessage = item.description;
+            }
+            return item.name;
+          });
       }
 
       return session;

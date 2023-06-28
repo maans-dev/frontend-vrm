@@ -1,17 +1,48 @@
 import { FunctionComponent } from 'react';
-import { EuiFlexItem, EuiCard, EuiIcon, EuiFlexGrid } from '@elastic/eui';
+import {
+  EuiFlexItem,
+  EuiCard,
+  EuiIcon,
+  EuiFlexGrid,
+  EuiEmptyPrompt,
+} from '@elastic/eui';
 import MainLayout from '@layouts/main';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { hasRole as hasRoleUtil } from '@lib/auth/utils';
 import { Roles } from '@lib/domain/auth';
 import { TbReport, TbReportSearch } from 'react-icons/tb';
+import { GrHostMaintenance } from 'react-icons/gr';
 
 const Index: FunctionComponent = () => {
   const router = useRouter();
   const { data: session, status } = useSession();
 
   const hasRole = (role: string) => hasRoleUtil(role, session?.user?.roles);
+  const hasFeature = (feature: string) => session?.features.includes(feature);
+
+  if (hasFeature('maintenance-mode')) {
+    return (
+      <MainLayout
+        alignment="top"
+        panelled={false}
+        restrictWidth={false}
+        showSpinner={status === 'loading'}>
+        <EuiEmptyPrompt
+          iconType={GrHostMaintenance}
+          color="danger"
+          title={<h2>Temporarily down for maintenance.</h2>}
+          body={
+            <p>
+              {session?.maintenanceMessage
+                ? session.maintenanceMessage
+                : 'We will be back up soon ...'}
+            </p>
+          }
+        />
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout
@@ -20,7 +51,7 @@ const Index: FunctionComponent = () => {
       restrictWidth={false}
       showSpinner={status === 'loading'}>
       <EuiFlexGrid gutterSize="l" columns={2}>
-        {hasRole(Roles.Canvass) && (
+        {hasRole(Roles.Canvass) && hasFeature('canvass-module') && (
           <EuiFlexItem>
             <EuiCard
               icon={<EuiIcon size="xxl" type="inputOutput" />}
@@ -32,7 +63,7 @@ const Index: FunctionComponent = () => {
           </EuiFlexItem>
         )}
 
-        {hasRole(Roles.Canvass) && (
+        {hasRole(Roles.Canvass) && hasFeature('capture-module') && (
           <EuiFlexItem>
             <EuiCard
               icon={<EuiIcon size="xxl" type="importAction" />}
@@ -44,7 +75,7 @@ const Index: FunctionComponent = () => {
           </EuiFlexItem>
         )}
 
-        {hasRole(Roles.VoterEdit) && (
+        {hasRole(Roles.VoterEdit) && hasFeature('cleanup-module') && (
           <EuiFlexItem>
             <EuiCard
               icon={<EuiIcon size="xxl" type="tableDensityExpanded" />}
@@ -56,19 +87,20 @@ const Index: FunctionComponent = () => {
           </EuiFlexItem>
         )}
 
-        {(hasRole(Roles.Membership) || hasRole(Roles.MembershipAdmin)) && (
-          <EuiFlexItem>
-            <EuiCard
-              icon={<EuiIcon size="xxl" type="users" />}
-              layout="horizontal"
-              title="Membership"
-              description="Membership edit."
-              onClick={() => router.push('/membership/voter-search')}
-            />
-          </EuiFlexItem>
-        )}
+        {(hasRole(Roles.Membership) || hasRole(Roles.MembershipAdmin)) &&
+          hasFeature('membership-module') && (
+            <EuiFlexItem>
+              <EuiCard
+                icon={<EuiIcon size="xxl" type="users" />}
+                layout="horizontal"
+                title="Membership"
+                description="Membership edit."
+                onClick={() => router.push('/membership/voter-search')}
+              />
+            </EuiFlexItem>
+          )}
 
-        {hasRole(Roles.SheetGen) && (
+        {hasRole(Roles.SheetGen) && hasFeature('sheet-gen-module') && (
           <EuiFlexItem>
             <EuiCard
               icon={<EuiIcon size="xxl" type="documents" />}
@@ -79,6 +111,20 @@ const Index: FunctionComponent = () => {
             />
           </EuiFlexItem>
         )}
+        {hasRole(Roles.SheetGen) &&
+          hasFeature('sheet-gen-coming-soon') &&
+          !hasFeature('sheet-gen-module') && (
+            <EuiFlexItem>
+              <EuiCard
+                isDisabled={true}
+                icon={<EuiIcon size="xxl" type="documents" />}
+                layout="horizontal"
+                title="Generate Sheets (Coming later this month)"
+                description="Generation of canvassing sheets."
+                onClick={() => router.push('/sheets')}
+              />
+            </EuiFlexItem>
+          )}
         {/* 
         {/* {hasRole(Roles.BulkComms) && (
           <EuiFlexItem>
@@ -92,19 +138,20 @@ const Index: FunctionComponent = () => {
           </EuiFlexItem>
         )} */}
 
-        {hasRole(Roles.ActivityReport) && (
-          <EuiFlexItem>
-            <EuiCard
-              icon={<TbReportSearch size="42px" />}
-              layout="horizontal"
-              title="Activity Reports"
-              description="VRM history of canvassing, capturing & voter edits"
-              onClick={() => router.push('/activity-reports/voter-search')}
-            />
-          </EuiFlexItem>
-        )}
+        {hasRole(Roles.ActivityReport) &&
+          hasFeature('activity-reports-module') && (
+            <EuiFlexItem>
+              <EuiCard
+                icon={<TbReportSearch size="42px" />}
+                layout="horizontal"
+                title="Activity Reports"
+                description="VRM history of canvassing, capturing & voter edits"
+                onClick={() => router.push('/activity-reports/voter-search')}
+              />
+            </EuiFlexItem>
+          )}
 
-        {session && (
+        {session && hasFeature('my-activity-module') && (
           <EuiFlexItem>
             <EuiCard
               icon={<TbReport size="42px" />}
