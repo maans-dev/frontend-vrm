@@ -457,6 +457,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
                 <FillInManuallyModal
                   address={updatedAddress}
                   onSubmit={onSetManualAddress}
+                  onClose={onSelectAddress}
                 />
               )}
             </EuiFlexItem>
