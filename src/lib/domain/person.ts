@@ -207,7 +207,7 @@ export enum ProvinceEnum {
   GT = 'Gauteng',
   KZN = 'Kwazulu-Natal',
   LP = 'Limpopo',
-  MP = 'Mapumalanga',
+  MP = 'Mpumalanga',
   NW = 'North West',
   NC = 'Northern Cape',
   WC = 'Western Cape',

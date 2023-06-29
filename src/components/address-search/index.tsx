@@ -2,24 +2,43 @@ import { FunctionComponent, useCallback, useEffect, useState } from 'react';
 import debounce from 'lodash/debounce';
 import { useSession } from 'next-auth/react';
 import { Address } from '@lib/domain/person';
-import { EuiFieldSearch, EuiInputPopover } from '@elastic/eui';
+import {
+  EuiFieldSearch,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiInputPopover,
+  EuiSpacer,
+  EuiText,
+} from '@elastic/eui';
 import AddressResults from './address.results';
 import { appsignal } from '@lib/appsignal';
+import FillInManuallyModal from '@components/living-address/fill-in-manually-modal';
+import Map from '@components/maps/map';
 
 export type Props = {
   onAddressChange: (selectedAddress: Partial<Address>) => void;
+  onMapAddressChange?: (latitude: number, longitude: number) => void;
+  address?: Partial<Address>;
+  onSubmit?: (address: Partial<Address>) => void;
+  onClose?: (address: Partial<Address>) => void;
 };
 
-const SearchAddress: FunctionComponent<Props> = ({ onAddressChange }) => {
+const SearchAddress: FunctionComponent<Props> = ({
+  onAddressChange,
+  onMapAddressChange,
+  address,
+  onSubmit,
+  onClose,
+}) => {
   const { data: session } = useSession();
   const [searchString, setSearchString] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [searchedLocation, setSearchedLocation] = useState<Partial<Address>[]>(
+    []
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-
-  useEffect(() => {
-    setIsPopoverOpen(searchResults.length > 0);
-  }, [searchResults]);
+  const [releaseFocusTrap, setReleaseFocusTrap] = useState(false);
 
   const doSearchChanged = async (value: string) => {
     if (value.length < 3) {
@@ -84,6 +103,11 @@ const SearchAddress: FunctionComponent<Props> = ({ onAddressChange }) => {
     }
   };
 
+  useEffect(() => {
+    setSearchedLocation(searchResults);
+    setIsPopoverOpen(searchResults.length > 0);
+  }, [searchResults]);
+
   return (
     <EuiInputPopover
       fullWidth={true}
@@ -92,11 +116,11 @@ const SearchAddress: FunctionComponent<Props> = ({ onAddressChange }) => {
           autoComplete="no"
           fullWidth={true}
           isLoading={isLoading}
-          compressed
           placeholder="E.g. 3 Kloof Street, Gardens"
           value={searchString}
           onBlur={e => {
-            if (isPopoverOpen && searchResults.length) e.target.focus();
+            if (isPopoverOpen && searchResults.length && !releaseFocusTrap)
+              e.target.focus();
             if (!isPopoverOpen) {
               setSearchString('');
               setSearchResults([]);
@@ -121,6 +145,41 @@ const SearchAddress: FunctionComponent<Props> = ({ onAddressChange }) => {
         address={searchResults}
         onSelect={doSelectAddress}
       />
+
+      <EuiSpacer size="s" />
+      <EuiFlexGroup direction="row" gutterSize="s">
+        <EuiFlexItem grow={false}>
+          <EuiFlexGroup direction="row" gutterSize="s">
+            <EuiFlexItem>
+              <EuiText size="s" color="subdued">
+                Alternatively
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <Map
+                displayText={true}
+                address={address}
+                onAddressChange={onMapAddressChange}
+                searchedLocation={searchedLocation}
+              />
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <FillInManuallyModal
+                address={searchResults[0]}
+                onSubmit={onSubmit}
+                removeResults={true}
+                onClose={address => {
+                  onClose(address);
+                  setReleaseFocusTrap(false);
+                }}
+                onOpen={() => {
+                  setReleaseFocusTrap(true);
+                }}
+              />
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </EuiFlexItem>
+      </EuiFlexGroup>
     </EuiInputPopover>
   );
 };
