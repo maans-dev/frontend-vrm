@@ -319,6 +319,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
 
   useCanvassFormReset(() => {
     setUpdatedAddress(address);
+    onChange(null);
   });
 
   useEffect(() => {
