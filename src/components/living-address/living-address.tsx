@@ -5,7 +5,9 @@ import {
   EuiFlexGrid,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiFormFieldset,
   EuiFormRow,
+  EuiHorizontalRule,
   EuiIcon,
   EuiPanel,
   EuiSpacer,
@@ -29,6 +31,7 @@ import { GeocodedAddressSource } from '@lib/domain/person-enum';
 import { MdHowToVote } from 'react-icons/md';
 import { appsignal } from '@lib/appsignal';
 import { CanvassingContext } from '@lib/context/canvassing.context';
+import router from 'next/router';
 
 export type Props = {
   address: Address;
@@ -184,10 +187,19 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
       ]),
       deleted: false,
       structure: {
-        votingDistrict_id: +selectedAddress.votingDistrict_id,
-        formatted: selectedAddress.structure?.formatted,
+        ...(selectedAddress.votingDistrict_id && {
+          votingDistrict_id: +selectedAddress.votingDistrict_id,
+        }),
+        ...(selectedAddress.structure && {
+          formatted: selectedAddress.structure.formatted,
+        }),
       },
     };
+
+    // Remove the structure property if it is an empty object
+    if (Object.keys(update.structure).length === 0) {
+      delete update.structure;
+    }
 
     setUpdatedAddress(update);
     onChange(update);
@@ -346,9 +358,10 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
   }, [person?.address, data?.address]);
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div>
       <SpinnerEmbed show={isLoading} />
       <SearchResultsModal results={searchResults} onClose={onSelectAddress} />
+      <EuiSpacer size="s" />
       <EuiFlexGroup direction="column">
         <EuiFlexGroup
           direction="row"
@@ -356,9 +369,51 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
           responsive={false}
           gutterSize="s">
           <EuiFlexItem>
-            <SearchAddress onAddressChange={onAddressChange} />
+            <EuiFormRow
+              label={
+                <EuiText size="xs">
+                  <strong>Search for an Address</strong>
+                </EuiText>
+              }>
+              <>
+                <SearchAddress
+                  onClose={onSelectAddress}
+                  onAddressChange={onAddressChange}
+                  onSubmit={onSetManualAddress}
+                  address={updatedAddress}
+                  onMapAddressChange={(latitude, longitude) =>
+                    onUseMyLocation(
+                      latitude,
+                      longitude,
+                      GeocodedAddressSource.GEOCODED_PIN
+                    )
+                  }
+                />
+              </>
+            </EuiFormRow>
           </EuiFlexItem>
         </EuiFlexGroup>
+
+        <EuiFlexGroup
+          alignItems="center"
+          gutterSize="m"
+          responsive
+          style={{ textAlign: 'center' }}>
+          <EuiFlexItem grow={1}></EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiSpacer size="s" />
+            <EuiText
+              size="s"
+              color="subdued"
+              className="text-center"
+              style={{ lineHeight: '20px' }}>
+              OR
+            </EuiText>
+            <EuiSpacer size="s" />
+          </EuiFlexItem>
+          <EuiFlexItem grow={1}></EuiFlexItem>
+        </EuiFlexGroup>
+
         <EuiFlexGrid
           direction="row"
           columns={isMobile ? 2 : 4}
@@ -367,9 +422,15 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
           gutterSize="s">
           <EuiFlexItem>{renderUseMyLocationButton()}</EuiFlexItem>
           <EuiFlexItem>
-            <FillInManuallyModal
+            <Map
               address={updatedAddress}
-              onSubmit={onSetManualAddress}
+              onAddressChange={(latitude, longitude) =>
+                onUseMyLocation(
+                  latitude,
+                  longitude,
+                  GeocodedAddressSource.GEOCODED_PIN
+                )
+              }
             />
           </EuiFlexItem>
           <EuiFlexItem>
@@ -389,7 +450,22 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
             </EuiButton>
           </EuiFlexItem>
         </EuiFlexGrid>
+
         <EuiFlexItem>
+          <EuiFlexGroup
+            gutterSize="xs"
+            direction="column"
+            justifyContent="flexStart">
+            <EuiFlexItem>
+              {router.pathname.includes('/canvass') ||
+              router.pathname.includes('/capturing') ? null : (
+                <FillInManuallyModal
+                  address={updatedAddress}
+                  onSubmit={onSetManualAddress}
+                />
+              )}
+            </EuiFlexItem>
+          </EuiFlexGroup>
           <EuiFlexGroup responsive={false} gutterSize="m">
             <EuiFlexItem grow={3}>
               <EuiFormRow display="rowCompressed" label="Unit Number">
@@ -448,16 +524,19 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
             </EuiPanel>
           </EuiFormRow>
         </EuiFlexItem>
-        <Map
-          address={updatedAddress}
-          onAddressChange={(latitude, longitude) =>
-            onUseMyLocation(
-              latitude,
-              longitude,
-              GeocodedAddressSource.GEOCODED_PIN
-            )
-          }
-        />
+        <EuiFlexItem>
+          <Map
+            address={updatedAddress}
+            displayCoordinates={true}
+            onAddressChange={(latitude, longitude) =>
+              onUseMyLocation(
+                latitude,
+                longitude,
+                GeocodedAddressSource.GEOCODED_PIN
+              )
+            }
+          />
+        </EuiFlexItem>
       </EuiFlexGroup>
     </div>
   );

@@ -23,22 +23,22 @@ import { GeocodedAddressSource, Province } from '@lib/domain/person-enum';
 import { FunctionComponent, useEffect, useState } from 'react';
 
 export type Props = {
-  results?: Partial<Address>[];
+  results: Partial<Address>[];
   onClose: (address: Partial<Address>) => void;
+  setGeoCodeAddress?: (update: boolean) => void;
 };
 
-const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
+const SearchResultsModal: FunctionComponent<Props> = ({
+  results,
+  onClose,
+  setGeoCodeAddress,
+}) => {
   const [address, setAddress] = useState<Partial<Address>>(
     results.length === 1 ? results[0] : null
   );
   const [addressInternal, setAddressInternal] = useState<Partial<Address>>(
     results.length === 1 ? results[0] : null
   );
-
-  useEffect(() => {
-    if (results.length === 1) setAddress(results[0]);
-    if (results.length === 1) setAddressInternal(results[0]);
-  }, [results]);
 
   const onUpdateAddress = (field: string, value: string) => {
     setAddress(a => {
@@ -73,6 +73,9 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
   };
 
   const doClose = (address: Partial<Address>) => {
+    if (typeof setGeoCodeAddress === 'function') {
+      setGeoCodeAddress(false);
+    }
     setAddress(null);
     setAddressInternal(null);
     onClose(address);
@@ -147,6 +150,7 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
                 name="Street Number"
                 compressed
                 value={address?.streetNo}
+                disabled={!!addressInternal?.streetNo}
                 onChange={e => {
                   const inputValue = e.target.value;
                   const numericValue = inputValue.replace(/[^0-9]/g, ''); // Remove non-numeric characters
@@ -160,6 +164,7 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
               <EuiFieldText
                 name="Street Name"
                 compressed
+                disabled={!!addressInternal?.streetName}
                 value={address?.streetName}
                 onChange={e => {
                   const uppercaseValue = e.target.value.toUpperCase();
@@ -274,29 +279,24 @@ const SearchResultsModal: FunctionComponent<Props> = ({ results, onClose }) => {
               address.formatted
             ) : address.service.type === 'VOTING_DISTRICT' ? (
               <>
-                {address?.votingDistrict} ({address?.votingDistrict_id})
+                {address.votingDistrict} ({address?.votingDistrict_id})
               </>
             ) : (
               <>{address.formatted}</>
             )}
           </EuiText>
-          {/* {address.service.type !== 'VOTING_DISTRICT' && (
-            <EuiText size="xs">
-              <EuiFlexGroup responsive={false} gutterSize="s">
-                <EuiFlexItem grow={false}>
-                  <EuiIcon type={MdHowToVote} />
-                </EuiFlexItem>
-                <EuiFlexItem>
-                  {address?.votingDistrict} ({address?.votingDistrict_id})
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            </EuiText>
-          )} */}
         </EuiPanel>
       </>
     ) : (
       'Select a location'
     );
+
+  useEffect(() => {
+    if (results.length === 1 && !address) {
+      setAddress(results[0]);
+      setAddressInternal(results[0]);
+    }
+  }, [address, results]);
 
   return (
     <>

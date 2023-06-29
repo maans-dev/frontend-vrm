@@ -3,6 +3,8 @@ import { Marker, GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 
 import {
   EuiButton,
+  EuiButtonEmpty,
+  EuiButtonIcon,
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,
@@ -15,12 +17,22 @@ import {
 } from '@elastic/eui';
 import { FaThumbtack } from 'react-icons/fa';
 import { Address } from '@lib/domain/person';
+import { IoMapOutline } from 'react-icons/io5';
 export interface Props {
-  address: Partial<Address>;
-  onAddressChange: (latitude: number, longitude: number) => void;
+  address?: Partial<Address>;
+  onAddressChange?: (latitude: number, longitude: number) => void;
+  displayText?: boolean;
+  displayCoordinates?: boolean;
+  searchedLocation?: Partial<Address>[];
 }
 
-const Map: FunctionComponent<Props> = ({ address, onAddressChange }) => {
+const Map: FunctionComponent<Props> = ({
+  address,
+  onAddressChange,
+  displayText,
+  displayCoordinates,
+  searchedLocation,
+}) => {
   const [showMap, setShowMap] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -33,28 +45,31 @@ const Map: FunctionComponent<Props> = ({ address, onAddressChange }) => {
   const [isDragging, setIsDragging] = useState(false);
   const isMobile = useIsWithinBreakpoints(['xs', 's']);
   const [screenWidth, setScreenWidth] = useState(0);
-
-  useEffect(() => {
-    const handleResize = () => setScreenWidth(window.innerWidth);
-
-    if (typeof window !== 'undefined') {
-      setScreenWidth(window.innerWidth);
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
-    }
-  }, []);
   const isTablet = screenWidth >= 767 && screenWidth <= 1073;
 
   useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_MAPS_API,
   });
+
   const handleMapButtonClick = () => {
     setShowMap(true);
     setIsModalVisible(true);
   };
+
   const handleCloseModal = () => {
     setShowMap(false);
     setIsModalVisible(false);
+  };
+
+  const isDefaultLocation =
+    location.lat === -30.559483 && location.lng === 22.937506;
+
+  const handleDoubleClick = event => {
+    setLocation({
+      lat: event.latLng.lat(),
+      lng: event.latLng.lng(),
+    });
+    setShowConfirmation(true);
   };
 
   function handleConfirmationClick() {
@@ -82,44 +97,69 @@ const Map: FunctionComponent<Props> = ({ address, onAddressChange }) => {
       url: 'https://maps.google.com/mapfiles/ms/icons/red-pushpin.png',
     };
     setMarkerIcon(icon);
-    setLocation({
-      lat: address?.latitude || -30.559483,
-      lng: address?.longitude || 22.937506,
-    });
-  }, [address]);
+    if (
+      searchedLocation &&
+      searchedLocation[0]?.latitude &&
+      searchedLocation[0]?.longitude
+    ) {
+      setLocation({
+        lat: searchedLocation[0].latitude,
+        lng: searchedLocation[0].longitude,
+      });
+    } else {
+      setLocation({
+        lat: address?.latitude || -30.559483,
+        lng: address?.longitude || 22.937506,
+      });
+    }
+  }, [address, searchedLocation]);
 
-  const isDefaultLocation =
-    location.lat === -30.559483 && location.lng === 22.937506;
+  useEffect(() => {
+    const handleResize = () => setScreenWidth(window.innerWidth);
 
-  const handleDoubleClick = event => {
-    setLocation({
-      lat: event.latLng.lat(),
-      lng: event.latLng.lng(),
-    });
-    setShowConfirmation(true);
-  };
+    if (typeof window !== 'undefined') {
+      setScreenWidth(window.innerWidth);
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
+  }, []);
 
   return (
     <>
-      <EuiButton
-        style={{ width: '320px' }}
-        type="submit"
-        iconType={FaThumbtack}
-        size="s"
-        onClick={handleMapButtonClick}>
-        {address && address?.longitude && address?.latitude ? (
-          <>
-            <EuiIcon type="globe" />
-            <EuiText size="s">Show map</EuiText>({address.latitude.toFixed(4)},{' '}
-            {address.longitude.toFixed(4)})
-          </>
-        ) : (
-          <>
-            <EuiIcon type="globe" />
-            <EuiText size="s">Use map to set location</EuiText>
-          </>
-        )}
-      </EuiButton>
+      {displayText ? (
+        <div>
+          <EuiButtonIcon
+            href="#"
+            iconType={FaThumbtack}
+            iconSize="s"
+            aria-label="Use Pin on Map"
+            onClick={handleMapButtonClick}
+          />
+          <EuiButtonEmpty href="#" onClick={handleMapButtonClick} size="xs">
+            Use Pin on Map
+          </EuiButtonEmpty>
+        </div>
+      ) : displayCoordinates ? (
+        address && address.longitude && address.latitude ? (
+          <EuiButton
+            type="submit"
+            style={{ width: '320px' }}
+            onClick={handleMapButtonClick}>
+            <EuiIcon type={IoMapOutline} size="m" />
+            <EuiText size="s">Show on Map</EuiText>(
+            {address.latitude.toFixed(4)}, {address.longitude.toFixed(4)})
+          </EuiButton>
+        ) : null
+      ) : (
+        <EuiButton
+          type="submit"
+          iconType={FaThumbtack}
+          size="m"
+          onClick={handleMapButtonClick}>
+          <EuiText size="s">Pin on Map</EuiText>
+        </EuiButton>
+      )}
+
       {isModalVisible && (
         <EuiOverlayMask>
           <EuiModal onClose={handleCloseModal} maxWidth="1200px">

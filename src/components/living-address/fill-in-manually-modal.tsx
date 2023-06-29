@@ -14,22 +14,62 @@ import {
   EuiSpacer,
   EuiSuperSelect,
 } from '@elastic/eui';
-import { FaPen } from 'react-icons/fa';
 import { FunctionComponent, useEffect, useState } from 'react';
 import { Address } from '@lib/domain/person';
 import omit from 'lodash/omit';
 import { GeocodedAddressSource, Province } from '@lib/domain/person-enum';
+import { useSession } from 'next-auth/react';
+import { appsignal } from '@lib/appsignal';
+import SearchResultsModal from './search-results-modal';
+
+function generateAddressString(updatedAddress: Partial<Address>) {
+  let addressString = '';
+
+  if (updatedAddress.streetNo && updatedAddress.streetName) {
+    addressString += `${updatedAddress.streetNo} ${updatedAddress.streetName}`;
+  }
+
+  if (updatedAddress.suburb) {
+    if (addressString.length > 0) {
+      addressString += ' ';
+    }
+    addressString += updatedAddress.suburb;
+  }
+
+  if (updatedAddress.city) {
+    if (addressString.length > 0) {
+      addressString += ' ';
+    }
+    addressString += updatedAddress.city;
+  }
+
+  if (updatedAddress.province_enum) {
+    if (addressString.length > 0) {
+      addressString += ' ';
+    }
+    addressString += updatedAddress.province_enum;
+  }
+
+  return addressString.toLowerCase();
+}
 
 export type Props = {
   address: Partial<Address>;
   onSubmit: (address: Partial<Address>) => void;
+  onAddressChange?: (selectedAddress: Partial<Address>) => void;
+  removeResults?: boolean;
+  onClose?: (address: Partial<Address>) => void;
+  onOpen?: () => void;
 };
 
 const FillInManuallyModal: FunctionComponent<Props> = ({
   address,
   onSubmit,
+  removeResults,
+  onClose,
+  onOpen,
 }) => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const { data: session } = useSession();
   const [updatedAddress, setUpdatedAddress] = useState(() => {
     const update: any = {
       ...omit(address, [
@@ -55,8 +95,19 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
 
     return update;
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchResults, setSearchResults] = useState<Address[]>([]);
+  //Fill In Manually Modal
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const closeModal = () => setIsModalVisible(false);
-  const showModal = () => setIsModalVisible(true);
+  const showModal = () => {
+    setIsModalVisible(true);
+    onOpen();
+  };
+  //GeoCode Address Modal
+  const [isGeoCodeVisible, setIsGeoCodeVisible] = useState(false);
+  const [error, setError] = useState<string>(null);
+
   const submit = () => {
     closeModal();
     onSubmit({
@@ -93,39 +144,161 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
     setUpdatedAddress(update);
   };
 
+  const onReset = () => {
+    setUpdatedAddress(prevState => ({
+      ...prevState,
+      streetNo: '',
+      streetName: '',
+      suburb: '',
+      city: '',
+      postalCode: '',
+      buildingName: '',
+      buildingNo: '',
+      comment: '',
+    }));
+  };
+
+  const doGeoCodeSearch = async (value: string) => {
+    if (value.length < 3) {
+      setSearchResults([]);
+      return;
+    }
+    setIsLoading(true);
+    const url = `${process.env.NEXT_PUBLIC_API_BASE}/address/geocode/forward/`;
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session?.accessToken}`,
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        address: value,
+        username: session?.user?.darn,
+      }),
+    });
+
+    setIsLoading(false);
+
+    if (!response.ok) {
+      setSearchResults([]);
+      const errJson = JSON.parse(await response.text());
+      appsignal.sendError(
+        new Error(`Unable to forward geocode this address: ${errJson.message}`),
+        span => {
+          span.setAction('api-call');
+          span.setParams({
+            route: url,
+            address: value,
+            username: session.user.darn,
+          });
+          span.setTags({ user_darn: session.user.darn.toString() });
+        }
+      );
+      return;
+    }
+
+    const respPayload = await response.json();
+
+    setSearchResults(respPayload?.data?.results?.values || []);
+  };
+
+  const doVotingDistrictSearch = async () => {
+    setError(null);
+    const latitude = searchResults[0].latitude;
+    const longitude = searchResults[0].longitude;
+    const url = `${process.env.NEXT_PUBLIC_API_BASE}/structures/votingdistricts?latitude=${latitude}&longitude=${longitude}`;
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session?.accessToken}`,
+      },
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      // throw 'Unable to load Voting District for this address';
+      const errJson = JSON.parse(await response.text());
+      setError(
+        `Unable to load Voting District for this address: ${errJson.message}`
+      );
+
+      appsignal.sendError(
+        new Error(
+          `Unable to load Voting District for this address: ${errJson.message}`
+        ),
+        span => {
+          span.setAction('api-call');
+          span.setParams({
+            route: url,
+            user: session.user.darn,
+          });
+          span.setTags({ user_darn: session.user.darn.toString() });
+        }
+      );
+      return;
+    }
+
+    const structureInfo = await response.json();
+
+    if (structureInfo.length === 0) {
+      setError(
+        `Unable to load Voting District for this address: No VD found at ${latitude}, ${longitude}`
+      );
+      appsignal.sendError(
+        new Error(
+          `Unable to load Voting District for this address: No VD found at ${latitude}, ${longitude}`
+        ),
+        span => {
+          span.setAction('api-call');
+          span.setParams({
+            route: url,
+            user: session.user.darn,
+          });
+          span.setTags({ user_darn: session.user.darn.toString() });
+        }
+      );
+      return;
+    }
+
+    setSearchResults(prev => {
+      prev[0].votingDistrict_id = +structureInfo[0].votingDistrict_id;
+      prev[0].votingDistrict = structureInfo[0].votingDistrict;
+      prev[0].province = structureInfo[0].province;
+      prev[0].structure = structureInfo[0];
+      prev[0].buildingNo = updatedAddress?.buildingNo ?? '';
+      prev[0].buildingName = updatedAddress?.buildingName ?? '';
+      prev[0].comment = updatedAddress?.comment ?? '';
+      return prev;
+    });
+  };
+
+  const handleGeoCodeButtonClick = () => {
+    doGeoCodeSearch(generateAddressString(updatedAddress));
+    closeModal();
+    setIsGeoCodeVisible(true);
+  };
+
   useEffect(() => {
-    const update: any = {
-      ...omit(address, [
-        'key',
-        'type',
-        'formatted',
-        'service',
-        'emoji',
-        'created',
-        'createdBy',
-        'key_hash',
-        'key_text',
-        'modified',
-        'modifiedBy',
-        'person',
-        'structure',
-      ]),
-    };
-
-    update.structure = {
-      deleted: true,
-    };
-
-    setUpdatedAddress(update);
-  }, [address]);
+    if (searchResults[0]?.longitude && searchResults[0]?.latitude) {
+      doVotingDistrictSearch();
+    }
+  }, [searchResults, updatedAddress]);
 
   return (
     <>
-      <EuiButton iconType={FaPen} onClick={showModal}>
-        Fill in manually
-      </EuiButton>
+      {isGeoCodeVisible && (
+        <SearchResultsModal
+          results={searchResults}
+          onClose={onClose}
+          setGeoCodeAddress={setIsGeoCodeVisible}
+        />
+      )}
+
+      <EuiButtonEmpty href="#" onClick={showModal} size="xs">
+        {removeResults ? 'Edit manually' : 'Fill in manually'}
+      </EuiButtonEmpty>
       {isModalVisible && (
-        <EuiModal onClose={closeModal}>
+        <EuiModal onClose={closeModal} initialFocus=".unit-number">
           <EuiModalHeader>
             <EuiModalHeaderTitle>Fill in manually</EuiModalHeaderTitle>
           </EuiModalHeader>
@@ -135,6 +308,7 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
                 <EuiFlexItem grow={3}>
                   <EuiFormRow label="Unit Number" display="rowCompressed">
                     <EuiFieldText
+                      className="unit-number"
                       name="Unit Number"
                       compressed
                       value={updatedAddress?.buildingNo}
@@ -268,10 +442,21 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
             </EuiForm>
           </EuiModalBody>
           <EuiModalFooter>
-            <EuiButtonEmpty onClick={closeModal}>Cancel</EuiButtonEmpty>
-            <EuiButton onClick={submit} fill>
-              Use Address
-            </EuiButton>
+            <EuiFlexGroup justifyContent="spaceBetween">
+              <EuiFlexItem grow={false}>
+                <EuiButton onClick={handleGeoCodeButtonClick} fill>
+                  Geocode Address
+                </EuiButton>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiButtonEmpty onClick={onReset}>Reset</EuiButtonEmpty>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiButton onClick={submit} fill>
+                  Use Address
+                </EuiButton>
+              </EuiFlexItem>
+            </EuiFlexGroup>
           </EuiModalFooter>
         </EuiModal>
       )}
