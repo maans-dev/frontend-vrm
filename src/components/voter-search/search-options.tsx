@@ -96,7 +96,7 @@ const SearchOptions: FunctionComponent<Props> = ({
       values: [
         {
           [data.type]: data[structureCodeMap[data.type.toLowerCase()]],
-          in: ['living'],
+          in: ['living', 'registered'],
           inAnd: false,
           // out: ['living', 'registered'],
           outAnd: false,
