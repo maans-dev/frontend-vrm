@@ -76,7 +76,8 @@ export const validatePhoneInput = (
 
   for (const contact of phoneContacts) {
     const isDuplicateInUpdated =
-      phoneContacts.filter(c => c.value === contact.value).length > 1;
+      phoneContacts.filter(c => contact.value && c.value === contact.value)
+        .length > 1;
 
     const isDuplicateInPerson =
       personContacts?.some(
@@ -86,14 +87,19 @@ export const validatePhoneInput = (
     if (isDuplicateInUpdated || isDuplicateInPerson) {
       duplicatePhoneNumbers.push(contact);
     } else {
-      uniquePhoneNumbers.add(contact.value);
+      if (contact?.value) {
+        uniquePhoneNumbers.add(contact.value);
+      }
     }
   }
 
   let isValid = true;
   let phoneErrorText = '';
 
-  if (duplicatePhoneNumbers.length > 0) {
+  if (
+    duplicatePhoneNumbers.length > 0 &&
+    duplicatePhoneNumbers.map(n => n.value)?.includes(inputValue)
+  ) {
     isValid = false;
     phoneErrorText = 'Duplicate phone numbers found';
   } else if (inputValue) {
