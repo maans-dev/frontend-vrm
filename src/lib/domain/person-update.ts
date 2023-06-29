@@ -12,6 +12,7 @@ export interface PersonUpdateRequest extends Person {
 export interface PersonUpdate<T> {
   field: string;
   data: T;
+  replace?: boolean;
 }
 
 export type GeneralUpdate =

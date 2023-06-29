@@ -25,6 +25,7 @@ const Address: FunctionComponent<Props> = ({ address, onChange }) => {
     onChange({
       field: 'address',
       data: address,
+      replace: true,
     });
 
     if (address.deleted === true) {

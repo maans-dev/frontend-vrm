@@ -181,7 +181,12 @@ const CanvassingProvider = ({ children }) => {
         !Array.isArray(prev[update.field]) &&
         typeof prev[update.field] === 'object'
       ) {
-        next = { ...prev[update.field], ...next };
+        if (update?.replace) {
+          // dont' merge with prev replace it
+          next = { ...next };
+        } else {
+          next = { ...prev[update.field], ...next };
+        }
       }
 
       const updatedData = { ...prev, [update.field]: next };
