@@ -81,6 +81,10 @@ const Voter: FunctionComponent = () => {
     setUpdatePayload(update);
   };
 
+  const onMovedOrDeceasedChange = (update: PersonUpdate<GeneralUpdate>) => {
+    setUpdatePayload(update);
+  };
+
   const handleErrorScroll = () => {
     const section = document.getElementById('phoneNumberField');
     if (section) {
@@ -208,9 +212,9 @@ const Voter: FunctionComponent = () => {
         <DeceasedOrMoved
           deceased={person?.deceased}
           fields={person?.fields}
-          onDeceasedChange={onChange}
-          onMovedChange={onChange}
-          onAddressChange={onChange}
+          onDeceasedChange={onMovedOrDeceasedChange}
+          onMovedChange={onMovedOrDeceasedChange}
+          onAddressChange={onMovedOrDeceasedChange}
         />
       </EuiFormFieldset>
       <EuiSpacer />
