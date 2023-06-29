@@ -107,7 +107,7 @@ const BranchOverrideModal: FunctionComponent = () => {
 
             <EuiFlexItem>
               <Structres
-                onSelect={(label, data) => setSelectedOverrideBranch(data)}
+                onSelect={option => setSelectedOverrideBranch(option.value)}
               />
             </EuiFlexItem>
           </EuiForm>

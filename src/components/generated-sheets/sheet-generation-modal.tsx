@@ -2,6 +2,7 @@ import CampaignSelect from '@components/canvassing-type/campaign-select';
 import SortingTypeSelect from '@components/sorting-type/sorting-type-select';
 import { SortingType } from '@components/sorting-type/type';
 import Structres from '@components/structure-search';
+
 import {
   EuiButton,
   EuiButtonEmpty,
@@ -45,7 +46,6 @@ const SheetGenerationModal: FunctionComponent<Props> = ({
 
   const handleSubmit = async () => {
     setIsLoading(true);
-    console.log({ selectedStructure });
 
     const url = `${process.env.NEXT_PUBLIC_API_BASE}/activity/extract/sheetgen`;
     const reqPayload = {
@@ -127,7 +127,7 @@ const SheetGenerationModal: FunctionComponent<Props> = ({
       <EuiSpacer size="s" />
       <Structres
         showSelected={true}
-        onSelect={(label, data, value) => setSelectedStructure(data)}
+        onSelect={option => setSelectedStructure(option.value)}
       />
       <EuiSpacer size="m" />
       <EuiText size="xs">
