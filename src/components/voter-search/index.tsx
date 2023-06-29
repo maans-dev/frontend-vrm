@@ -5,7 +5,13 @@ import { PersonSearchParams } from '@lib/domain/person-search';
 import usePersonSearchFetcher from '@lib/fetcher/person/person-search.fetcher';
 import { useRouter } from 'next/router';
 import MainLayout from '@layouts/main';
-import { EuiBreadcrumb, EuiCallOut, EuiSpacer } from '@elastic/eui';
+import {
+  EuiBreadcrumb,
+  EuiCallOut,
+  EuiComboBoxOptionOption,
+  EuiSpacer,
+} from '@elastic/eui';
+import { Structure } from '@lib/domain/person';
 
 export type Props = {
   breadcrumb: EuiBreadcrumb[];
@@ -14,7 +20,9 @@ export type Props = {
 const VoterSearch: FunctionComponent<Props> = ({ breadcrumb }) => {
   const router = useRouter();
   const [searchParams, setSearchParams] =
-    useState<Partial<PersonSearchParams>>(null);
+    useState<Partial<PersonSearchParams>>();
+  const [persistedStructureOption, setPersistedStructureOption] =
+    useState<EuiComboBoxOptionOption<Partial<Structure>>>();
 
   const [activePage, setActivePage] = useState(0);
   const [rowSize, setRowSize] = useState(10);
@@ -40,7 +48,10 @@ const VoterSearch: FunctionComponent<Props> = ({ breadcrumb }) => {
     if (count) setPageCount(Math.ceil(count / rowSize));
   }, [rowSize, count]);
 
-  const doSearch = (params: Partial<PersonSearchParams>) => {
+  const doSearch = (
+    params: Partial<PersonSearchParams>,
+    persistedStructureOption: EuiComboBoxOptionOption<Partial<Structure>>
+  ) => {
     if (!params) return;
     mutate();
     // remove empty keys
@@ -48,8 +59,8 @@ const VoterSearch: FunctionComponent<Props> = ({ breadcrumb }) => {
       if (!params[key] || params[key] === '') delete params[key];
     }
     setActivePage(0);
-    setPageCount(0);
     setSearchParams(params);
+    setPersistedStructureOption(persistedStructureOption);
   };
 
   useEffect(() => {
@@ -75,6 +86,8 @@ const VoterSearch: FunctionComponent<Props> = ({ breadcrumb }) => {
       )}
       {!isLoading || count > 1 ? (
         <SearchOptions
+          persistedSearchParams={searchParams}
+          persistedStructureOption={persistedStructureOption}
           onSubmit={doSearch}
           as={results === null || results === undefined ? 'form' : 'modal'}
           isLoading={isLoading}

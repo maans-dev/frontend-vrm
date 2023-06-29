@@ -1,4 +1,5 @@
 import { AdvancedSearchTooltip } from '@components/form/advanced-search-tooltip';
+import Structres from '@components/structure-search';
 import {
   EuiForm,
   EuiFormRow,
@@ -14,27 +15,48 @@ import {
   EuiModalFooter,
   EuiModalHeader,
   EuiModalHeaderTitle,
+  EuiComboBoxOptionOption,
 } from '@elastic/eui';
+import { Structure } from '@lib/domain/person';
 import { PersonSearchParams } from '@lib/domain/person-search';
 import moment, { Moment } from 'moment';
-import { FormEvent, FunctionComponent, useState } from 'react';
+import { FormEvent, FunctionComponent, useEffect, useState } from 'react';
 
 export type Props = {
-  onSubmit?: (params: Partial<PersonSearchParams>) => void;
+  onSubmit?: (
+    params: Partial<PersonSearchParams>,
+    persistedStructureOption: EuiComboBoxOptionOption<Partial<Structure>>
+  ) => void;
   as: 'form' | 'modal';
   isLoading: boolean;
+  persistedSearchParams: Partial<PersonSearchParams>;
+  persistedStructureOption: EuiComboBoxOptionOption<Partial<Structure>>;
 };
 
 const SearchOptions: FunctionComponent<Props> = ({
   onSubmit,
   as,
   isLoading,
+  persistedSearchParams,
+  persistedStructureOption,
 }) => {
-  const [searchParams, setSearchParams] =
-    useState<Partial<PersonSearchParams>>();
+  const [searchParams, setSearchParams] = useState<Partial<PersonSearchParams>>(
+    persistedSearchParams
+  );
+  const [selectedStructureOption, setSelectedStructureOption] = useState<
+    EuiComboBoxOptionOption<Partial<Structure>>
+  >(persistedStructureOption);
 
   const [dob, setDob] = useState<Moment>();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [allowedStructureTypes] = useState([
+    'ward',
+    'votingdistrict',
+    'region',
+    'municipality',
+    'constituency',
+    'province',
+  ]);
   const closeModal = () => setIsModalVisible(false);
   const showModal = () => {
     setIsModalVisible(true);
@@ -44,13 +66,49 @@ const SearchOptions: FunctionComponent<Props> = ({
     const target = event.target as HTMLFormElement;
     const name = target.name;
 
-    if (target.name === 'dob') return;
+    if (target.name === '' || target.name === 'dob') return;
 
     const value = target.value;
     setSearchParams(previousValue => {
       const newValue = {
         ...previousValue,
         [name]: value,
+      };
+
+      for (const key in newValue) {
+        if (!newValue[key] || newValue[key] === '') delete newValue[key];
+      }
+
+      return newValue;
+    });
+  };
+
+  const handleSelectStructure = (data: Partial<Structure>) => {
+    const structureCodeMap = {
+      municipality: 'municipalityCatB',
+      region: 'region_code',
+      constituency: 'constituency_code',
+      ward: 'ward',
+      votingdistrict: 'votingDistrict_id',
+    };
+
+    const structure = {
+      values: [
+        {
+          [data.type]: data[structureCodeMap[data.type.toLowerCase()]],
+          in: ['living'],
+          inAnd: false,
+          // out: ['living', 'registered'],
+          outAnd: false,
+          and: false,
+        },
+      ],
+    };
+
+    setSearchParams(previousValue => {
+      const newValue = {
+        ...previousValue,
+        structure: JSON.stringify(structure),
       };
 
       for (const key in newValue) {
@@ -78,7 +136,7 @@ const SearchOptions: FunctionComponent<Props> = ({
   };
 
   const handleSubmit = () => {
-    onSubmit(searchParams);
+    onSubmit(searchParams, selectedStructureOption);
     if (isModalVisible) closeModal();
   };
 
@@ -188,6 +246,18 @@ const SearchOptions: FunctionComponent<Props> = ({
           append={<AdvancedSearchTooltip />}
           value={searchParams?.phone || ''}
           onChange={() => null}
+        />
+      </EuiFormRow>
+
+      <EuiFormRow display="rowCompressed" label="Structure">
+        <Structres
+          structureTypes={allowedStructureTypes}
+          showSelected={true}
+          persistedOption={persistedStructureOption}
+          onSelect={option => {
+            setSelectedStructureOption(option);
+            handleSelectStructure(option.value);
+          }}
         />
       </EuiFormRow>
 
