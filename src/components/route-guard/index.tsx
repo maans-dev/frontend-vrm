@@ -1,3 +1,4 @@
+import MainLayout from '@layouts/main';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import {
@@ -16,6 +17,8 @@ const RouteGuard = (props: {
   const { data: session, status } = useSession();
 
   useEffect(() => {
+    if (status !== 'authenticated') return;
+
     const hasFeature = (feature: string) => session?.features.includes(feature);
 
     const featureFlagCheck = () => {
@@ -81,9 +84,13 @@ const RouteGuard = (props: {
       router.events.off('routeChangeStart', preventAccess);
       router.events.off('routeChangeComplete', featureFlagCheck);
     };
-  }, [router, router.events, session?.features]);
+  }, [router, router.events, session?.features, status]);
 
-  return moduleEnabled ? children : children;
+  return moduleEnabled ? (
+    children
+  ) : (
+    <MainLayout breadcrumb={null} panelled={false} showSpinner={true} />
+  );
 };
 
 export default RouteGuard;
