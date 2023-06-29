@@ -208,7 +208,7 @@ const Voter: FunctionComponent = () => {
       />
 
       <EuiSpacer />
-      <EuiFormFieldset legend={{ children: 'Deceased or moved?' }}>
+      <EuiFormFieldset legend={{ children: 'Quick edits' }}>
         <DeceasedOrMoved
           deceased={person?.deceased}
           fields={person?.fields}

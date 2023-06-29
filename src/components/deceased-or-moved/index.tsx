@@ -264,7 +264,7 @@ const DeceasedOrMoved: FunctionComponent<Props> = ({
       ) : null}
 
       <EuiFlexGroup gutterSize="s">
-        <EuiFlexItem>
+        <EuiFlexItem grow={hideMoved ? false : true}>
           <EuiCheckableCard
             id="deceased-modal"
             checked={deceasedInternal}

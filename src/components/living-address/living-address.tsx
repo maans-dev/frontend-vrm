@@ -5,9 +5,7 @@ import {
   EuiFlexGrid,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiFormFieldset,
   EuiFormRow,
-  EuiHorizontalRule,
   EuiIcon,
   EuiPanel,
   EuiSpacer,
@@ -17,7 +15,7 @@ import {
 } from '@elastic/eui';
 import { FaHouseUser, FaUndo, FaStoreAltSlash } from 'react-icons/fa';
 import FillInManuallyModal from './fill-in-manually-modal';
-import { Address, Structure } from '@lib/domain/person';
+import { Address } from '@lib/domain/person';
 import { useGeolocated } from 'react-geolocated';
 import { useSession } from 'next-auth/react';
 import SearchResultsModal from './search-results-modal';
@@ -394,24 +392,20 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
           </EuiFlexItem>
         </EuiFlexGroup>
 
-        <EuiFlexGroup
-          alignItems="center"
-          gutterSize="m"
-          responsive
-          style={{ textAlign: 'center' }}>
-          <EuiFlexItem grow={1}></EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <EuiSpacer size="s" />
+        <EuiFlexGroup alignItems="center" gutterSize="xs">
+          <EuiFlexItem grow={true}>
             <EuiText
               size="s"
               color="subdued"
-              className="text-center"
-              style={{ lineHeight: '20px' }}>
+              style={{
+                lineHeight: '0px',
+                display: 'block',
+                width: '100%',
+                textAlign: 'center',
+              }}>
               OR
             </EuiText>
-            <EuiSpacer size="s" />
           </EuiFlexItem>
-          <EuiFlexItem grow={1}></EuiFlexItem>
         </EuiFlexGroup>
 
         <EuiFlexGrid
