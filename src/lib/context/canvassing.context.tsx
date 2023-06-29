@@ -44,7 +44,7 @@ export type CanvassingContextType = {
   setCanvassDate: (data: Moment) => void;
   setUpdatePayload: (update) => void;
   nextId: () => number;
-  submitUpdatePayload: () => void;
+  submitUpdatePayload: (eventOverride?: boolean) => void;
   resetForm: () => void;
   handleTabChange: (tabNumber: number) => void;
   selectedTab: number;
@@ -201,7 +201,7 @@ const CanvassingProvider = ({ children }) => {
     setSelectedTab(tabNumber);
   }
 
-  const submitUpdatePayload = async () => {
+  const submitUpdatePayload = async (eventOverride = false) => {
     setIsSubmitting(true);
     setServerError('');
     const requestBody = cloneDeep(data);
@@ -252,13 +252,14 @@ const CanvassingProvider = ({ children }) => {
       });
 
       let endpoint = 'canvass';
-      if (router.pathname.includes('cleanup')) {
+      if (eventOverride || router.pathname.includes('cleanup')) {
         endpoint = 'datacleanup';
-        // Delete the canvass field as that it's required for data cleanup.
+        // Delete the canvass field as it's not required for data cleanup.
         delete requestBody.canvass;
       }
       if (router.pathname.includes('membership')) {
         endpoint = 'membership';
+        delete requestBody.canvass;
       }
 
       url = `${process.env.NEXT_PUBLIC_API_BASE}/event/${endpoint}/`;

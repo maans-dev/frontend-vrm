@@ -31,6 +31,7 @@ import useTagFetcher from '@lib/fetcher/tags/tags';
 interface Props {
   deceased: boolean;
   fields: Field[];
+  hideMoved?: boolean;
   onDeceasedChange: (update: PersonUpdate<DeceasedUpdate>) => void;
   onMovedChange: (update: PersonUpdate<MovedUpdate>) => void;
   onAddressChange: (update: PersonUpdate<AddressUpdate>) => void;
@@ -41,6 +42,7 @@ export const MovedTagCode = ['MVD'];
 const DeceasedOrMoved: FunctionComponent<Props> = ({
   deceased,
   fields,
+  hideMoved,
   onDeceasedChange,
   onMovedChange,
 }) => {
@@ -82,7 +84,7 @@ const DeceasedOrMoved: FunctionComponent<Props> = ({
 
   const handleSaveDeceased = () => {
     setIsDeceasedModalVisible(false);
-    submitUpdatePayload();
+    submitUpdatePayload(true);
   };
 
   const handleContinueDeceased = () => {
@@ -148,7 +150,7 @@ const DeceasedOrMoved: FunctionComponent<Props> = ({
 
   const handleSaveMoved = () => {
     setIsMovedModalVisible(false);
-    submitUpdatePayload();
+    submitUpdatePayload(true);
   };
 
   const deceasedModal = (
@@ -272,16 +274,18 @@ const DeceasedOrMoved: FunctionComponent<Props> = ({
             onChange={handleDeceasedModalChange}
           />
         </EuiFlexItem>
-        <EuiFlexItem>
-          <EuiCheckableCard
-            id="moved-modal"
-            checked={isMovedInternalExist}
-            css={{ height: '100%' }}
-            label="Moved?"
-            checkableType="checkbox"
-            onChange={handleMovedModalChange}
-          />
-        </EuiFlexItem>
+        {!hideMoved && (
+          <EuiFlexItem>
+            <EuiCheckableCard
+              id="moved-modal"
+              checked={isMovedInternalExist}
+              css={{ height: '100%' }}
+              label="Moved?"
+              checkableType="checkbox"
+              onChange={handleMovedModalChange}
+            />
+          </EuiFlexItem>
+        )}
       </EuiFlexGroup>
     </>
   );

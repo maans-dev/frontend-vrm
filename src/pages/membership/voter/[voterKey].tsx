@@ -252,16 +252,6 @@ const Voter: FunctionComponent = () => {
       />
 
       <EuiSpacer />
-      <EuiFormFieldset legend={{ children: 'Deceased or moved?' }}>
-        <DeceasedOrMoved
-          deceased={person?.deceased}
-          fields={person?.fields}
-          onDeceasedChange={onChange}
-          onMovedChange={onChange}
-          onAddressChange={onChange}
-        />
-      </EuiFormFieldset>
-      <EuiSpacer />
       <EuiForm fullWidth isInvalid={serverError !== ''} error={[serverError]}>
         <EuiFlexGroup direction="row" gutterSize="xs">
           <EuiFlexItem>
@@ -304,6 +294,17 @@ const Voter: FunctionComponent = () => {
             <EuiSpacer />
 
             <div style={{ display: selectedTab === 0 ? 'block' : 'none' }}>
+              <EuiFormFieldset>
+                <DeceasedOrMoved
+                  hideMoved
+                  deceased={person?.deceased}
+                  fields={person?.fields}
+                  onDeceasedChange={onChange}
+                  onMovedChange={onChange}
+                  onAddressChange={onChange}
+                />
+              </EuiFormFieldset>
+              <EuiSpacer />
               <EuiFormFieldset legend={{ children: 'Contact Details' }}>
                 <ContactDetails
                   deceased={person?.deceased}
