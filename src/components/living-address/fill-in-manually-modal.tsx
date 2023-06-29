@@ -26,28 +26,23 @@ function generateAddressString(updatedAddress: Partial<Address>) {
   let addressString = '';
 
   if (updatedAddress.streetNo && updatedAddress.streetName) {
-    addressString += `${updatedAddress.streetNo} ${updatedAddress.streetName}`;
+    addressString = `${updatedAddress.streetNo}`;
+  }
+
+  if (updatedAddress.streetName) {
+    addressString = `${addressString} ${updatedAddress.streetName}`;
   }
 
   if (updatedAddress.suburb) {
-    if (addressString.length > 0) {
-      addressString += ' ';
-    }
-    addressString += updatedAddress.suburb;
+    addressString = `${addressString} ${updatedAddress.suburb}`;
   }
 
   if (updatedAddress.city) {
-    if (addressString.length > 0) {
-      addressString += ' ';
-    }
-    addressString += updatedAddress.city;
+    addressString = `${addressString} ${updatedAddress.city}`;
   }
 
   if (updatedAddress.province_enum) {
-    if (addressString.length > 0) {
-      addressString += ' ';
-    }
-    addressString += updatedAddress.province_enum;
+    addressString = `${addressString} ${updatedAddress.province_enum}`;
   }
 
   return addressString.toLowerCase();
@@ -282,6 +277,31 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
     closeModal();
     setIsGeoCodeVisible(true);
   };
+
+  useEffect(() => {
+    const update: any = {
+      ...omit(address, [
+        'key',
+        'type',
+        'formatted',
+        'service',
+        'emoji',
+        'created',
+        'createdBy',
+        'key_hash',
+        'key_text',
+        'modified',
+        'modifiedBy',
+        'person',
+        'structure',
+      ]),
+    };
+
+    update.structure = {
+      deleted: true,
+    };
+    setUpdatedAddress(update);
+  }, [address]);
 
   return (
     <>
