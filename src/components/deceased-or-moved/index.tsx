@@ -101,7 +101,7 @@ const DeceasedOrMoved: FunctionComponent<Props> = ({
       setIsMovedInternalExist(false);
       setIsMovedModalVisible(false);
       //Moved Tag Update
-      if (movedInternal.length > 0) {
+      if (movedInternal?.length > 0) {
         const tagUpdate = {
           key: movedInternal[0]?.key,
           deleted: true,

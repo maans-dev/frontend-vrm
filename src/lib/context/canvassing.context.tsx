@@ -155,8 +155,9 @@ const CanvassingProvider = ({ children }) => {
         if ('deleted' in update.data) {
           if (typeof update.data.key === 'number') {
             // completely remove if this is a new item
+            if (!prev[update.field]) return prev;
             next = [
-              ...prev[update.field].filter((d: GeneralUpdate) => {
+              ...prev[update.field]?.filter((d: GeneralUpdate) => {
                 assertHasFields(['key'], d);
                 assertHasFields(['key'], update.data);
                 return d.key !== update.data?.key;
