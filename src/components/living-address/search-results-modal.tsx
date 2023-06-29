@@ -63,7 +63,12 @@ const SearchResultsModal: FunctionComponent<Props> = ({
       }
     }
 
-    setAddress({ ...option, buildingName: '', buildingNo: '', comment: '' });
+    setAddress({
+      ...option,
+      buildingName: '',
+      buildingNo: '',
+      comment: '',
+    });
     setAddressInternal({
       ...option,
       buildingName: '',
@@ -78,7 +83,7 @@ const SearchResultsModal: FunctionComponent<Props> = ({
     }
     setAddress(null);
     setAddressInternal(null);
-    onClose(address);
+    if (onClose) onClose(address);
   };
 
   const options = results.map((result, i) => (
@@ -95,7 +100,7 @@ const SearchResultsModal: FunctionComponent<Props> = ({
             {result?.service?.emoji}{' '}
             {result.formatted ? (
               result.formatted
-            ) : result.service.type === 'VOTING_DISTRICT' ? (
+            ) : result?.service?.type === 'VOTING_DISTRICT' ? (
               <>
                 {result?.votingDistrict} ({result?.votingDistrict_id})
               </>
@@ -277,7 +282,7 @@ const SearchResultsModal: FunctionComponent<Props> = ({
             {address?.service?.emoji}{' '}
             {address.formatted ? (
               address.formatted
-            ) : address.service.type === 'VOTING_DISTRICT' ? (
+            ) : address?.service?.type === 'VOTING_DISTRICT' ? (
               <>
                 {address.votingDistrict} ({address?.votingDistrict_id})
               </>
@@ -296,7 +301,7 @@ const SearchResultsModal: FunctionComponent<Props> = ({
       setAddress(results[0]);
       setAddressInternal(results[0]);
     }
-  }, [address, results]);
+  }, [results]);
 
   return (
     <>

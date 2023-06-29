@@ -102,7 +102,7 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
   const closeModal = () => setIsModalVisible(false);
   const showModal = () => {
     setIsModalVisible(true);
-    onOpen();
+    if (onOpen) onOpen();
   };
   //GeoCode Address Modal
   const [isGeoCodeVisible, setIsGeoCodeVisible] = useState(false);
@@ -198,14 +198,28 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
     }
 
     const respPayload = await response.json();
+    const results = respPayload?.data?.results?.values;
 
-    setSearchResults(respPayload?.data?.results?.values || []);
+    if (results) {
+      const vd = await doVotingDistrictSearch(results[0]);
+      results[0].votingDistrict_id = +vd.votingDistrict_id;
+      results[0].votingDistrict = vd.votingDistrict;
+      results[0].province = vd.province;
+      results[0].structure = vd;
+      results[0].buildingNo = updatedAddress?.buildingNo ?? '';
+      results[0].buildingName = updatedAddress?.buildingName ?? '';
+      results[0].comment = updatedAddress?.comment ?? '';
+      results[0].geocodeSource = GeocodedAddressSource.GEOCODED_ADDRESS;
+      setSearchResults(results);
+    } else {
+      setSearchResults([]);
+    }
   };
 
-  const doVotingDistrictSearch = async () => {
+  const doVotingDistrictSearch = async (address: Partial<Address>) => {
     setError(null);
-    const latitude = searchResults[0].latitude;
-    const longitude = searchResults[0].longitude;
+    const latitude = address.latitude;
+    const longitude = address.longitude;
     const url = `${process.env.NEXT_PUBLIC_API_BASE}/structures/votingdistricts?latitude=${latitude}&longitude=${longitude}`;
     const response = await fetch(url, {
       headers: {
@@ -260,16 +274,7 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
       return;
     }
 
-    setSearchResults(prev => {
-      prev[0].votingDistrict_id = +structureInfo[0].votingDistrict_id;
-      prev[0].votingDistrict = structureInfo[0].votingDistrict;
-      prev[0].province = structureInfo[0].province;
-      prev[0].structure = structureInfo[0];
-      prev[0].buildingNo = updatedAddress?.buildingNo ?? '';
-      prev[0].buildingName = updatedAddress?.buildingName ?? '';
-      prev[0].comment = updatedAddress?.comment ?? '';
-      return prev;
-    });
+    return structureInfo[0];
   };
 
   const handleGeoCodeButtonClick = () => {
@@ -277,12 +282,6 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
     closeModal();
     setIsGeoCodeVisible(true);
   };
-
-  useEffect(() => {
-    if (searchResults[0]?.longitude && searchResults[0]?.latitude) {
-      doVotingDistrictSearch();
-    }
-  }, [searchResults, updatedAddress]);
 
   return (
     <>
