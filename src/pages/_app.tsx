@@ -16,6 +16,8 @@ import { ErrorBoundary } from '@appsignal/react';
 import { appsignal, initAppsignal } from '@lib/appsignal';
 import SwrGlobalErrorHandler from '@components/error/swr-global-error-handler';
 import RouteGuard from '@components/route-guard';
+import { EuiButton, EuiButtonEmpty, EuiEmptyPrompt } from '@elastic/eui';
+import router from 'next/router';
 
 /**
  * Next.js uses the App component to initialize pages. You can override it
@@ -48,14 +50,40 @@ const EuiApp: FunctionComponent<AppProps<{ session: Session }>> = ({
           <SwrGlobalErrorHandler>
             <Theme>
               <Chrome>
-                <ErrorBoundary instance={appsignal}>
-                  <CanvassingProvider>
+                <CanvassingProvider>
+                  <ErrorBoundary
+                    instance={appsignal}
+                    fallback={error => (
+                      <EuiEmptyPrompt
+                        color="danger"
+                        iconType="error"
+                        title={<h2>Something went wrong.</h2>}
+                        body={
+                          <>
+                            <p>{error?.message}</p>
+                          </>
+                        }
+                        actions={[
+                          <EuiButton
+                            key={1}
+                            fill
+                            onClick={() => window.location.replace('/')}>
+                            Return to home page
+                          </EuiButton>,
+                          <EuiButtonEmpty
+                            key={2}
+                            onClick={() => window.location.reload()}>
+                            Try again
+                          </EuiButtonEmpty>,
+                        ]}
+                      />
+                    )}>
                     <AuthHandler />
                     <RouteGuard>
                       <Component {...pageProps} />
                     </RouteGuard>
-                  </CanvassingProvider>
-                </ErrorBoundary>
+                  </ErrorBoundary>
+                </CanvassingProvider>
               </Chrome>
             </Theme>
           </SwrGlobalErrorHandler>
