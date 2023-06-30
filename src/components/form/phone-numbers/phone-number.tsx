@@ -315,6 +315,9 @@ const PhoneNumberLine: FunctionComponent<Props> = ({
   );
 
   useEffect(() => {
+    if (data?.contacts?.some(contact => contact.deleted === true)) {
+      onUpdate({ ...phoneContact, deleted: true });
+    }
     switch (phoneContact.type) {
       case 'WORK':
         setTypeIcon(
@@ -371,7 +374,12 @@ const PhoneNumberLine: FunctionComponent<Props> = ({
           />
         );
     }
-  }, [phoneContact, euiTheme.colors.disabledText, euiTheme.colors.subduedText]);
+  }, [
+    phoneContact,
+    euiTheme.colors.disabledText,
+    euiTheme.colors.subduedText,
+    data?.contacts,
+  ]);
 
   return (
     <>

@@ -1,6 +1,5 @@
 import { FunctionComponent, useContext } from 'react';
 import { EuiButton, EuiFlexItem, EuiPanel } from '@elastic/eui';
-// import AddEditNumber from './add-edit-number';
 import { PhoneContact } from '@lib/domain/phone-numbers';
 import PhoneNumberLine from './phone-number';
 import { CanvassingContext } from '@lib/context/canvassing.context';

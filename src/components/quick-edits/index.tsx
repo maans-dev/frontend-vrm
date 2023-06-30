@@ -25,8 +25,9 @@ import {
   AddressUpdate,
 } from '@lib/domain/person-update';
 import { CanvassingContext } from '@lib/context/canvassing.context';
-import { Field, FieldMetaData } from '@lib/domain/person';
+import { Contact, Field, FieldMetaData } from '@lib/domain/person';
 import useTagFetcher from '@lib/fetcher/tags/tags';
+import router from 'next/router';
 
 interface Props {
   deceased: boolean;
@@ -52,6 +53,11 @@ const DeceasedOrMoved: FunctionComponent<Props> = ({
   const [movedField, setMovedField] = useState<FieldMetaData[]>();
   const [isDeceasedModalVisible, setIsDeceasedModalVisible] = useState(false);
   const [deceasedInternal, setDeceasedInternal] = useState<boolean>(deceased);
+  const [numberExistOnPerson, setNumberExistOnPerson] = useState<Contact[]>();
+  const [isWrongNumberModalVisible, setIsWrongNumberModalVisible] =
+    useState(false);
+  const [wrongNumberContinue, setWrongNumberContinue] = useState(false);
+  const canvassPage = router.asPath.includes('/canvass');
   const [isMovedModalVisible, setIsMovedModalVisible] = useState(false);
   const [movedInternal, setMovedInternal] = useState<Field[]>(
     fields?.filter(f => MovedTagCode.includes(f.field.code))
@@ -59,6 +65,9 @@ const DeceasedOrMoved: FunctionComponent<Props> = ({
   const [isMovedInternalExist, setIsMovedInternalExist] = useState<boolean>(
     Boolean(movedInternal && movedInternal.length > 0)
   );
+  const [phoneDoesNotExist, setPhoneDoesNotExist] = useState<boolean>();
+
+  const phoneNumberFromUrl = router.query['phone-number'];
 
   const handleDeceasedModalChange = () => {
     // Deceased is true, so deselect & update payload
@@ -153,6 +162,31 @@ const DeceasedOrMoved: FunctionComponent<Props> = ({
     submitUpdatePayload(true);
   };
 
+  const handleWrongNumberChange = () => {
+    if (numberExistOnPerson.length === 1 && !wrongNumberContinue) {
+      setIsWrongNumberModalVisible(true);
+      setWrongNumberContinue(true);
+      const update = {
+        field: 'contacts',
+        data: { deleted: true, key: numberExistOnPerson[0].key },
+      };
+      setUpdatePayload(update);
+    }
+    if (wrongNumberContinue) {
+      setWrongNumberContinue(false);
+      setIsWrongNumberModalVisible(false);
+      const update = {
+        field: 'contacts',
+        data: { deleted: false, key: numberExistOnPerson?.[0]?.key },
+      };
+      setUpdatePayload(update);
+    }
+    if (numberExistOnPerson.length < 1) {
+      setIsWrongNumberModalVisible(true);
+      setPhoneDoesNotExist(true);
+    }
+  };
+
   const deceasedModal = (
     <EuiModal
       onClose={() => setIsDeceasedModalVisible(false)}
@@ -206,6 +240,76 @@ const DeceasedOrMoved: FunctionComponent<Props> = ({
     </EuiModal>
   );
 
+  const wrongNumberModal = (
+    <EuiModal
+      onClose={() => {
+        if (phoneDoesNotExist) {
+          setPhoneDoesNotExist(false);
+          setIsWrongNumberModalVisible(false);
+        } else {
+          setIsWrongNumberModalVisible(false);
+          setWrongNumberContinue(false);
+          //Restore Phone Number
+          const update = {
+            field: 'contacts',
+            data: { deleted: false, key: numberExistOnPerson?.[0]?.key },
+          };
+          setUpdatePayload(update);
+        }
+      }}
+      initialFocus="[name=popswitch]">
+      <EuiModalHeader>
+        <EuiModalHeaderTitle>Save now or continue?</EuiModalHeaderTitle>
+      </EuiModalHeader>
+
+      <EuiModalBody>
+        <EuiText>
+          Number does not belong to voter, remove number and save, no additional
+          changes required.
+        </EuiText>
+      </EuiModalBody>
+
+      <EuiModalFooter>
+        <EuiButtonEmpty
+          onClick={() => {
+            if (phoneDoesNotExist) {
+              setPhoneDoesNotExist(false);
+              setIsWrongNumberModalVisible(false);
+            }
+            setIsWrongNumberModalVisible(false);
+          }}>
+          Continue
+        </EuiButtonEmpty>
+        <EuiButton
+          fill
+          onClick={() => {
+            if (phoneDoesNotExist) {
+              setPhoneDoesNotExist(false);
+              setIsWrongNumberModalVisible(false);
+            } else {
+              setIsWrongNumberModalVisible(false);
+              setWrongNumberContinue(false);
+              //Restore Phone Number
+              const update = {
+                field: 'contacts',
+                data: { deleted: false, key: numberExistOnPerson?.[0]?.key },
+              };
+              setUpdatePayload(update);
+            }
+          }}>
+          Cancel
+        </EuiButton>
+        <EuiButton
+          onClick={() => {
+            submitUpdatePayload(true);
+          }}
+          fill>
+          Save
+        </EuiButton>
+      </EuiModalFooter>
+    </EuiModal>
+  );
+
   useEffect(() => {
     setMovedField(movedTag);
     if (!isMovedInternalExist) {
@@ -253,6 +357,18 @@ const DeceasedOrMoved: FunctionComponent<Props> = ({
     }
   }, [data?.address?.deleted, movedField, movedInternal]);
 
+  //Update state if URL with phone-number exist on Person
+  useEffect(() => {
+    if (person?.contacts) {
+      const phoneNumberExists = person.contacts.filter(
+        contact => contact.value === phoneNumberFromUrl
+      );
+      setNumberExistOnPerson(phoneNumberExists);
+    } else {
+      setNumberExistOnPerson([]);
+    }
+  }, [person?.contacts, router.query['phone-number']]);
+
   return (
     <>
       {isDeceasedModalVisible ? (
@@ -261,6 +377,10 @@ const DeceasedOrMoved: FunctionComponent<Props> = ({
 
       {isMovedModalVisible ? (
         <EuiOverlayMask>{movedModal}</EuiOverlayMask>
+      ) : null}
+
+      {isWrongNumberModalVisible ? (
+        <EuiOverlayMask>{wrongNumberModal}</EuiOverlayMask>
       ) : null}
 
       <EuiFlexGroup gutterSize="s">
@@ -274,6 +394,7 @@ const DeceasedOrMoved: FunctionComponent<Props> = ({
             onChange={handleDeceasedModalChange}
           />
         </EuiFlexItem>
+
         {!hideMoved && (
           <EuiFlexItem>
             <EuiCheckableCard
@@ -283,6 +404,19 @@ const DeceasedOrMoved: FunctionComponent<Props> = ({
               label="Moved?"
               checkableType="checkbox"
               onChange={handleMovedModalChange}
+            />
+          </EuiFlexItem>
+        )}
+
+        {canvassPage && phoneNumberFromUrl && (
+          <EuiFlexItem>
+            <EuiCheckableCard
+              id="wrong-number-modal"
+              checked={wrongNumberContinue || phoneDoesNotExist}
+              css={{ height: '100%' }}
+              label="Number does not belong to voter?"
+              checkableType="checkbox"
+              onChange={handleWrongNumberChange}
             />
           </EuiFlexItem>
         )}

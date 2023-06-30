@@ -10,7 +10,6 @@ import { EmailContact } from '@lib/domain/email-address';
 import { Contact } from '@lib/domain/person';
 import { Language } from '@lib/domain/person-enum';
 import {
-  DeceasedUpdate,
   EmailUpdate,
   GivenNameUpdate,
   LanguageUpdate,
@@ -19,8 +18,9 @@ import {
 } from '@lib/domain/person-update';
 import { PhoneContact } from '@lib/domain/phone-numbers';
 import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
-import { FunctionComponent, useEffect, useState } from 'react';
+import { FunctionComponent, useContext, useEffect, useState } from 'react';
 import EmailAddress from '@components/form/email-address';
+import { CanvassingContext } from '@lib/context/canvassing.context';
 
 interface Props {
   language: string;
@@ -31,7 +31,6 @@ interface Props {
   onPhoneChange: (update: PersonUpdate<PhoneUpdate>) => void;
   onEmailChange: (update: PersonUpdate<EmailUpdate>) => void;
   onPersonChange: (update: PersonUpdate<GivenNameUpdate>) => void;
-  onDeceasedChange: (update: PersonUpdate<DeceasedUpdate>) => void;
 }
 
 function getLanguageEnumValue(language: string): Language {
@@ -74,7 +73,6 @@ const ContactDetails: FunctionComponent<Props> = ({
   deceased,
   givenName,
   onPersonChange,
-  onDeceasedChange,
 }) => {
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(
     getLanguageEnumValue(language)
@@ -83,10 +81,10 @@ const ContactDetails: FunctionComponent<Props> = ({
     label: languageOption,
     value: languageOption,
   }));
-  const [deceasedInternal, setDeceasedInternal] = useState<boolean>(deceased);
   const [givenNameInternal, setGivenNameInternal] = useState<string>(
     givenName || ''
   );
+  const { person, data } = useContext(CanvassingContext);
 
   const handleLanguageChange = (
     selectedOptions: {
@@ -185,15 +183,6 @@ const ContactDetails: FunctionComponent<Props> = ({
     }
     onEmailChange({ field: 'contacts', data: update });
   };
-  const handleDeceasedChange = e => {
-    const value = e.target.checked;
-    setDeceasedInternal(value);
-    const update: PersonUpdate<DeceasedUpdate> = {
-      field: 'deceased',
-      data: value === deceased ? null : value,
-    };
-    onDeceasedChange(update);
-  };
   const handleGivenNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setGivenNameInternal(e.target.value);
     const update: PersonUpdate<GivenNameUpdate> = {
@@ -202,10 +191,8 @@ const ContactDetails: FunctionComponent<Props> = ({
     };
     onPersonChange(update);
   };
-
   useCanvassFormReset(() => {
     setSelectedLanguage(getLanguageEnumValue(language));
-    setDeceasedInternal(deceased);
     setGivenNameInternal(givenName);
     setPhoneContacts(
       contacts
@@ -233,7 +220,6 @@ const ContactDetails: FunctionComponent<Props> = ({
 
   useEffect(() => {
     setSelectedLanguage(getLanguageEnumValue(language));
-    setDeceasedInternal(deceased);
     setGivenNameInternal(givenName);
     setPhoneContacts(
       contacts
@@ -258,6 +244,38 @@ const ContactDetails: FunctionComponent<Props> = ({
         }))
     );
   }, [contacts, deceased, givenName, language]);
+  //Restore Deleted False Phone Contact
+  useEffect(() => {
+    if (data?.contacts?.some(contact => contact.deleted === false)) {
+      const restoreDeletedFalseContact = person?.contacts.find(contact =>
+        data?.contacts?.some(
+          dataContact =>
+            dataContact.key === contact.key && dataContact.deleted === false
+        )
+      );
+
+      if (restoreDeletedFalseContact) {
+        setPhoneContacts(prevState =>
+          prevState
+            .filter(contact => contact.category !== 'EMAIL')
+            .map(contact => ({
+              key: contact.key,
+              value: contact?.value,
+              type: contact.type,
+              category: contact.category,
+              canContact: contact.canContact,
+            }))
+            .concat({
+              key: restoreDeletedFalseContact.key,
+              value: restoreDeletedFalseContact?.value,
+              type: restoreDeletedFalseContact.type,
+              category: restoreDeletedFalseContact.category,
+              canContact: restoreDeletedFalseContact.canContact,
+            })
+        );
+      }
+    }
+  }, [data?.contacts, person?.contacts]);
 
   return (
     <>

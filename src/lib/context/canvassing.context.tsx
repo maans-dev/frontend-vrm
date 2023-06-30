@@ -52,6 +52,7 @@ export type CanvassingContextType = {
   setValidationError: (update: string) => void;
   votingDistrict: string;
   setVotingDistrict: (value: string) => void;
+  canvassUrlError: string;
 };
 
 export const CanvassingContext = createContext<Partial<CanvassingContextType>>(
@@ -69,6 +70,7 @@ const CanvassingProvider = ({ children }) => {
   const [isComplete, setIsComplete] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const [serverError, setServerError] = useState('');
+  const [canvassUrlError, setCanvassUrlError] = useState('');
   const router = useRouter();
   const [campaign, setCampaignInternal] = useState(null);
   const [canvassingType, setCanvassingTypeInternal] = useState(null);
@@ -80,6 +82,7 @@ const CanvassingProvider = ({ children }) => {
   const [selectedTab, setSelectedTab] = useState(1);
   const [validationError, setValidationError] = useState<string>('');
   const [votingDistrict, setVotingDistrict] = useState<string>('');
+  const [canvassUrl, setCanvassUrl] = useState(false);
 
   const setPerson = (person: Person) => setPersonInternal(person);
 
@@ -421,8 +424,98 @@ const CanvassingProvider = ({ children }) => {
     setIsDirty(false);
   };
 
+  const fetchCampaignData = useCallback(async () => {
+    try {
+      const { campaign, 'canvass-type': canvassType } = router.query;
+      //Throw error for invalid Canvass Type
+      if (canvassType !== 'phone' && canvassType !== 'face') {
+        setCanvassUrlError('Invalid canvass type');
+      }
+      const url = `${process.env.NEXT_PUBLIC_API_BASE}/activity/campaign/?key=${campaign}`;
+      const response = await fetch(url, {
+        headers: { Authorization: `Bearer ${session?.accessToken}` },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch campaign data');
+      }
+
+      const data = await response.json();
+
+      // Validate response data
+      if (!Array.isArray(data) || data.length === 0) {
+        throw new Error('Invalid campaign data');
+      }
+
+      const {
+        key: campaignKey,
+        name,
+        type: { name: typeName },
+      } = data[0];
+
+      // Store campaign information
+      const campaignInfo = {
+        key: campaignKey,
+        name: name,
+        type: {
+          name: typeName,
+        },
+      };
+      // Store campaign info in sessionStorage
+      sessionStorage.setItem('campaign', JSON.stringify(campaignInfo));
+      setCampaign(data[0]);
+
+      // Store canvass type
+      const canvassTypeObj = {
+        id:
+          canvassType === 'phone'
+            ? 'phone'
+            : canvassType === 'face'
+            ? 'face'
+            : undefined,
+        name:
+          canvassType === 'phone'
+            ? 'Telephone'
+            : canvassType === 'face'
+            ? 'Face to face'
+            : undefined,
+      };
+      // Store canvass type info in sessionStorage
+      sessionStorage.setItem('canvassType', JSON.stringify(canvassTypeObj));
+      setCanvassingType(canvassTypeObj);
+
+      //Update Data
+      const canvassUpdate: CanvassUpdate = {};
+      if (campaign) canvassUpdate.activity = campaignKey;
+      if (canvassType)
+        canvassUpdate.type =
+          canvassType === 'phone'
+            ? 'phone'
+            : canvassType === 'face'
+            ? 'face'
+            : undefined;
+      setData(prev => ({
+        canvass: {
+          ...prev?.canvass,
+          ...canvassUpdate,
+        },
+      }));
+    } catch (err) {
+      setCanvassUrlError(err.message);
+    }
+  }, [router.query, session?.accessToken]);
+
   // reset context state based on url
   useEffect(() => {
+    if (
+      router.asPath.includes('/canvass') &&
+      'campaign' in router.query &&
+      'canvass-type' in router.query &&
+      session?.accessToken
+    ) {
+      fetchCampaignData();
+      setCanvassUrl(true);
+    }
     if (
       !router.asPath.includes('/canvass') &&
       !router.asPath.includes('/capture') &&
@@ -507,9 +600,11 @@ const CanvassingProvider = ({ children }) => {
       }));
     }
 
-    // rediect to canvass/capture type page if campaign/type not set
+    // // redirect to canvass/capture type page if campaign/type not set
     if (
-      (canvassRoute && router.route !== '/canvass/canvassing-type') ||
+      (canvassUrl &&
+        canvassRoute &&
+        router.route !== '/canvass/canvassing-type') ||
       (captureRoute && router.route !== '/capture/capturing-type')
     ) {
       if (!campaign || !type) {
@@ -518,7 +613,7 @@ const CanvassingProvider = ({ children }) => {
         );
       }
     }
-  }, [router]);
+  }, [router, session?.accessToken]);
 
   useEffect(() => {
     if (data?.contacts) {
@@ -573,6 +668,7 @@ const CanvassingProvider = ({ children }) => {
         setValidationError,
         votingDistrict,
         setVotingDistrict,
+        canvassUrlError,
       }}>
       {children}
     </CanvassingContext.Provider>
