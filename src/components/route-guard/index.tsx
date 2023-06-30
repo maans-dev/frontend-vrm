@@ -17,11 +17,17 @@ const RouteGuard = (props: {
   const { data: session, status } = useSession();
 
   useEffect(() => {
-    if (status !== 'authenticated' && !router.asPath.includes('/auth')) {
+    const isAuthenticated = status === 'authenticated';
+    if (!isAuthenticated && !router.asPath.includes('/auth')) {
       return;
     }
 
     if (router.asPath.includes('/auth')) {
+      setModuleEnabled(true);
+      return;
+    }
+
+    if (isAuthenticated && router.asPath.includes('/support')) {
       setModuleEnabled(true);
       return;
     }

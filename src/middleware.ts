@@ -12,7 +12,7 @@ export default withAuth(
 
     let authorized = false;
 
-    if (req.nextUrl.pathname === '/') {
+    if (req.nextUrl.pathname === '/' || req.nextUrl.pathname === '/support') {
       authorized = (token.roles as string[])?.length > 0;
     }
 
