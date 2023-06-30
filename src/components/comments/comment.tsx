@@ -10,6 +10,9 @@ import { FunctionComponent } from 'react';
 import { CiUser } from 'react-icons/ci';
 import { Comment } from '@lib/domain/person';
 import { renderName } from '@lib/person/utils';
+import { useSession } from 'next-auth/react';
+import { hasRole } from '@lib/auth/utils';
+import { Roles } from '@lib/domain/auth';
 
 export type Props = {
   comment: Comment;
@@ -19,8 +22,14 @@ export type Props = {
 const Commenter: FunctionComponent<Props> = ({ comment, onArchive }) => {
   const isSystemComment = comment.type === 'system';
   const isMemberComment = comment.type === 'membership';
+  const { data: session } = useSession();
 
   const { euiTheme } = useEuiTheme();
+
+  const canDelete = (darn: number) => {
+    const isAdmin = hasRole(Roles.SuperUser, session?.user?.roles);
+    return isAdmin || (session?.user?.darn === darn && !isSystemComment);
+  };
 
   function formatTimestamp(timestamp) {
     return moment(timestamp).format('D MMM YYYY');
@@ -51,7 +60,7 @@ const Commenter: FunctionComponent<Props> = ({ comment, onArchive }) => {
       }
       eventColor={isSystemComment ? 'warning' : null}
       actions={
-        !isSystemComment ? (
+        canDelete(comment?.createdBy?.key) ? (
           <EuiButtonIcon
             title="Archive"
             aria-label="Archive"
