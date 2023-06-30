@@ -26,7 +26,7 @@ import { GeneralUpdate, PersonUpdate } from '@lib/domain/person-update';
 import { CanvassingContext } from '@lib/context/canvassing.context';
 import { CanvassingSelectionDetails } from '@components/canvassing-type/canvassing-selection-details';
 import { useLeavePageConfirmation } from '@lib/hooks/useLeavePageConfirmation';
-import DeceasedOrMoved from '@components/deceased-or-moved';
+import DeceasedOrMoved from '@components/quick-edits';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
@@ -44,6 +44,7 @@ const Voter: FunctionComponent = () => {
     resetForm,
     data,
     validationError,
+    canvassUrlError,
   } = useContext(CanvassingContext);
   useLeavePageConfirmation(isDirty);
 
@@ -164,14 +165,17 @@ const Voter: FunctionComponent = () => {
     }
   }, [data?.affiliation?.confirmed, data]);
 
-  if (error && !isLoading && !isSubmitting && !isValidating && voterKey) {
+  if (
+    canvassUrlError ||
+    (error && !isLoading && !isSubmitting && !isValidating && voterKey)
+  ) {
     return (
       <MainLayout breadcrumb={breadcrumb} panelled={false}>
         <EuiCallOut
           title="Something went wrong"
           color="danger"
           iconType="error">
-          {error?.message}
+          {error?.message} {canvassUrlError}
         </EuiCallOut>
       </MainLayout>
     );
@@ -241,7 +245,6 @@ const Voter: FunctionComponent = () => {
             onPhoneChange={onChange}
             onEmailChange={onChange}
             onPersonChange={onChange}
-            onDeceasedChange={onChange}
           />
         </EuiFormFieldset>
         <EuiSpacer />

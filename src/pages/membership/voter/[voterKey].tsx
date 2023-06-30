@@ -30,7 +30,7 @@ import Membership from '@components/membership';
 import PersonHistory from '@components/person-history';
 import { useLeavePageConfirmation } from '@lib/hooks/useLeavePageConfirmation';
 import MembershipProvider from '@components/membership/membership.context';
-import DeceasedOrMoved from '@components/deceased-or-moved';
+import DeceasedOrMoved from '@components/quick-edits';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
@@ -315,7 +315,6 @@ const Voter: FunctionComponent = () => {
                   onPhoneChange={onChange}
                   onEmailChange={onChange}
                   onPersonChange={onChange}
-                  onDeceasedChange={onChange}
                 />
               </EuiFormFieldset>
               <EuiSpacer />
