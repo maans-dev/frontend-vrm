@@ -1,12 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import {
-  FunctionComponent,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import { FunctionComponent, useEffect, useRef, useState } from 'react';
 
 import {
   EuiBreadcrumb,
@@ -22,6 +16,7 @@ import { HeaderSecondary } from '@components/header/header-secondary';
 import Spinner from '@components/spinner/spinner';
 import { Roles } from '@lib/domain/auth';
 import dynamic from 'next/dynamic';
+import { useSession } from 'next-auth/react';
 
 const DisclosureNoticeModal = dynamic(
   () => import('@components/disclosure-notice/disclosure-modal'),
@@ -58,6 +53,8 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
 
   const [showSubHeader, setShowSubHeader] = useState(false);
   // const [showCanvassHeader, setShowCanvassHeader] = useState(false);
+  const { data: session, status } = useSession();
+  const hasFeature = (feature: string) => session?.features.includes(feature);
 
   useEffect(() => {
     setShowSubHeader(router.route !== '/' && router.route !== '/403');
@@ -89,29 +86,31 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
 
         {showSubHeader ? <HeaderSecondary breadcrumb={breadcrumb} /> : null}
 
-        <div
-          style={{
-            display: 'block',
-            position: 'sticky',
-            top: showSubHeader ? '96px' : '48px',
-            zIndex: 99,
-          }}>
-          <EuiText
-            size="s"
-            color="white"
-            textAlign="center"
-            css={{
-              background: 'red',
-              padding: '10px',
-              width: '100%',
+        {hasFeature('display-beta-message') && (
+          <div
+            style={{
+              display: 'block',
+              position: 'sticky',
+              top: showSubHeader ? '96px' : '48px',
+              zIndex: 99,
             }}>
-            <strong>
-              This is a Beta test site. All data entered here will be deleted at
-              the end of the beta testing period. Nothing recorded here will
-              count towards canvassing or capturing.
-            </strong>
-          </EuiText>
-        </div>
+            <EuiText
+              size="s"
+              color="white"
+              textAlign="center"
+              css={{
+                background: 'red',
+                padding: '10px',
+                width: '100%',
+              }}>
+              <strong>
+                This is a Beta test site. All data entered here will be deleted
+                at the end of the beta testing period. Nothing recorded here
+                will count towards canvassing or capturing.
+              </strong>
+            </EuiText>
+          </div>
+        )}
 
         <EuiSpacer size="s" />
 
