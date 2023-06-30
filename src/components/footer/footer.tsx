@@ -6,20 +6,25 @@ import {
   EuiText,
   EuiThemeProvider,
 } from '@elastic/eui';
+import { useRouter } from 'next/router';
 import { FunctionComponent } from 'react';
 
 const Footer: FunctionComponent = () => {
+  const router = useRouter();
   return (
     <EuiPageTemplate.BottomBar paddingSize="s" style={{ position: 'relative' }}>
       <EuiThemeProvider colorMode="light">
         <EuiFlexGroup responsive={false} justifyContent="center" gutterSize="m">
-          <EuiFlexItem grow={false}>
+          {/* <EuiFlexItem grow={false}>
             <EuiButtonEmpty color="primary" size="xs">
               Help
             </EuiButtonEmpty>
-          </EuiFlexItem>
+          </EuiFlexItem> */}
           <EuiFlexItem grow={false}>
-            <EuiButtonEmpty color="success" size="xs">
+            <EuiButtonEmpty
+              color="success"
+              size="xs"
+              onClick={() => router.push('/support')}>
               Support
             </EuiButtonEmpty>
           </EuiFlexItem>
