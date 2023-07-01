@@ -213,25 +213,26 @@ const Map: FunctionComponent<Props> = ({
                     </EuiFlexItem>
                   </EuiFlexGroup>
                   <EuiSpacer size={isMobile ? 's' : 'm'} />
-                  {showConfirmation && (
-                    <EuiFlexGroup justifyContent="center">
-                      <EuiFlexItem grow={false}>
-                        <EuiButton onClick={handleConfirmationClick} size="m">
-                          Use this location
-                        </EuiButton>
-                        <EuiSpacer size="s" />
-                        <EuiText size="xs" textAlign="center">
-                          <strong>
-                            Coordinates: {location.lat.toFixed(4)},{' '}
-                            {location.lng.toFixed(4)}
-                          </strong>
-                        </EuiText>
-                      </EuiFlexItem>
-                    </EuiFlexGroup>
-                  )}
                 </>
               )}
             </EuiModalBody>
+            {showConfirmation && (
+              <EuiFlexGroup justifyContent="center">
+                <EuiFlexItem grow={false}>
+                  <EuiButton onClick={handleConfirmationClick} size="m">
+                    Use this location
+                  </EuiButton>
+                  <EuiSpacer size="s" />
+                  <EuiText size="xs" textAlign="center">
+                    <strong>
+                      Coordinates: {location.lat.toFixed(4)},{' '}
+                      {location.lng.toFixed(4)}
+                    </strong>
+                  </EuiText>
+                </EuiFlexItem>
+              </EuiFlexGroup>
+            )}
+            <EuiSpacer size={isMobile ? 's' : 'm'} />
           </EuiModal>
         </EuiOverlayMask>
       )}
