@@ -35,7 +35,10 @@ import DeceasedOrMoved from '@components/quick-edits';
 const Voter: FunctionComponent = () => {
   const router = useRouter();
   const voterKey = router.query.voterKey as string;
-  const { person, isLoading, isValidating, error } = usePersonFetcher(voterKey);
+  const { person, isLoading, isValidating, error } = usePersonFetcher(
+    voterKey,
+    true
+  );
   const [selectedTab, setSelectedTab] = useState(0);
 
   const {

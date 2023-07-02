@@ -1,13 +1,31 @@
 import { appsignal } from '@lib/appsignal';
+import { hasRole } from '@lib/auth/utils';
+import { Roles } from '@lib/domain/auth';
 import { Person } from '@lib/domain/person';
 import { useSession } from 'next-auth/react';
 import useSWR from 'swr';
 import { fetcherAPI } from '../api.fetcher';
 
-export default function usePersonFetcher(key: string) {
+export default function usePersonFetcher(
+  key: string,
+  isMembershipRequest = false
+) {
   const shouldFetch = key ? true : false;
   const { data: session } = useSession();
-  const url = `/person?key=${key}&template=["Address","Contact","Fields","Comment","Canvass","Membership"]`;
+
+  const hasMembershipAdminRole = hasRole(
+    Roles.MembershipAdmin,
+    session?.user?.roles
+  );
+
+  const hasMembershipRole = hasRole(Roles.Membership, session?.user?.roles);
+
+  const membershipTemplate =
+    isMembershipRequest && (hasMembershipAdminRole || hasMembershipRole)
+      ? 'Membership'
+      : 'Membership_Ltd';
+
+  const url = `/person?key=${key}&template=["Address","Contact","Fields","Comment","Canvass","${membershipTemplate}"]`;
 
   const { data, error, isLoading, mutate, isValidating } = useSWR<Person[]>(
     shouldFetch ? url : null,
