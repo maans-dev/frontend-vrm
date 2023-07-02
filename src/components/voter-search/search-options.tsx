@@ -182,8 +182,7 @@ const SearchOptions: FunctionComponent<Props> = ({
           compressed
           onKeyDown={handleKeyDown}
           placeholder="ID Number, DARN or Membership number"
-          value={searchParams?.identity || ''}
-          append={<AdvancedSearchTooltip />}
+          value={searchParams?.identity?.replaceAll('*', '') || ''}
           onChange={() => null}
         />
       </EuiFormRow>
