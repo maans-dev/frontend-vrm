@@ -57,21 +57,26 @@ const Index: FunctionComponent = () => {
         <Spinner show={isLoading} />
       ) : (
         <>
-          {activityReport && reportError && renderErrorCallout(reportError)}
-          <EuiFlexGroup direction="column">
-            <EuiFormFieldset
-              legend={{
-                children: `Activity Report for ${person && renderName(person)}`,
-              }}>
-              <ActivityReportTable report={activityReport} />
-            </EuiFormFieldset>
-            <EuiFormFieldset
-              legend={{
-                children: `History for ${person && renderName(person)}`,
-              }}>
-              <PersonHistory personKey={Number(voterKey)} mode="activity" />
-            </EuiFormFieldset>
-          </EuiFlexGroup>
+          {reportError ? (
+            renderErrorCallout(reportError)
+          ) : (
+            <EuiFlexGroup direction="column">
+              <EuiFormFieldset
+                legend={{
+                  children: `Activity Report for ${
+                    person && renderName(person)
+                  }`,
+                }}>
+                <ActivityReportTable report={activityReport} />
+              </EuiFormFieldset>
+              <EuiFormFieldset
+                legend={{
+                  children: `History for ${person && renderName(person)}`,
+                }}>
+                <PersonHistory personKey={Number(voterKey)} mode="activity" />
+              </EuiFormFieldset>
+            </EuiFlexGroup>
+          )}
         </>
       )}
     </MainLayout>
