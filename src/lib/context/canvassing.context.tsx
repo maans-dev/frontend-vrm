@@ -288,6 +288,9 @@ const CanvassingProvider = ({ children }) => {
         mutate(
           `/person?key=${person.key}&template=["Address","Contact","Field","Comment","Canvass","Membership"]`
         );
+        mutate(
+          `/person?key=${person.key}&template=["Address","Contact","Field","Comment","Canvass","Membership_Ltd"]`
+        );
         if (router.pathname.includes('/canvass/')) {
           router.push('/canvass/canvassing-type');
         } else if (router.pathname.includes('/capture/')) {
