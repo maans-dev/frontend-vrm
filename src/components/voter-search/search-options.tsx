@@ -232,8 +232,7 @@ const SearchOptions: FunctionComponent<Props> = ({
           name="email"
           onKeyDown={handleKeyDown}
           compressed
-          append={<AdvancedSearchTooltip />}
-          value={searchParams?.email || ''}
+          value={searchParams?.email?.replaceAll('*', '') || ''}
           onChange={() => null}
         />
       </EuiFormRow>
@@ -243,8 +242,7 @@ const SearchOptions: FunctionComponent<Props> = ({
           name="phone"
           onKeyDown={handleKeyDown}
           compressed
-          append={<AdvancedSearchTooltip />}
-          value={searchParams?.phone || ''}
+          value={searchParams?.phone?.replaceAll('*', '') || ''}
           onChange={() => null}
         />
       </EuiFormRow>
