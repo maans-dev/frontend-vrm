@@ -38,7 +38,6 @@ export type Props = {
   surname: string;
   dob: Date;
   colourCode: ColourCode;
-  modified: Date;
   canvassedBy: CanvassedBy;
   livingStructure: LivingStructure;
   registeredStructure: RegisteredStructure;
@@ -53,7 +52,6 @@ const VoterInfo: FunctionComponent<Props> = ({
   surname,
   dob,
   colourCode,
-  modified,
   canvassedBy,
   livingStructure,
   registeredStructure,
@@ -181,7 +179,9 @@ const VoterInfo: FunctionComponent<Props> = ({
             <EuiFlexItem grow={false}>
               <EuiText size="xs">
                 Last Canvassed on{' '}
-                <strong>{moment(modified).format('YYYY/MM/DD')}</strong>
+                <strong>
+                  {moment(canvassedBy?.date)?.format('YYYY/MM/DD') || 'Unknown'}
+                </strong>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem>
