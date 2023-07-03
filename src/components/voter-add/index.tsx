@@ -347,7 +347,7 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
 
   useEffect(() => {
     if (id && id.length === 13) {
-      setSearchId({ idNumber: id });
+      setSearchId({ identity: id });
     } else {
       setSearchId(null);
     }
