@@ -528,7 +528,9 @@ const MembershipProvider: FunctionComponent<
           field: 'membership',
           data: {
             daAbroad: isDaAbroadSelected,
-            branchOverride: isBranchOverrideSelected,
+            branchOverride: hasRole(Roles.MembershipAdmin)
+              ? isBranchOverrideSelected
+              : null,
             structure: {
               country_code: updatedBranch?.structure?.country_code,
             },
@@ -546,7 +548,9 @@ const MembershipProvider: FunctionComponent<
         field: 'membership',
         data: {
           daAbroad: isDaAbroadSelected,
-          branchOverride: isBranchOverrideSelected,
+          branchOverride: hasRole(Roles.MembershipAdmin)
+            ? isBranchOverrideSelected
+            : null,
           structure: {
             ...(updatedBranch?.structure?.type?.toLowerCase() === 'ward'
               ? { ward: +updatedBranch.structure.ward }
