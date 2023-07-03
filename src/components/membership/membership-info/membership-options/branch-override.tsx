@@ -1,5 +1,6 @@
 import { MembershipContext } from '@components/membership/membership.context';
 import { EuiCheckableCard, htmlIdGenerator } from '@elastic/eui';
+import { Roles } from '@lib/domain/auth';
 import { FunctionComponent, useContext } from 'react';
 
 const BranchOverrideOption: FunctionComponent = () => {
@@ -8,6 +9,7 @@ const BranchOverrideOption: FunctionComponent = () => {
     isBranchOverrideSelected,
     onSelectBranchOverride,
     onDeleteBranchOverride,
+    hasRole,
   } = useContext(MembershipContext);
 
   return (
@@ -18,7 +20,7 @@ const BranchOverrideOption: FunctionComponent = () => {
         label="Permission to have a different branch given"
         checkableType="checkbox"
         aria-label="Permission to have a different branch given"
-        disabled={!hasBranchOverride}
+        disabled={!hasBranchOverride || !hasRole(Roles.MembershipAdmin)}
         checked={isBranchOverrideSelected}
         onChange={() =>
           isBranchOverrideSelected
