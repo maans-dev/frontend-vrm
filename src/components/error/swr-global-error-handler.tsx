@@ -21,15 +21,15 @@ const SwrGlobalErrorHandler: FunctionComponent = ({ children }) => {
               title: 'Attempting to re-authenticate',
               color: 'warning',
             });
-            console.log('SwrGlobalErrorHandler', router.asPath, router);
             signIn('da', { callbackUrl: router.asPath }); // Force sign in to hopefully resolve error
             return;
           }
-          const endpoint = error.cause.cause.route.split('?')[0];
+          const endpoint =
+            error?.cause?.cause?.route?.split('?')?.[0] || 'unknown';
           appsignal.sendError(error, span => {
             span.setAction(`api:${endpoint}`);
             span.setParams({
-              cause: error.cause.cause,
+              cause: error?.cause?.cause || error,
             });
             span.setTags({
               user_darn: session?.user?.darn?.toString(),
