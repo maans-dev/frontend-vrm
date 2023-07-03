@@ -1,11 +1,5 @@
 import PhoneNumbers from '@components/form/phone-numbers';
-import {
-  EuiComboBox,
-  EuiFieldText,
-  EuiFormRow,
-  EuiSpacer,
-  EuiSwitch,
-} from '@elastic/eui';
+import { EuiComboBox, EuiFieldText, EuiFormRow, EuiSpacer } from '@elastic/eui';
 import { EmailContact } from '@lib/domain/email-address';
 import { Contact } from '@lib/domain/person';
 import { Language } from '@lib/domain/person-enum';
@@ -84,7 +78,6 @@ const ContactDetails: FunctionComponent<Props> = ({
   const [givenNameInternal, setGivenNameInternal] = useState<string>(
     givenName || ''
   );
-  const { person, data } = useContext(CanvassingContext);
 
   const handleLanguageChange = (
     selectedOptions: {
@@ -244,38 +237,6 @@ const ContactDetails: FunctionComponent<Props> = ({
         }))
     );
   }, [contacts, deceased, givenName, language]);
-  //Restore Deleted False Phone Contact
-  useEffect(() => {
-    if (data?.contacts?.some(contact => contact.deleted === false)) {
-      const restoreDeletedFalseContact = person?.contacts.find(contact =>
-        data?.contacts?.some(
-          dataContact =>
-            dataContact.key === contact.key && dataContact.deleted === false
-        )
-      );
-
-      if (restoreDeletedFalseContact) {
-        setPhoneContacts(prevState =>
-          prevState
-            .filter(contact => contact.category !== 'EMAIL')
-            .map(contact => ({
-              key: contact.key,
-              value: contact?.value,
-              type: contact.type,
-              category: contact.category,
-              canContact: contact.canContact,
-            }))
-            .concat({
-              key: restoreDeletedFalseContact.key,
-              value: restoreDeletedFalseContact?.value,
-              type: restoreDeletedFalseContact.type,
-              category: restoreDeletedFalseContact.category,
-              canContact: restoreDeletedFalseContact.canContact,
-            })
-        );
-      }
-    }
-  }, [data?.contacts, person?.contacts]);
 
   return (
     <>

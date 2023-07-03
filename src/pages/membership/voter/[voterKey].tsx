@@ -30,7 +30,7 @@ import Membership from '@components/membership';
 import PersonHistory from '@components/person-history';
 import { useLeavePageConfirmation } from '@lib/hooks/useLeavePageConfirmation';
 import MembershipProvider from '@components/membership/membership.context';
-import DeceasedOrMoved from '@components/quick-edits';
+import QuickEdits from '@components/quick-edits';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
@@ -297,7 +297,7 @@ const Voter: FunctionComponent = () => {
 
             <div style={{ display: selectedTab === 0 ? 'block' : 'none' }}>
               <EuiFormFieldset>
-                <DeceasedOrMoved
+                <QuickEdits
                   hideMoved
                   deceased={person?.deceased}
                   fields={person?.fields}
