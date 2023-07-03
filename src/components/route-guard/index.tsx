@@ -80,7 +80,7 @@ const RouteGuard = (props: {
 
       if (!enabled && !router.asPath.includes('404')) {
         setModuleEnabled(false);
-        router.push('/');
+        if (router.asPath !== '/') router.push('/');
       } else {
         setModuleEnabled(true);
       }

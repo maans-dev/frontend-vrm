@@ -40,7 +40,11 @@ const DisclosureNoticeModal: FunctionComponent = () => {
     if (!session) return;
     setShouldModalRender(true);
 
-    if (isFeatureEnabled && !session.disclosureAccepted) {
+    if (
+      isFeatureEnabled &&
+      !session.disclosureAccepted &&
+      router.asPath !== '/'
+    ) {
       router.push('/'); // Navigate back to the home screen
     }
   }, [session, session?.disclosureAccepted, isFeatureEnabled]);
