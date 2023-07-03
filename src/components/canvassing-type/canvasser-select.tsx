@@ -81,18 +81,6 @@ const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
       onChange(respPayload[0]);
     } else {
       setCanvasserSearchError('Canvasser not found');
-      appsignal.sendError(
-        new Error(`Unable to find canvasser: ${canvasserSearchText}`),
-        span => {
-          span.setAction('capture:canvassedBySearch');
-          span.setParams({
-            route: url,
-            identity: canvasserSearchText,
-            response: redactObject(respPayload),
-          });
-          span.setTags({ user_darn: session?.user?.darn.toString() });
-        }
-      );
       setFoundCanvasser(null);
       onChange(null);
     }
