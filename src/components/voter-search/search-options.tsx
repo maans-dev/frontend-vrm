@@ -20,7 +20,7 @@ import {
 import { Structure } from '@lib/domain/person';
 import { PersonSearchParams } from '@lib/domain/person-search';
 import moment, { Moment } from 'moment';
-import { FormEvent, FunctionComponent, useEffect, useState } from 'react';
+import { FormEvent, FunctionComponent, useState } from 'react';
 
 export type Props = {
   onSubmit?: (
@@ -84,32 +84,41 @@ const SearchOptions: FunctionComponent<Props> = ({
   };
 
   const handleSelectStructure = (data: Partial<Structure>) => {
-    const structureCodeMap = {
-      municipality: 'municipalityCatB',
-      region: 'region_code',
-      constituency: 'constituency_code',
-      ward: 'ward',
-      votingdistrict: 'votingDistrict_id',
-    };
+    let structure;
 
-    const structure = {
-      values: [
-        {
-          [data.type]: data[structureCodeMap[data.type.toLowerCase()]],
-          in: ['living', 'registered'],
-          inAnd: false,
-          // out: ['living', 'registered'],
-          outAnd: false,
-          and: false,
-        },
-      ],
-    };
+    if (data) {
+      const structureCodeMap = {
+        municipality: 'municipalityCatB',
+        region: 'region_code',
+        constituency: 'constituency_code',
+        ward: 'ward',
+        votingdistrict: 'votingDistrict_id',
+      };
+
+      structure = {
+        values: [
+          {
+            [data.type]: data[structureCodeMap[data.type.toLowerCase()]],
+            in: ['living', 'registered'],
+            inAnd: false,
+            // out: ['living', 'registered'],
+            outAnd: false,
+            and: false,
+          },
+        ],
+      };
+    }
 
     setSearchParams(previousValue => {
       const newValue = {
         ...previousValue,
-        structure: JSON.stringify(structure),
       };
+
+      if (structure) {
+        newValue['structure'] = JSON.stringify(structure);
+      } else {
+        if (newValue['structure']) delete newValue['structure'];
+      }
 
       for (const key in newValue) {
         if (!newValue[key] || newValue[key] === '') delete newValue[key];
@@ -143,6 +152,7 @@ const SearchOptions: FunctionComponent<Props> = ({
   const handleReset = () => {
     setSearchParams({});
     setDob(null);
+    setSelectedStructureOption(undefined);
   };
 
   const handleKeyDown = event => {
@@ -166,7 +176,11 @@ const SearchOptions: FunctionComponent<Props> = ({
           onClick={() => handleSubmit()}
           isLoading={isLoading}
           disabled={
-            !searchParams || !Object.keys(searchParams).length || isLoading
+            !searchParams ||
+            !Object.keys(searchParams).length ||
+            isLoading ||
+            (Object.keys(searchParams)?.length === 1 &&
+              selectedStructureOption !== undefined)
           }>
           Search
         </EuiButton>
@@ -249,14 +263,22 @@ const SearchOptions: FunctionComponent<Props> = ({
         />
       </EuiFormRow>
 
-      <EuiFormRow display="rowCompressed" label="Structure">
+      <EuiFormRow
+        display="rowCompressed"
+        label="Structure"
+        isInvalid={
+          selectedStructureOption && Object.keys(searchParams).length === 1
+        }
+        error={
+          'Please also use at least one of the other search fields in addition to Structure'
+        }>
         <Structres
           structureTypes={allowedStructureTypes}
           showSelected={true}
           persistedOption={persistedStructureOption}
           onSelect={option => {
             setSelectedStructureOption(option);
-            handleSelectStructure(option.value);
+            handleSelectStructure(option?.value);
           }}
         />
       </EuiFormRow>

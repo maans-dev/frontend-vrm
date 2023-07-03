@@ -178,7 +178,10 @@ const Structres: FunctionComponent<Props> = ({
               <EuiFlexItem grow={false}>
                 <EuiButtonIcon
                   iconType="trash"
-                  onClick={() => setSelected(null)}
+                  onClick={() => {
+                    setSelected(undefined);
+                    onSelect(undefined);
+                  }}
                 />
               </EuiFlexItem>
             </EuiFlexGroup>
