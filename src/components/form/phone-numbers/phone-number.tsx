@@ -315,9 +315,6 @@ const PhoneNumberLine: FunctionComponent<Props> = ({
   );
 
   useEffect(() => {
-    if (data?.contacts?.some(contact => contact.deleted === true)) {
-      onUpdate({ ...phoneContact, deleted: true });
-    }
     switch (phoneContact.type) {
       case 'WORK':
         setTypeIcon(
