@@ -116,7 +116,11 @@ const VoterInfo: FunctionComponent<Props> = ({
           ? 0
           : contextData.address?.structure?.votingDistrict_id;
       const rvd = registeredStructure?.votingDistrict_id;
-      const url = `${process.env.NEXT_PUBLIC_API_BASE}/address/colourcode?livingVotingDistrict_id=${lvd}&registeredVotingDistrict_id=${rvd}`;
+      const url = `${
+        process.env.NEXT_PUBLIC_API_BASE
+      }/address/colourcode?livingVotingDistrict_id=${
+        lvd || 0
+      }&registeredVotingDistrict_id=${rvd || 0}`;
       const response = await fetch(url, {
         headers: {
           'Content-Type': 'application/json',
