@@ -26,7 +26,7 @@ import { GeneralUpdate, PersonUpdate } from '@lib/domain/person-update';
 import { CanvassingContext } from '@lib/context/canvassing.context';
 import { CanvassingSelectionDetails } from '@components/canvassing-type/canvassing-selection-details';
 import { useLeavePageConfirmation } from '@lib/hooks/useLeavePageConfirmation';
-import DeceasedOrMoved from '@components/quick-edits';
+import QuickEdits from '@components/quick-edits';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
@@ -215,7 +215,7 @@ const Voter: FunctionComponent = () => {
 
       <EuiSpacer />
       <EuiFormFieldset legend={{ children: 'Quick edits' }}>
-        <DeceasedOrMoved
+        <QuickEdits
           deceased={person?.deceased}
           fields={person?.fields}
           onDeceasedChange={onChange}
