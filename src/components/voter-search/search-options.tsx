@@ -252,12 +252,18 @@ const SearchOptions: FunctionComponent<Props> = ({
 
       <EuiFormRow display="rowCompressed" label="First names">
         <EuiFieldText
-          name="firstName"
+          name="names"
           onKeyDown={handleKeyDown}
           compressed
           append={<AdvancedSearchTooltip />}
-          value={searchParams?.firstName || ''}
-          onChange={() => null}
+          value={searchParams?.names || ''}
+          onChange={event => {
+            const newNameSearch = event.target.value;
+            setSearchParams(prevSearchParams => ({
+              ...prevSearchParams,
+              names: newNameSearch,
+            }));
+          }}
         />
       </EuiFormRow>
 
