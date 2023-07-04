@@ -1,8 +1,15 @@
 import PhoneNumbers from '@components/form/phone-numbers';
-import { EuiComboBox, EuiFieldText, EuiFormRow, EuiSpacer } from '@elastic/eui';
+import {
+  EuiComboBox,
+  EuiFieldText,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiFormRow,
+  EuiSpacer,
+} from '@elastic/eui';
 import { EmailContact } from '@lib/domain/email-address';
 import { Contact } from '@lib/domain/person';
-import { Language } from '@lib/domain/person-enum';
+import { Language, Salutation } from '@lib/domain/person-enum';
 import {
   EmailUpdate,
   GivenNameUpdate,
@@ -18,10 +25,12 @@ import { CanvassingContext } from '@lib/context/canvassing.context';
 
 interface Props {
   language: string;
+  salutation: Salutation;
   contacts: Contact[];
   deceased: boolean;
   givenName: string;
   onLanguageChange: (update: PersonUpdate<LanguageUpdate>) => void;
+  onSalutationChange: (update: PersonUpdate<LanguageUpdate>) => void;
   onPhoneChange: (update: PersonUpdate<PhoneUpdate>) => void;
   onEmailChange: (update: PersonUpdate<EmailUpdate>) => void;
   onPersonChange: (update: PersonUpdate<GivenNameUpdate>) => void;
@@ -60,8 +69,10 @@ function getLanguageEnumValue(language: string): Language {
 
 const ContactDetails: FunctionComponent<Props> = ({
   language,
+  salutation,
   contacts,
   onLanguageChange,
+  onSalutationChange,
   onPhoneChange,
   onEmailChange,
   deceased,
@@ -78,6 +89,9 @@ const ContactDetails: FunctionComponent<Props> = ({
   const [givenNameInternal, setGivenNameInternal] = useState<string>(
     givenName || ''
   );
+
+  const [selectedSalutation, setSelectedSalutation] =
+    useState<Salutation>(salutation);
 
   const handleLanguageChange = (
     selectedOptions: {
@@ -98,6 +112,24 @@ const ContactDetails: FunctionComponent<Props> = ({
       });
     }
   };
+
+  const handleSalutationChange = (
+    selectedOptions: {
+      label: string;
+      value: string;
+    }[]
+  ) => {
+    const selected = selectedOptions[0]?.value;
+    if (selected) {
+      setSelectedSalutation(selected as Salutation);
+
+      onSalutationChange({
+        field: 'salutation',
+        data: salutation !== selected ? (selected as Language) : null,
+      });
+    }
+  };
+
   const [phoneContacts, setPhoneContacts] = useState<PhoneContact[]>(
     contacts
       ?.filter(contact => contact.category !== 'EMAIL')
@@ -240,17 +272,42 @@ const ContactDetails: FunctionComponent<Props> = ({
 
   return (
     <>
-      <EuiFormRow display="rowCompressed" label="Preferred name">
-        <EuiFieldText
-          id="preferredName"
-          name="preferredName"
-          compressed
-          autoComplete="off"
-          value={givenNameInternal}
-          placeholder="Enter a preferred name"
-          onChange={handleGivenNameChange}
-        />
-      </EuiFormRow>
+      <EuiFlexGroup responsive={true}>
+        <EuiFlexItem grow={false} style={{ width: '160px' }}>
+          <EuiFormRow display="rowCompressed" label="Salutation">
+            <EuiComboBox
+              compressed
+              isClearable={false}
+              aria-label="Salutation"
+              placeholder="Select salutation"
+              singleSelection={{ asPlainText: true }}
+              options={Object.values(Salutation).map(option => ({
+                label: option,
+                value: option,
+              }))}
+              selectedOptions={
+                selectedSalutation
+                  ? [{ value: selectedSalutation, label: selectedSalutation }]
+                  : []
+              }
+              onChange={handleSalutationChange}
+            />
+          </EuiFormRow>
+        </EuiFlexItem>
+        <EuiFlexItem grow={true}>
+          <EuiFormRow display="rowCompressed" label="Preferred name">
+            <EuiFieldText
+              id="preferredName"
+              name="preferredName"
+              compressed
+              autoComplete="off"
+              value={givenNameInternal}
+              placeholder="Enter a preferred name"
+              onChange={handleGivenNameChange}
+            />
+          </EuiFormRow>
+        </EuiFlexItem>
+      </EuiFlexGroup>
 
       <EuiSpacer size="m" />
 

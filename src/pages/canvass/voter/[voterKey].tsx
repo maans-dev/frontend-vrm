@@ -27,6 +27,7 @@ import { CanvassingContext } from '@lib/context/canvassing.context';
 import { CanvassingSelectionDetails } from '@components/canvassing-type/canvassing-selection-details';
 import { useLeavePageConfirmation } from '@lib/hooks/useLeavePageConfirmation';
 import QuickEdits from '@components/quick-edits';
+import { Language, Salutation } from '@lib/domain/person-enum';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
@@ -246,6 +247,8 @@ const Voter: FunctionComponent = () => {
             onPhoneChange={onChange}
             onEmailChange={onChange}
             onPersonChange={onChange}
+            salutation={person?.salutation as Salutation}
+            onSalutationChange={onChange}
           />
         </EuiFormFieldset>
         <EuiSpacer />

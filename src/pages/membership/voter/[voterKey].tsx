@@ -31,6 +31,7 @@ import PersonHistory from '@components/person-history';
 import { useLeavePageConfirmation } from '@lib/hooks/useLeavePageConfirmation';
 import MembershipProvider from '@components/membership/membership.context';
 import QuickEdits from '@components/quick-edits';
+import { Salutation } from '@lib/domain/person-enum';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
@@ -317,6 +318,8 @@ const Voter: FunctionComponent = () => {
                   onPhoneChange={onChange}
                   onEmailChange={onChange}
                   onPersonChange={onChange}
+                  salutation={person?.salutation as Salutation}
+                  onSalutationChange={onChange}
                 />
               </EuiFormFieldset>
               <EuiSpacer />
