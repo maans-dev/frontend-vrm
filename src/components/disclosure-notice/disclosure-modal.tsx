@@ -3,18 +3,21 @@ import { EuiConfirmModal, EuiText, EuiTitle } from '@elastic/eui';
 import { signOut, useSession } from 'next-auth/react';
 import { css } from '@emotion/react';
 import { useRouter } from 'next/router';
+import { appsignal } from '@lib/appsignal';
 
 const DisclosureNoticeModal: FunctionComponent = () => {
   const router = useRouter();
   const { data: session, update } = useSession();
   const isFeatureEnabled = session?.features?.includes('disclosure');
   const [shouldModalRender, setShouldModalRender] = useState(false); //This avoids flashing the modal after user has already accepted
+  const [error, setError] = useState<string>(null);
 
   const handleConfirm = async () => {
     const url = `${process.env.NEXT_PUBLIC_API_BASE}/event/user-agreement/`;
     const data = {
       accepted: true,
     };
+    setError(null);
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -23,10 +26,22 @@ const DisclosureNoticeModal: FunctionComponent = () => {
       },
       body: JSON.stringify(data),
     });
-    // const respPayload = await response.clone().json();
     if (!response.ok) {
       const errJson = JSON.parse(await response.clone().text());
-      console.log(errJson);
+      setError(`Unable to set user aggreement: ${errJson.message}`);
+
+      appsignal.sendError(
+        new Error(`Unable to set user aggreement: ${errJson.message}`),
+        span => {
+          span.setAction('api-call:/event/user-agreement');
+          span.setParams({
+            route: url,
+            isFeatureEnabled: isFeatureEnabled,
+            user: session.user.darn,
+          });
+          span.setTags({ user_darn: session.user.darn.toString() });
+        }
+      );
       return;
     }
     await update({ disclosureAccepted: true });
