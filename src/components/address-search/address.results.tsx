@@ -165,7 +165,6 @@ const AddressResults = ({ address, onSelect, isLoading }: Props) => {
     if (selectedAddress?.value?.service?.type === 'VOTING_DISTRICT') {
       selectedAddress.value.geocodeSource = GeocodedAddressSource.GEOCODED_VD;
     }
-    console.log({ selectedAddress });
     onSelect(selectedAddress);
   };
 
