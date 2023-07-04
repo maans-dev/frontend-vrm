@@ -31,3 +31,15 @@ export enum Province {
   NC = 'Northern Cape',
   WC = 'Western Cape',
 }
+
+export enum Salutation {
+  MR = 'MR',
+  MRS = 'MRS',
+  MS = 'MS',
+  MNR = 'MNR',
+  MEV = 'MEV',
+  MEJ = 'MEJ',
+  PROF = 'PROF',
+  DR = 'DR',
+  ADV = 'ADV',
+}
