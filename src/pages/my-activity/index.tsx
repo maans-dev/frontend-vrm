@@ -1,6 +1,7 @@
 import { FunctionComponent } from 'react';
 import {
   EuiBreadcrumb,
+  EuiButton,
   EuiCallOut,
   EuiFlexGroup,
   EuiFlexItem,
@@ -16,6 +17,21 @@ import Spinner from '@components/spinner/spinner';
 import router from 'next/router';
 
 export const renderErrorCallout = error => {
+  if (error?.cause?.cause?.status === 403) {
+    return (
+      <EuiCallOut
+        color="primary"
+        iconType="alert"
+        title="You don't have permission to view activity of this user.">
+        <EuiButton
+          fill
+          onClick={() => router.push('/activity-reports/voter-search')}>
+          Return to voter search
+        </EuiButton>
+      </EuiCallOut>
+    );
+  }
+
   return (
     <EuiCallOut color="danger" iconType="alert" title="Error">
       {error.message}

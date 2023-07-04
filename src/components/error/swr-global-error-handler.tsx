@@ -24,10 +24,19 @@ const SwrGlobalErrorHandler: FunctionComponent = ({ children }) => {
             signIn('da', { callbackUrl: router.asPath }); // Force sign in to hopefully resolve error
             return;
           }
-          const endpoint =
+          const endpoint: string =
             error?.cause?.cause?.route?.split('?')?.[0] || 'unknown';
+
+          if (
+            error?.cause?.cause?.status === 403 &&
+            endpoint.includes('/activity/report')
+          ) {
+            // prevent these specific errors from being logged to appsignal #https://source.da-io.net/vrm-revamp/frontend/-/issues/212
+            return;
+          }
+
           appsignal.sendError(error, span => {
-            span.setAction(`api:${endpoint}`);
+            span.setAction(`swr-global:api:${endpoint}`);
             span.setParams({
               cause: error?.cause?.cause || error,
             });

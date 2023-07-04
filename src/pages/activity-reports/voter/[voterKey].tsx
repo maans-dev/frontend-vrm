@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useContext, useEffect } from 'react';
 import { EuiBreadcrumb, EuiFlexGroup, EuiFormFieldset } from '@elastic/eui';
 import MainLayout from '@layouts/main';
 import { useRouter } from 'next/router';
@@ -34,6 +34,7 @@ const Index: FunctionComponent = () => {
   ];
   const router = useRouter();
   const voterKey = router?.query?.voterKey as string;
+
   const { person, isLoading: personLoading } = usePersonFetcher(voterKey);
   const {
     activityReport,
