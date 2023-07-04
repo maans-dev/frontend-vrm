@@ -18,12 +18,11 @@ import {
   ColourCode,
   LivingStructure,
   Membership,
-  Person,
   RegisteredStructure,
 } from '@lib/domain/person';
 import { GiHouse } from 'react-icons/gi';
 import { MdHowToVote } from 'react-icons/md';
-import { renderName } from '@lib/person/utils';
+import { Names, renderName } from '@lib/person/utils';
 import { useStickyVoterInfo } from '@lib/hooks/useStickyVoterInfo';
 import { css } from '@emotion/react';
 import { CanvassingContext } from '@lib/context/canvassing.context';
@@ -35,6 +34,7 @@ export type Props = {
   darn: number;
   salutation: string;
   givenName: string;
+  firstName: string;
   surname: string;
   dob: Date;
   colourCode: ColourCode;
@@ -49,6 +49,7 @@ const VoterInfo: FunctionComponent<Props> = ({
   darn,
   salutation,
   givenName,
+  firstName,
   surname,
   dob,
   colourCode,
@@ -64,6 +65,14 @@ const VoterInfo: FunctionComponent<Props> = ({
   const { data: session } = useSession();
 
   const { data: contextData, votingDistrict } = useContext(CanvassingContext);
+
+  const renderFullName = (names: Names) => {
+    const title = names?.salutation ? `${names?.salutation} ` : '';
+    if (names?.givenName && names?.firstName && names?.surname)
+      return `${title} ${names.firstName} (${names.givenName}) ${names.surname}`;
+    if (!names?.surname) return 'Unknown';
+    return `${title}${names.firstName} ${names.surname}`;
+  };
 
   const getBadgeColour = () => {
     if (deceased) return '#cccccc';
@@ -244,8 +253,13 @@ const VoterInfo: FunctionComponent<Props> = ({
               <EuiFlexItem grow={false}>
                 <EuiTitle size="xs">
                   <EuiTextColor>
-                    {renderName({ salutation, givenName, surname })} (
-                    {moment().diff(dob, 'years', false)})
+                    {renderFullName({
+                      salutation,
+                      firstName,
+                      givenName,
+                      surname,
+                    })}{' '}
+                    ({moment().diff(dob, 'years', false)})
                   </EuiTextColor>
                 </EuiTitle>
               </EuiFlexItem>
