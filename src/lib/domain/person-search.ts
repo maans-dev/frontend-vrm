@@ -3,6 +3,7 @@ export interface PersonSearchParams {
   dob: number | string;
   surname: string;
   firstName: string;
+  names: string;
   email: string;
   phone: string;
   contactability?: string;
