@@ -6,4 +6,5 @@ export interface PersonSearchParams {
   email: string;
   phone: string;
   contactability?: string;
+  eligible?: boolean;
 }

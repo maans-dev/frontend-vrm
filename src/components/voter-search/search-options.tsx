@@ -16,6 +16,7 @@ import {
   EuiModalHeader,
   EuiModalHeaderTitle,
   EuiComboBoxOptionOption,
+  EuiCheckbox,
 } from '@elastic/eui';
 import { Structure } from '@lib/domain/person';
 import { PersonSearchParams } from '@lib/domain/person-search';
@@ -41,7 +42,12 @@ const SearchOptions: FunctionComponent<Props> = ({
   persistedStructureOption,
 }) => {
   const [searchParams, setSearchParams] = useState<Partial<PersonSearchParams>>(
-    persistedSearchParams
+    () => {
+      if (!persistedSearchParams) {
+        return { eligible: true };
+      }
+      return persistedSearchParams;
+    }
   );
   const [selectedStructureOption, setSelectedStructureOption] = useState<
     EuiComboBoxOptionOption<Partial<Structure>>
@@ -144,13 +150,27 @@ const SearchOptions: FunctionComponent<Props> = ({
     });
   };
 
+  const handleEligibleChange = e => {
+    setSearchParams(prev => {
+      return { ...prev, eligible: e?.target?.checked };
+    });
+  };
+
   const handleSubmit = () => {
+    if ('eligible' in searchParams && !searchParams.eligible) {
+      // don't send through eligible=false to search endpoint
+      delete searchParams.eligible;
+    }
+    if ('eligible' in searchParams && searchParams?.identity) {
+      // don't send through eligible if identity search
+      delete searchParams.eligible;
+    }
     onSubmit(searchParams, selectedStructureOption);
     if (isModalVisible) closeModal();
   };
 
   const handleReset = () => {
-    setSearchParams({});
+    setSearchParams({ eligible: true });
     setDob(null);
     setSelectedStructureOption(undefined);
   };
@@ -190,7 +210,7 @@ const SearchOptions: FunctionComponent<Props> = ({
 
   const form = (
     <EuiForm fullWidth component="form" onChange={handleChange}>
-      <EuiFormRow label="Identity" display="rowCompressed">
+      <EuiFormRow label="ID Number or DARN" display="rowCompressed">
         <EuiFieldText
           name="identity"
           compressed
@@ -280,6 +300,17 @@ const SearchOptions: FunctionComponent<Props> = ({
             setSelectedStructureOption(option);
             handleSelectStructure(option?.value);
           }}
+        />
+      </EuiFormRow>
+
+      <EuiSpacer />
+
+      <EuiFormRow display="rowCompressed">
+        <EuiCheckbox
+          id="eligible"
+          label="Eligible voters only?"
+          checked={searchParams?.eligible}
+          onChange={e => handleEligibleChange(e)}
         />
       </EuiFormRow>
 
