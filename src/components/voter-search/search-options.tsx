@@ -74,7 +74,10 @@ const SearchOptions: FunctionComponent<Props> = ({
 
     if (target.name === '' || target.name === 'dob') return;
 
-    const value = target.value;
+    const value =
+      target.name === 'identity'
+        ? target.value.replaceAll('*', '').replaceAll(' ', '')
+        : target.value;
     setSearchParams(previousValue => {
       const newValue = {
         ...previousValue,
@@ -216,10 +219,7 @@ const SearchOptions: FunctionComponent<Props> = ({
           compressed
           onKeyDown={handleKeyDown}
           placeholder="ID Number, DARN"
-          value={
-            searchParams?.identity?.replaceAll('*', '')?.replaceAll(' ', '') ||
-            ''
-          }
+          value={searchParams?.identity || ''}
           onChange={() => null}
         />
       </EuiFormRow>
