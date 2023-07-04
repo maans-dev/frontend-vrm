@@ -209,7 +209,8 @@ const Voter: FunctionComponent = () => {
         deceased={person?.deceased}
         darn={person?.key}
         salutation={person?.salutation}
-        givenName={person?.givenName || person?.firstName}
+        givenName={person?.givenName}
+        firstName={person?.firstName}
         surname={person?.surname}
         dob={moment(person?.dob, 'YYYYMMDD').toDate()}
         colourCode={person?.colourCode}
