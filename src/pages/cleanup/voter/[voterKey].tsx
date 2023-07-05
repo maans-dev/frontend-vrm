@@ -218,6 +218,7 @@ const Voter: FunctionComponent = () => {
         livingStructure={person?.livingStructure}
         registeredStructure={person?.registeredStructure}
         membership={person?.membership}
+        pubRep={person?.pubRep}
       />
 
       <EuiSpacer />

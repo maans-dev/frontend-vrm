@@ -28,6 +28,7 @@ export interface Person {
   created: Date;
   modifiedBy: string;
   modified: Date;
+  pubRep: string;
   membership: Membership;
   canvassedBy: CanvassedBy;
   canvassed: Date;

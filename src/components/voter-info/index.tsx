@@ -42,6 +42,7 @@ export type Props = {
   livingStructure: LivingStructure;
   registeredStructure: RegisteredStructure;
   membership: Membership;
+  pubRep: string;
 };
 
 const VoterInfo: FunctionComponent<Props> = ({
@@ -57,6 +58,7 @@ const VoterInfo: FunctionComponent<Props> = ({
   livingStructure,
   registeredStructure,
   membership,
+  pubRep,
 }) => {
   const isMobile = useIsWithinBreakpoints(['xs', 's']);
   const { offsetTopRefEl, offsetTop } = useStickyVoterInfo();
@@ -263,19 +265,30 @@ const VoterInfo: FunctionComponent<Props> = ({
                   </EuiTextColor>
                 </EuiTitle>
               </EuiFlexItem>
-              {['Active', 'Expired'].includes(membership?.status) && !deceased && (
+              {pubRep ? (
                 <EuiFlexItem
                   grow={false}
                   style={{ inlineSize: 'auto', flexBasis: 'auto' }}>
-                  <EuiBadge
-                    css={{ borderRadius: '10px' }}
-                    color={
-                      membership?.status === 'Expired' ? '#cccccc' : 'primary'
-                    }>
-                    Membership <strong>{membership?.status}</strong> (
-                    {membership?.expiry})
+                  <EuiBadge css={{ borderRadius: '10px' }} color="primary">
+                    Public Representative <strong>({pubRep})</strong>
                   </EuiBadge>
                 </EuiFlexItem>
+              ) : (
+                ['Active', 'Expired'].includes(membership?.status) &&
+                !deceased && (
+                  <EuiFlexItem
+                    grow={false}
+                    style={{ inlineSize: 'auto', flexBasis: 'auto' }}>
+                    <EuiBadge
+                      css={{ borderRadius: '10px' }}
+                      color={
+                        membership?.status === 'Expired' ? '#cccccc' : 'primary'
+                      }>
+                      Membership <strong>{membership?.status}</strong> (
+                      {membership?.expiry})
+                    </EuiBadge>
+                  </EuiFlexItem>
+                )
               )}
             </EuiFlexGroup>
             <EuiFlexItem grow={false}>
