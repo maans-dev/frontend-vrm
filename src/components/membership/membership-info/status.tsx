@@ -5,7 +5,8 @@ import {
   EuiText,
   IconColor,
 } from '@elastic/eui';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useContext } from 'react';
+import { MembershipContext } from '../membership.context';
 
 export interface Props {
   status: string;
@@ -13,6 +14,7 @@ export interface Props {
 }
 
 const Status: FunctionComponent<Props> = ({ status, colour }) => {
+  const { person } = useContext(MembershipContext);
   return (
     <EuiFlexGroup>
       <EuiFlexItem grow={false}>
@@ -21,9 +23,11 @@ const Status: FunctionComponent<Props> = ({ status, colour }) => {
         </EuiText>
       </EuiFlexItem>
       <EuiFlexItem>
-        <EuiHealth color={colour}>
+        <EuiHealth color={person.pubRep ? 'success' : colour}>
           <EuiText size="s">
-            <strong>{status}</strong>
+            <strong>
+              {person.pubRep ? 'Active (Public Representative)' : status}
+            </strong>
           </EuiText>
         </EuiHealth>
       </EuiFlexItem>

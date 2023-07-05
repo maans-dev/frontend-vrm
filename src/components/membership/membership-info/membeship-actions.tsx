@@ -4,7 +4,7 @@ import { FunctionComponent, useContext } from 'react';
 import { MembershipContext } from '../membership.context';
 
 const MembershipActions: FunctionComponent = () => {
-  const { membership, onActivate, onRenew, onCancel, hasRole } =
+  const { membership, onActivate, onRenew, onCancel, hasRole, person } =
     useContext(MembershipContext);
   return (
     <EuiFlexGroup alignItems="center">
@@ -28,31 +28,28 @@ const MembershipActions: FunctionComponent = () => {
           )}
         </EuiFlexItem>
       )}
-
-      {['Expired', 'Active'].includes(membership?.status) && (
+      {person?.pubRep ? (
         <EuiFlexItem>
-          <EuiButton
-            onClick={onRenew}
-            // disabled={disabled}
-            size="s"
-            color="primary"
-            fill>
-            Renew
-          </EuiButton>
+          <EuiText color="subdued" textAlign="center" size="xs">
+            To edit this membership record please contact your Provincial
+            Director or the Federal Membership team.
+          </EuiText>
         </EuiFlexItem>
-      )}
+      ) : null}
+      {!person?.pubRep && ['Expired', 'Active'].includes(membership?.status) && (
+        <>
+          <EuiFlexItem>
+            <EuiButton onClick={onRenew} size="s" color="primary" fill>
+              Renew
+            </EuiButton>
+          </EuiFlexItem>
 
-      {['Expired', 'Active'].includes(membership?.status) && (
-        <EuiFlexItem>
-          <EuiButton
-            onClick={onCancel}
-            // disabled={disabled}
-            size="s"
-            color="primary"
-            fill>
-            Cancel
-          </EuiButton>
-        </EuiFlexItem>
+          <EuiFlexItem>
+            <EuiButton onClick={onCancel} size="s" color="primary" fill>
+              Cancel
+            </EuiButton>
+          </EuiFlexItem>
+        </>
       )}
     </EuiFlexGroup>
   );
