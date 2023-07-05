@@ -183,10 +183,6 @@ const SearchOptions: FunctionComponent<Props> = ({
     }
   };
 
-  useEffect(() => {
-    console.log({ persistedSearchParams, searchParams });
-  }, [persistedSearchParams, searchParams]);
-
   const formActions = (
     <EuiFlexGroup direction="row" responsive={false} justifyContent="flexEnd">
       <EuiFlexItem grow={false}>
