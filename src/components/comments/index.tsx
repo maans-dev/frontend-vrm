@@ -16,7 +16,6 @@ import { CommentsUpdate, PersonUpdate } from '@lib/domain/person-update';
 import { CanvassingContext } from '@lib/context/canvassing.context';
 import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
 import router from 'next/router';
-// import { CommentsType } from '@lib/domain/comments';
 
 export type Props = {
   comments: Comment[];
@@ -33,14 +32,6 @@ const Comments: FunctionComponent<Props> = ({
   const [comment, setComment] = useState<Partial<Comment>[]>([]);
   const { nextId } = useContext(CanvassingContext);
 
-  useEffect(() => {
-    if (router.pathname.includes('/membership')) {
-      setComment(comments?.filter(c => !c.archived && c.type === 'membership'));
-    } else {
-      setComment(comments?.filter(c => !c.archived && c.type === 'person'));
-    }
-  }, [comments]);
-
   const { euiTheme } = useEuiTheme();
 
   useCanvassFormReset(() => {
@@ -50,8 +41,6 @@ const Comments: FunctionComponent<Props> = ({
       setComment(comments?.filter(c => !c.archived && c.type === 'person'));
     }
   });
-
-  if (!comments) return <></>;
 
   const handleAddComment = () => {
     const newCommentObj = {
@@ -117,16 +106,18 @@ const Comments: FunctionComponent<Props> = ({
     }
   };
 
+  useEffect(() => {
+    if (router.pathname.includes('/membership')) {
+      setComment(comments?.filter(c => !c.archived && c.type === 'membership'));
+    } else {
+      setComment(comments?.filter(c => !c.archived && c.type === 'person'));
+    }
+  }, [comments]);
+
+  if (!comments) return <></>;
+
   return (
     <>
-      {/* <Global
-        styles={css`
-          .euiCommentEvent__header {
-            font-size: 10px;
-            padding: 0 8px !important;
-          }
-        `}
-      /> */}
       <EuiCommentList
         aria-label="Comments"
         gutterSize="m"

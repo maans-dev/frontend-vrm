@@ -39,7 +39,7 @@ const Commenter: FunctionComponent<Props> = ({ comment, onArchive }) => {
     <EuiComment
       username={renderName(comment.createdBy)}
       event={isSystemComment ? <>{comment.value}</> : 'added a comment'}
-      timestamp={formatTimestamp(comment.created)}
+      timestamp={formatTimestamp(comment.createdBy.date)}
       timelineAvatarAriaLabel={renderName(comment.createdBy)}
       timelineAvatar={
         isSystemComment ? (
