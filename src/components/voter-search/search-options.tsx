@@ -21,7 +21,7 @@ import {
 import { Structure } from '@lib/domain/person';
 import { PersonSearchParams } from '@lib/domain/person-search';
 import moment, { Moment } from 'moment';
-import { FormEvent, FunctionComponent, useState } from 'react';
+import { FormEvent, FunctionComponent, useEffect, useState } from 'react';
 
 export type Props = {
   onSubmit?: (
@@ -53,7 +53,9 @@ const SearchOptions: FunctionComponent<Props> = ({
     EuiComboBoxOptionOption<Partial<Structure>>
   >(persistedStructureOption);
 
-  const [dob, setDob] = useState<Moment>();
+  const [dob, setDob] = useState<Moment>(
+    persistedSearchParams?.dob ? moment(persistedSearchParams.dob) : null
+  );
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [allowedStructureTypes] = useState([
     'ward',
@@ -74,10 +76,11 @@ const SearchOptions: FunctionComponent<Props> = ({
 
     if (target.name === '' || target.name === 'dob') return;
 
-    const value =
-      target.name === 'identity'
-        ? target.value.replaceAll('*', '').replaceAll(' ', '')
-        : target.value;
+    const value = target.value;
+    if (['identity', 'phone', 'email'].includes(target.name)) {
+      target.value.replaceAll('*', '').replaceAll(' ', '');
+    }
+
     setSearchParams(previousValue => {
       const newValue = {
         ...previousValue,
@@ -164,10 +167,6 @@ const SearchOptions: FunctionComponent<Props> = ({
       // don't send through eligible=false to search endpoint
       delete searchParams.eligible;
     }
-    if ('eligible' in searchParams && searchParams?.identity) {
-      // don't send through eligible if identity search
-      delete searchParams.eligible;
-    }
     onSubmit(searchParams, selectedStructureOption);
     if (isModalVisible) closeModal();
   };
@@ -184,6 +183,10 @@ const SearchOptions: FunctionComponent<Props> = ({
     }
   };
 
+  useEffect(() => {
+    console.log({ persistedSearchParams, searchParams });
+  }, [persistedSearchParams, searchParams]);
+
   const formActions = (
     <EuiFlexGroup direction="row" responsive={false} justifyContent="flexEnd">
       <EuiFlexItem grow={false}>
@@ -199,11 +202,13 @@ const SearchOptions: FunctionComponent<Props> = ({
           onClick={() => handleSubmit()}
           isLoading={isLoading}
           disabled={
+            isLoading ||
             !searchParams ||
             !Object.keys(searchParams).length ||
-            isLoading ||
-            (Object.keys(searchParams)?.length === 1 &&
-              selectedStructureOption !== undefined)
+            (Object.keys(searchParams)?.length <= 2 &&
+              selectedStructureOption !== undefined) ||
+            (Object.keys(searchParams).length === 1 &&
+              'eligible' in searchParams)
           }>
           Search
         </EuiButton>
@@ -274,7 +279,7 @@ const SearchOptions: FunctionComponent<Props> = ({
           name="email"
           onKeyDown={handleKeyDown}
           compressed
-          value={searchParams?.email?.replaceAll('*', '') || ''}
+          value={searchParams?.email || ''}
           onChange={() => null}
         />
       </EuiFormRow>
@@ -284,7 +289,7 @@ const SearchOptions: FunctionComponent<Props> = ({
           name="phone"
           onKeyDown={handleKeyDown}
           compressed
-          value={searchParams?.phone?.replaceAll('*', '') || ''}
+          value={searchParams?.phone || ''}
           onChange={() => null}
         />
       </EuiFormRow>
@@ -293,7 +298,7 @@ const SearchOptions: FunctionComponent<Props> = ({
         display="rowCompressed"
         label="Structure"
         isInvalid={
-          selectedStructureOption && Object.keys(searchParams).length === 1
+          selectedStructureOption && Object.keys(searchParams).length <= 2
         }
         error={
           'Please also use at least one of the other search fields in addition to Structure'
@@ -301,7 +306,7 @@ const SearchOptions: FunctionComponent<Props> = ({
         <Structres
           structureTypes={allowedStructureTypes}
           showSelected={true}
-          persistedOption={persistedStructureOption}
+          persistedOption={selectedStructureOption}
           onSelect={option => {
             setSelectedStructureOption(option);
             handleSelectStructure(option?.value);
@@ -315,7 +320,8 @@ const SearchOptions: FunctionComponent<Props> = ({
         <EuiCheckbox
           id="eligible"
           label="Eligible voters only?"
-          checked={searchParams?.eligible}
+          checked={searchParams?.eligible && !searchParams?.identity}
+          disabled={searchParams?.identity?.length > 0}
           onChange={e => handleEligibleChange(e)}
         />
       </EuiFormRow>

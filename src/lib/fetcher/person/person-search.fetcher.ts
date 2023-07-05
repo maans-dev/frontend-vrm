@@ -16,25 +16,31 @@ export default function usePersonSearchFetcher(
 ) {
   const shouldFetch = params ? true : false;
   // handle phone and email params
+  const clonedParams = {...params}
   let contactibility = null;
   if (shouldFetch) {
-    if (params.phone || params.email) {
+    if (clonedParams.phone || clonedParams.email) {
       contactibility = {}
-      if (params.phone) {
-        contactibility['PHONE'] = { value: params.phone }
-        delete params.phone;
+      if (clonedParams.phone) {
+        contactibility['PHONE'] = { value: clonedParams.phone }
+        delete clonedParams.phone;
       }
-      if (params.email) {
-        contactibility['EMAIL'] = { value: params.email }
-        delete params.email;
+      if (clonedParams.email) {
+        contactibility['EMAIL'] = { value: clonedParams.email }
+        delete clonedParams.email;
       }
 
-      params.contactability = JSON.stringify(contactibility);
+      clonedParams.contactability = JSON.stringify(contactibility);
     }
   }
 
+  if ('eligible' in clonedParams && clonedParams?.identity) {
+    // don't send through eligible if identity search
+    delete clonedParams.eligible;
+  }
+
   const url = `/person?count=true&limit=${limit}&offset=${offset}&template=["Address","IEC","Contact"]&orderBy={"ignoreDefault":true,"values":[{"key":"surname","metaData":{"direction":"ASC"}},{"key":"firstName"}]}&${new URLSearchParams(
-    params as never).toString()}`;
+    clonedParams as never).toString()}`;
 
   const { data, error, isLoading, mutate } = useSWR<PersonSearchResponse>(
     shouldFetch

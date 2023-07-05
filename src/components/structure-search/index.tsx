@@ -61,6 +61,8 @@ const Structres: FunctionComponent<Props> = ({
   useEffect(() => {
     if (persistedOption) {
       setSelected(persistedOption);
+    } else {
+      setSelected(null);
     }
   }, [persistedOption]);
 
