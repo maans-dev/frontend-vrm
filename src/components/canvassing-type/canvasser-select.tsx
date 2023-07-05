@@ -58,7 +58,7 @@ const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
     });
 
     if (!response.ok) {
-      const errJson = JSON.parse(await response.text());
+      const errJson = JSON.parse(await response.clone().text());
       setCanvasserSearchError(`Canvasser not found: ${errJson.message}`);
       appsignal.sendError(
         new Error(`Unable to find canvasser: ${errJson.message}`),
@@ -74,7 +74,7 @@ const CanvasserSelect: FunctionComponent<Props> = ({ onChange, canvasser }) => {
       return;
     }
 
-    const respPayload = await response.json();
+    const respPayload = await response.clone().json();
 
     if (respPayload && respPayload.length === 1) {
       setFoundCanvasser(respPayload[0]);

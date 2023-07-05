@@ -123,7 +123,7 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
       body: JSON.stringify(reqPayload),
     });
 
-    const respPayload = await response.json();
+    const respPayload = await response.clone().json();
 
     if (response.ok) {
       const newPersonKey = respPayload.data.person.key;
@@ -135,7 +135,7 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
       closeModal();
     } else {
       setServerError(respPayload?.message || 'Something went wrong');
-      const errJson = JSON.parse(await response.text());
+      const errJson = JSON.parse(await response.clone().text());
       appsignal.sendError(
         new Error(`Unable to create person: ${errJson.message}`),
         span => {

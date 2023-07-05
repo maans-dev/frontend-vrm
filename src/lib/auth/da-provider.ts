@@ -21,7 +21,7 @@ export const DaAuthProvider: Provider = {
         }
       );
 
-      const userInfo = await userInfoResponse.json();
+      const userInfo = await userInfoResponse.clone().json();
 
       // console.log('[USER_INFO]', userInfo);
 

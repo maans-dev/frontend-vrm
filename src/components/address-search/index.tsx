@@ -64,7 +64,7 @@ const SearchAddress: FunctionComponent<Props> = ({
 
     if (!response.ok) {
       setSearchResults([]);
-      const errJson = JSON.parse(await response.text());
+      const errJson = JSON.parse(await response.clone().text());
       appsignal.sendError(
         new Error(`Unable to forward geocode this address: ${errJson.message}`),
         span => {
@@ -80,7 +80,7 @@ const SearchAddress: FunctionComponent<Props> = ({
       return;
     }
 
-    const respPayload = await response.json();
+    const respPayload = await response.clone().json();
 
     setSearchResults(respPayload?.data?.results?.values || []);
   };

@@ -27,11 +27,11 @@ const DisclosureNoticeModal: FunctionComponent = () => {
       body: JSON.stringify(data),
     });
     if (!response.ok) {
-      const errJson = JSON.parse(await response.clone().text());
-      setError(`Unable to set user aggreement: ${errJson.message}`);
+      const errJson = await response.clone().text();
+      setError(`Unable to set user aggreement: ${errJson}`);
 
       appsignal.sendError(
-        new Error(`Unable to set user aggreement: ${errJson.message}`),
+        new Error(`Unable to set user aggreement: ${errJson}`),
         span => {
           span.setAction('api-call:/event/user-agreement');
           span.setParams({

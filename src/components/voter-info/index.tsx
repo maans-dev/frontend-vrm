@@ -140,7 +140,7 @@ const VoterInfo: FunctionComponent<Props> = ({
 
       if (!response.ok) {
         // throw 'Unable to load Voting District for this address';
-        const errMsg = await response.text();
+        const errMsg = await response.clone().text();
         appsignal.sendError(
           new Error(
             `Unable to load Voting District for this address: ${errMsg}`
@@ -157,16 +157,16 @@ const VoterInfo: FunctionComponent<Props> = ({
         return;
       }
 
-      const colourCode = await response.json();
+      const colourCode = await response.clone().json();
       if (colourCode.length) setUpdatedColorCode(colourCode[0]);
     };
 
     getColourCode();
   }, [
     session?.accessToken,
-    session.user.darn,
+    session?.user?.darn,
     registeredStructure?.votingDistrict_id,
-    contextData.address,
+    contextData?.address,
   ]);
 
   const renderExtraInfo = (

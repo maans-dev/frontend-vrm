@@ -101,7 +101,7 @@ const AddressResults = ({ address, onSelect, isLoading }: Props) => {
 
       if (!response.ok) {
         // throw 'Unable to load Voting District for this address';
-        const errJson = JSON.parse(await response.text());
+        const errJson = JSON.parse(await response.clone().text());
         setError(
           `Unable to load Voting District for this address: ${errJson.message}`
         );
@@ -123,7 +123,7 @@ const AddressResults = ({ address, onSelect, isLoading }: Props) => {
         return;
       }
 
-      const structureInfo: Partial<Structure>[] = await response.json();
+      const structureInfo: Partial<Structure>[] = await response.clone().json();
 
       if (structureInfo.length === 0) {
         setError(
