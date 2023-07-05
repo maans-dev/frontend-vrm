@@ -42,7 +42,7 @@ const PersonSearch: FunctionComponent<Props> = ({
     });
 
     if (!response.ok) {
-      const errJson = JSON.parse(await response.text());
+      const errJson = JSON.parse(await response.clone().text());
       appsignal.sendError(
         new Error(`Unable to find person by identity: ${errJson.message}`),
         span => {
@@ -56,7 +56,7 @@ const PersonSearch: FunctionComponent<Props> = ({
       return;
     }
 
-    const respPayload = await response.json();
+    const respPayload = await response.clone().json();
 
     if (respPayload && respPayload.length === 1) {
       setFoundPerson(respPayload[0]);

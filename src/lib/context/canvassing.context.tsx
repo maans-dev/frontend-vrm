@@ -443,7 +443,7 @@ const CanvassingProvider = ({ children }) => {
         throw new Error('Failed to fetch campaign data');
       }
 
-      const data = await response.json();
+      const data = await response.clone().json();
 
       // Validate response data
       if (!Array.isArray(data) || data.length === 0) {

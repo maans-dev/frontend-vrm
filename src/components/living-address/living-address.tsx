@@ -79,7 +79,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
     setIsLoading(false);
 
     if (!response.ok) {
-      const errJson = JSON.parse(await response.text());
+      const errJson = JSON.parse(await response.clone().text());
       appsignal.sendError(
         new Error(`Unable to reverse geocode coordinates: ${errJson.message}`),
         span => {
@@ -97,7 +97,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
       return;
     }
 
-    const respPayload = await response.json();
+    const respPayload = await response.clone().json();
 
     const results = respPayload?.data?.results?.values.map(a => {
       return a.service.type !== 'ROOFTOP'

@@ -176,7 +176,7 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
 
     if (!response.ok) {
       setSearchResults([]);
-      const errJson = JSON.parse(await response.text());
+      const errJson = JSON.parse(await response.clone().text());
       appsignal.sendError(
         new Error(`Unable to forward geocode this address: ${errJson.message}`),
         span => {
@@ -192,7 +192,7 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
       return;
     }
 
-    const respPayload = await response.json();
+    const respPayload = await response.clone().json();
     const results = respPayload?.data?.results?.values;
 
     if (results) {
@@ -226,7 +226,7 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
 
     if (!response.ok) {
       // throw 'Unable to load Voting District for this address';
-      const errJson = JSON.parse(await response.text());
+      const errJson = JSON.parse(await response.clone().text());
       setError(
         `Unable to load Voting District for this address: ${errJson.message}`
       );
@@ -247,7 +247,7 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
       return;
     }
 
-    const structureInfo = await response.json();
+    const structureInfo = await response.clone().json();
 
     if (structureInfo.length === 0) {
       setError(

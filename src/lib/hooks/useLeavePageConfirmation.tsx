@@ -18,8 +18,6 @@ export const useLeavePageConfirmation = (
     const handleBrowseAway = () => {
       if (!shouldPreventLeaving) return;
       if (window.confirm(message)) return;
-      router.events.emit('routeChangeError');
-      throw 'routeChange aborted.';
     };
 
     window.addEventListener('beforeunload', handleWindowClose);
