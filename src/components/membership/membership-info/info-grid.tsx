@@ -1,6 +1,7 @@
 import { EuiFlexGrid, EuiFlexGroup, EuiFlexItem, EuiText } from '@elastic/eui';
 import moment from 'moment';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useContext } from 'react';
+import { MembershipContext } from '../membership.context';
 
 export interface Props {
   membershipNumber: string;
@@ -15,6 +16,7 @@ const InfoGrid: FunctionComponent<Props> = ({
   joinDate,
   expiryDate,
 }) => {
+  const { person } = useContext(MembershipContext);
   const formatDate = (dateString: string) => {
     if (!dateString) return 'Unknown';
     return moment(dateString).format('D MMM YYYY');
@@ -80,7 +82,7 @@ const InfoGrid: FunctionComponent<Props> = ({
         <EuiFlexItem grow={false}>
           <EuiText size="s">
             <strong style={{ whiteSpace: 'nowrap' }}>
-              {formatDate(expiryDate)}
+              {person?.pubRep ? 'N / A' : formatDate(expiryDate)}
             </strong>
           </EuiText>
         </EuiFlexItem>
