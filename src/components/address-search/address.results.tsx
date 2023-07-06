@@ -101,14 +101,12 @@ const AddressResults = ({ address, onSelect, isLoading }: Props) => {
 
       if (!response.ok) {
         // throw 'Unable to load Voting District for this address';
-        const errJson = JSON.parse(await response.clone().text());
-        setError(
-          `Unable to load Voting District for this address: ${errJson.message}`
-        );
+        const errJson = await response.clone().text();
+        setError(`Unable to load Voting District for this address: ${errJson}`);
 
         appsignal.sendError(
           new Error(
-            `Unable to load Voting District for this address: ${errJson.message}`
+            `Unable to load Voting District for this address: ${errJson}`
           ),
           span => {
             span.setAction('api-call');
@@ -117,7 +115,7 @@ const AddressResults = ({ address, onSelect, isLoading }: Props) => {
               address: selectedAddress,
               user: session.user.darn,
             });
-            span.setTags({ user_darn: session.user.darn.toString() });
+            span.setTags({ user_darn: session?.user?.darn?.toString() });
           }
         );
         return;
