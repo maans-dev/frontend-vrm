@@ -341,7 +341,7 @@ const CanvassingProvider = ({ children }) => {
             route: url,
             body: redactObject(requestBody),
           });
-          span.setTags({ user_darn: session.user.darn.toString() });
+          span.setTags({ user_darn: session?.user?.darn?.toString() });
         }
       );
     }

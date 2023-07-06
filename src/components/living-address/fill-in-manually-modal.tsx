@@ -186,7 +186,7 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
             address: value,
             username: session.user.darn,
           });
-          span.setTags({ user_darn: session.user.darn.toString() });
+          span.setTags({ user_darn: session?.user?.darn?.toString() });
         }
       );
       return;
@@ -263,7 +263,7 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
             route: url,
             user: session.user.darn,
           });
-          span.setTags({ user_darn: session.user.darn.toString() });
+          span.setTags({ user_darn: session?.user?.darn?.toString() });
         }
       );
       return;

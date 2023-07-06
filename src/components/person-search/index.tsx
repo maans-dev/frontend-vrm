@@ -71,7 +71,7 @@ const PersonSearch: FunctionComponent<Props> = ({
             route: url,
             response: redactObject(respPayload),
           });
-          span.setTags({ user_darn: session.user.darn.toString() });
+          span.setTags({ user_darn: session?.user?.darn?.toString() });
         }
       );
       setFoundPerson(null);

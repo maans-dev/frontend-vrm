@@ -319,7 +319,7 @@ const Voter: FunctionComponent = () => {
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />
-        {data.contacts && validationError && validationErrorMessage}
+        {data?.contacts && validationError && validationErrorMessage}
         <EuiSpacer />
         {formActions}
       </EuiForm>

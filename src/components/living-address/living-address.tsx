@@ -71,7 +71,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
       body: JSON.stringify({
         latitude,
         longitude,
-        username: session.user.darn,
+        username: session?.user?.darn,
         metaData: { votingDistrict: true },
       }),
     });
@@ -91,7 +91,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
             username: session.user.darn,
             metaData: 'votingDistrict: true',
           });
-          span.setTags({ user_darn: session.user.darn.toString() });
+          span.setTags({ user_darn: session?.user?.darn?.toString() });
         }
       );
       return;
@@ -231,8 +231,8 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
       [field]: value,
     };
     if (
-      'votingDistrict_id' in updatedAddress.structure &&
-      address.structure.votingDistrict_id !==
+      'votingDistrict_id' in updatedAddress?.structure &&
+      address?.structure?.votingDistrict_id !==
         +updatedAddress.structure.votingDistrict_id
     ) {
       update.structure = {
