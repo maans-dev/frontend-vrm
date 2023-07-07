@@ -5,11 +5,15 @@ import {
   EuiButton,
   EuiButtonEmpty,
   EuiButtonIcon,
+  EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiFormRow,
   EuiIcon,
   EuiModal,
   EuiModalBody,
+  EuiModalHeader,
+  EuiModalHeaderTitle,
   EuiOverlayMask,
   EuiSpacer,
   EuiText,
@@ -42,6 +46,7 @@ const Map: FunctionComponent<Props> = ({
     lat: address?.latitude || -30.559483,
     lng: address?.longitude || 22.937506,
   });
+  const [coordinates, setCoordinates] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const isMobile = useIsWithinBreakpoints(['xs', 's']);
   const [screenWidth, setScreenWidth] = useState(0);
@@ -91,6 +96,40 @@ const Map: FunctionComponent<Props> = ({
     setIsDragging(false);
     setShowConfirmation(true);
   }
+
+  const onUseCoordinates = () => {
+    if (!coordinates) return;
+
+    let latitude: number, longitude: number;
+
+    if (coordinates.includes(',')) {
+      const [latStr, lngStr] = coordinates
+        .split(',')
+        .map(coord => coord.trim());
+      latitude = Number(latStr);
+      longitude = Number(lngStr);
+    } else if (coordinates.includes(' ')) {
+      const [latStr, lngStr] = coordinates
+        .split(' ')
+        .map(coord => coord.trim());
+      latitude = Number(latStr);
+      longitude = Number(lngStr);
+    } else {
+      return;
+    }
+
+    if (isNaN(latitude) || isNaN(longitude)) return;
+
+    setLocation({
+      lat: latitude,
+      lng: longitude,
+    });
+    setCoordinates('');
+  };
+
+  const handleCoordinatesChange = event => {
+    setCoordinates(event.target.value);
+  };
 
   useEffect(() => {
     const icon = {
@@ -163,6 +202,12 @@ const Map: FunctionComponent<Props> = ({
       {isModalVisible && (
         <EuiOverlayMask>
           <EuiModal onClose={handleCloseModal} maxWidth="1200px">
+            <EuiModalHeader style={{ justifyContent: 'center' }}>
+              <EuiModalHeaderTitle size={isMobile ? 'xs' : 's'}>
+                Drop a Pin by Double-Clicking on the Map or Enter Coordinates
+                Below
+              </EuiModalHeaderTitle>
+            </EuiModalHeader>
             <EuiModalBody>
               {showMap && (
                 <>
@@ -191,7 +236,7 @@ const Map: FunctionComponent<Props> = ({
                               ? '800px'
                               : '1000px',
                             margin: '10px',
-                            marginTop: '20px',
+                            marginTop: '-2px',
                             border: '1px solid rgba(128, 128, 128, 0.4  )',
                             boxShadow: '0px 0px 10px rgba(0,0,0,0.1)',
                           }}>
@@ -216,10 +261,47 @@ const Map: FunctionComponent<Props> = ({
                 </>
               )}
             </EuiModalBody>
-            {showConfirmation && (
-              <EuiFlexGroup justifyContent="center">
-                <EuiFlexItem grow={false}>
-                  <EuiButton onClick={handleConfirmationClick} size="m">
+
+            {isMobile && <EuiSpacer size="s" />}
+
+            <EuiFlexGroup
+              justifyContent="center"
+              direction={isMobile ? 'column' : undefined}
+              responsive={false}
+              gutterSize="s">
+              <EuiFormRow>
+                <EuiFlexGroup
+                  style={
+                    isMobile
+                      ? { paddingLeft: '10px', paddingRight: '10px' }
+                      : undefined
+                  }>
+                  <EuiFieldText
+                    compressed
+                    placeholder="Latitude, Longitude"
+                    id="coordinatesInput"
+                    value={coordinates}
+                    onChange={handleCoordinatesChange}
+                    append={
+                      <EuiButton size="s" onClick={onUseCoordinates}>
+                        Set Coordinates
+                      </EuiButton>
+                    }
+                  />
+                </EuiFlexGroup>
+              </EuiFormRow>
+
+              <EuiSpacer size="s" />
+
+              {showConfirmation && (
+                <EuiFlexItem
+                  grow={false}
+                  style={
+                    isMobile
+                      ? { paddingLeft: '10px', paddingRight: '10px' }
+                      : undefined
+                  }>
+                  <EuiButton onClick={handleConfirmationClick} size="s">
                     Use this location
                   </EuiButton>
                   <EuiSpacer size="s" />
@@ -230,9 +312,10 @@ const Map: FunctionComponent<Props> = ({
                     </strong>
                   </EuiText>
                 </EuiFlexItem>
-              </EuiFlexGroup>
-            )}
-            <EuiSpacer size={isMobile ? 's' : 'm'} />
+              )}
+            </EuiFlexGroup>
+
+            <EuiSpacer size={isMobile ? 'm' : 'l'} />
           </EuiModal>
         </EuiOverlayMask>
       )}
