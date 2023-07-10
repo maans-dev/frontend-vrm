@@ -65,8 +65,53 @@ const DisclosureNoticeModal: FunctionComponent = () => {
     }
   };
 
-  const handleCancel = () => {
-    signOut({ callbackUrl: 'https://login.voteda.org/logout' });
+  const handleCancel = async () => {
+    try {
+      setLoading(true);
+
+      const url = `${process.env.NEXT_PUBLIC_API_BASE}/event/user-agreement/`;
+      const data = {
+        accepted: false,
+      };
+      setError(null);
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session?.accessToken}`,
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        setLoading(false);
+        const errJson = await response.clone().text();
+        setError(`Unable to set user agreement: ${errJson}`);
+
+        appsignal.sendError(
+          new Error(`Unable to set user agreement: ${errJson}`),
+          span => {
+            span.setAction('api-call:/event/user-agreement');
+            span.setParams({
+              route: url,
+              isFeatureEnabled: isFeatureEnabled,
+              user: session?.user?.darn,
+            });
+            span.setTags({ user_darn: session?.user?.darn?.toString() });
+          }
+        );
+        return;
+      }
+
+      await update({ disclosureAccepted: false });
+      setLoading(false);
+    } catch (error) {
+      setError(error);
+      setLoading(false);
+    } finally {
+      setLoading(false);
+      signOut({ callbackUrl: 'https://login.voteda.org/logout' });
+    }
   };
 
   useEffect(() => {

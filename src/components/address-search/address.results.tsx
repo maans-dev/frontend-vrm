@@ -88,7 +88,7 @@ const AddressResults = ({ address, onSelect, isLoading }: Props) => {
     const selectedAddress = options.find(option => option.checked === 'on');
 
     // add structure info
-    if (!('votingDistrict_id' in selectedAddress.value)) {
+    if (selectedAddress && !('votingDistrict_id' in selectedAddress.value)) {
       // fetch the structure info
       const url = `${process.env.NEXT_PUBLIC_API_BASE}/structures/votingdistricts?latitude=${selectedAddress.data.latitude}&longitude=${selectedAddress.data.longitude}`;
       const response = await fetch(url, {

@@ -63,17 +63,6 @@ const PersonSearch: FunctionComponent<Props> = ({
       handleRecruitedByChange(respPayload[0]);
     } else {
       setPersonSearchError('Person not found');
-      appsignal.sendError(
-        new Error(`Unable to find person by identity: ${canvasserSearchText}`),
-        span => {
-          span.setAction('api-call');
-          span.setParams({
-            route: url,
-            response: redactObject(respPayload),
-          });
-          span.setTags({ user_darn: session?.user?.darn?.toString() });
-        }
-      );
       setFoundPerson(null);
       // onChange(null);
     }

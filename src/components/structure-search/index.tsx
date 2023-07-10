@@ -47,7 +47,7 @@ const Structres: FunctionComponent<Props> = ({
   }, 300);
 
   const handleSearchChange = (value: string) => {
-    debouncedHandleSearchChange(value);
+    debouncedHandleSearchChange(value?.trimEnd());
   };
 
   useEffect(() => {
