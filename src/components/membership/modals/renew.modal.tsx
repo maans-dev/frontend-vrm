@@ -185,7 +185,7 @@ const RenewModal: FunctionComponent = () => {
                 onChange={selectedDate => {
                   const today = moment();
 
-                  if (selectedDate.isSameOrBefore(today)) {
+                  if (selectedDate?.isSameOrBefore(today)) {
                     setDate(selectedDate);
                   }
                 }}
