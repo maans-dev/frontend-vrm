@@ -31,6 +31,7 @@ import { PhoneContact } from '@lib/domain/phone-numbers';
 import { usePhoneValidation } from './usePhoneValidation';
 import { GoCircleSlash } from 'react-icons/go';
 import { CanvassingContext } from '@lib/context/canvassing.context';
+import { useAnalytics } from '@lib/hooks/useAnalytics';
 
 export type Props = {
   phoneContact: PhoneContact;
@@ -44,6 +45,7 @@ const PhoneNumberLine: FunctionComponent<Props> = ({
   onUpdate,
 }) => {
   const isMobile = useIsWithinBreakpoints(['xs', 's']);
+  const { trackCustomEvent } = useAnalytics();
   const phoneTypeOptions = [
     {
       value: 'CELL',
@@ -144,6 +146,8 @@ const PhoneNumberLine: FunctionComponent<Props> = ({
   const handleRemove = () => {
     setValidationError('');
     onUpdate({ ...phoneContact, deleted: true });
+
+    trackCustomEvent('Contact Details', 'Removed a phone number');
   };
 
   const toggleConfirm = () => {
@@ -151,10 +155,14 @@ const PhoneNumberLine: FunctionComponent<Props> = ({
       ...phoneContact,
       confirmed: phoneContact?.confirmed ? null : true,
     });
+
+    trackCustomEvent('Contact Details', 'Confirmed a phone number');
   };
 
   const toggleDNC = () => {
     onUpdate({ ...phoneContact, canContact: !phoneContact?.canContact });
+
+    trackCustomEvent('Contact Details', 'DNC on a phone number');
   };
 
   const committedPhoneNumbers = (

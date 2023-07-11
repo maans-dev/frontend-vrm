@@ -3,6 +3,7 @@ import { EuiButton, EuiFlexItem, EuiPanel } from '@elastic/eui';
 import { PhoneContact } from '@lib/domain/phone-numbers';
 import PhoneNumberLine from './phone-number';
 import { CanvassingContext } from '@lib/context/canvassing.context';
+import { useAnalytics } from '@lib/hooks/useAnalytics';
 
 export type Props = {
   phoneContacts: PhoneContact[];
@@ -14,6 +15,7 @@ const PhoneNumbers: FunctionComponent<Props> = ({
   onUpdate,
 }) => {
   const { nextId } = useContext(CanvassingContext);
+  const { trackCustomEvent } = useAnalytics();
   const addNewField = () => {
     const newPhoneContact: PhoneContact = {
       value: '',
@@ -24,6 +26,8 @@ const PhoneNumbers: FunctionComponent<Props> = ({
       confirmed: true,
     };
     onUpdate(newPhoneContact);
+
+    trackCustomEvent('Contact Details', 'Add a new phone number');
   };
 
   return (

@@ -17,7 +17,7 @@ import { appsignal, initAppsignal } from '@lib/appsignal';
 import SwrGlobalErrorHandler from '@components/error/swr-global-error-handler';
 import RouteGuard from '@components/route-guard';
 import { EuiButton, EuiButtonEmpty, EuiEmptyPrompt } from '@elastic/eui';
-import router from 'next/router';
+import Analytics from '@components/analytics';
 
 /**
  * Next.js uses the App component to initialize pages. You can override it
@@ -26,6 +26,7 @@ import router from 'next/router';
  *
  * @see https://nextjs.org/docs/advanced-features/custom-app
  */
+
 const EuiApp: FunctionComponent<AppProps<{ session: Session }>> = ({
   Component,
   pageProps: { session, ...pageProps },
@@ -79,6 +80,7 @@ const EuiApp: FunctionComponent<AppProps<{ session: Session }>> = ({
                       />
                     )}>
                     <AuthHandler />
+                    <Analytics />
                     <RouteGuard>
                       <Component {...pageProps} />
                     </RouteGuard>

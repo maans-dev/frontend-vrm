@@ -14,6 +14,7 @@ import AddressResults from './address.results';
 import { appsignal } from '@lib/appsignal';
 import FillInManuallyModal from '@components/living-address/fill-in-manually-modal';
 import Map from '@components/maps/map';
+import { useAnalytics } from '@lib/hooks/useAnalytics';
 
 export type Props = {
   onAddressChange: (selectedAddress: Partial<Address>) => void;
@@ -39,6 +40,7 @@ const SearchAddress: FunctionComponent<Props> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [releaseFocusTrap, setReleaseFocusTrap] = useState(false);
+  const { trackCustomEvent } = useAnalytics();
 
   const doSearchChanged = async (value: string) => {
     if (value.length < 3) {
@@ -100,6 +102,7 @@ const SearchAddress: FunctionComponent<Props> = ({
     if (selected && selected.label && selected.data) {
       onAddressChange(selected.value);
       setSearchResults([]);
+      trackCustomEvent('Living address', 'Search for an address, selected');
     }
   };
 

@@ -4,12 +4,14 @@ import {
   EuiPopover,
   EuiText,
 } from '@elastic/eui';
+import { useAnalytics } from '@lib/hooks/useAnalytics';
 import { useSession, signOut } from 'next-auth/react';
 import { FunctionComponent, useState } from 'react';
 
 export const UserBadge: FunctionComponent = () => {
   const [isPopoverOpen, setPopover] = useState(false);
   const { data: session, status } = useSession();
+  const { trackUserLogout } = useAnalytics();
 
   const closePopover = () => {
     setPopover(false);
@@ -24,6 +26,7 @@ export const UserBadge: FunctionComponent = () => {
           icon: 'user',
           onClick: () => {
             closePopover();
+            trackUserLogout();
             signOut({ callbackUrl: 'https://login.voteda.org/logout' });
             // signOut();
           },

@@ -27,13 +27,15 @@ import { CanvassingContext } from '@lib/context/canvassing.context';
 import { CanvassingSelectionDetails } from '@components/canvassing-type/canvassing-selection-details';
 import { useLeavePageConfirmation } from '@lib/hooks/useLeavePageConfirmation';
 import QuickEdits from '@components/quick-edits';
-import { Language, Salutation } from '@lib/domain/person-enum';
+import { Salutation } from '@lib/domain/person-enum';
+import { useAnalytics } from '@lib/hooks/useAnalytics';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
   const voterKey = router.query['voterKey'] as string;
   const { person, isLoading, isValidating, error } = usePersonFetcher(voterKey);
   const [confirmed, setConfirmed] = useState(false);
+  const { trackCustomEvent } = useAnalytics();
 
   const {
     setPerson,
@@ -146,7 +148,10 @@ const Voter: FunctionComponent = () => {
             iconType="save"
             disabled={!isDirty || confirmed === false || !!validationError}
             isLoading={isSubmitting}
-            onClick={() => submitUpdatePayload()}>
+            onClick={() => {
+              trackCustomEvent('Canvass Form', 'Canvass Form Saved');
+              submitUpdatePayload();
+            }}>
             Save
           </EuiButton>
         </EuiFlexItem>
@@ -221,7 +226,6 @@ const Voter: FunctionComponent = () => {
           onDeceasedChange={onMovedOrDeceasedChange}
           onMovedChange={onMovedOrDeceasedChange}
           onAddressChange={onMovedOrDeceasedChange}
-          onPhoneChange={onChange}
           contacts={person?.contacts}
         />
       </EuiFormFieldset>

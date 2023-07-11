@@ -49,6 +49,7 @@
     "lodash": "^4.17.21",
     "next-auth": "^4.22.0",
     "prop-types": "^15.8.1",
+    "react-ga4": "^2.1.0",
     "react-geolocated": "^4.0.3",
     "react-icons": "^4.7.1",
     "react-json-tree": "^0.18.0",

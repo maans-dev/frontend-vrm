@@ -3,6 +3,7 @@ import { EuiButton, EuiFlexItem, EuiPanel } from '@elastic/eui';
 import { EmailContact } from '@lib/domain/email-address';
 import EmailAddressLine from './email-address';
 import { CanvassingContext } from '@lib/context/canvassing.context';
+import { useAnalytics } from '@lib/hooks/useAnalytics';
 
 export type Props = {
   emailContacts: EmailContact[];
@@ -14,6 +15,7 @@ const EmailAddress: FunctionComponent<Props> = ({
   onUpdate,
 }) => {
   const { nextId } = useContext(CanvassingContext);
+  const { trackCustomEvent } = useAnalytics();
   const addNewField = () => {
     const newEmailContact = {
       value: '',
@@ -24,6 +26,8 @@ const EmailAddress: FunctionComponent<Props> = ({
       confirmed: true,
     };
     onUpdate(newEmailContact);
+
+    trackCustomEvent('Contact Details', 'Add a new email address');
   };
 
   return (

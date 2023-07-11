@@ -12,10 +12,10 @@ import {
 } from '@elastic/eui';
 import { FunctionComponent, useContext, useState } from 'react';
 import { EmailContact } from '@lib/domain/email-address';
-import { isEmail } from '../form-utils';
 import { GoCircleSlash } from 'react-icons/go';
 import { CanvassingContext } from '@lib/context/canvassing.context';
 import { useEmailValidation } from './useEmailValidation';
+import { useAnalytics } from '@lib/hooks/useAnalytics';
 
 export type Props = {
   emailContact: EmailContact;
@@ -38,10 +38,13 @@ const EmailAddressLine: FunctionComponent<Props> = ({
     data?.contacts,
     person?.contacts
   );
+  const { trackCustomEvent } = useAnalytics();
 
   const handleRemove = () => {
     setValidationError('');
     onUpdate({ ...emailContact, deleted: true });
+
+    trackCustomEvent('Contact Details', 'Removed a email address');
   };
 
   const toggleConfirm = () => {
@@ -49,10 +52,14 @@ const EmailAddressLine: FunctionComponent<Props> = ({
       ...emailContact,
       confirmed: emailContact?.confirmed ? null : true,
     });
+
+    trackCustomEvent('Contact Details', 'Confirmed a email address');
   };
 
   const toggleDNC = () => {
     onUpdate({ ...emailContact, canContact: !emailContact?.canContact });
+
+    trackCustomEvent('Contact Details', 'DNC on a email address');
   };
 
   const committedEmailAddress = (
