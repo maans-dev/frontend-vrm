@@ -30,6 +30,7 @@ import { MdHowToVote } from 'react-icons/md';
 import { appsignal } from '@lib/appsignal';
 import { CanvassingContext } from '@lib/context/canvassing.context';
 import router from 'next/router';
+import { useAnalytics } from '@lib/hooks/useAnalytics';
 
 export type Props = {
   address: Address;
@@ -52,6 +53,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
       },
       userDecisionTimeout: 5000,
     });
+  const { trackCustomEvent } = useAnalytics();
 
   const onUseMyLocation = async (
     latitude: number,
@@ -258,13 +260,14 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
           iconSide="left"
           // disabled={!isGeolocationEnabled}
           color="primary"
-          onClick={() =>
+          onClick={() => {
+            trackCustomEvent('Living address', 'Use device location');
             onUseMyLocation(
               coords.latitude,
               coords.longitude,
               GeocodedAddressSource.GEOCODED_DEVICE
-            )
-          }>
+            );
+          }}>
           Use device location
         </EuiButton>
       );
@@ -294,6 +297,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
   const onReset = () => {
     setUpdatedAddress(address);
     onChange(null);
+    trackCustomEvent('Living address', 'Clicked living address reset');
   };
 
   const onMoved = () => {
@@ -302,6 +306,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
     };
     setUpdatedAddress(emptyAddress);
     onChange(emptyAddress);
+    trackCustomEvent('Living address', 'Clicked voter has moved');
   };
 
   function formatVotingDistrict(structure) {

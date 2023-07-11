@@ -13,6 +13,7 @@ import { PhoneContact } from '@lib/domain/phone-numbers';
 import PhoneNumberList from './phone-number-list';
 import { CanvassingContext } from '@lib/context/canvassing.context';
 import router from 'next/router';
+import { useAnalytics } from '@lib/hooks/useAnalytics';
 
 interface Props {
   setPhoneDoesNotExist: (value: boolean) => void;
@@ -32,6 +33,7 @@ const WrongNumberModal: FunctionComponent<Props> = ({
   phoneContacts,
 }) => {
   const { data, submitUpdatePayload } = useContext(CanvassingContext);
+  const { trackCustomEvent } = useAnalytics();
   return (
     <EuiModal
       onClose={() => {
@@ -84,10 +86,15 @@ const WrongNumberModal: FunctionComponent<Props> = ({
         </EuiButton>
         <EuiButton
           onClick={() => {
-            {
-              phoneContacts.length < 1
-                ? router.push('/canvass/canvassing-type')
-                : submitUpdatePayload(true);
+            if (phoneContacts.length < 1) {
+              router.push('/canvass/canvassing-type');
+              trackCustomEvent(
+                'Quick Edits',
+                'Saved but No wrong number selected'
+              );
+            } else {
+              submitUpdatePayload(true);
+              trackCustomEvent('Quick Edits', 'Saved a Wrong number');
             }
           }}
           fill>

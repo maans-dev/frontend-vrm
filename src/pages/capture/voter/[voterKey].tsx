@@ -28,12 +28,14 @@ import { CanvassingSelectionDetails } from '@components/canvassing-type/canvassi
 import { useLeavePageConfirmation } from '@lib/hooks/useLeavePageConfirmation';
 import QuickEdits from '@components/quick-edits';
 import { Salutation } from '@lib/domain/person-enum';
+import { useAnalytics } from '@lib/hooks/useAnalytics';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
   const voterKey = router.query.voterKey as string;
   const { person, isLoading, isValidating, error } = usePersonFetcher(voterKey);
   const [confirmed, setConfirmed] = useState(false);
+  const { trackCustomEvent } = useAnalytics();
 
   const {
     setPerson,
@@ -95,7 +97,10 @@ const Voter: FunctionComponent = () => {
           iconType="save"
           disabled={!isDirty}
           isLoading={isSubmitting || !!validationError}
-          onClick={() => submitUpdatePayload()}>
+          onClick={() => {
+            trackCustomEvent('Capture Form', 'Capture Form Saved');
+            submitUpdatePayload();
+          }}>
           Save
         </EuiButton>
       </EuiFlexItem>

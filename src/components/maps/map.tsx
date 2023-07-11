@@ -22,6 +22,7 @@ import {
 import { FaThumbtack } from 'react-icons/fa';
 import { Address } from '@lib/domain/person';
 import { IoMapOutline } from 'react-icons/io5';
+import { useAnalytics } from '@lib/hooks/useAnalytics';
 export interface Props {
   address?: Partial<Address>;
   onAddressChange?: (latitude: number, longitude: number) => void;
@@ -51,6 +52,7 @@ const Map: FunctionComponent<Props> = ({
   const isMobile = useIsWithinBreakpoints(['xs', 's']);
   const [screenWidth, setScreenWidth] = useState(0);
   const isTablet = screenWidth >= 767 && screenWidth <= 1073;
+  const { trackCustomEvent } = useAnalytics();
 
   useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_MAPS_API,
@@ -59,6 +61,7 @@ const Map: FunctionComponent<Props> = ({
   const handleMapButtonClick = () => {
     setShowMap(true);
     setIsModalVisible(true);
+    trackCustomEvent('Living address', 'Pin on Map');
   };
 
   const handleCloseModal = () => {
@@ -80,6 +83,7 @@ const Map: FunctionComponent<Props> = ({
   function handleConfirmationClick() {
     onAddressChange(location.lat, location.lng);
     setIsModalVisible(false);
+    trackCustomEvent('Living address', 'Use Pin on Map Location');
   }
 
   function handleMarkerDragStart() {
@@ -98,6 +102,7 @@ const Map: FunctionComponent<Props> = ({
   }
 
   const onUseCoordinates = () => {
+    trackCustomEvent('Living address', 'Entered coordinates manually');
     if (!coordinates) return;
 
     let latitude: number, longitude: number;
@@ -172,7 +177,13 @@ const Map: FunctionComponent<Props> = ({
             iconType={FaThumbtack}
             iconSize="s"
             aria-label="Use Pin on Map"
-            onClick={handleMapButtonClick}
+            onClick={() => {
+              trackCustomEvent(
+                'Living Address',
+                'Clicked Use Pin on Map on Search Address'
+              );
+              handleMapButtonClick();
+            }}
           />
           <EuiButtonEmpty href="#" onClick={handleMapButtonClick} size="xs">
             Use Pin on Map
@@ -183,7 +194,10 @@ const Map: FunctionComponent<Props> = ({
           <EuiButton
             type="submit"
             style={{ width: '320px' }}
-            onClick={handleMapButtonClick}>
+            onClick={() => {
+              trackCustomEvent('Living Address', 'Clicked Show on Map');
+              handleMapButtonClick();
+            }}>
             <EuiIcon type={IoMapOutline} size="m" />
             <EuiText size="s">Show on Map</EuiText>(
             {address.latitude.toFixed(4)}, {address.longitude.toFixed(4)})
@@ -194,7 +208,10 @@ const Map: FunctionComponent<Props> = ({
           type="submit"
           iconType={FaThumbtack}
           size="m"
-          onClick={handleMapButtonClick}>
+          onClick={() => {
+            trackCustomEvent('Living Address', 'Clicked Pin on Map');
+            handleMapButtonClick();
+          }}>
           <EuiText size="s">Pin on Map</EuiText>
         </EuiButton>
       )}

@@ -19,9 +19,9 @@ import {
 } from '@lib/domain/person-update';
 import { PhoneContact } from '@lib/domain/phone-numbers';
 import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
-import { FunctionComponent, useContext, useEffect, useState } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 import EmailAddress from '@components/form/email-address';
-import { CanvassingContext } from '@lib/context/canvassing.context';
+import { useAnalytics } from '@lib/hooks/useAnalytics';
 
 interface Props {
   language: string;
@@ -89,6 +89,7 @@ const ContactDetails: FunctionComponent<Props> = ({
   const [givenNameInternal, setGivenNameInternal] = useState<string>(
     givenName || ''
   );
+  const { trackCustomEvent } = useAnalytics();
 
   const [selectedSalutation, setSelectedSalutation] =
     useState<Salutation>(salutation);
@@ -110,6 +111,7 @@ const ContactDetails: FunctionComponent<Props> = ({
             ? (selectedLanguageValue as Language)
             : null,
       });
+      trackCustomEvent('Contact Details', 'Language change');
     }
   };
 
@@ -127,6 +129,7 @@ const ContactDetails: FunctionComponent<Props> = ({
         field: 'salutation',
         data: salutation !== selected ? (selected as Language) : null,
       });
+      trackCustomEvent('Contact Details', 'Salutation selected');
     }
   };
 

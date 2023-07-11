@@ -4,26 +4,12 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import {
-  EuiButton,
-  EuiButtonEmpty,
-  EuiCheckableCard,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiModal,
-  EuiModalBody,
-  EuiModalFooter,
-  EuiModalHeader,
-  EuiModalHeaderTitle,
-  EuiOverlayMask,
-  EuiText,
-} from '@elastic/eui';
+import { EuiCheckableCard, EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
 import {
   PersonUpdate,
   DeceasedUpdate,
   MovedUpdate,
   AddressUpdate,
-  PhoneUpdate,
 } from '@lib/domain/person-update';
 import { CanvassingContext } from '@lib/context/canvassing.context';
 import { Contact, Field, FieldMetaData } from '@lib/domain/person';
@@ -33,6 +19,7 @@ import { PhoneContact } from '@lib/domain/phone-numbers';
 import DeceasedModal from './deceased-modal';
 import MovedModal from './moved-modal';
 import WrongNumberModal from './wrong-number/wrong-number-modal';
+import { useAnalytics } from '@lib/hooks/useAnalytics';
 
 interface Props {
   deceased: boolean;
@@ -42,7 +29,6 @@ interface Props {
   onDeceasedChange: (update: PersonUpdate<DeceasedUpdate>) => void;
   onMovedChange: (update: PersonUpdate<MovedUpdate>) => void;
   onAddressChange: (update: PersonUpdate<AddressUpdate>) => void;
-  onPhoneChange?: (update: PersonUpdate<PhoneUpdate>) => void;
 }
 
 export const MovedTagCode = ['MVD'];
@@ -54,7 +40,6 @@ const QuickEdits: FunctionComponent<Props> = ({
   contacts,
   onDeceasedChange,
   onMovedChange,
-  onPhoneChange,
 }) => {
   const [phoneContacts, setPhoneContacts] = useState<PhoneContact[]>(
     contacts
@@ -86,8 +71,11 @@ const QuickEdits: FunctionComponent<Props> = ({
     Boolean(movedInternal && movedInternal.length > 0)
   );
   const [phoneDoesNotExist, setPhoneDoesNotExist] = useState<boolean>();
+  const { trackCustomEvent } = useAnalytics();
 
   const handleDeceasedModalChange = () => {
+    trackCustomEvent('Quick Edits', 'Deceased Modal Clicked');
+
     // Deceased is true, so deselect & update payload
     if (deceasedInternal) {
       setDeceasedInternal(false);
@@ -110,11 +98,15 @@ const QuickEdits: FunctionComponent<Props> = ({
   };
 
   const handleSaveDeceased = () => {
+    trackCustomEvent('Quick Edits', 'Saved Deceased');
+
     setIsDeceasedModalVisible(false);
     submitUpdatePayload(true);
   };
 
   const handleContinueDeceased = () => {
+    trackCustomEvent('Quick Edits', 'Continue Deceased');
+
     setIsDeceasedModalVisible(false);
     const update: PersonUpdate<DeceasedUpdate> = {
       field: 'deceased',
@@ -124,6 +116,8 @@ const QuickEdits: FunctionComponent<Props> = ({
   };
 
   const handleMovedModalChange = () => {
+    trackCustomEvent('Quick Edits', 'Moved Modal Clicked');
+
     if (isMovedInternalExist) {
       setIsMovedInternalExist(false);
       setIsMovedModalVisible(false);
@@ -176,11 +170,15 @@ const QuickEdits: FunctionComponent<Props> = ({
   };
 
   const handleSaveMoved = () => {
+    trackCustomEvent('Quick Edits', 'Saved Moved');
+
     setIsMovedModalVisible(false);
     submitUpdatePayload(true);
   };
 
   const handleWrongNumberChange = () => {
+    trackCustomEvent('Quick Edits', 'Wrong Number Modal Clicked');
+
     if (numberExistOnPerson.length === 1 && !wrongNumberContinue) {
       setIsWrongNumberModalVisible(true);
       const update = {
