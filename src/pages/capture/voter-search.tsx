@@ -2,6 +2,7 @@ import { FunctionComponent } from 'react';
 import { EuiBreadcrumb } from '@elastic/eui';
 import { useRouter } from 'next/router';
 import VoterSearch from '@components/voter-search';
+import Head from 'next/head';
 
 const Index: FunctionComponent = () => {
   const router = useRouter();
@@ -27,7 +28,14 @@ const Index: FunctionComponent = () => {
     },
   ];
 
-  return <VoterSearch breadcrumb={breadcrumb} />;
+  return (
+    <>
+      <Head>
+        <title>VRM | Capture | Voter Search </title>
+      </Head>
+      <VoterSearch breadcrumb={breadcrumb} />
+    </>
+  );
 };
 
 export default Index;

@@ -29,6 +29,7 @@ import { useLeavePageConfirmation } from '@lib/hooks/useLeavePageConfirmation';
 import QuickEdits from '@components/quick-edits';
 import { Salutation } from '@lib/domain/person-enum';
 import { useAnalytics } from '@lib/hooks/useAnalytics';
+import Head from 'next/head';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
@@ -176,111 +177,126 @@ const Voter: FunctionComponent = () => {
     (error && !isLoading && !isSubmitting && !isValidating && voterKey)
   ) {
     return (
-      <MainLayout breadcrumb={breadcrumb} panelled={false}>
-        <EuiCallOut
-          title="Something went wrong"
-          color="danger"
-          iconType="error">
-          {error?.message} {canvassUrlError}
-        </EuiCallOut>
-      </MainLayout>
+      <>
+        <Head>
+          <title>VRM | Canvass | Voter </title>
+        </Head>
+        <MainLayout breadcrumb={breadcrumb} panelled={false}>
+          <EuiCallOut
+            title="Something went wrong"
+            color="danger"
+            iconType="error">
+            {error?.message} {canvassUrlError}
+          </EuiCallOut>
+        </MainLayout>
+      </>
     );
   }
 
   if (isLoading || isSubmitting || isValidating || !voterKey) {
     return (
-      <MainLayout
-        breadcrumb={breadcrumb}
-        showSpinner={isLoading || isSubmitting || isValidating || !voterKey}
-        panelled={false}
-      />
+      <>
+        <Head>
+          <title>VRM | Canvass | Voter </title>
+        </Head>
+        <MainLayout
+          breadcrumb={breadcrumb}
+          showSpinner={isLoading || isSubmitting || isValidating || !voterKey}
+          panelled={false}
+        />
+      </>
     );
   }
 
   return (
-    <MainLayout
-      breadcrumb={breadcrumb}
-      showSpinner={isLoading || isSubmitting || isValidating}
-      panelled={false}>
-      <VoterInfo
-        deceased={person?.deceased}
-        darn={person?.key}
-        salutation={person?.salutation}
-        givenName={person?.givenName}
-        firstName={person?.firstName}
-        surname={person?.surname}
-        dob={moment(person?.dob, 'YYYYMMDD').toDate()}
-        colourCode={person?.colourCode}
-        canvassedBy={person?.canvassedBy}
-        livingStructure={person?.livingStructure}
-        registeredStructure={person?.registeredStructure}
-        membership={person?.membership}
-        pubRep={person?.pubRep}
-      />
-
-      <EuiSpacer />
-      <EuiFormFieldset legend={{ children: 'Quick edits' }}>
-        <QuickEdits
+    <>
+      <Head>
+        <title>VRM | Canvass | Voter </title>
+      </Head>
+      <MainLayout
+        breadcrumb={breadcrumb}
+        showSpinner={isLoading || isSubmitting || isValidating}
+        panelled={false}>
+        <VoterInfo
           deceased={person?.deceased}
-          fields={person?.fields}
-          onDeceasedChange={onMovedOrDeceasedChange}
-          onMovedChange={onMovedOrDeceasedChange}
-          onAddressChange={onMovedOrDeceasedChange}
-          contacts={person?.contacts}
+          darn={person?.key}
+          salutation={person?.salutation}
+          givenName={person?.givenName}
+          firstName={person?.firstName}
+          surname={person?.surname}
+          dob={moment(person?.dob, 'YYYYMMDD').toDate()}
+          colourCode={person?.colourCode}
+          canvassedBy={person?.canvassedBy}
+          livingStructure={person?.livingStructure}
+          registeredStructure={person?.registeredStructure}
+          membership={person?.membership}
+          pubRep={person?.pubRep}
         />
-      </EuiFormFieldset>
-      <EuiSpacer />
-      <EuiForm fullWidth isInvalid={serverError !== ''} error={[serverError]}>
-        <EuiFormFieldset legend={{ children: 'Canvassing tags' }}>
-          <CanvassingTags fields={person?.fields} onChange={onChange} />
-        </EuiFormFieldset>
+
         <EuiSpacer />
-        <EuiFormFieldset legend={{ children: 'Affiliation' }}>
-          <Affiliation
-            affiliation={person?.affiliation}
-            affiliationDate={person?.affiliation_date}
-            onChange={onChange}
-          />
-        </EuiFormFieldset>
-        <EuiSpacer />
-        <EuiFormFieldset legend={{ children: 'Contact details' }}>
-          <ContactDetails
+        <EuiFormFieldset legend={{ children: 'Quick edits' }}>
+          <QuickEdits
             deceased={person?.deceased}
-            givenName={person?.givenName}
-            language={person?.language}
+            fields={person?.fields}
+            onDeceasedChange={onMovedOrDeceasedChange}
+            onMovedChange={onMovedOrDeceasedChange}
+            onAddressChange={onMovedOrDeceasedChange}
             contacts={person?.contacts}
-            onLanguageChange={onChange}
-            onPhoneChange={onChange}
-            onEmailChange={onChange}
-            onPersonChange={onChange}
-            salutation={person?.salutation as Salutation}
-            onSalutationChange={onChange}
           />
         </EuiFormFieldset>
         <EuiSpacer />
-        <EuiFormFieldset legend={{ children: 'Living Address' }}>
-          <Address address={person?.address} onChange={onChange} />
-        </EuiFormFieldset>
-        <EuiSpacer />
-        <EuiFormFieldset legend={{ children: 'Comments' }}>
-          <Comments comments={person?.comments} onCommentChange={onChange} />
-        </EuiFormFieldset>
-        <EuiSpacer />
-        <EuiFormFieldset legend={{ children: 'Tags' }}>
-          <EuiFormRow display="rowCompressed">
-            <VoterTags fields={person?.fields} onChange={onChange} />
-          </EuiFormRow>
-        </EuiFormFieldset>
-        <EuiSpacer />
-        <CanvassingSelectionDetails />
-        <EuiSpacer />
-        {!confirmed ? affiliationMessage : null}
-        <EuiSpacer size="xs" />
-        {data.contacts && validationError ? validationErrorMessage : null}
-        <EuiSpacer />
-        {formActions}
-      </EuiForm>
-    </MainLayout>
+        <EuiForm fullWidth isInvalid={serverError !== ''} error={[serverError]}>
+          <EuiFormFieldset legend={{ children: 'Canvassing tags' }}>
+            <CanvassingTags fields={person?.fields} onChange={onChange} />
+          </EuiFormFieldset>
+          <EuiSpacer />
+          <EuiFormFieldset legend={{ children: 'Affiliation' }}>
+            <Affiliation
+              affiliation={person?.affiliation}
+              affiliationDate={person?.affiliation_date}
+              onChange={onChange}
+            />
+          </EuiFormFieldset>
+          <EuiSpacer />
+          <EuiFormFieldset legend={{ children: 'Contact details' }}>
+            <ContactDetails
+              deceased={person?.deceased}
+              givenName={person?.givenName}
+              language={person?.language}
+              contacts={person?.contacts}
+              onLanguageChange={onChange}
+              onPhoneChange={onChange}
+              onEmailChange={onChange}
+              onPersonChange={onChange}
+              salutation={person?.salutation as Salutation}
+              onSalutationChange={onChange}
+            />
+          </EuiFormFieldset>
+          <EuiSpacer />
+          <EuiFormFieldset legend={{ children: 'Living Address' }}>
+            <Address address={person?.address} onChange={onChange} />
+          </EuiFormFieldset>
+          <EuiSpacer />
+          <EuiFormFieldset legend={{ children: 'Comments' }}>
+            <Comments comments={person?.comments} onCommentChange={onChange} />
+          </EuiFormFieldset>
+          <EuiSpacer />
+          <EuiFormFieldset legend={{ children: 'Tags' }}>
+            <EuiFormRow display="rowCompressed">
+              <VoterTags fields={person?.fields} onChange={onChange} />
+            </EuiFormRow>
+          </EuiFormFieldset>
+          <EuiSpacer />
+          <CanvassingSelectionDetails />
+          <EuiSpacer />
+          {!confirmed ? affiliationMessage : null}
+          <EuiSpacer size="xs" />
+          {data.contacts && validationError ? validationErrorMessage : null}
+          <EuiSpacer />
+          {formActions}
+        </EuiForm>
+      </MainLayout>
+    </>
   );
 };
 

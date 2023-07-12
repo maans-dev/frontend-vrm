@@ -11,6 +11,7 @@ import {
 import MainLayout from '@layouts/main';
 import { useRouter } from 'next/router';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
+import Head from 'next/head';
 
 interface Contact {
   structure: string;
@@ -134,50 +135,55 @@ const Index: FunctionComponent = () => {
   ];
 
   return (
-    <MainLayout breadcrumb={breadcrumb} panelled={false}>
-      <EuiPanel>
-        <EuiText>
-          <h1>Support</h1>
+    <>
+      <Head>
+        <title>VRM | Support </title>
+      </Head>
+      <MainLayout breadcrumb={breadcrumb} panelled={false}>
+        <EuiPanel>
+          <EuiText>
+            <h1>Support</h1>
 
-          <p>
-            If you have questions or issues with this system please contact the
-            designated VRM representative in your province or region. Their
-            details are shown below. If they cannot assist, they will pass your
-            questions on to the IT department at FHO.
-          </p>
-
-          <EuiCallOut
-            size="m"
-            title="If you are reporting an error or an issue, please supply the following
-          information:"
-            iconType={AiOutlineInfoCircle}>
-            <ul>
-              <li>Who you are – name and ID number.</li>
-              <li>What you were trying to do on the system.</li>
-              <li>What happened / what went wrong.</li>
-              <li>Any error message that appeared on your screen.</li>
-              <li>If possible, a screenshot that shows the issue.</li>
-            </ul>
             <p>
-              This will greatly assist us to efficiently resolve any issues.
+              If you have questions or issues with this system please contact
+              the designated VRM representative in your province or region.
+              Their details are shown below. If they cannot assist, they will
+              pass your questions on to the IT department at FHO.
             </p>
-          </EuiCallOut>
-        </EuiText>
 
-        <EuiSpacer />
+            <EuiCallOut
+              size="m"
+              title="If you are reporting an error or an issue, please supply the following
+          information:"
+              iconType={AiOutlineInfoCircle}>
+              <ul>
+                <li>Who you are – name and ID number.</li>
+                <li>What you were trying to do on the system.</li>
+                <li>What happened / what went wrong.</li>
+                <li>Any error message that appeared on your screen.</li>
+                <li>If possible, a screenshot that shows the issue.</li>
+              </ul>
+              <p>
+                This will greatly assist us to efficiently resolve any issues.
+              </p>
+            </EuiCallOut>
+          </EuiText>
 
-        <EuiBasicTable
-          tableCaption="Demo of EuiBasicTable"
-          items={contactDetails}
-          rowHeader="firstName"
-          columns={columns}
-          // rowProps={getRowProps}
-          // cellProps={getCellProps}
-        />
+          <EuiSpacer />
 
-        <EuiSpacer />
-      </EuiPanel>
-    </MainLayout>
+          <EuiBasicTable
+            tableCaption="Demo of EuiBasicTable"
+            items={contactDetails}
+            rowHeader="firstName"
+            columns={columns}
+            // rowProps={getRowProps}
+            // cellProps={getCellProps}
+          />
+
+          <EuiSpacer />
+        </EuiPanel>
+      </MainLayout>
+    </>
   );
 };
 

@@ -1,4 +1,4 @@
-import { FunctionComponent, useContext, useEffect } from 'react';
+import { FunctionComponent } from 'react';
 import { EuiBreadcrumb, EuiFlexGroup, EuiFormFieldset } from '@elastic/eui';
 import MainLayout from '@layouts/main';
 import { useRouter } from 'next/router';
@@ -9,6 +9,7 @@ import useActivityReportFetcher from '@lib/fetcher/activity/activity-report';
 import Spinner from '@components/spinner/spinner';
 import { renderErrorCallout } from 'pages/my-activity';
 import { renderName } from '@lib/person/utils';
+import Head from 'next/head';
 
 const Index: FunctionComponent = () => {
   const breadcrumb: EuiBreadcrumb[] = [
@@ -44,43 +45,56 @@ const Index: FunctionComponent = () => {
 
   if (isLoading || !voterKey) {
     return (
-      <MainLayout
-        breadcrumb={breadcrumb}
-        showSpinner={isLoading}
-        panelled={false}
-      />
+      <>
+        <Head>
+          <title>VRM | Activity Reports | Voter </title>
+        </Head>
+        <MainLayout
+          breadcrumb={breadcrumb}
+          showSpinner={isLoading}
+          panelled={false}
+        />
+      </>
     );
   }
 
   return (
-    <MainLayout breadcrumb={breadcrumb} panelled={false} restrictWidth="1400px">
-      {isLoading && personLoading ? (
-        <Spinner show={isLoading} />
-      ) : (
-        <>
-          {reportError ? (
-            renderErrorCallout(reportError)
-          ) : (
-            <EuiFlexGroup direction="column">
-              <EuiFormFieldset
-                legend={{
-                  children: `Activity Report for ${
-                    person && renderName(person)
-                  }`,
-                }}>
-                <ActivityReportTable report={activityReport} />
-              </EuiFormFieldset>
-              <EuiFormFieldset
-                legend={{
-                  children: `History for ${person && renderName(person)}`,
-                }}>
-                <PersonHistory personKey={Number(voterKey)} mode="activity" />
-              </EuiFormFieldset>
-            </EuiFlexGroup>
-          )}
-        </>
-      )}
-    </MainLayout>
+    <>
+      <Head>
+        <title>VRM | Activity Reports | Voter </title>
+      </Head>
+      <MainLayout
+        breadcrumb={breadcrumb}
+        panelled={false}
+        restrictWidth="1400px">
+        {isLoading && personLoading ? (
+          <Spinner show={isLoading} />
+        ) : (
+          <>
+            {reportError ? (
+              renderErrorCallout(reportError)
+            ) : (
+              <EuiFlexGroup direction="column">
+                <EuiFormFieldset
+                  legend={{
+                    children: `Activity Report for ${
+                      person && renderName(person)
+                    }`,
+                  }}>
+                  <ActivityReportTable report={activityReport} />
+                </EuiFormFieldset>
+                <EuiFormFieldset
+                  legend={{
+                    children: `History for ${person && renderName(person)}`,
+                  }}>
+                  <PersonHistory personKey={Number(voterKey)} mode="activity" />
+                </EuiFormFieldset>
+              </EuiFlexGroup>
+            )}
+          </>
+        )}
+      </MainLayout>
+    </>
   );
 };
 

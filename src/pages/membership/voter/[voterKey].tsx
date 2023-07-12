@@ -32,6 +32,7 @@ import { useLeavePageConfirmation } from '@lib/hooks/useLeavePageConfirmation';
 import MembershipProvider from '@components/membership/membership.context';
 import QuickEdits from '@components/quick-edits';
 import { Salutation } from '@lib/domain/person-enum';
+import Head from 'next/head';
 
 const Voter: FunctionComponent = () => {
   const router = useRouter();
@@ -140,11 +141,16 @@ const Voter: FunctionComponent = () => {
 
   if (isLoading) {
     return (
-      <MainLayout
-        breadcrumb={breadcrumb}
-        showSpinner={isLoading}
-        panelled={false}
-      />
+      <>
+        <Head>
+          <title>VRM | Membership | Voter </title>
+        </Head>
+        <MainLayout
+          breadcrumb={breadcrumb}
+          showSpinner={isLoading}
+          panelled={false}
+        />
+      </>
     );
   }
 
@@ -199,25 +205,35 @@ const Voter: FunctionComponent = () => {
 
   if (error && !isLoading && !isSubmitting && !isValidating && voterKey) {
     return (
-      <MainLayout breadcrumb={breadcrumb} panelled={false}>
-        <EuiCallOut
-          title="Something went wrong"
-          color="danger"
-          iconType="error">
-          {error?.message}
-        </EuiCallOut>
-      </MainLayout>
+      <>
+        <Head>
+          <title>VRM | Membership | Voter </title>
+        </Head>
+        <MainLayout breadcrumb={breadcrumb} panelled={false}>
+          <EuiCallOut
+            title="Something went wrong"
+            color="danger"
+            iconType="error">
+            {error?.message}
+          </EuiCallOut>
+        </MainLayout>
+      </>
     );
   }
 
   if (isLoading || isSubmitting || isValidating || !voterKey) {
     return (
-      <MainLayout
-        breadcrumb={breadcrumb}
-        showSpinner={isLoading || isSubmitting || isValidating || !voterKey}
-        panelled={false}
-        restrictWidth="1400px"
-      />
+      <>
+        <Head>
+          <title>VRM | Membership | Voter </title>
+        </Head>
+        <MainLayout
+          breadcrumb={breadcrumb}
+          showSpinner={isLoading || isSubmitting || isValidating || !voterKey}
+          panelled={false}
+          restrictWidth="1400px"
+        />
+      </>
     );
   }
 
@@ -235,141 +251,146 @@ const Voter: FunctionComponent = () => {
   }
 
   return (
-    <MainLayout
-      breadcrumb={breadcrumb}
-      showSpinner={isSubmitting}
-      panelled={false}
-      restrictWidth="1400px">
-      <VoterInfo
-        deceased={person?.deceased}
-        darn={person?.key}
-        salutation={person?.salutation}
-        givenName={person?.givenName}
-        firstName={person?.firstName}
-        surname={person?.surname}
-        dob={moment(person?.dob, 'YYYYMMDD').toDate()}
-        colourCode={person?.colourCode}
-        canvassedBy={person?.canvassedBy}
-        livingStructure={person?.livingStructure}
-        registeredStructure={person?.registeredStructure}
-        membership={person?.membership}
-        pubRep={person?.pubRep}
-      />
+    <>
+      <Head>
+        <title>VRM | Membership | Voter </title>
+      </Head>
+      <MainLayout
+        breadcrumb={breadcrumb}
+        showSpinner={isSubmitting}
+        panelled={false}
+        restrictWidth="1400px">
+        <VoterInfo
+          deceased={person?.deceased}
+          darn={person?.key}
+          salutation={person?.salutation}
+          givenName={person?.givenName}
+          firstName={person?.firstName}
+          surname={person?.surname}
+          dob={moment(person?.dob, 'YYYYMMDD').toDate()}
+          colourCode={person?.colourCode}
+          canvassedBy={person?.canvassedBy}
+          livingStructure={person?.livingStructure}
+          registeredStructure={person?.registeredStructure}
+          membership={person?.membership}
+          pubRep={person?.pubRep}
+        />
 
-      <EuiSpacer />
-      <EuiForm fullWidth isInvalid={serverError !== ''} error={[serverError]}>
-        <EuiFlexGroup direction="row" gutterSize="xs">
-          <EuiFlexItem>
-            <EuiTabs css={tabsStyle} size="s">
-              <EuiTab
-                onClick={() => handleTabChange(0)}
-                isSelected={selectedTab === 0}>
-                {tabContent}
-              </EuiTab>
-              <EuiTab
-                onClick={() => handleTabChange(1)}
-                isSelected={selectedTab === 1}>
-                Address & Location
-              </EuiTab>
-              <EuiTab
-                onClick={() => handleTabChange(2)}
-                isSelected={selectedTab === 2}>
-                Tags & Custom fields
-              </EuiTab>
-              <EuiTab
-                onClick={() => handleTabChange(3)}
-                isSelected={selectedTab === 3}>
-                {person?.membership?.structure?.key === null &&
-                person?.membership?.status !== 'NotAMember' &&
-                person?.membership?.status ? (
-                  <EuiText size="xs" color="warning">
-                    <EuiIcon type="alert" color="warning" />{' '}
-                    <strong>Membership</strong>
-                  </EuiText>
-                ) : (
-                  'Membership'
-                )}
-              </EuiTab>
-              <EuiTab
-                onClick={() => handleTabChange(4)}
-                isSelected={selectedTab === 4}>
-                History
-              </EuiTab>
-            </EuiTabs>
-            <EuiSpacer />
-
-            <div style={{ display: selectedTab === 0 ? 'block' : 'none' }}>
-              <EuiFormFieldset>
-                <QuickEdits
-                  hideMoved
-                  deceased={person?.deceased}
-                  fields={person?.fields}
-                  onDeceasedChange={onChange}
-                  onMovedChange={onChange}
-                  onAddressChange={onChange}
-                />
-              </EuiFormFieldset>
-              <EuiSpacer />
-              <EuiFormFieldset legend={{ children: 'Contact Details' }}>
-                <ContactDetails
-                  deceased={person?.deceased}
-                  givenName={person?.givenName}
-                  language={person?.language}
-                  contacts={person?.contacts}
-                  onLanguageChange={onChange}
-                  onPhoneChange={onChange}
-                  onEmailChange={onChange}
-                  onPersonChange={onChange}
-                  salutation={person?.salutation as Salutation}
-                  onSalutationChange={onChange}
-                />
-              </EuiFormFieldset>
-              <EuiSpacer />
-            </div>
-
-            <div style={{ display: selectedTab === 1 ? 'block' : 'none' }}>
-              <EuiFormFieldset
-                legend={{ children: 'Living Address & Location' }}>
-                <Address address={person?.address} onChange={onChange} />
-              </EuiFormFieldset>
-            </div>
-
-            <div style={{ display: selectedTab === 2 ? 'block' : 'none' }}>
-              <EuiFormFieldset legend={{ children: 'Canvassing tags' }}>
-                <CanvassingTags fields={person?.fields} onChange={onChange} />
-              </EuiFormFieldset>
-              <EuiSpacer />
-              <EuiFormFieldset legend={{ children: 'Voter tags' }}>
-                <VoterTags fields={person?.fields} onChange={onChange} />
-              </EuiFormFieldset>
-            </div>
-
-            <div style={{ display: selectedTab === 3 ? 'block' : 'none' }}>
-              <MembershipProvider
-                person={person}
-                onSelectAddressTab={handleGoToAddress}>
-                <Membership />
-              </MembershipProvider>
-            </div>
-
-            <div style={{ display: selectedTab === 4 ? 'block' : 'none' }}>
-              <EuiFormFieldset
-                css={{
-                  position: 'relative',
-                  minHeight: '300px',
-                }}
-                legend={{ children: 'History' }}>
-                <PersonHistory personKey={person.key} />
-              </EuiFormFieldset>
-            </div>
-          </EuiFlexItem>
-        </EuiFlexGroup>
         <EuiSpacer />
-        {data.contacts && validationError && validationErrorMessage}
-        <EuiSpacer />
-        {formActions}
-      </EuiForm>
-    </MainLayout>
+        <EuiForm fullWidth isInvalid={serverError !== ''} error={[serverError]}>
+          <EuiFlexGroup direction="row" gutterSize="xs">
+            <EuiFlexItem>
+              <EuiTabs css={tabsStyle} size="s">
+                <EuiTab
+                  onClick={() => handleTabChange(0)}
+                  isSelected={selectedTab === 0}>
+                  {tabContent}
+                </EuiTab>
+                <EuiTab
+                  onClick={() => handleTabChange(1)}
+                  isSelected={selectedTab === 1}>
+                  Address & Location
+                </EuiTab>
+                <EuiTab
+                  onClick={() => handleTabChange(2)}
+                  isSelected={selectedTab === 2}>
+                  Tags & Custom fields
+                </EuiTab>
+                <EuiTab
+                  onClick={() => handleTabChange(3)}
+                  isSelected={selectedTab === 3}>
+                  {person?.membership?.structure?.key === null &&
+                  person?.membership?.status !== 'NotAMember' &&
+                  person?.membership?.status ? (
+                    <EuiText size="xs" color="warning">
+                      <EuiIcon type="alert" color="warning" />{' '}
+                      <strong>Membership</strong>
+                    </EuiText>
+                  ) : (
+                    'Membership'
+                  )}
+                </EuiTab>
+                <EuiTab
+                  onClick={() => handleTabChange(4)}
+                  isSelected={selectedTab === 4}>
+                  History
+                </EuiTab>
+              </EuiTabs>
+              <EuiSpacer />
+
+              <div style={{ display: selectedTab === 0 ? 'block' : 'none' }}>
+                <EuiFormFieldset>
+                  <QuickEdits
+                    hideMoved
+                    deceased={person?.deceased}
+                    fields={person?.fields}
+                    onDeceasedChange={onChange}
+                    onMovedChange={onChange}
+                    onAddressChange={onChange}
+                  />
+                </EuiFormFieldset>
+                <EuiSpacer />
+                <EuiFormFieldset legend={{ children: 'Contact Details' }}>
+                  <ContactDetails
+                    deceased={person?.deceased}
+                    givenName={person?.givenName}
+                    language={person?.language}
+                    contacts={person?.contacts}
+                    onLanguageChange={onChange}
+                    onPhoneChange={onChange}
+                    onEmailChange={onChange}
+                    onPersonChange={onChange}
+                    salutation={person?.salutation as Salutation}
+                    onSalutationChange={onChange}
+                  />
+                </EuiFormFieldset>
+                <EuiSpacer />
+              </div>
+
+              <div style={{ display: selectedTab === 1 ? 'block' : 'none' }}>
+                <EuiFormFieldset
+                  legend={{ children: 'Living Address & Location' }}>
+                  <Address address={person?.address} onChange={onChange} />
+                </EuiFormFieldset>
+              </div>
+
+              <div style={{ display: selectedTab === 2 ? 'block' : 'none' }}>
+                <EuiFormFieldset legend={{ children: 'Canvassing tags' }}>
+                  <CanvassingTags fields={person?.fields} onChange={onChange} />
+                </EuiFormFieldset>
+                <EuiSpacer />
+                <EuiFormFieldset legend={{ children: 'Voter tags' }}>
+                  <VoterTags fields={person?.fields} onChange={onChange} />
+                </EuiFormFieldset>
+              </div>
+
+              <div style={{ display: selectedTab === 3 ? 'block' : 'none' }}>
+                <MembershipProvider
+                  person={person}
+                  onSelectAddressTab={handleGoToAddress}>
+                  <Membership />
+                </MembershipProvider>
+              </div>
+
+              <div style={{ display: selectedTab === 4 ? 'block' : 'none' }}>
+                <EuiFormFieldset
+                  css={{
+                    position: 'relative',
+                    minHeight: '300px',
+                  }}
+                  legend={{ children: 'History' }}>
+                  <PersonHistory personKey={person.key} />
+                </EuiFormFieldset>
+              </div>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+          <EuiSpacer />
+          {data.contacts && validationError && validationErrorMessage}
+          <EuiSpacer />
+          {formActions}
+        </EuiForm>
+      </MainLayout>
+    </>
   );
 };
 
