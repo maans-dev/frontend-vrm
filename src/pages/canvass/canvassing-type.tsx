@@ -17,6 +17,7 @@ import { CanvassingContext } from '@lib/context/canvassing.context';
 import useCanvassTypeFetcher from '@lib/fetcher/campaign-type/campaign';
 import { Campaign } from '@lib/domain/person';
 import { ICanvassType } from '@components/canvassing-type/type';
+import Head from 'next/head';
 
 const canvassTypeData: ICanvassType[] = [
   { id: 'face', name: 'Face to face' },
@@ -67,75 +68,85 @@ const CanvassingType: FunctionComponent = () => {
 
   if (isLoading) {
     return (
-      <MainLayout
-        breadcrumb={breadcrumb}
-        showSpinner={isLoading}
-        panelled={false}
-      />
+      <>
+        <Head>
+          <title>VRM | Canvass </title>
+        </Head>
+        <MainLayout
+          breadcrumb={breadcrumb}
+          showSpinner={isLoading}
+          panelled={false}
+        />
+      </>
     );
   }
 
   return (
-    <MainLayout breadcrumb={breadcrumb} panelled={false}>
-      {error && (
-        <>
-          <EuiCallOut
-            title="Somethig went wrong"
-            color="danger"
-            iconType="alert">
-            {error?.message ? error.message : 'Unknown error'}
-          </EuiCallOut>
-          <EuiSpacer />
-        </>
-      )}
-      <Global
-        styles={css`
-          li.euiSelectableListItem[aria-checked='true'] {
-            background: #155fa220;
-          }
-          li.euiSelectableListItem {
-            font-weight: 600;
-          }
-        `}
-      />
-      <EuiText size="xs">
-        <h3>Which campaign are you canvassing for?</h3>
-      </EuiText>
-      <EuiSpacer size="m" />
-      <CampaignSelect
-        campaigns={campaignData}
-        selectedKey={data?.canvass?.activity}
-        onChange={update => {
-          setUpdatePayload({
-            field: 'canvass',
-            data: {
-              activity: update.key,
-            },
-          });
-          setCampaign(update);
-        }}
-      />
-      <EuiSpacer size="l" />
-      <EuiText size="xs">
-        <h3>How was this voter canvassed?</h3>
-      </EuiText>
-      <EuiSpacer size="s" />
-      <CanvassingTypeSelect
-        canvassTypes={canvassTypeData}
-        selectedType={data?.canvass?.type}
-        onChange={update => {
-          setUpdatePayload({
-            field: 'canvass',
-            data: {
-              type: update.id,
-            },
-          });
-          setCanvassingType(update);
-        }}
-      />
-      <EuiSpacer />
-      {formActions}
-    </MainLayout>
+    <>
+      <Head>
+        <title>VRM | Canvass </title>
+      </Head>
+      <MainLayout breadcrumb={breadcrumb} panelled={false}>
+        {error && (
+          <>
+            <EuiCallOut
+              title="Somethig went wrong"
+              color="danger"
+              iconType="alert">
+              {error?.message ? error.message : 'Unknown error'}
+            </EuiCallOut>
+            <EuiSpacer />
+          </>
+        )}
+        <Global
+          styles={css`
+            li.euiSelectableListItem[aria-checked='true'] {
+              background: #155fa220;
+            }
+            li.euiSelectableListItem {
+              font-weight: 600;
+            }
+          `}
+        />
+        <EuiText size="xs">
+          <h3>Which campaign are you canvassing for?</h3>
+        </EuiText>
+        <EuiSpacer size="m" />
+        <CampaignSelect
+          campaigns={campaignData}
+          selectedKey={data?.canvass?.activity}
+          onChange={update => {
+            setUpdatePayload({
+              field: 'canvass',
+              data: {
+                activity: update.key,
+              },
+            });
+            setCampaign(update);
+          }}
+        />
+        <EuiSpacer size="l" />
+        <EuiText size="xs">
+          <h3>How was this voter canvassed?</h3>
+        </EuiText>
+        <EuiSpacer size="s" />
+        <CanvassingTypeSelect
+          canvassTypes={canvassTypeData}
+          selectedType={data?.canvass?.type}
+          onChange={update => {
+            setUpdatePayload({
+              field: 'canvass',
+              data: {
+                type: update.id,
+              },
+            });
+            setCanvassingType(update);
+          }}
+        />
+        <EuiSpacer />
+        {formActions}
+      </MainLayout>
+    </>
   );
 };
 

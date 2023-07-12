@@ -15,6 +15,7 @@ import ActivityReportTable from '@components/activity-report';
 import useActivityReportFetcher from '@lib/fetcher/activity/activity-report';
 import Spinner from '@components/spinner/spinner';
 import router from 'next/router';
+import Head from 'next/head';
 
 export const renderErrorCallout = error => {
   if (error?.cause?.cause?.status === 403) {
@@ -62,41 +63,61 @@ const Index: FunctionComponent = () => {
 
   if (isLoading) {
     return (
-      <MainLayout breadcrumb={breadcrumb} showSpinner={true} panelled={false} />
+      <>
+        <Head>
+          <title>VRM | My Activity </title>
+        </Head>
+        <MainLayout
+          breadcrumb={breadcrumb}
+          showSpinner={true}
+          panelled={false}
+        />
+      </>
     );
   }
 
   return (
-    <MainLayout breadcrumb={breadcrumb} panelled={false} restrictWidth="1400px">
-      {isLoading ? (
-        <Spinner show={isLoading} />
-      ) : (
-        <>
-          {activityReport && reportError && renderErrorCallout(reportError)}
-          <EuiFlexGroup direction="column">
-            <EuiFlexItem>
-              <EuiCallOut
-                color="primary"
-                title="This report shows a simple count of all of your activity
+    <>
+      <Head>
+        <title>VRM | My Activity </title>
+      </Head>
+      <MainLayout
+        breadcrumb={breadcrumb}
+        panelled={false}
+        restrictWidth="1400px">
+        {isLoading ? (
+          <Spinner show={isLoading} />
+        ) : (
+          <>
+            {activityReport && reportError && renderErrorCallout(reportError)}
+            <EuiFlexGroup direction="column">
+              <EuiFlexItem>
+                <EuiCallOut
+                  color="primary"
+                  title="This report shows a simple count of all of your activity
                 recorded on VRM."
-                iconType="iInCircle"
-                size="s">
-                <EuiText size="xs">
-                  The figures may be different from those on specific campaign
-                  reports which apply particular criteria.
-                </EuiText>
-              </EuiCallOut>
-            </EuiFlexItem>
-            <EuiFormFieldset legend={{ children: 'My Activity Report' }}>
-              <ActivityReportTable report={activityReport} />
-            </EuiFormFieldset>
-            <EuiFormFieldset legend={{ children: 'My Activity' }}>
-              <PersonHistory personKey={session?.user?.darn} mode="activity" />
-            </EuiFormFieldset>
-          </EuiFlexGroup>
-        </>
-      )}
-    </MainLayout>
+                  iconType="iInCircle"
+                  size="s">
+                  <EuiText size="xs">
+                    The figures may be different from those on specific campaign
+                    reports which apply particular criteria.
+                  </EuiText>
+                </EuiCallOut>
+              </EuiFlexItem>
+              <EuiFormFieldset legend={{ children: 'My Activity Report' }}>
+                <ActivityReportTable report={activityReport} />
+              </EuiFormFieldset>
+              <EuiFormFieldset legend={{ children: 'My Activity' }}>
+                <PersonHistory
+                  personKey={session?.user?.darn}
+                  mode="activity"
+                />
+              </EuiFormFieldset>
+            </EuiFlexGroup>
+          </>
+        )}
+      </MainLayout>
+    </>
   );
 };
 
