@@ -1,6 +1,6 @@
 import { FunctionComponent, useEffect, useState } from 'react';
 import useStructureFetcher from '@lib/fetcher/structures/structures';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import { ProvinceEnum, Structure } from '@lib/domain/person';
 import {
   EuiButtonIcon,
