@@ -129,7 +129,7 @@ const PersonHistoryItem: FunctionComponent<Props> = ({
   event,
   mode = 'history',
 }) => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const hasRole = (role: string) => hasRoleUtil(role, session?.user?.roles);
   const [isExpanded, setIsExpanded] = useState(false);
   const isSystemEntry = false;

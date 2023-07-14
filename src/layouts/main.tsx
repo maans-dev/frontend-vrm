@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import { FunctionComponent, useEffect, useRef, useState } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 
 import {
   EuiBreadcrumb,
@@ -53,7 +53,7 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
 
   const [showSubHeader, setShowSubHeader] = useState(false);
   // const [showCanvassHeader, setShowCanvassHeader] = useState(false);
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const hasFeature = (feature: string) => session?.features.includes(feature);
 
   useEffect(() => {

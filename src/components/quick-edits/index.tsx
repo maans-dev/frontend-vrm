@@ -41,7 +41,7 @@ const QuickEdits: FunctionComponent<Props> = ({
   onDeceasedChange,
   onMovedChange,
 }) => {
-  const [phoneContacts, setPhoneContacts] = useState<PhoneContact[]>(
+  const [phoneContacts] = useState<PhoneContact[]>(
     contacts
       ?.filter(contact => contact.category !== 'EMAIL')
       .map(contact => ({
@@ -72,6 +72,7 @@ const QuickEdits: FunctionComponent<Props> = ({
   );
   const [phoneDoesNotExist, setPhoneDoesNotExist] = useState<boolean>();
   const { trackCustomEvent } = useAnalytics();
+  const callCenterMode = router.query['phone-number'];
 
   const handleDeceasedModalChange = () => {
     trackCustomEvent('Quick Edits', 'Deceased Modal Clicked');
@@ -251,7 +252,7 @@ const QuickEdits: FunctionComponent<Props> = ({
     } else {
       setNumberExistOnPerson([]);
     }
-  }, [person?.contacts, router.query['phone-number']]);
+  }, [person?.contacts, callCenterMode]);
 
   return (
     <>
