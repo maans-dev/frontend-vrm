@@ -16,7 +16,6 @@ import { PersonEvent } from '@lib/domain/person-history';
 import PersonHistoryItem from './person-history-item';
 import usePersonHistoryOrActivityFetcher from '@lib/fetcher/person/person.history';
 import dateMath from '@elastic/datemath';
-import { useSession } from 'next-auth/react';
 
 export type Props = {
   personKey: number;
@@ -28,7 +27,6 @@ const PersonHistory: FunctionComponent<Props> = ({
   personKey,
   mode = 'history',
 }) => {
-  const { data: session } = useSession();
   const [start, setStart] = useState('now/y');
   const [end, setEnd] = useState('now/y');
 
@@ -40,7 +38,7 @@ const PersonHistory: FunctionComponent<Props> = ({
   const [activePage, setActivePage] = useState(0);
   const [rowSize, setRowSize] = useState(10);
 
-  const { history, isLoading, error } = usePersonHistoryOrActivityFetcher(
+  const { history, isLoading } = usePersonHistoryOrActivityFetcher(
     personKey,
     startMoment.format('YYYY-MM-DD HH:mm'),
     endMoment.format('YYYY-MM-DD HH:mm'),

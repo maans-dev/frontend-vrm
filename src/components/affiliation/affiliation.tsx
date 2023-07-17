@@ -15,7 +15,7 @@ import { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import useAffiliationFetcher from '@lib/fetcher/affiliation/affiliation';
 import { AffiliateUpdate, PersonUpdate } from '@lib/domain/person-update';
 import { useCanvassFormReset } from '@lib/hooks/use-canvass-form-reset';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 

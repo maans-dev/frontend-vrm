@@ -7,7 +7,7 @@ import {
   PersonUpdate,
   PersonUpdateRequest,
 } from '@lib/domain/person-update';
-import { cloneDeep } from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
 import { useRouter } from 'next/router';
 import {
   createContext,

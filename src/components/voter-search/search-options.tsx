@@ -22,7 +22,6 @@ import { Structure } from '@lib/domain/person';
 import { PersonSearchParams } from '@lib/domain/person-search';
 import moment, { Moment } from 'moment';
 import { useSession } from 'next-auth/react';
-import router from 'next/router';
 import { FormEvent, FunctionComponent, useEffect, useState } from 'react';
 
 export type Props = {
