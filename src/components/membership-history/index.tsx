@@ -31,7 +31,7 @@ const MembershipEvents: FunctionComponent<Props> = ({ personKey }) => {
 
   const [pageCount, setPageCount] = useState(0);
 
-  const { history, isLoading, error } = useMembershipHistoryFetcher(
+  const { history, isLoading } = useMembershipHistoryFetcher(
     personKey,
     startMoment.format('YYYY-MM-DD HH:mm'),
     endMoment.format('YYYY-MM-DD HH:mm'),

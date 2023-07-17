@@ -301,7 +301,7 @@ const SearchResultsModal: FunctionComponent<Props> = ({
       setAddress(results[0]);
       setAddressInternal(results[0]);
     }
-  }, [results]);
+  }, [address, results]);
 
   return (
     <>

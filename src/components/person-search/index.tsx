@@ -8,7 +8,7 @@ import {
   EuiText,
   EuiButtonEmpty,
 } from '@elastic/eui';
-import { appsignal, redactObject } from '@lib/appsignal';
+import { appsignal } from '@lib/appsignal';
 import { Person } from '@lib/domain/person';
 import moment from 'moment';
 import { useSession } from 'next-auth/react';

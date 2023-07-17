@@ -4,7 +4,8 @@ import { Field, FieldMetaData } from '@lib/domain/person';
 import useTagFetcher from '@lib/fetcher/tags/tags';
 import { FieldsUpdate, PersonUpdate } from '@lib/domain/person-update';
 import { CanvassingTagCodes } from '@lib/domain/tags';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
+
 import { EuiCallOut } from '@elastic/eui';
 
 export type Props = {

@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent } from 'react';
 import {
   EuiBasicTableColumn,
   EuiBasicTable,
@@ -34,17 +34,7 @@ const SearchResults: FunctionComponent<Props> = ({
   activePage,
   onChangePage,
 }) => {
-  // const [sortField, setSortField] = useState<keyof Person>('name');
-  // const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const isMobile = useIsWithinBreakpoints(['xs', 's']);
-
-  const onTableChange = ({ sort }: Criteria<Person>) => {
-    if (sort) {
-      const { field: sortField, direction: sortDirection } = sort;
-      // setSortField(sortField);
-      // setSortDirection(sortDirection);
-    }
-  };
 
   const getRowProps = (voter: Person) => {
     return {
@@ -248,15 +238,7 @@ const SearchResults: FunctionComponent<Props> = ({
         rowHeader="darn"
         columns={columns}
         tableLayout="auto"
-        // sorting={{
-        //   sort: {
-        //     field: sortField,
-        //     direction: sortDirection,
-        //   },
-        //   enableAllColumns: true,
-        // }}
         rowProps={getRowProps}
-        onChange={onTableChange}
         noItemsMessage={
           <>
             <EuiSpacer />
