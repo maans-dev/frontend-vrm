@@ -359,7 +359,8 @@ const SearchOptions: FunctionComponent<Props> = ({
 
   useEffect(() => {
     const userDarn = session?.user?.darn;
-    if (userDarn && searchParams?.identity === 'me') {
+    const searchIdentity = searchParams?.identity?.toLowerCase();
+    if (userDarn && searchIdentity === 'me') {
       setSearchParams(prev => ({
         ...prev,
         identity: userDarn.toString(),
