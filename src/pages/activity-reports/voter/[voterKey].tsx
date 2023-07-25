@@ -1,5 +1,10 @@
 import { FunctionComponent } from 'react';
-import { EuiBreadcrumb, EuiFlexGroup, EuiFormFieldset } from '@elastic/eui';
+import {
+  EuiBreadcrumb,
+  EuiCallOut,
+  EuiFlexGroup,
+  EuiFormFieldset,
+} from '@elastic/eui';
 import MainLayout from '@layouts/main';
 import { useRouter } from 'next/router';
 import PersonHistory from '@components/person-history';
@@ -35,8 +40,12 @@ const Index: FunctionComponent = () => {
   ];
   const router = useRouter();
   const voterKey = router?.query?.voterKey as string;
-
-  const { person, isLoading: personLoading } = usePersonFetcher(voterKey);
+  //TODO
+  const {
+    person,
+    isLoading: personLoading,
+    error: personError,
+  } = usePersonFetcher(voterKey);
   const {
     activityReport,
     error: reportError,
@@ -71,6 +80,14 @@ const Index: FunctionComponent = () => {
           <Spinner show={isLoading} />
         ) : (
           <>
+            {personError && (
+              <EuiCallOut
+                title="Activity Report Error"
+                color="danger"
+                iconType="alert">
+                {personError.message}
+              </EuiCallOut>
+            )}
             {reportError ? (
               renderErrorCallout(reportError)
             ) : (

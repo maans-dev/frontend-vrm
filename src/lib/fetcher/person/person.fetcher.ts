@@ -53,7 +53,7 @@ export default function usePersonFetcher(
           route: url,
         });
         span.setTags({
-          user_darn: session.user.darn.toString(),
+          user_darn: session?.user?.darn?.toString(),
           route: '/person',
         });
       });
