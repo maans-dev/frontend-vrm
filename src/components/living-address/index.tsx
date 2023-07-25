@@ -18,7 +18,7 @@ export type Props = {
 
 const Address: FunctionComponent<Props> = ({ address, onChange }) => {
   const { nextId } = useContext(CanvassingContext);
-  const { data: movedTag } = useTagFetcher('MVD'); //TODO handle when fetch fails
+  const { data: movedTag } = useTagFetcher('MVD');
   const [movedKey, setMovedKey] = useState<string>();
 
   const doChange = (address: Partial<Address>) => {

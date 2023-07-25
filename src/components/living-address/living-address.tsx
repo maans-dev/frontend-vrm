@@ -81,9 +81,9 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
     setIsLoading(false);
 
     if (!response.ok) {
-      const errJson = JSON.parse(await response.clone().text());
+      const errJson = response.clone().text();
       appsignal.sendError(
-        new Error(`Unable to reverse geocode coordinates: ${errJson.message}`),
+        new Error(`Unable to reverse geocode coordinates: ${errJson}`),
         span => {
           span.setAction('api-call');
           span.setParams({

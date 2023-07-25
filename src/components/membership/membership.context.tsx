@@ -25,6 +25,8 @@ import {
 } from 'react';
 import { hasRole as hasRoleUtil } from '@lib/auth/utils';
 import { Roles } from '@lib/domain/auth';
+import { EuiCallOut } from '@elastic/eui';
+import error from 'next/error';
 
 export interface Branch {
   label: string | React.ReactNode;
@@ -121,8 +123,8 @@ const MembershipProvider: FunctionComponent<
   const [personStructure, setPersonStructure] = useState(
     person?.address?.structure
   );
-
-  const { countries } = useCountryFetcher(
+  //TODO
+  const { countries, error: CountryFetchError } = useCountryFetcher(
     membershipBranch?.type === 'COUNTRY' ? membershipBranch.country_code : null
   );
 
@@ -356,6 +358,18 @@ const MembershipProvider: FunctionComponent<
           showConfirmCallout: false,
           structure: membershipBranch,
         });
+        if (CountryFetchError) {
+          {
+            CountryFetchError && (
+              <EuiCallOut
+                title="Country Search Error"
+                color="danger"
+                iconType="alert">
+                {CountryFetchError.message}
+              </EuiCallOut>
+            );
+          }
+        }
         return;
       } else {
         if (

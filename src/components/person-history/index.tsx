@@ -1,5 +1,6 @@
 import { FunctionComponent, useEffect, useState } from 'react';
 import {
+  EuiCallOut,
   EuiCommentList,
   EuiFlexGroup,
   EuiFlexItem,
@@ -37,8 +38,8 @@ const PersonHistory: FunctionComponent<Props> = ({
 
   const [activePage, setActivePage] = useState(0);
   const [rowSize, setRowSize] = useState(10);
-
-  const { history, isLoading } = usePersonHistoryOrActivityFetcher(
+  //TODO
+  const { history, isLoading, error } = usePersonHistoryOrActivityFetcher(
     personKey,
     startMoment.format('YYYY-MM-DD HH:mm'),
     endMoment.format('YYYY-MM-DD HH:mm'),
@@ -50,9 +51,11 @@ const PersonHistory: FunctionComponent<Props> = ({
   const [pageCount, setPageCount] = useState(0);
 
   const changeItemsPerPage = (pageSize: number) => {
-    setPageCount(Math.ceil(history.count / pageSize));
-    setRowSize(pageSize);
-    setActivePage(0);
+    if (history && history.count !== undefined) {
+      setPageCount(Math.ceil(history.count / pageSize));
+      setRowSize(pageSize);
+      setActivePage(0);
+    }
   };
 
   const eventsInternal = history?.values?.map(event => {
@@ -90,6 +93,14 @@ const PersonHistory: FunctionComponent<Props> = ({
   return (
     <>
       <EuiFlexGroup justifyContent="spaceAround">
+        {error && (
+          <EuiCallOut
+            title="Person History Error"
+            color="danger"
+            iconType="alert">
+            {error.message}
+          </EuiCallOut>
+        )}
         <EuiFlexItem grow={true}>
           <EuiSuperDatePicker
             // compressed

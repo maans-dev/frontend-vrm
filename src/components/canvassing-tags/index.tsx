@@ -1,5 +1,10 @@
 import { FunctionComponent, useEffect, useState } from 'react';
-import { EuiFlexGrid, EuiFlexItem, useIsWithinBreakpoints } from '@elastic/eui';
+import {
+  EuiCallOut,
+  EuiFlexGrid,
+  EuiFlexItem,
+  useIsWithinBreakpoints,
+} from '@elastic/eui';
 import CanvassingTag from './canvassing-tag';
 import { Field, FieldMetaData } from '@lib/domain/person';
 import { FieldsUpdate, PersonUpdate } from '@lib/domain/person-update';
@@ -16,7 +21,8 @@ const CanvassingTags: FunctionComponent<Props> = ({ fields, onChange }) => {
   const [internalFields, setInternalFields] = useState<Field[]>(
     fields?.filter(f => CanvassingTagCodes.includes(f.field.code))
   );
-  const { data } = useCanvassingTagFetcher();
+  //TODO
+  const { data, error } = useCanvassingTagFetcher();
   const [presetFields, setPresetFields] = useState<Partial<Field>[]>(null);
 
   const nextId = (() => {
@@ -87,6 +93,14 @@ const CanvassingTags: FunctionComponent<Props> = ({ fields, onChange }) => {
       direction="row"
       gutterSize="s"
       responsive={true}>
+      {error && (
+        <EuiCallOut
+          title="Canvassing Tags Error"
+          color="danger"
+          iconType="alert">
+          {error.message}
+        </EuiCallOut>
+      )}
       {presetFields?.map((f, i) => {
         return (
           <EuiFlexItem key={i} grow={false} style={{ minWidth: 100 }}>
