@@ -144,11 +144,26 @@ const Index: FunctionComponent = () => {
                 title="Generate Sheets (Coming later this month)"
                 description="Generation of canvassing sheets."
                 onClick={() => {
+                  trackPageClick('/sheets');
                   router.push('/sheets');
                 }}
               />
             </EuiFlexItem>
           )}
+        {hasRole(Roles.SheetGenAdmin) && hasFeature('sheet-gen-approvals') && (
+          <EuiFlexItem>
+            <EuiCard
+              icon={<EuiIcon size="xxl" type="inputOutput" />}
+              layout="horizontal"
+              title="Sheet Generation Approval"
+              description="Approval of generated sheets."
+              onClick={() => {
+                trackPageClick('/sheet-gen-approval');
+                router.push('/sheet-gen-approval');
+              }}
+            />
+          </EuiFlexItem>
+        )}
         {/* 
         {/* {hasRole(Roles.BulkComms) && (
           <EuiFlexItem>

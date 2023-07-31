@@ -7,4 +7,5 @@ export enum Roles {
   VoterEdit = 'vrmVoterEdit',
   SuperUser = 'vrmSuperUser',
   ActivityReport = 'vrmActivityReport',
+  SheetGenAdmin = 'vrmSheetAdmin',
 }

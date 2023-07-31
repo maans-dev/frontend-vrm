@@ -12,4 +12,5 @@ export interface Ward {
   constituency: string;
   ward: string;
   ward_num: number;
+  formatted: string;
 }

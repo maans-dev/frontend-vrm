@@ -25,9 +25,11 @@ const SheetPanel: FunctionComponent<Props> = ({
     return items;
   }, [sheetPanelData]);
 
+  const sheetData = orderedItems.filter(item => item.status !== 'DELETED');
+
   return (
     <>
-      {orderedItems?.map(item => (
+      {sheetData?.map(item => (
         <SheetCard key={item.key} data={item} sheetGenMutate={sheetGenMutate} />
       ))}
     </>

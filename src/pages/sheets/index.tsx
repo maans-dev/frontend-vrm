@@ -77,8 +77,12 @@ const Index: FunctionComponent = () => {
     );
   }
 
+  const generatedData = generatedSheetData.filter(
+    item => item.status !== 'DELETED'
+  );
+
   // Empty prompt when user has no previously generated sheets
-  if (!generatedSheetData || generatedSheetData?.length === 0) {
+  if (!generatedData || generatedData?.length === 0) {
     return (
       <MainLayout
         breadcrumb={breadcrumb}

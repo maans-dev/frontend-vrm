@@ -9,6 +9,8 @@ import {
   EuiButton,
   EuiButtonIcon,
   EuiBadge,
+  EuiFormRow,
+  EuiButtonEmpty,
 } from '@elastic/eui';
 import Download from './download';
 import moment from 'moment';
@@ -16,19 +18,44 @@ import { useSession } from 'next-auth/react';
 import { appsignal } from '@lib/appsignal';
 import { renderName } from '@lib/person/utils';
 import { KeyedMutator } from 'swr';
+import { fetchAndDownload } from './do-download';
 
 export type Props = {
   data: SheetGeneration;
   sheetGenMutate: KeyedMutator<SheetGeneration[]>;
+  key: string;
 };
 
-const SheetCard: FunctionComponent<Props> = ({ data, sheetGenMutate }) => {
+const SheetCard: FunctionComponent<Props> = ({ data, sheetGenMutate, key }) => {
   const { data: session } = useSession();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showFullText, setShowFullText] = useState(false);
+
+  const handleShowFullText = () => {
+    setShowFullText(true);
+  };
+
+  const handleCloseFullText = () => {
+    setShowFullText(false);
+  };
+
+  const maxTextLength = 100;
+  const truncatedRejectedReason = data?.rejectedReason?.slice(0, maxTextLength);
+  const truncatedRequestReason = data?.requestReason?.slice(0, maxTextLength);
+  const hasTruncatedRejectedReason =
+    data?.rejectedReason?.length > maxTextLength;
+  const hasTruncatedRequestReason = data?.requestReason?.length > maxTextLength;
 
   function formatDate(dateString: string): string {
     return moment(dateString).fromNow();
   }
+  const prettifyStatus = status => {
+    if (status === 'PENDING_APPROVAL') {
+      return status.replace('_', ' ');
+    }
+    return status;
+  };
+  const statusText = data?.status ? prettifyStatus(data.status) : 'Unknown';
 
   const handleDelete = async (actvityKey: string) => {
     setIsDeleting(true);
@@ -69,7 +96,7 @@ const SheetCard: FunctionComponent<Props> = ({ data, sheetGenMutate }) => {
 
   return (
     <>
-      <EuiPanel>
+      <EuiPanel key={key}>
         <EuiFlexGroup justifyContent="spaceBetween">
           <EuiFlexItem grow={2}>
             <EuiText size="m">
@@ -79,20 +106,93 @@ const SheetCard: FunctionComponent<Props> = ({ data, sheetGenMutate }) => {
             {data?.structures?.[0]?.formatted ? (
               <>
                 <EuiText size="s">{data?.structures?.[0]?.formatted}</EuiText>
-                {/* <EuiText size="s">
-                  Voting District, {data?.structures?.[0]?.province}
-                </EuiText> */}
               </>
             ) : (
               <EuiText size="s" color="warning">
                 Unknown structure
               </EuiText>
             )}
+            <EuiSpacer size="s" />
+            <EuiFormRow
+              label={
+                <EuiText size="s">
+                  <strong>Reason for request:</strong>
+                </EuiText>
+              }
+              fullWidth>
+              <EuiText size="m">
+                {hasTruncatedRequestReason && !showFullText ? (
+                  <>
+                    <span style={{ color: 'var(--euiColorPrimary)' }}>
+                      {truncatedRequestReason}
+                    </span>
+                    <EuiButtonEmpty
+                      size="xs"
+                      onClick={handleShowFullText}
+                      style={{ paddingLeft: 0, paddingBottom: '4px' }}>
+                      ...Show More
+                    </EuiButtonEmpty>
+                  </>
+                ) : (
+                  <>
+                    {data?.requestReason}{' '}
+                    {hasTruncatedRequestReason && (
+                      <EuiButtonEmpty
+                        size="s"
+                        onClick={handleCloseFullText}
+                        style={{ paddingLeft: 0, paddingBottom: '4px' }}>
+                        Show Less
+                      </EuiButtonEmpty>
+                    )}
+                  </>
+                )}
+              </EuiText>
+            </EuiFormRow>
+            <EuiSpacer size="xs" />
+            <EuiFormRow
+              label={
+                data?.rejectedReason ? (
+                  <EuiText size="s">
+                    <strong>Rejection reason:</strong>
+                  </EuiText>
+                ) : null
+              }
+              fullWidth>
+              <EuiText size="m">
+                {hasTruncatedRejectedReason && !showFullText ? (
+                  <>
+                    <span style={{ color: 'var(--euiColorPrimary)' }}>
+                      {truncatedRejectedReason}
+                    </span>
+                    <EuiButtonEmpty
+                      size="xs"
+                      onClick={handleShowFullText}
+                      style={{ paddingLeft: 0, paddingBottom: '4px' }}>
+                      ...Show More
+                    </EuiButtonEmpty>
+                  </>
+                ) : (
+                  <>
+                    {data?.rejectedReason}{' '}
+                    {hasTruncatedRejectedReason && (
+                      <EuiButtonEmpty
+                        size="s"
+                        onClick={handleCloseFullText}
+                        style={{ paddingLeft: 0, paddingBottom: '4px' }}>
+                        Show Less
+                      </EuiButtonEmpty>
+                    )}
+                  </>
+                )}
+              </EuiText>
+            </EuiFormRow>
           </EuiFlexItem>
           <EuiFlexItem grow={1}>
             <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
               <EuiFlexItem grow={false}>
-                {['PROCESSING', 'PENDING'].includes(data.status) && (
+                {['PROCESSING', 'PENDING', 'PENDING_APPROVAL'].includes(
+                  data.status
+                ) && (
                   <>
                     <EuiText size="s">
                       <strong>Requested by:</strong>{' '}
@@ -119,17 +219,25 @@ const SheetCard: FunctionComponent<Props> = ({ data, sheetGenMutate }) => {
                 <EuiSpacer />
                 <EuiFlexGroup alignItems="center">
                   {data.status !== 'DONE' && (
-                    <EuiText style={{ width: '200px' }}>
-                      <strong>Status:</strong>{' '}
-                      <EuiBadge>{data?.status}</EuiBadge>
+                    <EuiText style={{ width: '200px' }} size="s">
+                      <strong>Status: </strong>
+                      <EuiBadge
+                        color={
+                          data?.status === 'REJECTED'
+                            ? 'warning'
+                            : data?.status === 'PENDING_APPROVAL'
+                            ? 'primary'
+                            : 'default'
+                        }>
+                        {statusText}
+                      </EuiBadge>
                     </EuiText>
                   )}
                   {data.status === 'DONE' && data.files.length === 1 && (
                     <>
                       <EuiButton
                         style={{ width: '200px' }}
-                        href={data.files[0]}
-                        target="_blank">
+                        onClick={() => fetchAndDownload(data.files[0].key)}>
                         Download
                       </EuiButton>
                     </>

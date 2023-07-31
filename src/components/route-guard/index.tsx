@@ -62,6 +62,10 @@ const RouteGuard = (props: {
         enabled = hasFeature('sheet-gen-module');
       }
 
+      if (router.asPath.includes('/sheet-gen-approval')) {
+        enabled = hasFeature('sheet-gen-approvals');
+      }
+
       if (router.asPath.includes('/comms')) {
         enabled = hasFeature('bulk-comms-module');
       }
