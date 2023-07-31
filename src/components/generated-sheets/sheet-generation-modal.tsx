@@ -7,17 +7,19 @@ import {
   EuiButton,
   EuiButtonEmpty,
   EuiCallOut,
+  EuiFormRow,
   EuiLoadingChart,
   EuiModalFooter,
   EuiSpacer,
   EuiText,
+  EuiTextArea,
 } from '@elastic/eui';
 import { appsignal, redactObject } from '@lib/appsignal';
 import { Campaign, Structure } from '@lib/domain/person';
 import { SheetGeneration } from '@lib/domain/sheet-generation';
 import useCampaignSheetGenFetcher from '@lib/fetcher/campaign-sheetgen/campaign';
 import { useSession } from 'next-auth/react';
-import { FunctionComponent, useState } from 'react';
+import { ChangeEventHandler, FunctionComponent, useState } from 'react';
 import { KeyedMutator } from 'swr';
 
 export type Props = {
@@ -37,6 +39,13 @@ const SheetGenerationModal: FunctionComponent<Props> = ({
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign>();
   const [selectedSort, setSelectedSort] = useState<SortingType>();
   const [isLoading, setIsLoading] = useState(false);
+  const [sheetGenReason, setSheetGenReason] = useState('');
+
+  const handleSheetGenReasonChange: ChangeEventHandler<
+    HTMLTextAreaElement
+  > = e => {
+    setSheetGenReason(e.target.value);
+  };
 
   const {
     campaignType,
@@ -45,6 +54,9 @@ const SheetGenerationModal: FunctionComponent<Props> = ({
   } = useCampaignSheetGenFetcher();
 
   const handleSubmit = async () => {
+    if (isLoading) {
+      return;
+    }
     setIsLoading(true);
 
     const url = `${process.env.NEXT_PUBLIC_API_BASE}/activity/extract/sheetgen`;
@@ -60,6 +72,7 @@ const SheetGenerationModal: FunctionComponent<Props> = ({
       ],
       campaign: selectedCampaign.key,
       sortOrder: selectedSort.id,
+      requestReason: sheetGenReason,
     };
     const response = await fetch(url, {
       headers: {
@@ -69,9 +82,6 @@ const SheetGenerationModal: FunctionComponent<Props> = ({
       method: 'POST',
       body: JSON.stringify(reqPayload),
     });
-
-    setIsLoading(false);
-
     if (!response.ok) {
       const errJson = JSON.parse(await response.clone().text());
       appsignal.sendError(
@@ -97,11 +107,16 @@ const SheetGenerationModal: FunctionComponent<Props> = ({
     setSelectedCampaign(null);
     setSelectedStructure(null);
     setSelectedSort(null);
-
     onClose();
+    setIsLoading(false);
   };
 
-  const isDisabled = !(selectedCampaign && selectedStructure && selectedSort);
+  const isDisabled = !(
+    selectedCampaign &&
+    selectedStructure &&
+    selectedSort &&
+    sheetGenReason
+  );
 
   if (campaignTypeLoading) {
     return (
@@ -127,7 +142,7 @@ const SheetGenerationModal: FunctionComponent<Props> = ({
       <EuiSpacer size="s" />
       <Structres
         showSelected={true}
-        onSelect={option => setSelectedStructure(option.value)}
+        onSelect={option => setSelectedStructure(option?.value)}
       />
       <EuiSpacer size="m" />
       <EuiText size="xs">
@@ -152,9 +167,28 @@ const SheetGenerationModal: FunctionComponent<Props> = ({
         }}
       />
       <EuiSpacer />
+
+      <EuiFormRow
+        label={
+          <EuiText size="xs">
+            <h3>Please explain briefly how you plan to use these sheets:</h3>
+          </EuiText>
+        }
+        display="rowCompressed">
+        <EuiTextArea
+          value={sheetGenReason || ''}
+          onChange={handleSheetGenReasonChange}
+          maxLength={1000}
+        />
+      </EuiFormRow>
+
+      <EuiSpacer />
       <EuiModalFooter>
         <EuiButtonEmpty onClick={onClose}>Cancel</EuiButtonEmpty>
-        <EuiButton onClick={handleSubmit} fill disabled={isDisabled}>
+        <EuiButton
+          onClick={handleSubmit}
+          fill
+          disabled={isDisabled || isLoading}>
           Request
         </EuiButton>
       </EuiModalFooter>

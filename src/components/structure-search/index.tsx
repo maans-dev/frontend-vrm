@@ -6,6 +6,7 @@ import {
   EuiButtonIcon,
   EuiComboBox,
   EuiComboBoxOptionOption,
+  EuiContext,
   EuiFlexGroup,
   EuiFlexItem,
   EuiIconTip,
@@ -121,50 +122,57 @@ const Structres: FunctionComponent<Props> = ({
 
   return (
     <>
-      <EuiComboBox
-        // compressed
-        fullWidth
-        async
-        isLoading={searchValue && isLoading}
-        noSuggestions={!searchValue}
-        aria-label="Start typing to search for a structure"
-        placeholder="Start typing to search for a structure"
-        singleSelection={{ asPlainText: true }}
-        // selectedOptions={selected ? [selected] : []}
-        options={searchValue ? options : []}
-        onChange={options => {
-          setSelected(options[0]);
-          onSelect(options[0]);
-        }}
-        rowHeight={50}
-        onSearchChange={handleSearchChange}
-        renderOption={renderOption}
-        isClearable={true}
-        append={
-          <EuiIconTip
-            css={{
-              width: '800px',
-            }}
-            color="primary"
-            title="Search for a structure by it's name or code:"
-            content={
-              <EuiText size="s">
-                <ul>
-                  <li>
-                    Ward: <strong>TSHWANE Ward 92</strong>
-                  </li>
-                  <li>
-                    VD: <strong>ARCADIA PRIMARY SCHOOL</strong>
-                  </li>
-                  <li>
-                    Code: <strong>97090252</strong>
-                  </li>
-                </ul>
-              </EuiText>
-            }
-          />
-        }
-      />
+      <EuiContext
+        i18n={{
+          mapping: {
+            'euiComboBoxOptionsList.noMatchingOptions': `${searchValue} doesn't match any options you have access to`,
+          },
+        }}>
+        <EuiComboBox
+          // compressed
+          fullWidth
+          async
+          isLoading={searchValue && isLoading}
+          noSuggestions={!searchValue}
+          aria-label="Start typing to search for a structure"
+          placeholder="Start typing to search for a structure"
+          singleSelection={{ asPlainText: true }}
+          // selectedOptions={selected ? [selected] : []}
+          options={searchValue ? options : []}
+          onChange={options => {
+            setSelected(options[0]);
+            onSelect(options[0]);
+          }}
+          rowHeight={50}
+          onSearchChange={handleSearchChange}
+          renderOption={renderOption}
+          isClearable={true}
+          append={
+            <EuiIconTip
+              css={{
+                width: '800px',
+              }}
+              color="primary"
+              title="Search for a structure by it's name or code:"
+              content={
+                <EuiText size="s">
+                  <ul>
+                    <li>
+                      Ward: <strong>TSHWANE Ward 92</strong>
+                    </li>
+                    <li>
+                      VD: <strong>ARCADIA PRIMARY SCHOOL</strong>
+                    </li>
+                    <li>
+                      Code: <strong>97090252</strong>
+                    </li>
+                  </ul>
+                </EuiText>
+              }
+            />
+          }
+        />
+      </EuiContext>
       {selected && showSelected && (
         <>
           <EuiSpacer size="xs" />

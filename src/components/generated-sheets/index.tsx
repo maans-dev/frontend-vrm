@@ -13,7 +13,12 @@ const GeneratedSheets: FunctionComponent<Props> = ({
   sheetGenMutate,
 }) => {
   return (
-    <SheetPanel sheetPanelData={sheetGenData} sheetGenMutate={sheetGenMutate} />
+    <>
+      <SheetPanel
+        sheetPanelData={sheetGenData}
+        sheetGenMutate={sheetGenMutate}
+      />
+    </>
   );
 };
 

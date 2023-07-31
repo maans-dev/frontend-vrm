@@ -7,7 +7,7 @@ export default function useStructureFetcher(searchTerm: string) {
   if (searchTerm) {
     query.set('name', searchTerm);
   }
-  const endpoint = `/structures/search?${query.toString()}`;
+  const endpoint = `/structures/search?${query.toString()}&limitAction=sheetGen`;
   const { data, error, isLoading } = useSWR<Structure[]>(
     searchTerm && searchTerm.length > 2 ? endpoint : null,
     fetcherAPI

@@ -3,11 +3,20 @@ export interface SheetGeneration {
   name: string;
   structures: Structure[];
   campaign: Campaign;
-  files: string[];
+  files: SheetGenFile[];
   status: string;
+  metaData: any;
   active: boolean;
   createdBy: CreatedBy;
   modifiedBy: ModifiedBy;
+  requestReason: string;
+  rejectedReason: string;
+  results_number: number | string;
+}
+
+export interface SheetGenFile {
+  key: string;
+  name_text: string;
 }
 
 interface Structure {

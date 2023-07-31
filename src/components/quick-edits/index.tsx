@@ -215,7 +215,6 @@ const QuickEdits: FunctionComponent<Props> = ({
         f => f?.field?.key === movedTag[0].key
       );
       if (!tagUpdateKey?.[0]?.field?.key) return;
-      console.log({ tagUpdateKey }, data.fields);
       const tagUpdate = {
         key: tagUpdateKey?.[0]?.key,
       } as Partial<Field>;

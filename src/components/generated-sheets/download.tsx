@@ -1,20 +1,23 @@
 import { EuiPopover, EuiButton, EuiListGroup } from '@elastic/eui';
 import { FunctionComponent, useState } from 'react';
 import { BsFilePdf } from 'react-icons/bs';
+import { fetchAndDownload } from './do-download';
+import type { SheetGenFile } from '@lib/domain/sheet-generation';
 
 export type Props = {
-  files: string[];
+  files: SheetGenFile[];
 };
 
 const Download: FunctionComponent<Props> = ({ files }) => {
   const filesListItems = files
     .map(file => ({
-      label: file.split('/').pop().split('#')[0].split('?')[0],
-      href: file,
-      target: 'blank',
+      label: file.name_text,
       iconType: BsFilePdf,
       showToolTip: false,
       toolTipText: '',
+      onClick: () => {
+        fetchAndDownload(file.key);
+      },
     }))
     .flat();
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);

@@ -27,7 +27,10 @@ export default withAuth(
       authorized = hasRole(Roles.Membership, token?.roles as string[]);
     }
 
-    if (req.nextUrl.pathname.includes('/sheets')) {
+    if (
+      req.nextUrl.pathname.includes('/sheets') ||
+      req.nextUrl.pathname.includes('/sheet-gen-approval')
+    ) {
       authorized = hasRole(Roles.SheetGen, token?.roles as string[]);
     }
 
