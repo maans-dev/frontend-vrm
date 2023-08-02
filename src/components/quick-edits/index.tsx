@@ -198,7 +198,7 @@ const QuickEdits: FunctionComponent<Props> = ({
     setMovedField(movedTag);
     if (!isMovedInternalExist) {
       const updatedMovedInternal = data?.fields?.filter(
-        f => f.field?.key === movedTag[0].key
+        f => f.field?.key === movedTag?.[0].key
       );
       setMovedInternal(updatedMovedInternal);
       setIsMovedInternalExist(
