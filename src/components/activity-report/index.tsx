@@ -34,18 +34,19 @@ const ActivityReportTable: FunctionComponent<Props> = ({ report }) => {
       name: isMobile ? 'YTD' : 'Year to Date',
     },
   ];
+  let items = [];
+  if (Array.isArray(reportItems)) {
+    items = reportItems.map(item => ({
+      id: item.person,
+      name: startCase(item.name),
+      prev7days: item.prev7days,
+      prev30days: item.prev30days,
+    }));
+  }
 
   useEffect(() => {
     setReportItems(report);
   }, [report]);
-
-  const items = reportItems?.map(item => ({
-    id: item.person,
-    name: startCase(item.name),
-    prev7days: item.prev7days,
-    prev30days: item.prev30days,
-    ytd: item.ytd,
-  }));
 
   return (
     <>

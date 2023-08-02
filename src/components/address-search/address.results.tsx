@@ -113,7 +113,7 @@ const AddressResults = ({ address, onSelect, isLoading }: Props) => {
             span.setParams({
               route: url,
               address: selectedAddress,
-              user: session.user.darn,
+              user: session?.user?.darn,
             });
             span.setTags({ user_darn: session?.user?.darn?.toString() });
           }
@@ -157,7 +157,9 @@ const AddressResults = ({ address, onSelect, isLoading }: Props) => {
       selectedAddress.value.geocodeSource =
         GeocodedAddressSource.GEOCODED_ADDRESS;
     } else {
-      selectedAddress.value.geocodeSource = GeocodedAddressSource.UNGEOCODED;
+      if (selectedAddress.value.geocodeSource) {
+        selectedAddress.value.geocodeSource = GeocodedAddressSource.UNGEOCODED;
+      }
     }
 
     if (selectedAddress?.value?.service?.type === 'VOTING_DISTRICT') {
