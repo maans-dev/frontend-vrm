@@ -1,6 +1,13 @@
 import { appsignal } from '@lib/appsignal';
 import { initialize } from 'unleash-client';
 
+export interface Strategy {
+  name: string;
+  parameters?: {
+    userIds?: string;
+  };
+}
+
 export const unleashClient = initialize({
   url: process.env.FEATURE_FLAGS_URL,
   appName: process.env.NEXT_PUBLIC_ENVIRONMENT,

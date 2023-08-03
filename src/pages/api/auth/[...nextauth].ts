@@ -5,7 +5,7 @@ import { fetchAndExtractRoles } from '@lib/auth/utils';
 import { OAuthConfig } from 'next-auth/providers';
 import { appsignal } from '@lib/appsignal';
 import moment from 'moment';
-import { unleashClient } from '@lib/feature-toggles/unleash';
+import { Strategy, unleashClient } from '@lib/feature-toggles/unleash';
 
 /**
  * Takes a token, and returns a new token with updated
@@ -133,10 +133,54 @@ export const authOptions: NextAuthOptions = {
         } catch (e) {
           throw e;
         }
-        // get feature toggles
+        // get feature toggles definitions
         const toggles = unleashClient.getFeatureToggleDefinitions();
+        // check if user id has permission fo feature
+        const isUserEnabledForFeature = (
+          feature: {
+            name: string;
+            description?: string;
+            enabled: boolean;
+            strategies?: Strategy[];
+          },
+          sessionUserDarn: string
+        ) => {
+          const strategyWithUserId = feature?.strategies?.find(
+            strategy => strategy?.name === 'userWithId'
+          );
+
+          // If the feature is not enabled, return false.
+          if (!feature.enabled) {
+            return false;
+          }
+
+          if (!strategyWithUserId) {
+            // If the feature doesn't have the 'userWithId' strategy,
+            // then check if it is simply enabled.
+            return true;
+          }
+
+          // Check if sessionUserDarn is defined and non-empty.
+          if (!sessionUserDarn) {
+            return false;
+          }
+
+          // Get the userIds parameter from the strategy and convert it to an array.
+          const userIds = strategyWithUserId.parameters?.userIds
+            ? strategyWithUserId.parameters.userIds
+                .split(',')
+                .map(userId => userId.trim())
+            : [];
+
+          // Check if the sessionUserDarn is in the array of userIds.
+          return userIds.includes(sessionUserDarn);
+        };
+
         session.features = toggles
-          .filter(item => item.enabled)
+          .filter(item =>
+            isUserEnabledForFeature(item, session?.user?.darn?.toString())
+          )
+          .filter(i => i.enabled)
           .map(item => {
             if (item.name === 'maintenance-mode') {
               session.maintenanceMessage = item.description;

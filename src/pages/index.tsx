@@ -19,7 +19,6 @@ const Index: FunctionComponent = () => {
   const router = useRouter();
   const { data: session, status } = useSession();
   const { trackPageClick } = useAnalytics();
-
   const hasRole = (role: string) => hasRoleUtil(role, session?.user?.roles);
   const hasFeature = (feature: string) => session?.features.includes(feature);
 
