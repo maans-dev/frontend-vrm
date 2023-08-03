@@ -50,6 +50,10 @@ export default withAuth(
       authorized = hasRole(Roles.ActivityReport, token?.roles as string[]);
     }
 
+    if (req.nextUrl.pathname.startsWith('/api/download')) {
+      authorized = (token.roles as string[])?.length > 0;
+    }
+
     if (!req.nextUrl.pathname.includes('403') && !authorized) {
       return NextResponse.rewrite(new URL('/403', req.url));
     }
