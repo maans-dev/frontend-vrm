@@ -18,7 +18,6 @@ import { useSession } from 'next-auth/react';
 import { appsignal } from '@lib/appsignal';
 import { renderName } from '@lib/person/utils';
 import { KeyedMutator } from 'swr';
-import { fetchAndDownload } from './do-download';
 
 export type Props = {
   data: SheetGeneration;
@@ -237,7 +236,8 @@ const SheetCard: FunctionComponent<Props> = ({ data, sheetGenMutate, key }) => {
                     <>
                       <EuiButton
                         style={{ width: '200px' }}
-                        onClick={() => fetchAndDownload(data.files[0].key)}>
+                        href={`/api/download/${data.files[0].key}`}
+                        target="_blank">
                         Download
                       </EuiButton>
                     </>
