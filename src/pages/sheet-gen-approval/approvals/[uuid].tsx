@@ -30,6 +30,7 @@ const SheetApproval: FunctionComponent = () => {
     sheetData,
     isLoading: sheetFetchIsLoading,
     error: sheetFetchError,
+    mutate: sheetGenMutate,
   } = useSheetFetcher();
   const router = useRouter();
   const { data: session } = useSession();
@@ -149,6 +150,7 @@ const SheetApproval: FunctionComponent = () => {
                   <SheetPageApproveCard
                     key={item.key}
                     data={item}
+                    sheetGenMutate={sheetGenMutate}
                     approvalStatus={approvalStatus}
                     activityUUID={uuid}
                   />
@@ -175,6 +177,7 @@ const SheetApproval: FunctionComponent = () => {
                   <SheetPageApproveCard
                     key={item.key}
                     data={item}
+                    sheetGenMutate={sheetGenMutate}
                     approvalStatus={approvalStatus}
                     activityUUID={uuid}
                   />

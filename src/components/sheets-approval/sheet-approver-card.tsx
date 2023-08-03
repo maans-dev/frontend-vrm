@@ -17,15 +17,18 @@ import router from 'next/router';
 import { renderName } from '@lib/person/utils';
 import { appsignal } from '@lib/appsignal';
 import moment from 'moment';
+import { KeyedMutator } from 'swr';
 
 export type Props = {
   activityUUID: string | string[];
   data: SheetGeneration;
+  sheetGenMutate: KeyedMutator<SheetGeneration[]>;
   approvalStatus: string | string[];
 };
 
 const SheetPageApproveCard: FunctionComponent<Props> = ({
   data,
+  sheetGenMutate,
   activityUUID,
   approvalStatus,
 }) => {
@@ -73,6 +76,7 @@ const SheetPageApproveCard: FunctionComponent<Props> = ({
     });
 
     setIsLoading(false);
+    await sheetGenMutate();
 
     if (!response.ok) {
       return;
@@ -99,6 +103,7 @@ const SheetPageApproveCard: FunctionComponent<Props> = ({
     });
 
     setIsLoading(false);
+    await sheetGenMutate();
 
     if (!response.ok) {
       const errJson = JSON.parse(await response.clone().text());
