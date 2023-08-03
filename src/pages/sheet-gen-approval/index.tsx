@@ -1,5 +1,5 @@
 import { FunctionComponent, useEffect, useState } from 'react';
-import { EuiBreadcrumb, EuiCallOut, EuiEmptyPrompt } from '@elastic/eui';
+import { EuiBreadcrumb, EuiCallOut } from '@elastic/eui';
 import MainLayout from '@layouts/main';
 import router from 'next/router';
 import SheetApproval from '@components/sheets-approval';
@@ -26,7 +26,6 @@ const Index: FunctionComponent = () => {
     sheetData,
     error: sheetFetchError,
     isLoading: sheetFetchIsLoading,
-    isValidating,
   } = useSheetFetcher();
   const { data: session } = useSession();
   const [approvedSheets, setApprovedSheet] = useState([]);
@@ -103,7 +102,7 @@ const Index: FunctionComponent = () => {
     getRejectedSheets();
   }, []);
 
-  if (isLoading || sheetFetchIsLoading || isValidating) {
+  if (isLoading || sheetFetchIsLoading) {
     return (
       <>
         <Head>
@@ -111,7 +110,7 @@ const Index: FunctionComponent = () => {
         </Head>
         <MainLayout
           breadcrumb={breadcrumb}
-          showSpinner={isLoading || isValidating}
+          showSpinner={isLoading}
           panelled={false}
         />
       </>
