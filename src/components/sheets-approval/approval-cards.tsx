@@ -13,6 +13,7 @@ import {
 } from '@elastic/eui';
 import { renderName } from '@lib/person/utils';
 import router from 'next/router';
+import moment from 'moment';
 
 export type Props = {
   data: SheetGeneration;
@@ -21,12 +22,7 @@ export type Props = {
   rejected?: boolean;
 };
 
-const SheetApproverCard: FunctionComponent<Props> = ({
-  data,
-  key,
-  approved,
-  rejected,
-}) => {
+const SheetApproverCard: FunctionComponent<Props> = ({ data, key }) => {
   const [showFullText, setShowFullText] = useState(false);
   const [sheetData, setSheetData] = useState<SheetGeneration>(data);
 
@@ -38,14 +34,26 @@ const SheetApproverCard: FunctionComponent<Props> = ({
     setShowFullText(false);
   };
 
-  const maxTextLength = 100;
-  const truncatedText = sheetData?.requestReason?.slice(0, maxTextLength);
-  const hasTruncatedText = sheetData?.requestReason?.length > maxTextLength;
-  const hasTruncatedRejectedReason =
-    sheetData?.rejectedReason?.length > maxTextLength;
-  const truncatedRejectedReason = sheetData?.rejectedReason?.slice(
+  const maxTextLength = 50;
+  const repeatedCharactersRegex = /(.)\1{2,}/g;
+
+  const truncatedText = (sheetData?.requestReason || '').slice(
     0,
     maxTextLength
+  );
+  const hasTruncatedText =
+    (sheetData?.requestReason || '').replace(repeatedCharactersRegex, '')
+      .length > maxTextLength;
+
+  const hasTruncatedRejectedReason =
+    (sheetData?.rejectedReason || '').length > maxTextLength;
+  const truncatedRejectedReason = (sheetData?.rejectedReason || '')
+    .slice(0, maxTextLength)
+    .replace(repeatedCharactersRegex, '');
+
+  const displayRejectedReason = (sheetData?.rejectedReason || '').replace(
+    repeatedCharactersRegex,
+    ''
   );
 
   const handleSubmit = () => {
@@ -61,6 +69,15 @@ const SheetApproverCard: FunctionComponent<Props> = ({
     const url = `/sheet-gen-approval/approvals/${key}?status=${status}`;
     router.push(url);
   };
+
+  const approvedRejectedDate = moment(sheetData?.modifiedBy.date).format(
+    'DD MMM YYYY'
+  );
+  const approvedRejectedDaysAgo = moment(sheetData?.modifiedBy.date).fromNow(
+    true
+  );
+  const requestedDate = moment(sheetData?.createdBy.date).format('DD MMM YYYY');
+  const requestedDaysAgo = moment(sheetData?.createdBy.date).fromNow(true);
 
   useEffect(() => {
     if (data) {
@@ -78,7 +95,7 @@ const SheetApproverCard: FunctionComponent<Props> = ({
             </EuiText>
             <EuiSpacer size="s" />
             <>
-              <EuiText size="s">{sheetData.structures[0]?.formatted}</EuiText>
+              <EuiText size="s">{sheetData?.structures[0]?.formatted}</EuiText>
             </>
             <EuiSpacer size="s" />
             <EuiFormRow
@@ -103,7 +120,12 @@ const SheetApproverCard: FunctionComponent<Props> = ({
                   </>
                 ) : (
                   <>
-                    {sheetData?.requestReason}{' '}
+                    <EuiText size="s">
+                      {sheetData?.requestReason?.replace(
+                        repeatedCharactersRegex,
+                        (match, group1) => group1.repeat(3)
+                      )}{' '}
+                    </EuiText>
                     {hasTruncatedText && (
                       <EuiButtonEmpty
                         size="s"
@@ -140,7 +162,7 @@ const SheetApproverCard: FunctionComponent<Props> = ({
                   </>
                 ) : (
                   <>
-                    {sheetData?.rejectedReason}{' '}
+                    <EuiText size="s">{displayRejectedReason} </EuiText>
                     {hasTruncatedRejectedReason && (
                       <EuiButtonEmpty
                         size="s"
@@ -153,71 +175,88 @@ const SheetApproverCard: FunctionComponent<Props> = ({
                 )}
               </EuiText>
             </EuiFormRow>
+            <EuiSpacer size="s" />
+            <EuiText size="s">
+              <strong>Requested by:</strong> {renderName(sheetData?.createdBy)}{' '}
+              on {requestedDate} ({requestedDaysAgo} ago)
+            </EuiText>
+
+            <EuiFlexItem grow={false}>
+              <>
+                <EuiSpacer size="xs" />
+                {!(sheetData?.status === 'PENDING_APPROVAL') && (
+                  <EuiText size="s">
+                    <strong>
+                      {sheetData?.status === 'DONE'
+                        ? 'Approved by:'
+                        : sheetData?.status === 'REJECTED'
+                        ? 'Rejected by:'
+                        : null}
+                    </strong>{' '}
+                    {renderName(sheetData?.modifiedBy)} on{' '}
+                    {approvedRejectedDate} ({approvedRejectedDaysAgo} ago)
+                  </EuiText>
+                )}
+              </>
+            </EuiFlexItem>
           </EuiFlexItem>
 
           <EuiFlexItem grow={1}>
-            <EuiFlexItem grow={false}>
-              <>
+            <EuiFlexGroup
+              direction="column"
+              alignItems="center"
+              justifyContent="center">
+              <EuiText size="s">
+                <strong>Voters requested:</strong>{' '}
+                {sheetData?.results_number
+                  ? sheetData?.results_number
+                  : 'Unknown'}
+              </EuiText>
+              <EuiSpacer size="xs" />
+              {!(sheetData?.status === 'PENDING_APPROVAL') ? (
                 <EuiText size="s">
-                  <strong>Requested by:</strong>{' '}
-                  {renderName(sheetData?.createdBy)}
+                  <strong>Status: </strong>
+                  <EuiBadge
+                    color={
+                      sheetData?.status === 'REJECTED'
+                        ? 'warning'
+                        : sheetData?.status === 'DONE'
+                        ? 'primary'
+                        : 'default'
+                    }>
+                    {sheetData?.status}
+                  </EuiBadge>
                 </EuiText>
-                <EuiSpacer size="xs" />
-                <EuiText size="s" style={{ marginBottom: '-15px' }}>
-                  <strong>Voters requested:</strong>{' '}
-                  {sheetData?.results_number
-                    ? sheetData?.results_number
-                    : 'Unknown'}
-                </EuiText>
-              </>
-              <EuiSpacer />
-            </EuiFlexItem>
-            <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
-              {approved || rejected ? (
-                <>
-                  {
-                    <EuiText style={{ width: '200px' }} size="s">
-                      <strong>Status: </strong>
-                      <EuiBadge
-                        color={
-                          sheetData?.status === 'REJECTED'
-                            ? 'warning'
-                            : sheetData?.status === 'DONE'
-                            ? 'primary'
-                            : 'default'
-                        }>
-                        {sheetData?.status}
-                      </EuiBadge>
-                    </EuiText>
-                  }
-                </>
-              ) : (
-                <>
-                  <EuiFlexItem grow={false}>
-                    <EuiButton
-                      iconType="check"
-                      size="s"
-                      color="primary"
-                      onClick={handleSubmit}
-                      aria-label="Approve"
-                      fill>
-                      Approve
-                    </EuiButton>
-                  </EuiFlexItem>
-                  <EuiFlexItem grow={false}>
-                    <EuiButton
-                      iconType="cross"
-                      size="s"
-                      aria-label="Reject"
-                      onClick={handleReject}>
-                      Reject
-                    </EuiButton>
-                  </EuiFlexItem>
-                </>
-              )}
+              ) : null}
             </EuiFlexGroup>
           </EuiFlexItem>
         </EuiFlexGroup>
+        {sheetData?.status === 'PENDING_APPROVAL' ? (
+          <>
+            <EuiFlexGroup gutterSize="m" justifyContent="flexEnd">
+              <EuiFlexItem grow={false}>
+                <EuiButton
+                  iconType="check"
+                  size="s"
+                  color="primary"
+                  onClick={handleSubmit}
+                  aria-label="Approve"
+                  fill>
+                  Approve
+                </EuiButton>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiButton
+                  iconType="cross"
+                  size="s"
+                  aria-label="Reject"
+                  onClick={handleReject}>
+                  Reject
+                </EuiButton>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          </>
+        ) : null}
       </EuiPanel>
       <EuiSpacer />
     </>

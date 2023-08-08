@@ -45,7 +45,7 @@ const SheetPageApproveCard: FunctionComponent<Props> = ({
     setShowFullText(false);
   };
 
-  const maxTextLength = 100;
+  const maxTextLength = 50;
   const truncatedText = data?.requestReason.slice(0, maxTextLength);
   const hasTruncatedText = data?.requestReason.length > maxTextLength;
   const hasTruncatedRejectedReason =
@@ -124,6 +124,8 @@ const SheetPageApproveCard: FunctionComponent<Props> = ({
 
   const formattedDate = moment(data?.modifiedBy.date).format('DD MMM YYYY');
   const daysAgo = moment(data?.modifiedBy.date).fromNow(true);
+  const createdByDate = moment(data?.createdBy.date).format('DD MMM YYYY');
+  const createdByDaysAgo = moment(data?.createdBy.date).fromNow(true);
 
   return (
     <>
@@ -133,7 +135,8 @@ const SheetPageApproveCard: FunctionComponent<Props> = ({
           <EuiSplitPanel.Inner grow={false} color="warning" paddingSize="m">
             <EuiText>
               <p>
-                This request has already been approved by{' '}
+                This request has already been{' '}
+                {data?.status === 'DONE' ? 'approved' : 'rejected'} by{' '}
                 {data?.modifiedBy ? (
                   <>
                     <strong>{`${renderName(data?.modifiedBy)}`} </strong>
@@ -163,6 +166,11 @@ const SheetPageApproveCard: FunctionComponent<Props> = ({
                     : 'Unknown'}
                 </EuiText>
               </>
+              <EuiSpacer size="m" />
+              <EuiText size="s">
+                <strong>Requested by:</strong> {renderName(data?.createdBy)} on{' '}
+                {createdByDate} ({createdByDaysAgo} ago)
+              </EuiText>
               <EuiSpacer size="s" />
               <EuiFormRow
                 label={
@@ -186,7 +194,7 @@ const SheetPageApproveCard: FunctionComponent<Props> = ({
                     </>
                   ) : (
                     <>
-                      {data?.requestReason}{' '}
+                      <EuiText size="s">{data?.requestReason} </EuiText>
                       {hasTruncatedText && (
                         <EuiButtonEmpty
                           size="s"
@@ -199,6 +207,27 @@ const SheetPageApproveCard: FunctionComponent<Props> = ({
                   )}
                 </EuiText>
               </EuiFormRow>
+              <EuiSpacer size="m" />
+
+              <EuiFlexItem grow={false}>
+                <>
+                  <EuiSpacer size="xs" />
+                  {!(data?.status === 'PENDING_APPROVAL') && (
+                    <EuiText size="s">
+                      <strong>
+                        {data?.status === 'DONE'
+                          ? 'Approved by:'
+                          : data?.status === 'REJECTED'
+                          ? 'Rejected by:'
+                          : null}
+                      </strong>{' '}
+                      {renderName(data?.modifiedBy)} on {formattedDate} (
+                      {daysAgo} ago)
+                    </EuiText>
+                  )}
+                </>
+                <EuiSpacer size="s" />
+              </EuiFlexItem>
               {!(data?.status === 'DONE' || data?.status === 'REJECTED') &&
               approvalStatus === 'reject' ? (
                 <EuiFormRow
@@ -232,19 +261,22 @@ const SheetPageApproveCard: FunctionComponent<Props> = ({
                   <EuiText size="m">
                     {hasTruncatedRejectedReason && !showFullText ? (
                       <>
-                        <span style={{ color: 'var(--euiColorPrimary)' }}>
-                          {truncatedRejectedReason}
-                        </span>
-                        <EuiButtonEmpty
-                          size="xs"
-                          onClick={handleShowFullText}
-                          style={{ paddingLeft: 0, paddingBottom: '4px' }}>
-                          ...Show More
-                        </EuiButtonEmpty>
+                        <EuiFlexItem>
+                          <EuiText size="s">
+                            {' '}
+                            {truncatedRejectedReason}{' '}
+                          </EuiText>
+                          <EuiButtonEmpty
+                            size="xs"
+                            onClick={handleShowFullText}
+                            style={{ paddingLeft: 0, paddingBottom: '4px' }}>
+                            ...Show More
+                          </EuiButtonEmpty>
+                        </EuiFlexItem>
                       </>
                     ) : (
                       <>
-                        {data?.rejectedReason}{' '}
+                        <EuiText size="s"> {data?.rejectedReason}</EuiText>
                         {hasTruncatedRejectedReason && (
                           <EuiButtonEmpty
                             size="s"
@@ -261,80 +293,75 @@ const SheetPageApproveCard: FunctionComponent<Props> = ({
             </EuiFlexItem>
 
             <EuiFlexItem grow={1}>
-              <EuiFlexItem grow={false}>
-                <EuiFlexItem grow={false}>
-                  <>
-                    <EuiText size="s">
-                      <strong>Requested by:</strong>{' '}
-                      {renderName(data?.createdBy)}
-                    </EuiText>
-                    <EuiSpacer size="xs" />
-                    <EuiText size="s" style={{ marginBottom: '-15px' }}>
-                      <strong>Voters requested:</strong>{' '}
-                      {data?.results_number ? data?.results_number : 'Unknown'}
-                    </EuiText>
-                  </>
-                  <EuiSpacer />
-                </EuiFlexItem>
-              </EuiFlexItem>
-              {(activityUUID && approvalStatus && data?.status === 'DONE') ||
-              data?.status === 'REJECTED' ? (
-                <EuiText style={{ width: '200px' }} size="s">
-                  <strong>Status: </strong>
-                  <EuiBadge
-                    color={
-                      data?.status === 'REJECTED'
-                        ? 'warning'
-                        : data?.status === 'DONE'
-                        ? 'primary'
-                        : 'default'
-                    }>
-                    {data?.status}
-                  </EuiBadge>
-                </EuiText>
-              ) : null}
-
-              <EuiSpacer size="m" />
+              <EuiFlexItem grow={false}></EuiFlexItem>
               <EuiFlexGroup
+                direction="column"
                 alignItems="center"
-                justifyContent="flexEnd"></EuiFlexGroup>
-              <EuiFlexItem grow={false}>
-                {data?.status !== 'REJECTED' && approvalStatus === 'reject' ? (
-                  <EuiButton
-                    iconType="cross"
-                    size="m"
-                    aria-label="Delete"
-                    color="primary"
-                    fill
-                    disabled={!rejectReason}
-                    isLoading={isLoading}
-                    onClick={handleReject}>
-                    Reject
-                  </EuiButton>
-                ) : data?.status !== 'DONE' && data?.status !== 'REJECTED' ? (
-                  <EuiButton
-                    iconType="check"
-                    size="m"
-                    color="primary"
-                    onClick={handleApprove}
-                    aria-label="Approve"
-                    isLoading={isLoading}
-                    fill>
-                    Approve
-                  </EuiButton>
-                ) : (
-                  <EuiButton
-                    iconType="arrowLeft"
-                    size="m"
-                    color="primary"
-                    onClick={() => router.push('/sheet-gen-approval')}
-                    isLoading={isLoading}
-                    fill>
-                    Return to Sheet Generation Approvals
-                  </EuiButton>
-                )}
-              </EuiFlexItem>
+                justifyContent="center">
+                <EuiText size="s">
+                  <strong>Voters requested:</strong>{' '}
+                  {data?.results_number ? data?.results_number : 'Unknown'}
+                </EuiText>
+                {(activityUUID && approvalStatus && data?.status === 'DONE') ||
+                data?.status === 'REJECTED' ? (
+                  <EuiText size="s">
+                    <strong>Status: </strong>
+                    <EuiBadge
+                      color={
+                        data?.status === 'REJECTED'
+                          ? 'warning'
+                          : data?.status === 'DONE'
+                          ? 'primary'
+                          : 'default'
+                      }>
+                      {data?.status}
+                    </EuiBadge>
+                  </EuiText>
+                ) : null}
+              </EuiFlexGroup>
             </EuiFlexItem>
+          </EuiFlexGroup>
+          <EuiFlexGroup style={{ marginTop: '-25px' }} justifyContent="flexEnd">
+            {data?.status !== 'REJECTED' && approvalStatus === 'reject' ? (
+              <EuiButton
+                iconType="cross"
+                size="m"
+                style={{ width: '170px' }}
+                aria-label="Delete"
+                color="primary"
+                fill
+                disabled={!rejectReason}
+                isLoading={isLoading}
+                onClick={handleReject}>
+                Reject
+              </EuiButton>
+            ) : data?.status !== 'DONE' && data?.status !== 'REJECTED' ? (
+              <>
+                <EuiSpacer />
+                <EuiButton
+                  iconType="check"
+                  size="m"
+                  style={{ width: '170px' }}
+                  color="primary"
+                  onClick={handleApprove}
+                  aria-label="Approve"
+                  isLoading={isLoading}
+                  fill>
+                  Approve
+                </EuiButton>
+              </>
+            ) : (
+              <EuiButton
+                iconType="arrowLeft"
+                size="m"
+                style={{ width: '290px' }}
+                color="primary"
+                onClick={() => router.push('/sheet-gen-approval')}
+                isLoading={isLoading}
+                fill>
+                Return to Sheet Generation Approvals
+              </EuiButton>
+            )}
           </EuiFlexGroup>
         </EuiSplitPanel.Inner>
       </EuiSplitPanel.Outer>
