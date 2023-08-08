@@ -38,7 +38,13 @@ const SheetCard: FunctionComponent<Props> = ({ data, sheetGenMutate, key }) => {
     setShowFullText(false);
   };
 
-  const maxTextLength = 100;
+  const maxTextLength = 50;
+  const repeatedCharactersRegex = /(.)\1{2,}/g;
+
+  const displayRejectedReason = (data?.rejectedReason || '').replace(
+    repeatedCharactersRegex,
+    ''
+  );
   const truncatedRejectedReason = data?.rejectedReason?.slice(0, maxTextLength);
   const truncatedRequestReason = data?.requestReason?.slice(0, maxTextLength);
   const hasTruncatedRejectedReason =
@@ -134,7 +140,10 @@ const SheetCard: FunctionComponent<Props> = ({ data, sheetGenMutate, key }) => {
                   </>
                 ) : (
                   <>
-                    {data?.requestReason}{' '}
+                    {data?.requestReason?.replace(
+                      repeatedCharactersRegex,
+                      (match, group1) => group1.repeat(3)
+                    )}{' '}
                     {hasTruncatedRequestReason && (
                       <EuiButtonEmpty
                         size="s"
@@ -171,8 +180,8 @@ const SheetCard: FunctionComponent<Props> = ({ data, sheetGenMutate, key }) => {
                     </EuiButtonEmpty>
                   </>
                 ) : (
-                  <>
-                    {data?.rejectedReason}{' '}
+                  <EuiFlexItem>
+                    <EuiText size="s"> {displayRejectedReason}</EuiText>
                     {hasTruncatedRejectedReason && (
                       <EuiButtonEmpty
                         size="s"
@@ -181,7 +190,7 @@ const SheetCard: FunctionComponent<Props> = ({ data, sheetGenMutate, key }) => {
                         Show Less
                       </EuiButtonEmpty>
                     )}
-                  </>
+                  </EuiFlexItem>
                 )}
               </EuiText>
             </EuiFormRow>
