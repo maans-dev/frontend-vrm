@@ -34,26 +34,14 @@ const SheetApproverCard: FunctionComponent<Props> = ({ data, key }) => {
     setShowFullText(false);
   };
 
-  const maxTextLength = 50;
-  const repeatedCharactersRegex = /(.)\1{2,}/g;
-
-  const truncatedText = (sheetData?.requestReason || '').slice(
+  const maxTextLength = 100;
+  const truncatedText = sheetData?.requestReason?.slice(0, maxTextLength);
+  const hasTruncatedText = sheetData?.requestReason?.length > maxTextLength;
+  const hasTruncatedRejectedReason =
+    sheetData?.rejectedReason?.length > maxTextLength;
+  const truncatedRejectedReason = sheetData?.rejectedReason?.slice(
     0,
     maxTextLength
-  );
-  const hasTruncatedText =
-    (sheetData?.requestReason || '').replace(repeatedCharactersRegex, '')
-      .length > maxTextLength;
-
-  const hasTruncatedRejectedReason =
-    (sheetData?.rejectedReason || '').length > maxTextLength;
-  const truncatedRejectedReason = (sheetData?.rejectedReason || '')
-    .slice(0, maxTextLength)
-    .replace(repeatedCharactersRegex, '');
-
-  const displayRejectedReason = (sheetData?.rejectedReason || '').replace(
-    repeatedCharactersRegex,
-    ''
   );
 
   const handleSubmit = () => {
@@ -88,7 +76,7 @@ const SheetApproverCard: FunctionComponent<Props> = ({ data, key }) => {
   return (
     <>
       <EuiPanel key={key}>
-        <EuiFlexGroup justifyContent="spaceBetween">
+        <EuiFlexGroup justifyContent="spaceBetween" alignItems="flexStart">
           <EuiFlexItem grow={2}>
             <EuiText size="m">
               <strong>{sheetData?.name}</strong>
@@ -108,11 +96,19 @@ const SheetApproverCard: FunctionComponent<Props> = ({ data, key }) => {
               <EuiText size="m">
                 {hasTruncatedText && !showFullText ? (
                   <>
-                    <span style={{ color: 'var(--euiColorPrimary)' }}>
+                    <div
+                      style={{
+                        minWidth: '1%',
+                        overflowWrap: 'anywhere',
+                        wordBreak: 'break-word',
+                        color: 'var(--euiColorPrimary)',
+                      }}>
                       {truncatedText}...
-                    </span>
+                    </div>
+
                     <EuiButtonEmpty
                       size="xs"
+                      flush="left"
                       onClick={handleShowFullText}
                       style={{ paddingLeft: 0, paddingBottom: '4px' }}>
                       Show More
@@ -120,16 +116,20 @@ const SheetApproverCard: FunctionComponent<Props> = ({ data, key }) => {
                   </>
                 ) : (
                   <>
-                    <EuiText size="s">
-                      {sheetData?.requestReason?.replace(
-                        repeatedCharactersRegex,
-                        (match, group1) => group1.repeat(3)
-                      )}{' '}
-                    </EuiText>
+                    <div
+                      style={{
+                        minWidth: '1%',
+                        overflowWrap: 'anywhere',
+                        wordBreak: 'break-word',
+                      }}>
+                      {sheetData?.requestReason}
+                    </div>
+
                     {hasTruncatedText && (
                       <EuiButtonEmpty
-                        size="s"
+                        size="xs"
                         onClick={handleCloseFullText}
+                        flush="left"
                         style={{ paddingLeft: 0, paddingBottom: '4px' }}>
                         Show Less
                       </EuiButtonEmpty>
@@ -150,22 +150,39 @@ const SheetApproverCard: FunctionComponent<Props> = ({ data, key }) => {
               <EuiText size="m">
                 {hasTruncatedRejectedReason && !showFullText ? (
                   <>
-                    <span style={{ color: 'var(--euiColorPrimary)' }}>
-                      {truncatedRejectedReason}
-                    </span>
+                    <div
+                      style={{
+                        minWidth: '1%',
+                        overflowWrap: 'anywhere',
+                        wordBreak: 'break-word',
+                        color: 'var(--euiColorPrimary)',
+                      }}>
+                      {truncatedRejectedReason}...
+                    </div>
+
                     <EuiButtonEmpty
                       size="xs"
+                      flush="left"
                       onClick={handleShowFullText}
                       style={{ paddingLeft: 0, paddingBottom: '4px' }}>
-                      ...Show More
+                      Show More
                     </EuiButtonEmpty>
                   </>
                 ) : (
                   <>
-                    <EuiText size="s">{displayRejectedReason} </EuiText>
+                    <div
+                      style={{
+                        minWidth: '1%',
+                        overflowWrap: 'anywhere',
+                        wordBreak: 'break-word',
+                        color: 'var(--euiColorPrimary)',
+                      }}>
+                      {data?.rejectedReason}
+                    </div>
                     {hasTruncatedRejectedReason && (
                       <EuiButtonEmpty
-                        size="s"
+                        size="xs"
+                        flush="left"
                         onClick={handleCloseFullText}
                         style={{ paddingLeft: 0, paddingBottom: '4px' }}>
                         Show Less
@@ -202,33 +219,28 @@ const SheetApproverCard: FunctionComponent<Props> = ({ data, key }) => {
           </EuiFlexItem>
 
           <EuiFlexItem grow={1}>
-            <EuiFlexGroup
-              direction="column"
-              alignItems="center"
-              justifyContent="center">
+            <EuiText size="s">
+              <strong>Voters requested:</strong>{' '}
+              {sheetData?.results_number
+                ? sheetData?.results_number
+                : 'Unknown'}
+            </EuiText>
+            <EuiSpacer size="xs" />
+            {!(sheetData?.status === 'PENDING_APPROVAL') ? (
               <EuiText size="s">
-                <strong>Voters requested:</strong>{' '}
-                {sheetData?.results_number
-                  ? sheetData?.results_number
-                  : 'Unknown'}
+                <strong>Status: </strong>
+                <EuiBadge
+                  color={
+                    sheetData?.status === 'REJECTED'
+                      ? 'warning'
+                      : sheetData?.status === 'DONE'
+                      ? 'primary'
+                      : 'default'
+                  }>
+                  {sheetData?.status}
+                </EuiBadge>
               </EuiText>
-              <EuiSpacer size="xs" />
-              {!(sheetData?.status === 'PENDING_APPROVAL') ? (
-                <EuiText size="s">
-                  <strong>Status: </strong>
-                  <EuiBadge
-                    color={
-                      sheetData?.status === 'REJECTED'
-                        ? 'warning'
-                        : sheetData?.status === 'DONE'
-                        ? 'primary'
-                        : 'default'
-                    }>
-                    {sheetData?.status}
-                  </EuiBadge>
-                </EuiText>
-              ) : null}
-            </EuiFlexGroup>
+            ) : null}
           </EuiFlexItem>
         </EuiFlexGroup>
         {sheetData?.status === 'PENDING_APPROVAL' ? (

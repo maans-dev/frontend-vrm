@@ -39,12 +39,6 @@ const SheetCard: FunctionComponent<Props> = ({ data, sheetGenMutate, key }) => {
   };
 
   const maxTextLength = 50;
-  const repeatedCharactersRegex = /(.)\1{2,}/g;
-
-  const displayRejectedReason = (data?.rejectedReason || '').replace(
-    repeatedCharactersRegex,
-    ''
-  );
   const truncatedRejectedReason = data?.rejectedReason?.slice(0, maxTextLength);
   const truncatedRequestReason = data?.requestReason?.slice(0, maxTextLength);
   const hasTruncatedRejectedReason =
@@ -102,7 +96,7 @@ const SheetCard: FunctionComponent<Props> = ({ data, sheetGenMutate, key }) => {
   return (
     <>
       <EuiPanel key={key}>
-        <EuiFlexGroup justifyContent="spaceBetween">
+        <EuiFlexGroup justifyContent="spaceBetween" alignItems="flexStart">
           <EuiFlexItem grow={2}>
             <EuiText size="m">
               <strong>{data.campaign.name}</strong>
@@ -128,25 +122,37 @@ const SheetCard: FunctionComponent<Props> = ({ data, sheetGenMutate, key }) => {
               <EuiText size="m">
                 {hasTruncatedRequestReason && !showFullText ? (
                   <>
-                    <span style={{ color: 'var(--euiColorPrimary)' }}>
-                      {truncatedRequestReason}
-                    </span>
+                    <div
+                      style={{
+                        minWidth: '1%',
+                        overflowWrap: 'anywhere',
+                        wordBreak: 'break-word',
+                        color: 'var(--euiColorPrimary)',
+                      }}>
+                      {truncatedRequestReason}...
+                    </div>
                     <EuiButtonEmpty
+                      flush="left"
                       size="xs"
                       onClick={handleShowFullText}
                       style={{ paddingLeft: 0, paddingBottom: '4px' }}>
-                      ...Show More
+                      Show More
                     </EuiButtonEmpty>
                   </>
                 ) : (
                   <>
-                    {data?.requestReason?.replace(
-                      repeatedCharactersRegex,
-                      (match, group1) => group1.repeat(3)
-                    )}{' '}
+                    <div
+                      style={{
+                        minWidth: '1%',
+                        overflowWrap: 'anywhere',
+                        wordBreak: 'break-word',
+                      }}>
+                      {data?.requestReason}{' '}
+                    </div>
                     {hasTruncatedRequestReason && (
                       <EuiButtonEmpty
-                        size="s"
+                        size="xs"
+                        flush="left"
                         onClick={handleCloseFullText}
                         style={{ paddingLeft: 0, paddingBottom: '4px' }}>
                         Show Less
@@ -169,28 +175,43 @@ const SheetCard: FunctionComponent<Props> = ({ data, sheetGenMutate, key }) => {
               <EuiText size="m">
                 {hasTruncatedRejectedReason && !showFullText ? (
                   <>
-                    <span style={{ color: 'var(--euiColorPrimary)' }}>
-                      {truncatedRejectedReason}
-                    </span>
+                    <div
+                      style={{
+                        minWidth: '1%',
+                        overflowWrap: 'anywhere',
+                        wordBreak: 'break-word',
+                      }}>
+                      {truncatedRejectedReason}...
+                    </div>
+
                     <EuiButtonEmpty
+                      flush="left"
                       size="xs"
                       onClick={handleShowFullText}
                       style={{ paddingLeft: 0, paddingBottom: '4px' }}>
-                      ...Show More
+                      Show More
                     </EuiButtonEmpty>
                   </>
                 ) : (
-                  <EuiFlexItem>
-                    <EuiText size="s"> {displayRejectedReason}</EuiText>
+                  <>
+                    <div
+                      style={{
+                        minWidth: '1%',
+                        overflowWrap: 'anywhere',
+                        wordBreak: 'break-word',
+                      }}>
+                      {data?.rejectedReason}{' '}
+                    </div>
                     {hasTruncatedRejectedReason && (
                       <EuiButtonEmpty
-                        size="s"
+                        size="xs"
+                        flush="left"
                         onClick={handleCloseFullText}
                         style={{ paddingLeft: 0, paddingBottom: '4px' }}>
                         Show Less
                       </EuiButtonEmpty>
                     )}
-                  </EuiFlexItem>
+                  </>
                 )}
               </EuiText>
             </EuiFormRow>
@@ -206,6 +227,7 @@ const SheetCard: FunctionComponent<Props> = ({ data, sheetGenMutate, key }) => {
                       <strong>Requested by:</strong>{' '}
                       {renderName(data?.createdBy)}
                     </EuiText>
+                    <EuiSpacer size="xs" />
                     <EuiText size="s" style={{ marginBottom: '-15px' }}>
                       <strong>Requested:</strong>{' '}
                       {formatDate(data?.createdBy?.date)}
