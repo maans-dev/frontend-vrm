@@ -9,6 +9,7 @@ export interface PersonHistoryResponse {
 export interface PersonEvent {
   key: string;
   activity: Activity;
+  archives: Archives[];
   person: MyActivityPerson;
   category: Category;
   type: CategoryClass;
@@ -23,6 +24,25 @@ export interface PersonEvent {
   createdBy: CreatedBy;
   modifiedBy: ModifiedBy;
   recruitedBy: RecruitedBy;
+}
+
+export interface Archives {
+  key: string;
+  current_json: { [key: string]: any };
+  type_key: string;
+  status_id: null | number;
+  person_key: number;
+  source_key: null | string;
+  event: string;
+  group_json: any[];
+  key_hash: string;
+  key_text: string;
+  modified_json: { [key: string]: any };
+  pgtxid: number;
+  previous_json: { [key: string]: any };
+  schema: string;
+  tableName: string | number;
+  transactionType: string;
 }
 
 export interface MyActivityPerson {

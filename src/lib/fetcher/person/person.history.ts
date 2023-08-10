@@ -12,10 +12,13 @@ export default function usePersonHistoryOrActivityFetcher(
 ) {
   const shouldFetch = key ? true : false;
 
-  const endpoint =
-    mode === 'history'
-      ? `/person/${key}/event/history?count=true&limit=${limit}&offset=${offset}&timePeriod={"from":"${startDate}","to":"${endDate}"}`
-      : `/person/${key}/event/activity?count=true&limit=${limit}&offset=${offset}&timePeriod={"from":"${startDate}","to":"${endDate}"}`;
+  let endpoint;
+
+  if (mode === 'history') {
+    endpoint = `/person/${key}/event/history?count=true&limit=${limit}&offset=${offset}&template=ARCHIVE`;
+  } else {
+    endpoint = `/person/${key}/event/activity?count=true&limit=${limit}&offset=${offset}&template=ARCHIVE`;
+  }
 
   const { data, error, isLoading, mutate } = useSWR<PersonHistoryResponse>(
     shouldFetch ? endpoint : null,
