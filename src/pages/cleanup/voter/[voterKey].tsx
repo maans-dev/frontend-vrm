@@ -328,7 +328,7 @@ const Voter: FunctionComponent = () => {
                 <EuiFormFieldset
                   css={{ position: 'relative', minHeight: '300px' }}
                   legend={{ children: 'History' }}>
-                  <PersonHistory personKey={person.key} />
+                  <PersonHistory personKey={person.key} mode="history" />
                 </EuiFormFieldset>
               </div>
             </EuiFlexItem>

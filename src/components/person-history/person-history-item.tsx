@@ -23,7 +23,7 @@ export type Props = {
   onClick?: (event: PersonEvent) => void;
 };
 
-const EventTitle: FunctionComponent<Props> = ({
+export const EventTitle: FunctionComponent<Props> = ({
   event,
   mode = 'history',
   onClick,

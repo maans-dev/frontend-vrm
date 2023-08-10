@@ -14,9 +14,12 @@ import { css } from '@emotion/react';
 import orderBy from 'lodash/orderBy';
 import moment from 'moment';
 import { PersonEvent } from '@lib/domain/person-history';
-import PersonHistoryItem from './person-history-item';
 import usePersonHistoryOrActivityFetcher from '@lib/fetcher/person/person.history';
 import dateMath from '@elastic/datemath';
+import PersonHistoryTable from './person-history-table';
+import { hasRole as hasRoleUtil } from '@lib/auth/utils';
+import { useSession } from 'next-auth/react';
+import { Roles } from '@lib/domain/auth';
 
 export type Props = {
   personKey: number;
@@ -24,10 +27,9 @@ export type Props = {
   mode?: 'history' | 'activity';
 };
 
-const PersonHistory: FunctionComponent<Props> = ({
-  personKey,
-  mode = 'history',
-}) => {
+const PersonHistory: FunctionComponent<Props> = ({ personKey, mode }) => {
+  const { data: session } = useSession();
+  const hasRole = (role: string) => hasRoleUtil(role, session?.user?.roles);
   const [start, setStart] = useState('now/y');
   const [end, setEnd] = useState('now/y');
 
@@ -81,6 +83,8 @@ const PersonHistory: FunctionComponent<Props> = ({
     setEnd(end);
   };
 
+  const userHasSuperUserRole = hasRole(Roles.SuperUser);
+
   useEffect(() => {
     if (history) setPageCount(Math.ceil(history.count / rowSize));
   }, [history, rowSize]);
@@ -129,21 +133,23 @@ const PersonHistory: FunctionComponent<Props> = ({
           }
         `}>
         <>
-          {history?.values?.length
-            ? orderBy(eventsInternal, ['createdBy.date'], ['desc'])?.map(
-                (entry: PersonEvent) => {
-                  return (
-                    <PersonHistoryItem
-                      event={entry}
-                      key={entry.key}
-                      mode={mode}
-                    />
-                  );
-                }
-              )
-            : !isLoading && (
-                <EuiText textAlign="center">No events found</EuiText>
-              )}
+          {userHasSuperUserRole && (
+            <>
+              {history?.values?.length
+                ? orderBy(eventsInternal, ['createdBy.date'], ['desc'])?.map(
+                    (entry: PersonEvent) => (
+                      <PersonHistoryTable
+                        event={entry}
+                        key={entry.key}
+                        mode={mode}
+                      />
+                    )
+                  )
+                : !isLoading && (
+                    <EuiText textAlign="center">No events found</EuiText>
+                  )}
+            </>
+          )}
         </>
       </EuiCommentList>
 
