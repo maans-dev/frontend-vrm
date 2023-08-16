@@ -143,6 +143,7 @@ const SheetGenerationModal: FunctionComponent<Props> = ({
       <Structres
         showSelected={true}
         onSelect={option => setSelectedStructure(option?.value)}
+        addLimitAction={true}
       />
       <EuiSpacer size="m" />
       <EuiText size="xs">

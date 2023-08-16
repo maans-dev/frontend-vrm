@@ -19,6 +19,7 @@ import { StructureType } from '@lib/domain/stuctures';
 export type Props = {
   onSelect?: (option: EuiComboBoxOptionOption<Partial<Structure>>) => void;
   persistedOption?: EuiComboBoxOptionOption<Partial<Structure>>;
+  addLimitAction: boolean;
   showSelected?: boolean;
   structureTypes?:
     | 'ward'
@@ -35,9 +36,13 @@ const Structres: FunctionComponent<Props> = ({
   persistedOption,
   showSelected,
   structureTypes = ['ward', 'votingdistrict'],
+  addLimitAction,
 }) => {
   const [searchValue, setSearchValue] = useState('');
-  const { structures, isLoading } = useStructureFetcher(searchValue);
+  const { structures, isLoading } = useStructureFetcher(
+    searchValue,
+    addLimitAction
+  );
   const [structuresInternal, setStructuresInternal] =
     useState<Partial<Structure[]>>(null);
   const [selected, setSelected] =

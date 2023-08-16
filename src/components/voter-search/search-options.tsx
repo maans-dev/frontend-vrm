@@ -301,6 +301,7 @@ const SearchOptions: FunctionComponent<Props> = ({
           'Please also use at least one of the other search fields in addition to Structure'
         }>
         <Structres
+          addLimitAction={false}
           structureTypes={allowedStructureTypes}
           showSelected={true}
           persistedOption={selectedStructureOption}
