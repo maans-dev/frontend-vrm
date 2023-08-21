@@ -49,6 +49,7 @@ const SheetApproval: FunctionComponent<Props> = ({
             ))
           ) : (
             <EuiEmptyPrompt
+              hasShadow
               iconType="documents"
               iconColor="#000"
               title={<h2>Sheet Generation Approval</h2>}
@@ -71,6 +72,7 @@ const SheetApproval: FunctionComponent<Props> = ({
             ))
           ) : (
             <EuiEmptyPrompt
+              hasShadow
               iconType="documents"
               iconColor="#000"
               title={<h2>Sheet Generation Approval</h2>}
@@ -93,6 +95,7 @@ const SheetApproval: FunctionComponent<Props> = ({
             ))
           ) : (
             <EuiEmptyPrompt
+              hasShadow
               iconType="documents"
               iconColor="#000"
               title={<h2>Sheet Generation Approval</h2>}
