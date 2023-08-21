@@ -90,7 +90,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
             route: url,
             latitude,
             longitude,
-            username: session.user.darn,
+            username: session?.user?.darn,
             metaData: 'votingDistrict: true',
           });
           span.setTags({ user_darn: session?.user?.darn?.toString() });
@@ -233,6 +233,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
       [field]: value,
     };
     if (
+      updatedAddress?.structure && //Check if updatedAddress is defined
       'votingDistrict_id' in updatedAddress?.structure &&
       address?.structure?.votingDistrict_id !==
         +updatedAddress.structure.votingDistrict_id

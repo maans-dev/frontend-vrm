@@ -157,7 +157,7 @@ const AddressResults = ({ address, onSelect, isLoading }: Props) => {
       selectedAddress.value.geocodeSource =
         GeocodedAddressSource.GEOCODED_ADDRESS;
     } else {
-      if (selectedAddress.value.geocodeSource) {
+      if (selectedAddress?.value?.geocodeSource) {
         selectedAddress.value.geocodeSource = GeocodedAddressSource.UNGEOCODED;
       }
     }
