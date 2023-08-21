@@ -176,9 +176,9 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
 
     if (!response.ok) {
       setSearchResults([]);
-      const errJson = JSON.parse(await response.clone().text());
+      const errJson = await response.clone().text();
       appsignal.sendError(
-        new Error(`Unable to forward geocode this address: ${errJson.message}`),
+        new Error(`Unable to forward geocode this address: ${errJson}`),
         span => {
           span.setAction('api-call');
           span.setParams({

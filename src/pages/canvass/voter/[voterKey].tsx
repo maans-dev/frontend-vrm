@@ -291,7 +291,7 @@ const Voter: FunctionComponent = () => {
           <EuiSpacer />
           {!confirmed ? affiliationMessage : null}
           <EuiSpacer size="xs" />
-          {data.contacts && validationError ? validationErrorMessage : null}
+          {data?.contacts && validationError ? validationErrorMessage : null}
           <EuiSpacer />
           {formActions}
         </EuiForm>
