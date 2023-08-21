@@ -28,6 +28,9 @@ import { css } from '@emotion/react';
 import { CanvassingContext } from '@lib/context/canvassing.context';
 import { useSession } from 'next-auth/react';
 import { appsignal } from '@lib/appsignal';
+import ColorCodesFlyout, {
+  colorCodes,
+} from '@components/color-codes/color-codes';
 
 export type Props = {
   deceased?: boolean;
@@ -65,6 +68,15 @@ const VoterInfo: FunctionComponent<Props> = ({
   const [hasUpdatedAddress, setHasUpdatedAddress] = useState(false);
   const [updatedColorCode, setUpdatedColorCode] = useState<ColourCode>(null);
   const { data: session } = useSession();
+  const [isFlyoutVisible, setIsFlyoutVisible] = useState(false);
+
+  const openFlyout = () => {
+    setIsFlyoutVisible(true);
+  };
+
+  const closeFlyout = () => {
+    setIsFlyoutVisible(false);
+  };
 
   const { data: contextData, votingDistrict } = useContext(CanvassingContext);
 
@@ -267,6 +279,7 @@ const VoterInfo: FunctionComponent<Props> = ({
               </EuiFlexItem>
               {pubRep ? (
                 <EuiFlexItem
+                  onClick={openFlyout}
                   grow={false}
                   style={{ inlineSize: 'auto', flexBasis: 'auto' }}>
                   <EuiBadge css={{ borderRadius: '10px' }} color="primary">
@@ -277,6 +290,7 @@ const VoterInfo: FunctionComponent<Props> = ({
                 ['Active', 'Expired'].includes(membership?.status) &&
                 !deceased && (
                   <EuiFlexItem
+                    onClick={openFlyout}
                     grow={false}
                     style={{ inlineSize: 'auto', flexBasis: 'auto' }}>
                     <EuiBadge
@@ -291,7 +305,7 @@ const VoterInfo: FunctionComponent<Props> = ({
                 )
               )}
             </EuiFlexGroup>
-            <EuiFlexItem grow={false}>
+            <EuiFlexItem grow={false} onClick={openFlyout}>
               <EuiBadge
                 css={
                   isMobile &&
@@ -316,6 +330,11 @@ const VoterInfo: FunctionComponent<Props> = ({
           {isMobile ? accordion : renderExtraInfo}
         </EuiPanel>
       </div>
+      <ColorCodesFlyout
+        colorCodes={colorCodes}
+        isOpen={isFlyoutVisible}
+        onClose={closeFlyout}
+      />
     </>
   );
 };
