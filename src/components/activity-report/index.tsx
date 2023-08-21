@@ -40,6 +40,7 @@ const ActivityReportTable: FunctionComponent<Props> = ({ report }) => {
       id: item.person,
       name: startCase(item.name),
       prev7days: item.prev7days,
+      ytd: item.ytd,
       prev30days: item.prev30days,
     }));
   }
