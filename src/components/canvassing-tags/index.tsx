@@ -21,7 +21,6 @@ const CanvassingTags: FunctionComponent<Props> = ({ fields, onChange }) => {
   const [internalFields, setInternalFields] = useState<Field[]>(
     fields?.filter(f => CanvassingTagCodes.includes(f.field.code))
   );
-  //TODO
   const { data, error } = useCanvassingTagFetcher();
   const [presetFields, setPresetFields] = useState<Partial<Field>[]>(null);
 
