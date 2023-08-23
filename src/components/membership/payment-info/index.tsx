@@ -38,6 +38,9 @@ const PaymentInfo: FunctionComponent = () => {
               <strong>
                 {renderName(payment?.recruitedBy as Partial<Person>)}
               </strong>
+
+              <EuiText size="s">Payment Reference:</EuiText>
+              <strong>{payment?.referenceNumber}</strong>
             </EuiFlexGrid>
           </EuiFlexItem>
 
