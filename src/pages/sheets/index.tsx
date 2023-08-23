@@ -77,7 +77,7 @@ const Index: FunctionComponent = () => {
     );
   }
 
-  const generatedData = generatedSheetData.filter(
+  const generatedData = generatedSheetData?.filter(
     item => item.status !== 'DELETED'
   );
 
