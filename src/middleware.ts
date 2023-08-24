@@ -61,5 +61,5 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ['/((?!image/*|themes/*|favicon.ico|404|403|auth/*).*)'],
+  matcher: ['/((?!image/*|themes/*|favicon.ico|404|403|auth/*|api/health).*)'],
 };
