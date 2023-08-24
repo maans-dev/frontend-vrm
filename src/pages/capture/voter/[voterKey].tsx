@@ -223,6 +223,7 @@ const Voter: FunctionComponent = () => {
         <VoterInfo
           deceased={person?.deceased}
           darn={person?.key}
+          id={person?.idNumber}
           salutation={person?.salutation}
           givenName={person?.givenName}
           firstName={person?.firstName}
