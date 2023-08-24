@@ -31,6 +31,8 @@ import { appsignal } from '@lib/appsignal';
 import ColorCodesFlyout, {
   colorCodes,
 } from '@components/color-codes/color-codes';
+import { Roles } from '@lib/domain/auth';
+import { hasRole as hasRoleUtil } from '@lib/auth/utils';
 
 export type Props = {
   deceased?: boolean;
@@ -40,6 +42,7 @@ export type Props = {
   firstName: string;
   surname: string;
   dob: Date;
+  id: string;
   colourCode: ColourCode;
   canvassedBy: CanvassedBy;
   livingStructure: LivingStructure;
@@ -56,6 +59,7 @@ const VoterInfo: FunctionComponent<Props> = ({
   firstName,
   surname,
   dob,
+  id,
   colourCode,
   canvassedBy,
   livingStructure,
@@ -69,6 +73,8 @@ const VoterInfo: FunctionComponent<Props> = ({
   const [updatedColorCode, setUpdatedColorCode] = useState<ColourCode>(null);
   const { data: session } = useSession();
   const [isFlyoutVisible, setIsFlyoutVisible] = useState(false);
+  const hasRole = (role: string) =>
+    hasRoleUtil(role, session?.user?.roles, false);
 
   const openFlyout = () => {
     setIsFlyoutVisible(true);
@@ -189,7 +195,14 @@ const VoterInfo: FunctionComponent<Props> = ({
         responsive={true}>
         <EuiFlexItem grow={false}>
           <EuiText size="xs">
-            DOB <strong>{moment(dob).format('YYYY/MM/DD')}</strong>
+            {(hasRole(Roles.IdnumberVisible) || hasRole(Roles.SuperUser)) &&
+            id ? (
+              <span>
+                ID <strong>{id}</strong>
+              </span>
+            ) : (
+              <strong>{moment(dob).format('YYYY/MM/DD')}</strong>
+            )}
           </EuiText>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
