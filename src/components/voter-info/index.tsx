@@ -31,8 +31,8 @@ import { appsignal } from '@lib/appsignal';
 import ColorCodesFlyout, {
   colorCodes,
 } from '@components/color-codes/color-codes';
-import { Roles } from '@lib/domain/auth';
 import { hasRole as hasRoleUtil } from '@lib/auth/utils';
+import { Roles } from '@lib/domain/auth';
 
 export type Props = {
   deceased?: boolean;
@@ -201,7 +201,9 @@ const VoterInfo: FunctionComponent<Props> = ({
                 ID <strong>{id}</strong>
               </span>
             ) : (
-              <strong>{moment(dob).format('YYYY/MM/DD')}</strong>
+              <span>
+                DOB <strong>{moment(dob).format('YYYY/MM/DD')}</strong>
+              </span>
             )}
           </EuiText>
         </EuiFlexItem>
