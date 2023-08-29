@@ -413,7 +413,16 @@ const CanvassingProvider = ({ children }) => {
 
     setIsComplete(false);
     setPerson(null);
-    if (router.pathname.includes('/canvass')) {
+    if (
+      router.pathname.includes('/cleanup') ||
+      router.pathname.includes('membership')
+    ) {
+      setData({});
+    }
+    if (
+      router.pathname.includes('/canvass') ||
+      router.pathname.includes('capture')
+    ) {
       setData(prev => ({
         canvass: {
           activity: prev?.canvass?.activity,
@@ -619,7 +628,7 @@ const CanvassingProvider = ({ children }) => {
   }, [router, session?.accessToken]);
 
   useEffect(() => {
-    if (data?.contacts) {
+    if (data?.contacts && person?.contacts) {
       const { errorText } = validateContactInformation(
         data.contacts,
         person.contacts
@@ -627,8 +636,7 @@ const CanvassingProvider = ({ children }) => {
       setValidationError(errorText);
     }
   }, [data?.contacts, person?.contacts]);
-
-  // TODO: Remove this when stable as it's just for debugging
+  // TODO: Remove this when stable   it's just for debugging
   useEffect(() => {
     console.log('[CONTEXT]', { data, person });
     appsignal.addBreadcrumb({
