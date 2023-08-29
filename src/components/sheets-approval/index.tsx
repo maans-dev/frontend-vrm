@@ -33,7 +33,6 @@ const SheetApproval: FunctionComponent<Props> = ({
     useState<SheetGeneration[]>(approvedSheets);
   const [pendingApprovedSheets, setPendingApprovedSheets] =
     useState<SheetGeneration[]>(sheetData);
-  // const [loadingOnRefresh, setLoadingOnRefresh] = useState(false);
   const sheetGenTabs = [
     {
       id: 'pending',
@@ -41,7 +40,6 @@ const SheetApproval: FunctionComponent<Props> = ({
       content: (
         <Fragment>
           <EuiSpacer />
-          {/* {loadingOnRefresh && <Spinner show={loadingOnRefresh} />} */}
           {Array.isArray(pendingApprovedSheets) &&
           pendingApprovedSheets?.length > 0 ? (
             pendingApprovedSheets.map(item => (
@@ -49,7 +47,9 @@ const SheetApproval: FunctionComponent<Props> = ({
             ))
           ) : (
             <EuiEmptyPrompt
-              hasShadow
+              hasShadow={true}
+              hasBorder={false}
+              color="plain"
               iconType="documents"
               iconColor="#000"
               title={<h2>Sheet Generation Approval</h2>}
@@ -65,14 +65,15 @@ const SheetApproval: FunctionComponent<Props> = ({
       content: (
         <Fragment>
           <EuiSpacer />
-          {/* {isLoading && <SpinnerEmbed show={isLoading} />} */}
           {Array.isArray(approvedSheetData) && approvedSheetData?.length > 0 ? (
             approvedSheetData.map(item => (
               <SheetApproverCard key={item.key} data={item} approved={true} />
             ))
           ) : (
             <EuiEmptyPrompt
-              hasShadow
+              hasShadow={true}
+              hasBorder={false}
+              color="plain"
               iconType="documents"
               iconColor="#000"
               title={<h2>Sheet Generation Approval</h2>}
@@ -88,14 +89,15 @@ const SheetApproval: FunctionComponent<Props> = ({
       content: (
         <Fragment>
           <EuiSpacer />
-          {/* {isLoading && <SpinnerEmbed show={isLoading} />} */}
           {Array.isArray(rejectedSheetData) && rejectedSheetData?.length > 0 ? (
             rejectedSheetData.map(item => (
               <SheetApproverCard key={item.key} data={item} rejected={true} />
             ))
           ) : (
             <EuiEmptyPrompt
-              hasShadow
+              hasShadow={true}
+              hasBorder={false}
+              color="plain"
               iconType="documents"
               iconColor="#000"
               title={<h2>Sheet Generation Approval</h2>}
