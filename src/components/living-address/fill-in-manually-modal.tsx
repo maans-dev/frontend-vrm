@@ -135,8 +135,16 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
     update.structure = {
       deleted: true,
     };
+    const trimmedUpdate = {};
 
-    setUpdatedAddress(update);
+    Object.keys(update).forEach(key => {
+      if (typeof update[key] === 'string') {
+        trimmedUpdate[key] = update[key]?.trim();
+      } else {
+        trimmedUpdate[key] = update[key];
+      }
+    });
+    setUpdatedAddress(trimmedUpdate);
   };
 
   const onReset = () => {
@@ -296,11 +304,19 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
         'structure',
       ]),
     };
-
     update.structure = {
       deleted: true,
     };
-    setUpdatedAddress(update);
+    const trimmedUpdate = {};
+
+    Object.keys(update).forEach(key => {
+      if (typeof update[key] === 'string') {
+        trimmedUpdate[key] = update[key]?.trim();
+      } else {
+        trimmedUpdate[key] = update[key];
+      }
+    });
+    setUpdatedAddress(trimmedUpdate);
   }, [address]);
 
   return (
