@@ -168,7 +168,16 @@ const SearchOptions: FunctionComponent<Props> = ({
       // don't send through eligible=false to search endpoint
       delete searchParams.eligible;
     }
-    onSubmit(searchParams, selectedStructureOption);
+    const trimmedSearchParams = {};
+
+    Object.keys(searchParams).forEach(key => {
+      if (typeof searchParams[key] === 'string') {
+        trimmedSearchParams[key] = searchParams[key]?.trim();
+      } else {
+        trimmedSearchParams[key] = searchParams[key];
+      }
+    });
+    onSubmit(trimmedSearchParams, selectedStructureOption);
     if (isModalVisible) closeModal();
   };
 
