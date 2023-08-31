@@ -347,7 +347,7 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
                       value={updatedAddress?.buildingName}
                       onChange={e => {
                         const uppercaseValue = e.target.value.toUpperCase();
-                        onUpdateAddress('buildingName', uppercaseValue);
+                        onUpdateAddress('buildingName', uppercaseValue.trim());
                       }}
                     />
                   </EuiFormRow>
@@ -379,7 +379,7 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
                       value={updatedAddress?.streetName}
                       onChange={e => {
                         const uppercaseValue = e.target.value.toUpperCase();
-                        onUpdateAddress('streetName', uppercaseValue);
+                        onUpdateAddress('streetName', uppercaseValue.trim());
                       }}
                     />
                   </EuiFormRow>
@@ -395,7 +395,7 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
                   value={updatedAddress?.suburb}
                   onChange={e => {
                     const uppercaseValue = e.target.value.toUpperCase();
-                    onUpdateAddress('suburb', uppercaseValue);
+                    onUpdateAddress('suburb', uppercaseValue.trim());
                   }}
                 />
               </EuiFormRow>

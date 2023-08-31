@@ -475,7 +475,9 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
                   name="Unit Number"
                   compressed
                   value={updatedAddress?.buildingNo || ''}
-                  onChange={e => onUpdateAddress('buildingNo', e.target.value)}
+                  onChange={e =>
+                    onUpdateAddress('buildingNo', e.target.value.trim())
+                  }
                 />
               </EuiFormRow>
             </EuiFlexItem>
@@ -485,9 +487,9 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
                   name="Unit Name"
                   compressed
                   value={updatedAddress?.buildingName || ''}
-                  onChange={e =>
-                    onUpdateAddress('buildingName', e.target.value)
-                  }
+                  onChange={e => {
+                    onUpdateAddress('buildingName', e.target.value.trim());
+                  }}
                 />
               </EuiFormRow>
             </EuiFlexItem>

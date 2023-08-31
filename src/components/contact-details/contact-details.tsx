@@ -215,7 +215,7 @@ const ContactDetails: FunctionComponent<Props> = ({
     setGivenNameInternal(e.target.value);
     const update: PersonUpdate<GivenNameUpdate> = {
       field: 'givenName',
-      data: e.target.value,
+      data: e.target.value.trim(),
     };
     onPersonChange(update);
   };
