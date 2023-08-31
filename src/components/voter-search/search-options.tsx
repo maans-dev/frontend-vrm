@@ -77,15 +77,15 @@ const SearchOptions: FunctionComponent<Props> = ({
 
     if (target.name === '' || target.name === 'dob') return;
 
-    const value = target.value;
+    let value = target.value;
     if (['identity', 'phone', 'email'].includes(target.name)) {
-      target.value.replaceAll('*', '').replaceAll(' ', '');
+      value = value.replaceAll('*', '').replaceAll(' ', '');
     }
 
     setSearchParams(previousValue => {
       const newValue = {
         ...previousValue,
-        [name]: value,
+        [name]: value.trim(),
       };
 
       for (const key in newValue) {
