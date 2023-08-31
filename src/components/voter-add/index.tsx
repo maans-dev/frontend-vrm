@@ -41,7 +41,6 @@ export interface IValidationErrors {
 
 const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
   const { data: session } = useSession();
-  const [dob, setDob] = useState<Moment>();
   const [id, setId] = useState<string>('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [validationErrors, setValidationErrors] = useState<
@@ -59,7 +58,6 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
   const showModal = () => {
     setIsModalVisible(true);
     setValidationErrors({});
-    setDob(null);
     setId('');
     setIsSubmitting(false);
     setServerError('');
@@ -73,9 +71,8 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
 
     if (!data.firstName) errors.firstName = 'First names is required';
     if (!data.surname) errors.surname = 'Surname is required';
-    if (!data.idNumber && !data.dob) {
-      errors.idNumber = 'Either ID or date of birth is required';
-      errors.dob = 'Either ID or date of birth is required';
+    if (!data.idNumber) {
+      errors.idNumber = 'ID number is required';
     }
     if (data?.idNumber) {
       const isValidId = isValidRSAIDnumber(data.idNumber);
@@ -159,11 +156,6 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
     });
   };
 
-  const handleDOBChange = (date: Moment) => {
-    setDob(date);
-    setUserExists(false);
-  };
-
   const addFormId = useGeneratedHtmlId({ prefix: 'addVoterForm' });
 
   const form = (
@@ -241,23 +233,12 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
         </EuiFormFieldset>
 
         <EuiSpacer />
-        <EuiFormFieldset legend={{ children: 'Either SA ID or Date of birth' }}>
-          <EuiCheckableCard
-            id="IdNumber"
-            label={
-              <EuiText size="xs" style={{ marginTop: '-10px' }}>
-                <strong>South African ID number</strong>
-              </EuiText>
-            }
-            value={id}
-            checked={selectedOption === 'id'}
-            onChange={() => {
-              setDob(null);
-              setSelectedOption('id');
-            }}>
-            <EuiFormRow
-              isInvalid={'idNumber' in validationErrors}
-              error={validationErrors?.idNumber}>
+        <EuiFormFieldset legend={{ children: 'Details as on ID Document' }}>
+          <EuiFormRow
+            isInvalid={'idNumber' in validationErrors}
+            error={validationErrors?.idNumber}>
+            <>
+              <EuiSpacer size="xs" />
               <EuiFieldText
                 compressed
                 style={{
@@ -278,42 +259,8 @@ const VoterAdd: FunctionComponent<Props> = ({ notFound }) => {
                   setSelectedOption('id');
                 }}
               />
-            </EuiFormRow>
-          </EuiCheckableCard>
-
-          <EuiSpacer />
-
-          <EuiCheckableCard
-            id="dob"
-            label={
-              <EuiText size="xs" style={{ marginTop: '-10px' }}>
-                <strong>Date of birth</strong>
-              </EuiText>
-            }
-            value="dob"
-            checked={selectedOption === 'dob'}
-            onChange={() => {
-              setSelectedOption('dob');
-              setValidationErrors({});
-              setId('');
-            }}>
-            <EuiFormRow
-              isInvalid={'dob' in validationErrors}
-              error={validationErrors?.dob}>
-              <EuiDatePicker
-                css={{ marginTop: '-10px', maxHeight: '32px' }}
-                disabled={selectedOption === 'id'}
-                id="dob"
-                name="dob"
-                autoComplete="off"
-                dateFormat={['YYYY-MM-DD']}
-                selected={dob}
-                maxDate={moment().subtract(17, 'year')}
-                yearDropdownItemNumber={120}
-                onChange={handleDOBChange}
-              />
-            </EuiFormRow>
-          </EuiCheckableCard>
+            </>
+          </EuiFormRow>
         </EuiFormFieldset>
       </EuiForm>
     </div>
