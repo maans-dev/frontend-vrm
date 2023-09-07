@@ -27,11 +27,12 @@ export default withAuth(
       authorized = hasRole(Roles.Membership, token?.roles as string[]);
     }
 
-    if (
-      req.nextUrl.pathname.includes('/sheets') ||
-      req.nextUrl.pathname.includes('/sheet-gen-approval')
-    ) {
+    if (req.nextUrl.pathname.includes('/sheets')) {
       authorized = hasRole(Roles.SheetGen, token?.roles as string[]);
+    }
+
+    if (req.nextUrl.pathname.includes('/sheet-gen-approval')) {
+      authorized = hasRole(Roles.SheetGenAdmin, token?.roles as string[]);
     }
 
     if (req.nextUrl.pathname.includes('/comms')) {
