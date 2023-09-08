@@ -187,7 +187,8 @@ const EmailAddressLine: FunctionComponent<Props> = ({
             placeholder={validationError}
             value={emailContact.value}
             isInvalid={!isValid}
-            inputMode="numeric"
+            inputMode="email"
+            autoComplete="no"
             onChange={e => {
               const updatedValue = e.target.value.slice(0, 100);
               const updatedEmailContact = {

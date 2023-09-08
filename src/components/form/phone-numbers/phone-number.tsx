@@ -305,7 +305,8 @@ const PhoneNumberLine: FunctionComponent<Props> = ({
             placeholder="Enter a phone number"
             value={phoneContact.value}
             isInvalid={!isValid}
-            inputMode="numeric"
+            inputMode="tel"
+            autoComplete="no"
             onChange={e => {
               const updatedValue = e.target.value
                 .replace(/[^0-9+]/g, '')
