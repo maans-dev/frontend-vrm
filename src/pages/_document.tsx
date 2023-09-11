@@ -45,7 +45,7 @@ export default class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
-          <meta name="description" content="DA | WRM" />
+          <meta name="description" content="DA | VRM" />
           <meta name="eui-styles" />
 
           {themeConfig.availableThemes.map(each => themeLink(each))}
