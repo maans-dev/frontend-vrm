@@ -22,9 +22,18 @@ const Address: FunctionComponent<Props> = ({ address, onChange }) => {
   const [movedKey, setMovedKey] = useState<string>();
 
   const doChange = (address: Partial<Address>) => {
+    const trimmedUpdate = {};
+
+    Object.keys(address).forEach(key => {
+      if (typeof address[key] === 'string') {
+        trimmedUpdate[key] = address[key].trim();
+      } else {
+        trimmedUpdate[key] = address[key];
+      }
+    });
     onChange({
       field: 'address',
-      data: address,
+      data: trimmedUpdate,
       replace: true,
     });
 

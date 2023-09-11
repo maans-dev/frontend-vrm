@@ -85,7 +85,7 @@ const SearchOptions: FunctionComponent<Props> = ({
     setSearchParams(previousValue => {
       const newValue = {
         ...previousValue,
-        [name]: value.trim(),
+        [name]: value,
       };
 
       for (const key in newValue) {
