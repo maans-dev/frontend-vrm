@@ -246,17 +246,8 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
         key: updatedAddress.structure.key,
       };
     }
-    const trimmedUpdate = {};
-
-    Object.keys(update).forEach(key => {
-      if (typeof update[key] === 'string') {
-        trimmedUpdate[key] = update[key]?.trim();
-      } else {
-        trimmedUpdate[key] = update[key];
-      }
-    });
-    setUpdatedAddress(trimmedUpdate);
-    onChange(trimmedUpdate);
+    setUpdatedAddress(update);
+    onChange(update);
   };
 
   const renderUseMyLocationButton = () => {
@@ -483,9 +474,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
                   name="Unit Number"
                   compressed
                   value={updatedAddress?.buildingNo || ''}
-                  onChange={e =>
-                    onUpdateAddress('buildingNo', e.target.value.trim())
-                  }
+                  onChange={e => onUpdateAddress('buildingNo', e.target.value)}
                 />
               </EuiFormRow>
             </EuiFlexItem>

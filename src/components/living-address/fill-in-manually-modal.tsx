@@ -105,8 +105,18 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
 
   const submit = () => {
     closeModal();
+    const trimmedUpdatedAddress = {};
+
+    Object.keys(updatedAddress).forEach(key => {
+      if (typeof updatedAddress[key] === 'string') {
+        trimmedUpdatedAddress[key] = updatedAddress[key].trim();
+      } else {
+        trimmedUpdatedAddress[key] = updatedAddress[key];
+      }
+    });
+
     onSubmit({
-      ...updatedAddress,
+      ...trimmedUpdatedAddress,
       geocodeSource: GeocodedAddressSource.UNGEOCODED,
     });
   };
@@ -135,16 +145,7 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
     update.structure = {
       deleted: true,
     };
-    const trimmedUpdate = {};
-
-    Object.keys(update).forEach(key => {
-      if (typeof update[key] === 'string') {
-        trimmedUpdate[key] = update[key]?.trim();
-      } else {
-        trimmedUpdate[key] = update[key];
-      }
-    });
-    setUpdatedAddress(trimmedUpdate);
+    setUpdatedAddress(update);
   };
 
   const onReset = () => {
@@ -307,16 +308,7 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
     update.structure = {
       deleted: true,
     };
-    const trimmedUpdate = {};
-
-    Object.keys(update).forEach(key => {
-      if (typeof update[key] === 'string') {
-        trimmedUpdate[key] = update[key]?.trim();
-      } else {
-        trimmedUpdate[key] = update[key];
-      }
-    });
-    setUpdatedAddress(trimmedUpdate);
+    setUpdatedAddress(update);
   }, [address]);
 
   return (
@@ -349,8 +341,7 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
                       value={updatedAddress?.buildingNo}
                       onChange={e => {
                         const inputValue = e.target.value;
-                        const numbersOnly = inputValue.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-                        onUpdateAddress('buildingNo', numbersOnly);
+                        onUpdateAddress('buildingNo', inputValue);
                       }}
                     />
                   </EuiFormRow>
@@ -363,7 +354,7 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
                       value={updatedAddress?.buildingName}
                       onChange={e => {
                         const uppercaseValue = e.target.value.toUpperCase();
-                        onUpdateAddress('buildingName', uppercaseValue.trim());
+                        onUpdateAddress('buildingName', uppercaseValue);
                       }}
                     />
                   </EuiFormRow>
@@ -381,8 +372,7 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
                       value={updatedAddress?.streetNo}
                       onChange={e => {
                         const inputValue = e.target.value;
-                        const numericValue = inputValue.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-                        onUpdateAddress('streetNo', numericValue);
+                        onUpdateAddress('streetNo', inputValue);
                       }}
                     />
                   </EuiFormRow>
@@ -395,7 +385,7 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
                       value={updatedAddress?.streetName}
                       onChange={e => {
                         const uppercaseValue = e.target.value.toUpperCase();
-                        onUpdateAddress('streetName', uppercaseValue.trim());
+                        onUpdateAddress('streetName', uppercaseValue);
                       }}
                     />
                   </EuiFormRow>
@@ -411,7 +401,7 @@ const FillInManuallyModal: FunctionComponent<Props> = ({
                   value={updatedAddress?.suburb}
                   onChange={e => {
                     const uppercaseValue = e.target.value.toUpperCase();
-                    onUpdateAddress('suburb', uppercaseValue.trim());
+                    onUpdateAddress('suburb', uppercaseValue);
                   }}
                 />
               </EuiFormRow>
