@@ -50,38 +50,41 @@ const PersonHistoryTable: FunctionComponent<Props> = ({ event, mode }) => {
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
     };
-    for (const archive of archives) {
-      const { previous_json, modified_json, current_json, tableName } = archive;
-      const allKeys = new Set([
-        ...Object.keys(previous_json || {}),
-        ...Object.keys(modified_json || {}),
-        ...Object.keys(current_json || {}),
-        ...Object.keys(tableName),
-      ]);
-      allKeys.forEach(key => {
-        const previousValue = previous_json?.[key];
-        const modifiedValue = modified_json?.[key];
-        const currentValue = current_json?.[key];
+    if (archives) {
+      for (const archive of archives) {
+        const { previous_json, modified_json, current_json, tableName } =
+          archive;
+        const allKeys = new Set([
+          ...Object.keys(previous_json || {}),
+          ...Object.keys(modified_json || {}),
+          ...Object.keys(current_json || {}),
+          ...Object.keys(tableName),
+        ]);
+        allKeys.forEach(key => {
+          const previousValue = previous_json?.[key];
+          const modifiedValue = modified_json?.[key];
+          const currentValue = current_json?.[key];
 
-        const formattedPreviousValue = previousValue ?? '-';
-        const formattedModifiedValue = modifiedValue ?? '-';
-        const formattedCurrentValue = currentValue ?? '-';
+          const formattedPreviousValue = previousValue ?? '-';
+          const formattedModifiedValue = modifiedValue ?? '-';
+          const formattedCurrentValue = currentValue ?? '-';
 
-        if (formattedPreviousValue !== formattedCurrentValue) {
-          fieldChanges.push({
-            field: key,
-            previous_value: formattedPreviousValue,
-            changed_to_value:
-              formattedModifiedValue !== '-'
-                ? formattedModifiedValue
-                : formattedCurrentValue,
-            tableName: prettifyTableName(tableName),
-          });
-        }
-      });
+          if (formattedPreviousValue !== formattedCurrentValue) {
+            fieldChanges.push({
+              field: key,
+              previous_value: formattedPreviousValue,
+              changed_to_value:
+                formattedModifiedValue !== '-'
+                  ? formattedModifiedValue
+                  : formattedCurrentValue,
+              tableName: prettifyTableName(tableName),
+            });
+          }
+        });
+      }
+
+      return fieldChanges;
     }
-
-    return fieldChanges;
   };
 
   const formatField = (field: string) => {
@@ -262,7 +265,7 @@ const PersonHistoryTable: FunctionComponent<Props> = ({ event, mode }) => {
         {isExpanded && (
           <div>
             {changes
-              .reduce((acc, change) => {
+              ?.reduce((acc, change) => {
                 if (!acc.includes(change.tableName)) {
                   acc.push(change.tableName);
                 }
