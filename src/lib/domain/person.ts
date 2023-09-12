@@ -1,5 +1,6 @@
 import { Moment } from 'moment';
 import { GeocodedAddressSource, Province } from './person-enum';
+import { IecPayloadType } from '@components/voter-info';
 
 export interface Person {
   key: number;
@@ -36,9 +37,7 @@ export interface Person {
   comments: Comment[];
   contacts: Contact[];
   fields: Field[];
-  iec?: {
-    regStatus: 'VERIFIED' | 'REJECTED' | string;
-  };
+  iec?: IecPayloadType;
 }
 
 export interface Membership {

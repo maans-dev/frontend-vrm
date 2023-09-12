@@ -25,7 +25,7 @@ export default function usePersonFetcher(
       ? 'Membership'
       : 'Membership_Ltd';
 
-  const url = `/person?key=${key}&template=["Address","Contact","Fields","Comment","Canvass","${membershipTemplate}"]`;
+  const url = `/person?key=${key}&template=["Address","IEC","Contact","Fields","Comment","Canvass","${membershipTemplate}"]`;
 
   const { data, error, isLoading, mutate, isValidating } = useSWR<Person[]>(
     shouldFetch ? url : null,
