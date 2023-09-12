@@ -112,6 +112,7 @@ const VoterInfo: FunctionComponent<Props> = ({
 
   const canRefresh = person?.iec?.canRefresh;
   const getColourCode = updatedColorCode ?? colourCode;
+  const hasFeature = (feature: string) => session?.features.includes(feature);
 
   const getBadgeColour = () => {
     if (deceased) return '#cccccc';
@@ -418,23 +419,24 @@ const VoterInfo: FunctionComponent<Props> = ({
                 ? registeredStructure?.formatted
                 : 'Unknown'}
             </EuiText>
-
-            <EuiToolTip
-              position="top"
-              content={
-                !canRefresh
-                  ? `A voter's details may only be refreshed from the IEC once a week. This voter's details were refreshed on ${formattedDate}`
-                  : `Click to refresh this voter's registration details from the IEC.`
-              }>
-              <EuiButtonIcon
-                disabled={!canRefresh}
-                size="s"
-                display="base"
-                iconType="refresh"
-                aria-label="refresh"
-                onClick={handleRefreshIec}
-              />
-            </EuiToolTip>
+            {hasFeature('iec-refresh') && (
+              <EuiToolTip
+                position="top"
+                content={
+                  !canRefresh
+                    ? `A voter's details may only be refreshed from the IEC once a week. This voter's details were refreshed on ${formattedDate}`
+                    : `Click to refresh this voter's registration details from the IEC.`
+                }>
+                <EuiButtonIcon
+                  disabled={!canRefresh}
+                  size="s"
+                  display="base"
+                  iconType="refresh"
+                  aria-label="refresh"
+                  onClick={handleRefreshIec}
+                />
+              </EuiToolTip>
+            )}
           </EuiPanel>
         </EuiFlexItem>
       </EuiFlexGroup>
