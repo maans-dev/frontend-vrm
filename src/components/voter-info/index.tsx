@@ -110,24 +110,26 @@ const VoterInfo: FunctionComponent<Props> = ({
   const [isIecModalVisible, setIsModalVisible] = useState(false);
   const { person } = useContext(CanvassingContext);
 
-  const canRefresh = person?.iec?.canRefresh;
+  const [refreshedNow, setRefreshedNow] = useState<boolean>(false);
+  const canRefresh = person?.iec?.canRefresh && !refreshedNow;
+
   const getColourCode = updatedColorCode ?? colourCode;
-  const hasFeature = (feature: string) => session?.features.includes(feature);
 
   const getBadgeColour = () => {
     if (deceased) return '#cccccc';
-
     if (getColourCode?.colour && getColourCode?.colour !== 'FFFFFF')
       return `#${getColourCode.colour}`;
 
     return 'hollow';
   };
 
+  const hasFeature = (feature: string) => session?.features.includes(feature);
+
   const closeModal = () => setIsModalVisible(false);
 
-  const formattedDate = new Date(person?.iec?.lastRefreshed).toLocaleDateString(
-    'en-GB'
-  );
+  const formattedDate = refreshedNow
+    ? 'today'
+    : `on ${new Date(person?.iec?.lastRefreshed).toLocaleDateString('en-GB')}`;
 
   const openFlyout = () => {
     setIsFlyoutVisible(true);
@@ -185,7 +187,6 @@ const VoterInfo: FunctionComponent<Props> = ({
         setError(errJson.message);
         setIsModalVisible(true);
         setLoading(false);
-        // console.log(errJson);
       }
 
       setLoading(false);
@@ -202,10 +203,14 @@ const VoterInfo: FunctionComponent<Props> = ({
       <EuiConfirmModal
         style={{ width: 600 }}
         title={title}
-        onCancel={closeModal}
+        onCancel={() => {
+          closeModal();
+          setRefreshedNow(true);
+        }}
         onConfirm={() => {
           setConfirmed(true);
           closeModal();
+          setRefreshedNow(true);
         }}
         confirmButtonText="Close"
         defaultFocusedButton="confirm">
@@ -350,8 +355,6 @@ const VoterInfo: FunctionComponent<Props> = ({
     registeredStructure?.formatted,
   ]);
 
-  // console.log({ formattedIecStructure, confirmed, iecStructure, iecPayload });
-
   const renderExtraInfo = (
     <>
       <EuiFlexGroup
@@ -424,7 +427,7 @@ const VoterInfo: FunctionComponent<Props> = ({
                 position="top"
                 content={
                   !canRefresh
-                    ? `A voter's details may only be refreshed from the IEC once a week. This voter's details were refreshed on ${formattedDate}`
+                    ? `A voter's details may only be refreshed from the IEC once a week. This voter's details were refreshed ${formattedDate}.`
                     : `Click to refresh this voter's registration details from the IEC.`
                 }>
                 <EuiButtonIcon
