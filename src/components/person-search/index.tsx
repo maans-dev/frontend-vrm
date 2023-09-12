@@ -50,7 +50,7 @@ const PersonSearch: FunctionComponent<Props> = ({
           span.setParams({
             route: url,
           });
-          span.setTags({ user_darn: session.user.darn.toString() });
+          span.setTags({ user_darn: session?.user?.darn?.toString() });
         }
       );
       return;

@@ -58,7 +58,7 @@ const SearchAddress: FunctionComponent<Props> = ({
       method: 'POST',
       body: JSON.stringify({
         address: value,
-        username: session.user.darn,
+        username: session?.user?.darn,
       }),
     });
 
@@ -74,9 +74,9 @@ const SearchAddress: FunctionComponent<Props> = ({
           span.setParams({
             route: url,
             address: value,
-            username: session.user.darn,
+            username: session?.user?.darn,
           });
-          span.setTags({ user_darn: session.user.darn.toString() });
+          span.setTags({ user_darn: session?.user?.darn?.toString() });
         }
       );
       return;
