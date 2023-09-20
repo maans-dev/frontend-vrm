@@ -1,6 +1,7 @@
 import { FunctionComponent, useEffect, useState } from 'react';
 import {
   EuiAccordion,
+  EuiButtonEmpty,
   EuiCheckableCard,
   EuiFlexGroup,
   EuiFlexItem,
@@ -83,10 +84,31 @@ const CampaignSelect: FunctionComponent<Props> = ({
           }
         `}
       />
+
       {Object.keys(groupedCampaigns).map((campaignType, index) => {
         return (
           <EuiAccordion
+            buttonElement="button"
             key={campaignType}
+            style={{ borderBottomColor: '#155fa2' }}
+            extraAction={
+              <EuiFlexItem grow={false}>
+                <EuiButtonEmpty
+                  size="s"
+                  onClick={() => {
+                    if (openAccordionId !== campaignType) {
+                      setOpenAccordionId(
+                        openAccordionId === campaignType ? null : campaignType
+                      );
+                    }
+                  }}>
+                  {openAccordionId === campaignType ||
+                  (!openAccordionId && index === 0)
+                    ? 'Hide'
+                    : 'Show'}
+                </EuiButtonEmpty>
+              </EuiFlexItem>
+            }
             id={campaignType}
             forceState={
               openAccordionId === campaignType ||
@@ -94,11 +116,13 @@ const CampaignSelect: FunctionComponent<Props> = ({
                 ? 'open'
                 : 'closed'
             }
-            onToggle={() =>
-              setOpenAccordionId(
-                openAccordionId === campaignType ? null : campaignType
-              )
-            }
+            onToggle={() => {
+              if (openAccordionId !== campaignType) {
+                setOpenAccordionId(
+                  openAccordionId === campaignType ? null : campaignType
+                );
+              }
+            }}
             buttonContent={
               <EuiText size="s">
                 <strong>
