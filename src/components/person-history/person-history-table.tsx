@@ -251,6 +251,7 @@ const PersonHistoryTable: FunctionComponent<Props> = ({ event, mode }) => {
           )
         }
         actions={
+          hasRole(Roles.SuperUser) &&
           isExpandable() && (
             <EuiButtonIcon
               // title="expand"

@@ -185,6 +185,7 @@ const Membership: FunctionComponent<Props> = ({ event }) => {
         )
       }
       actions={
+        hasRole(Roles.SuperUser) &&
         renderMetaData && (
           <EuiButtonIcon
             // title="expand"
