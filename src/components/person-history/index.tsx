@@ -133,23 +133,19 @@ const PersonHistory: FunctionComponent<Props> = ({ personKey, mode }) => {
           }
         `}>
         <>
-          {userHasSuperUserRole && (
-            <>
-              {history?.values?.length
-                ? orderBy(eventsInternal, ['createdBy.date'], ['desc'])?.map(
-                    (entry: PersonEvent) => (
-                      <PersonHistoryTable
-                        event={entry}
-                        key={entry.key}
-                        mode={mode}
-                      />
-                    )
-                  )
-                : !isLoading && (
-                    <EuiText textAlign="center">No events found</EuiText>
-                  )}
-            </>
-          )}
+          {history?.values?.length
+            ? orderBy(eventsInternal, ['createdBy.date'], ['desc'])?.map(
+                (entry: PersonEvent) => (
+                  <PersonHistoryTable
+                    event={entry}
+                    key={entry.key}
+                    mode={mode}
+                  />
+                )
+              )
+            : !isLoading && (
+                <EuiText textAlign="center">No events found</EuiText>
+              )}
         </>
       </EuiCommentList>
 
