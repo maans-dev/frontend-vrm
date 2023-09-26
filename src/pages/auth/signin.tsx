@@ -1,43 +1,21 @@
-import { EuiButton, EuiCallOut, EuiImage, EuiPageTemplate } from '@elastic/eui';
-import { signIn } from 'next-auth/react';
+import MainLayout from '@layouts/main';
+import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 const Signin = () => {
   const router = useRouter();
+  const { status } = useSession();
 
-  return (
-    <EuiPageTemplate minHeight="100vh" panelled={false}>
-      <EuiPageTemplate.Section alignment="center">
-        <EuiPageTemplate.EmptyPrompt
-          paddingSize="l"
-          icon={
-            <EuiImage size="120px" src="/images/logo-with-text.svg" alt="" />
-          }
-          title={<h2>VRM Sign in</h2>}
-          titleSize="s"
-          actions={
-            <EuiButton
-              fill
-              fullWidth
-              color="primary"
-              onClick={() => signIn('da')}>
-              Sign in
-            </EuiButton>
-          }
-          // footer={footer}
-        >
-          {router?.query?.error && (
-            <EuiCallOut
-              title={`Something went wrong (${router?.query?.error})`}
-              color="danger"
-              iconType="error">
-              Please try again later.
-            </EuiCallOut>
-          )}
-        </EuiPageTemplate.EmptyPrompt>
-      </EuiPageTemplate.Section>
-    </EuiPageTemplate>
-  );
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      void signIn('da');
+    } else if (status === 'authenticated') {
+      void router.push('/');
+    }
+  }, [router, status]);
+
+  return <MainLayout panelled={false} restrictWidth={false} showSpinner />;
 };
 
 export default Signin;
