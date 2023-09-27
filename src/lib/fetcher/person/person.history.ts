@@ -22,21 +22,16 @@ export default function usePersonHistoryOrActivityFetcher(
   if (mode === 'history') {
     endpoint = `/person/${key}/event/history?count=true&limit=${limit}&offset=${offset}${
       isAdmin && '&template=ARCHIVE'
-    }`;
+    }&timePeriod={"from":"${startDate}","to":"${endDate}"}`;
   } else {
     endpoint = `/person/${key}/event/activity?count=true&limit=${limit}&offset=${offset}${
       isAdmin && '&template=ARCHIVE'
-    }`;
+    }&timePeriod={"from":"${startDate}","to":"${endDate}"}`;
   }
 
   const { data, error, isLoading, mutate } = useSWR<PersonHistoryResponse>(
     shouldFetch ? endpoint : null,
     fetcherAPI
-    // {
-    //   revalidateIfStale: true,
-    //   revalidateOnFocus: false,
-    //   revalidateOnReconnect: false,
-    // }
   );
 
   return {
