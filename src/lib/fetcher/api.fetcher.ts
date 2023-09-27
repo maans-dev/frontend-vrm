@@ -28,21 +28,21 @@ export const fetcherAPI = async (route: string) => {
       } catch {}
 
       if (!errorMessage) errorMessage = await res.clone().text();
-      appsignal.sendError(
-        new Error(
-          `Auth error - ${errorMessage?.message ?? errorMessage} - ${
-            res.status
-          }`
-        ),
-        async span => {
-          span.setAction('auth-error');
-          span.setParams({
-            route: route,
-            status: res.status,
-            info: errorMessage,
-          });
-        }
-      );
+      // appsignal.sendError(
+      //   new Error(
+      //     `Auth error - ${errorMessage?.message ?? errorMessage} - ${
+      //       res.status
+      //     }`
+      //   ),
+      //   async span => {
+      //     span.setAction('auth-error');
+      //     span.setParams({
+      //       route: route,
+      //       status: res.status,
+      //       info: errorMessage,
+      //     });
+      //   }
+      // );
     }
 
     return await res.clone().json();

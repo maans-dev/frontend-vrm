@@ -24,7 +24,7 @@ const Address: FunctionComponent<Props> = ({ address, onChange }) => {
   const doChange = (address: Partial<Address>) => {
     const trimmedUpdate = {};
 
-    Object.keys(address).forEach(key => {
+    Object?.keys(address).forEach(key => {
       if (typeof address[key] === 'string') {
         trimmedUpdate[key] = address[key].trim();
       } else {

@@ -243,7 +243,7 @@ const LivingAddress: FunctionComponent<Props> = ({ address, onChange }) => {
       };
     } else {
       update.structure = {
-        key: updatedAddress.structure.key,
+        key: updatedAddress?.structure?.key,
       };
     }
     setUpdatedAddress(update);
