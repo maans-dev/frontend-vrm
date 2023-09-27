@@ -17,9 +17,6 @@ import { PersonEvent } from '@lib/domain/person-history';
 import usePersonHistoryOrActivityFetcher from '@lib/fetcher/person/person.history';
 import dateMath from '@elastic/datemath';
 import PersonHistoryTable from './person-history-table';
-import { hasRole as hasRoleUtil } from '@lib/auth/utils';
-import { useSession } from 'next-auth/react';
-import { Roles } from '@lib/domain/auth';
 
 export type Props = {
   personKey: number;
@@ -28,8 +25,6 @@ export type Props = {
 };
 
 const PersonHistory: FunctionComponent<Props> = ({ personKey, mode }) => {
-  const { data: session } = useSession();
-  const hasRole = (role: string) => hasRoleUtil(role, session?.user?.roles);
   const [start, setStart] = useState('now/y');
   const [end, setEnd] = useState('now/y');
 
@@ -40,7 +35,6 @@ const PersonHistory: FunctionComponent<Props> = ({ personKey, mode }) => {
 
   const [activePage, setActivePage] = useState(0);
   const [rowSize, setRowSize] = useState(10);
-  //TODO
   const { history, isLoading, error } = usePersonHistoryOrActivityFetcher(
     personKey,
     startMoment.format('YYYY-MM-DD HH:mm'),
@@ -82,8 +76,6 @@ const PersonHistory: FunctionComponent<Props> = ({ personKey, mode }) => {
     setStart(start);
     setEnd(end);
   };
-
-  const userHasSuperUserRole = hasRole(Roles.SuperUser);
 
   useEffect(() => {
     if (history) setPageCount(Math.ceil(history.count / rowSize));
