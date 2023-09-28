@@ -57,7 +57,11 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
   const hasFeature = (feature: string) => session?.features.includes(feature);
 
   useEffect(() => {
-    setShowSubHeader(router.route !== '/' && router.route !== '/403');
+    setShowSubHeader(
+      router.route !== '/' &&
+        router.route !== '/403' &&
+        !router.route.startsWith('/auth')
+    );
     // eslint-disable-next-line prettier/prettier
     // setShowCanvassHeader(router.route === '/canvass/voter-search' || router.route === '/canvass/voter/[voterKey]' || router.route === '/capture/voter-capture/[voterKey]' || router.route === '/capture/capturing-search' );
   }, [router, router.route]);
