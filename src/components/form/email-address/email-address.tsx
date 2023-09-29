@@ -32,9 +32,10 @@ const EmailAddressLine: FunctionComponent<Props> = ({
   const [showActions, setShowActions] = useState(false);
   const onActionsClick = () => setShowActions(showActions => !showActions);
   const hideActions = () => setShowActions(false);
-  const { setValidationError, data, person } = useContext(CanvassingContext);
+  const { setValidationError, data, person, doFormReset } =
+    useContext(CanvassingContext);
   const { isValid, validationError } = useEmailValidation(
-    emailContact.value,
+    emailContact?.value,
     data?.contacts,
     person?.contacts
   );

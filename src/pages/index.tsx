@@ -163,18 +163,30 @@ const Index: FunctionComponent = () => {
             />
           </EuiFlexItem>
         )}
-        {/* 
-        {/* {hasRole(Roles.BulkComms) && (
+
+        {hasRole(Roles.BulkComms) && hasFeature('bulk-comms-generating') && (
           <EuiFlexItem>
             <EuiCard
               icon={<EuiIcon size="xxl" type="timeline" />}
               layout="horizontal"
               title="Bulk Comms"
-              description="Manage bulk comms requests."
+              description="Send an sms or email."
               onClick={() => router.push('/comms')}
             />
           </EuiFlexItem>
-        )} */}
+        )}
+
+        {hasRole(Roles.BulkCommsAdmin) && hasFeature('bulk-comms-approval') && (
+          <EuiFlexItem>
+            <EuiCard
+              icon={<EuiIcon size="xxl" type="aggregate" />}
+              layout="horizontal"
+              title="Bulk Comms Approval"
+              description="Approval of generated bulk comms"
+              onClick={() => router.push('/comms-approval')}
+            />
+          </EuiFlexItem>
+        )}
 
         {hasRole(Roles.ActivityReport) &&
           hasFeature('activity-reports-module') && (

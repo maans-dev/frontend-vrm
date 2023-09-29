@@ -12,8 +12,14 @@ export interface SheetGeneration {
   requestReason: string;
   rejectedReason: string;
   results_number: number | string;
+  message?: string;
+  type: SheetType;
 }
 
+interface SheetType {
+  active: boolean;
+  name;
+}
 export interface SheetGenFile {
   key: string;
   name_text: string;

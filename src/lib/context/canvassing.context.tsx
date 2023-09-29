@@ -630,8 +630,8 @@ const CanvassingProvider = ({ children }) => {
   useEffect(() => {
     if (data?.contacts && person?.contacts) {
       const { errorText } = validateContactInformation(
-        data.contacts,
-        person.contacts
+        data?.contacts,
+        person?.contacts
       );
       setValidationError(errorText);
     }
