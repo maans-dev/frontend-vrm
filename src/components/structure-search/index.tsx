@@ -3,7 +3,9 @@ import useStructureFetcher from '@lib/fetcher/structures/structures';
 import debounce from 'lodash/debounce';
 import { ProvinceEnum, Structure } from '@lib/domain/person';
 import {
+  EuiButton,
   EuiButtonIcon,
+  EuiCallOut,
   EuiComboBox,
   EuiComboBoxOptionOption,
   EuiContext,
@@ -21,6 +23,7 @@ export type Props = {
   persistedOption?: EuiComboBoxOptionOption<Partial<Structure>>;
   addLimitAction: boolean;
   showSelected?: boolean;
+  bulkComms?: boolean;
   structureTypes?:
     | 'ward'
     | 'votingdistrict'
@@ -37,8 +40,10 @@ const Structres: FunctionComponent<Props> = ({
   showSelected,
   structureTypes = ['ward', 'votingdistrict'],
   addLimitAction,
+  bulkComms,
 }) => {
   const [searchValue, setSearchValue] = useState('');
+  const [errorCalloutVisible, setErrorCalloutVisible] = useState(false);
   const { structures, isLoading } = useStructureFetcher(
     searchValue,
     addLimitAction
@@ -47,6 +52,7 @@ const Structres: FunctionComponent<Props> = ({
     useState<Partial<Structure[]>>(null);
   const [selected, setSelected] =
     useState<EuiComboBoxOptionOption<Partial<Structure>>>(persistedOption);
+  const [selectedOptions, setSelectedOptions] = useState([]);
 
   const debouncedHandleSearchChange = debounce((value: string) => {
     setSearchValue(value);
@@ -56,26 +62,18 @@ const Structres: FunctionComponent<Props> = ({
     debouncedHandleSearchChange(value?.trimEnd());
   };
 
-  useEffect(() => {
-    const filteredStructures = structures?.filter(s => {
-      const type = s.type.toLowerCase();
-      return structureTypes.includes(type);
-    });
-    setStructuresInternal(filteredStructures);
-  }, [structures]);
-
-  useEffect(() => {
-    if (persistedOption) {
-      setSelected(persistedOption);
-    } else {
-      setSelected(null);
-    }
-  }, [persistedOption]);
-
   const options = structuresInternal?.map(s => ({
     label: `${s.formatted}`,
     value: s as Partial<Structure>,
   }));
+
+  const filteredOptions = options?.filter(
+    option =>
+      !selectedOptions.some(
+        selectedOption =>
+          JSON.stringify(option.value) === JSON.stringify(selectedOption.value)
+      )
+  );
 
   const getProvince = (structure: Partial<Structure>) => {
     if ('province' in structure) return structure.province;
@@ -125,6 +123,22 @@ const Structres: FunctionComponent<Props> = ({
     );
   };
 
+  useEffect(() => {
+    const filteredStructures = structures?.filter(s => {
+      const type = s.type.toLowerCase();
+      return structureTypes.includes(type);
+    });
+    setStructuresInternal(filteredStructures);
+  }, [structures]);
+
+  useEffect(() => {
+    if (persistedOption) {
+      setSelected(persistedOption);
+    } else {
+      setSelected(null);
+    }
+  }, [persistedOption, selectedOptions]);
+
   return (
     <>
       <EuiContext
@@ -141,11 +155,23 @@ const Structres: FunctionComponent<Props> = ({
           noSuggestions={!searchValue}
           aria-label="Start typing to search for a structure"
           placeholder="Start typing to search for a structure"
-          singleSelection={{ asPlainText: true }}
-          // selectedOptions={selected ? [selected] : []}
-          options={searchValue ? options : []}
+          singleSelection={bulkComms ? { asPlainText: true } : false}
+          selectedOptions={selected ? [selected] : []}
+          options={searchValue ? filteredOptions : []}
           onChange={options => {
-            setSelected(options[0]);
+            if (bulkComms) {
+              const updatedSelectedOptions = selectedOptions
+                ? [...options, ...selectedOptions]
+                : options;
+              if (updatedSelectedOptions.length <= 10) {
+                setSelectedOptions(updatedSelectedOptions);
+              } else {
+                setErrorCalloutVisible(true);
+              }
+            } else {
+              const newSelectedOptions = options.length > 0 ? [options[0]] : [];
+              setSelectedOptions(newSelectedOptions);
+            }
             onSelect(options[0]);
           }}
           rowHeight={50}
@@ -178,7 +204,62 @@ const Structres: FunctionComponent<Props> = ({
           }
         />
       </EuiContext>
-      {selected && showSelected && (
+
+      <>
+        <EuiFlexGroup
+          justifyContent="center"
+          alignItems="center"
+          direction="column">
+          <EuiFlexItem>
+            <EuiSpacer size="s" />
+            <EuiText
+              size="xs"
+              textAlign="center"
+              color={errorCalloutVisible && 'warning'}>
+              You cannot select more than 30 structures.
+            </EuiText>
+            <EuiSpacer size="s" />
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      </>
+
+      {selectedOptions?.length > 0 && showSelected && (
+        <>
+          <EuiSpacer size="xs" />
+          {selectedOptions?.map(option => (
+            <>
+              <EuiPanel
+                key={option.label}
+                paddingSize="s"
+                css={{
+                  borderColor: '#155FA2',
+                }}
+                hasBorder={true}
+                hasShadow={false}>
+                <EuiFlexGroup responsive={false} alignItems="center">
+                  <EuiFlexItem>{renderOption(option)}</EuiFlexItem>
+                  <EuiFlexItem grow={false}>
+                    <EuiButtonIcon
+                      iconType="trash"
+                      onClick={() => {
+                        const updatedOptions = selectedOptions.filter(
+                          selectedOption =>
+                            selectedOption.label !== option.label
+                        );
+                        setSelectedOptions(updatedOptions);
+                        // onSelect(updatedOptions);
+                      }}
+                    />
+                  </EuiFlexItem>
+                </EuiFlexGroup>
+              </EuiPanel>
+              <EuiSpacer size="xs" />
+            </>
+          ))}
+        </>
+      )}
+
+      {/* {selected && showSelected && (
         <>
           <EuiSpacer size="xs" />
           <EuiPanel
@@ -202,7 +283,7 @@ const Structres: FunctionComponent<Props> = ({
             </EuiFlexGroup>
           </EuiPanel>
         </>
-      )}
+      )} */}
     </>
   );
 };

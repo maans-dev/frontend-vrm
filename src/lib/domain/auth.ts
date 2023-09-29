@@ -4,6 +4,7 @@ export enum Roles {
   MembershipAdmin = 'vrmMembershipAdmin',
   SheetGen = 'vrmSheetGen',
   BulkComms = 'vrmBulkComms',
+  BulkCommsAdmin = 'vrmBulkCommsAdmin',
   VoterEdit = 'vrmVoterEdit',
   SuperUser = 'vrmSuperUser',
   ActivityReport = 'vrmActivityReport',

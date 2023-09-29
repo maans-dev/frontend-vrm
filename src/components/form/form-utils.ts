@@ -164,7 +164,7 @@ export const validateContactInformation = (
     const isDuplicateInUpdated =
       emailContacts.filter(c => c.value === contact.value).length > 1;
 
-    const isDuplicateInPerson = personContacts.some(
+    const isDuplicateInPerson = personContacts?.some(
       c => c.value === contact.value
     );
 

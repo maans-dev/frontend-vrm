@@ -34,7 +34,7 @@
   "include": [
     "./src/**/*",
     "./types/**/*"
-  ],
+, "src/components/comms/gen-comms/sms-counter/sms-highlighted-message.tsx"  ],
   "exclude": [
     "node_modules"
   ]
