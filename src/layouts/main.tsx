@@ -85,6 +85,7 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
         }}
         panelled={panelled}
         restrictWidth={true}
+        responsive={[]}
         {...rest}>
         <HeaderPrimary />
 
@@ -123,6 +124,7 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
           paddingSize="m"
           restrictWidth={restrictWidth === undefined ? 800 : restrictWidth}
           alignment={alignment || 'top'}
+          contentProps={{ css: { flexGrow: 1 } }}
           bottomBorder={false}>
           {pageTitle ? renderPageTitle : null}
           {children}

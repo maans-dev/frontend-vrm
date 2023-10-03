@@ -82,6 +82,10 @@ const RouteGuard = (props: {
         enabled = hasFeature('activity-reports-module');
       }
 
+      if (router.asPath.includes('/live-map')) {
+        enabled = hasFeature('live-map');
+      }
+
       if (!enabled && !router.asPath.includes('404')) {
         setModuleEnabled(false);
         if (router.asPath !== '/') router.push('/');

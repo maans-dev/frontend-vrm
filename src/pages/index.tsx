@@ -11,7 +11,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { hasRole as hasRoleUtil } from '@lib/auth/utils';
 import { Roles } from '@lib/domain/auth';
-import { TbReport, TbReportSearch } from 'react-icons/tb';
+import { TbReport, TbReportSearch, TbMapBolt } from 'react-icons/tb';
 import { GrHostMaintenance } from 'react-icons/gr';
 import { useAnalytics } from '@lib/hooks/useAnalytics';
 
@@ -220,6 +220,23 @@ const Index: FunctionComponent = () => {
             />
           </EuiFlexItem>
         )}
+
+        {(hasRole(Roles.Canvass) || hasRole(Roles.VoterEdit)) &&
+          hasFeature('live-map') && (
+            <EuiFlexItem>
+              <EuiCard
+                icon={<TbMapBolt size="42px" />}
+                layout="horizontal"
+                title="Live Map"
+                description="Live map of VRM activity"
+                onClick={() => {
+                  trackPageClick('/live-map');
+
+                  router.push('/live-map');
+                }}
+              />
+            </EuiFlexItem>
+          )}
       </EuiFlexGrid>
     </MainLayout>
   );
