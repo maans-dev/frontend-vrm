@@ -51,6 +51,12 @@ export default withAuth(
       authorized = hasRole(Roles.ActivityReport, token?.roles as string[]);
     }
 
+    if (req.nextUrl.pathname.includes('/live-map')) {
+      authorized =
+        hasRole(Roles.Canvass, token?.roles as string[]) ||
+        hasRole(Roles.VoterEdit, token?.roles as string[]);
+    }
+
     if (req.nextUrl.pathname.startsWith('/api/download')) {
       authorized = (token.roles as string[])?.length > 0;
     }
