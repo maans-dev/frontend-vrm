@@ -9,7 +9,6 @@ const order = [
   'datacleanup',
   'membership',
   'vr-api-ad-hoc',
-  'admin',
   'user-agreement',
   'default',
 ];

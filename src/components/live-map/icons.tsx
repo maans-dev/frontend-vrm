@@ -5,16 +5,6 @@ interface IconInfo {
 }
 
 export const eventIcons: Record<string, IconInfo> = {
-  admin: {
-    image: '/images/pins/admin.png',
-    alt: 'White pin',
-    label: 'System edit',
-  },
-  system: {
-    image: '/images/pins/admin.png',
-    alt: 'White pin',
-    label: 'System edit',
-  },
   membership: {
     image: '/images/pins/membership.png',
     alt: 'Blue pin',
