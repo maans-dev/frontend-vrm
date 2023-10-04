@@ -89,7 +89,7 @@ export const LiveMap: FunctionComponent = () => {
           key={ep.eventKey}
           position={ep.point}
           opacity={Math.max(0, (ep.received + 60000 - now) / 60000)}
-          icon={eventIcons[ep.category].image ?? eventIcons.default.image}
+          icon={eventIcons[ep.category]?.image ?? eventIcons.default.image}
           animation={google.maps.Animation.DROP}
           zIndex={ep.received}
         />
