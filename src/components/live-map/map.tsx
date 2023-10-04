@@ -51,6 +51,10 @@ export const LiveMap: FunctionComponent = () => {
     if (lastJsonMessage != null) {
       const event = lastJsonMessage as Event;
 
+      if (event.category === 'system' || event.category === 'admin') {
+        return;
+      }
+
       setEventPoints(ep => [
         {
           ...event,
