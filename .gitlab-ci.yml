@@ -16,6 +16,7 @@ build-app-staging:
   artifacts:
     paths:
       - .next/
+      - public/
     exclude:
       - .next/cache/**/*
     expire_in: 1 hour
@@ -34,6 +35,7 @@ build-app-prod:
   artifacts:
     paths:
       - .next/
+      - public/
     exclude:
       - .next/cache/**/*
     expire_in: 1 hour
