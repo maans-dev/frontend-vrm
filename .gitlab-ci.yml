@@ -1,26 +1,50 @@
 stages:
-  - build
+  - build-app
+  - build-docker
 
-build-staging:
-  stage: build
+build-app-staging:
+  stage: build-app
   except:
     - prod
-  image: docker:20.10.16
-  services:
-    - docker:20.10.16-dind
+  image: node:18
+  variables:
+    NEXT_TELEMETRY_DISABLED: "1"
+    NEXT_PUBLIC_VERSION: '${CI_COMMIT_SHORT_SHA}'
   script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN source.da-io.net:4567
-    - docker build --build-arg CI_COMMIT_SHORT_SHA -t source.da-io.net:4567/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:${CI_COMMIT_REF_SLUG} -f Dockerfile.staging .
-    - docker push source.da-io.net:4567/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:${CI_COMMIT_REF_SLUG}
+    - yarn install --frozen-lockfile --registry https://npm-cache.da-io.net/
+    - yarn build:staging
+  artifacts:
+    paths:
+      - .next/
+    exclude:
+      - .next/cache/**/*
+    expire_in: 1 hour
 
-build-prod:
-  stage: build
+build-app-prod:
+  stage: build-app
   only:
     - prod
+  image: node:18
+  variables:
+    NEXT_TELEMETRY_DISABLED: "1"
+    NEXT_PUBLIC_VERSION: '${CI_COMMIT_SHORT_SHA}'
+  script:
+    - yarn install --frozen-lockfile --registry https://npm-cache.da-io.net/
+    - yarn build
+  artifacts:
+    paths:
+      - .next/
+    exclude:
+      - .next/cache/**/*
+    expire_in: 1 hour
+
+build-docker:
+  stage: build-docker
   image: docker:20.10.16
   services:
     - docker:20.10.16-dind
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN source.da-io.net:4567
-    - docker build --build-arg CI_COMMIT_SHORT_SHA -t source.da-io.net:4567/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:prod .
-    - docker push source.da-io.net:4567/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:prod
+    - docker pull source.da-io.net:4567/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_COMMIT_REF_SLUG || true
+    - docker build --cache-from source.da-io.net:4567/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_COMMIT_REF_SLUG -t source.da-io.net:4567/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_COMMIT_REF_SLUG .
+    - docker push source.da-io.net:4567/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:${CI_COMMIT_REF_SLUG}
