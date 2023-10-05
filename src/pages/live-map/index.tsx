@@ -16,14 +16,14 @@ const Index: FunctionComponent = () => {
       },
     },
     {
-      text: 'Live Map',
+      text: 'Live Activity Map',
     },
   ];
 
   return (
     <>
       <Head>
-        <title>VRM | Live Map</title>
+        <title>VRM | Live Activity Map</title>
       </Head>
       <MainLayout
         breadcrumb={breadcrumb}

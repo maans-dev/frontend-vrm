@@ -227,7 +227,7 @@ const Index: FunctionComponent = () => {
               <EuiCard
                 icon={<TbMapBolt size="42px" />}
                 layout="horizontal"
-                title="Live Map"
+                title="Live Activity Map"
                 description="Live map of VRM activity"
                 onClick={() => {
                   trackPageClick('/live-map');
