@@ -15,6 +15,9 @@ declare module 'next-auth' {
     } & DefaultSession['user'];
     features: string[];
     maintenanceMessage: string;
+    announceError?: string;
+    announceWarning?: string;
+    announceInfo?: string;
   }
 
   export interface User {

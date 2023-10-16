@@ -9,11 +9,13 @@ import {
   EuiPageTemplateProps,
   EuiSpacer,
   EuiText,
+  euiPaletteForStatus,
 } from '@elastic/eui';
 import { useRouter } from 'next/router';
 import { HeaderPrimary } from '@components/header/header-primary';
 import { HeaderSecondary } from '@components/header/header-secondary';
 import Spinner from '@components/spinner/spinner';
+import Announcement from '@components/announcement';
 import { Roles } from '@lib/domain/auth';
 import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
@@ -75,6 +77,8 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
     </>
   );
 
+  const palette = euiPaletteForStatus(5);
+
   return (
     <div css={{ position: 'relative' }}>
       <DisclosureNoticeModal />
@@ -91,30 +95,34 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
 
         {showSubHeader ? <HeaderSecondary breadcrumb={breadcrumb} /> : null}
 
-        {hasFeature('display-beta-message') && (
-          <div
-            style={{
-              display: 'block',
-              position: 'sticky',
-              top: showSubHeader ? '96px' : '48px',
-              zIndex: 99,
-            }}>
-            <EuiText
-              size="s"
-              color="white"
-              textAlign="center"
-              css={{
-                background: 'red',
-                padding: '10px',
-                width: '100%',
-              }}>
-              <strong>
-                This is a Beta test site. All data entered here will be deleted
-                at the end of the beta testing period. Nothing recorded here
-                will count towards canvassing or capturing.
-              </strong>
-            </EuiText>
-          </div>
+        {hasFeature('announce-error') && session.announceError && (
+          <Announcement
+            top={showSubHeader ? '96px' : '48px'}
+            backgroundColor={palette[4]}
+            textColor="white"
+            message={session.announceError}
+            zIndex={99}
+          />
+        )}
+
+        {hasFeature('announce-warning') && session.announceWarning && (
+          <Announcement
+            top={showSubHeader ? '96px' : '48px'}
+            backgroundColor={palette[2]}
+            textColor="black"
+            message={session.announceWarning}
+            zIndex={98}
+          />
+        )}
+
+        {hasFeature('announce-info') && session.announceInfo && (
+          <Announcement
+            top={showSubHeader ? '96px' : '48px'}
+            backgroundColor={palette[1]}
+            textColor="black"
+            message={session.announceInfo}
+            zIndex={97}
+          />
         )}
 
         <EuiSpacer size="s" />

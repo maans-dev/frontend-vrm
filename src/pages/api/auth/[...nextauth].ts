@@ -185,6 +185,15 @@ export const authOptions: NextAuthOptions = {
             if (item.name === 'maintenance-mode') {
               session.maintenanceMessage = item.description;
             }
+            if (item.name === 'announce-error') {
+              session.announceError = item.description;
+            }
+            if (item.name === 'announce-warning') {
+              session.announceWarning = item.description;
+            }
+            if (item.name === 'announce-info') {
+              session.announceInfo = item.description;
+            }
             return item.name;
           });
       }
