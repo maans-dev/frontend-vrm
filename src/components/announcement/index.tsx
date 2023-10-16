@@ -2,23 +2,15 @@ import React from 'react';
 import { EuiText } from '@elastic/eui';
 
 interface Props {
-  top: string;
   textColor: string;
   backgroundColor: string;
   message: string;
-  zIndex?: number;
 }
 
 const Announcement: React.FunctionComponent<Props> = props => {
-  const { top, textColor, backgroundColor, message, zIndex } = props;
+  const { textColor, backgroundColor, message } = props;
   return (
-    <div
-      style={{
-        display: 'block',
-        position: 'sticky',
-        top,
-        zIndex: zIndex ?? 99,
-      }}>
+    <div>
       <EuiText
         size="s"
         color={textColor}
