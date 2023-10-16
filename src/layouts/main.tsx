@@ -96,32 +96,33 @@ const MainLayout: FunctionComponent<EuiPageTemplateProps & Props> = ({
         {showSubHeader ? <HeaderSecondary breadcrumb={breadcrumb} /> : null}
 
         {hasFeature('announce-error') && session.announceError && (
-          <Announcement
-            top={showSubHeader ? '96px' : '48px'}
-            backgroundColor={palette[4]}
-            textColor="white"
-            message={session.announceError}
-            zIndex={99}
-          />
+          <div
+            style={{
+              position: 'sticky',
+              top: showSubHeader ? '96px' : '48px',
+              zIndex: 999,
+            }}>
+            <Announcement
+              backgroundColor={palette[4]}
+              textColor="white"
+              message={session.announceError}
+            />
+          </div>
         )}
 
         {hasFeature('announce-warning') && session.announceWarning && (
           <Announcement
-            top={showSubHeader ? '96px' : '48px'}
             backgroundColor={palette[2]}
             textColor="black"
             message={session.announceWarning}
-            zIndex={98}
           />
         )}
 
         {hasFeature('announce-info') && session.announceInfo && (
           <Announcement
-            top={showSubHeader ? '96px' : '48px'}
             backgroundColor={palette[1]}
             textColor="black"
             message={session.announceInfo}
-            zIndex={97}
           />
         )}
 
