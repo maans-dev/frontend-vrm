@@ -1,4 +1,9 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, {
+  FunctionComponent,
+  useEffect,
+  useState,
+  useCallback,
+} from 'react';
 import { Marker, GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 
 import {
@@ -100,6 +105,28 @@ const Map: FunctionComponent<Props> = ({
     setIsDragging(false);
     setShowConfirmation(true);
   }
+
+  const onLoad = useCallback((map: google.maps.Map) => {
+    const structMapType = new google.maps.ImageMapType({
+      getTileUrl: function (coord, zoom) {
+        // "Wrap" x (logitude) at 180th meridian properly
+        // NB: Don't touch coord.x because coord param is by reference, and changing its x property breakes something in Google's lib
+        const tilesPerGlobe = 1 << zoom;
+        let x = coord.x % tilesPerGlobe;
+        if (x < 0) {
+          x = tilesPerGlobe + x;
+        }
+        // Wrap y (latitude) in a like manner if you want to enable vertical infinite scroll
+
+        return `https://mapping.da.org.za/structures-2019/tiles/admin16/${zoom}/${x}/${coord.y}.png`;
+      },
+      tileSize: new google.maps.Size(256, 256),
+      name: 'Structures',
+      maxZoom: 19,
+    });
+
+    map.overlayMapTypes.insertAt(0, structMapType);
+  }, []);
 
   const onUseCoordinates = () => {
     trackCustomEvent('Living address', 'Entered coordinates manually');
@@ -241,6 +268,7 @@ const Map: FunctionComponent<Props> = ({
                             mapTypeControl: true,
                             fullscreenControl: true,
                           }}
+                          onLoad={onLoad}
                           mapContainerStyle={{
                             height: isMobile
                               ? 'calc(100vh - 140px)'
